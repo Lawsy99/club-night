@@ -85,6 +85,25 @@
   font-size: 16px;
 }
 
+.game-actions button.primary {
+  background: #f0c95a;
+  border-color: #f0c95a;
+  color: #1f2a24;
+  font-weight: 600;
+}
+
+.game-actions button.danger {
+  background: #7a2e25;
+  border-color: #a0453a;
+}
+
+.game-screen.loading {
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: var(--muted);
+}
+
 .game-actions button:disabled {
   opacity: 0.4;
   cursor: default;
