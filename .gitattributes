@@ -1,0 +1,6 @@
+# Store text files with Unix line endings (stops Windows line-ending warnings).
+* text=auto eol=lf
+# Binary assets: never touch.
+*.onnx binary
+*.wasm binary
+*.png binary

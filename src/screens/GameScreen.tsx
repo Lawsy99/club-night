@@ -16,6 +16,7 @@ import { getMaia, type MaiaStatus } from '../engine/maia/maia'
 import { chooseOpponentMove } from '../engine/opponent'
 import { useAnalysis } from '../engine/useAnalysis'
 import { useMoveRating } from '../engine/useMoveRating'
+import { useWakeLock } from './useWakeLock'
 import { assessMove, describeBlunder } from '../logic/blunder'
 import { flipScore, formatScore, scoreFor } from '../logic/evaluation'
 import { describeOutcome, getOutcome, replay, type GameOutcome } from '../logic/game'
@@ -37,7 +38,10 @@ type Props = {
   setGame: React.Dispatch<React.SetStateAction<GameRecord | null>>
   /** Games end with a review, which the player may skip. */
   onReview: () => void
-  onSkipReview: () => void
+  /** Straight into another game against the same opponent (colours swap). */
+  onRematch: () => void
+  /** Back to choose a different opponent. */
+  onChangeOpponent: () => void
 }
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
@@ -46,7 +50,7 @@ type PendingMove = { uci: string; fenAfter: string; warning: string | null }
 /** Arrow colour for "the move you played" when showing a better one. */
 const PLAYED_ARROW_COLOUR = 'rgba(208, 59, 59, 0.75)'
 
-export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
+export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponent }: Props) {
   const stage = HELP_STAGES[game.stage]
   const level = findLevel(game.levelId)
   const [engineError, setEngineError] = useState<string | null>(null)
@@ -74,6 +78,7 @@ export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
   const wantsAnalysis = !outcome && (playersTurn || stage.evalBar)
   const analysis = useAnalysis(fen, wantsAnalysis)
   const ratedMove = useMoveRating(game.moves, game.playerColour)
+  useWakeLock(!outcome)
 
   // Maia (800+) is a one-off download: show its progress while it arrives.
   useEffect(() => {
@@ -199,13 +204,9 @@ export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
   return (
     <main className="game-screen">
       <header className="game-header">
-        <h1>
-          vs {level.label} <span className="opponent-rating">{level.rating}</span>
-        </h1>
         <p className="stage-label">{stageLabel}</p>
+        <p className={outcome ? 'game-status game-over' : 'game-status'}>{status}</p>
       </header>
-
-      <p className={outcome ? 'game-status game-over' : 'game-status'}>{status}</p>
 
       <PlayerStrip
         name={level.label}
@@ -316,8 +317,11 @@ export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
             <button type="button" className="primary" onClick={onReview}>
               Review game
             </button>
-            <button type="button" onClick={onSkipReview}>
-              Skip review
+            <button type="button" onClick={onRematch}>
+              {outcome.winner === null ? 'Replay' : 'Rematch'}
+            </button>
+            <button type="button" onClick={onChangeOpponent}>
+              Change opponent
             </button>
           </>
         ) : (

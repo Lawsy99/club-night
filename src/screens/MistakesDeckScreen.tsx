@@ -3,7 +3,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { MomentTrainer } from '../components/MomentTrainer'
 import { RATING_LABELS } from '../logic/moveRating'
-import { answerCard, dueCards, nextDue, type Answer, type MistakeCard } from '../logic/mistakesDeck'
+import {
+  answerCard,
+  dueCards,
+  MAX_CARDS_PER_SESSION,
+  nextDue,
+  retireCard,
+  type Answer,
+  type MistakeCard,
+} from '../logic/mistakesDeck'
 import { loadCards, saveCard } from '../storage/db'
 import '../components/ratings.css'
 import './ReviewScreen.css'
@@ -23,7 +31,8 @@ export function MistakesDeckScreen({ onBack }: { onBack: () => void }) {
     loadCards()
       .then((cards) => {
         setAllCards(cards)
-        setQueue(dueCards(cards).map((card) => ({ card, repeat: false })))
+        // Short sittings: at most MAX_CARDS_PER_SESSION, oldest-due first.
+        setQueue(dueCards(cards).slice(0, MAX_CARDS_PER_SESSION).map((card) => ({ card, repeat: false })))
       })
       .catch(() => setQueue([]))
   }, [])
@@ -50,11 +59,24 @@ export function MistakesDeckScreen({ onBack }: { onBack: () => void }) {
     window.scrollTo({ top: 0 })
   }
 
+  /** "I've got this one": retire the card for good, and skip its practice repeat. */
+  function retireCurrent() {
+    if (!queue) return
+    const retired = retireCard(queue[index].card)
+    saveCard(retired).catch((err) => console.error('Card save failed', err))
+    setAllCards((cards) => cards.map((c) => (c.id === retired.id ? retired : c)))
+    setQueue((q) => (q ? q.filter((it, i) => i <= index || it.card.id !== retired.id) : q))
+    next()
+  }
+
   if (!queue) return <main className="review-screen">Opening the deck…</main>
 
   const item = queue[index]
   if (!item) {
     const upcoming = nextDue(allCards)
+    const active = allCards.filter((c) => !c.retired).length
+    const learned = allCards.length - active
+    const stillDue = dueCards(allCards).length
     return (
       <main className="review-screen">
         <header>
@@ -65,8 +87,15 @@ export function MistakesDeckScreen({ onBack }: { onBack: () => void }) {
             ? 'No cards yet. Mistakes and blunders from your game reviews will appear here.'
             : queue.length === 0
               ? `Nothing due right now.${upcoming ? ` Next card ${describeWhen(upcoming)}.` : ''}`
-              : `All done for now.${upcoming ? ` Next card ${describeWhen(upcoming)}.` : ''}`}
+              : stillDue > 0
+                ? `That's enough for one sitting. ${stillDue} more waiting for next time.`
+                : `All done for now.${upcoming ? ` Next card ${describeWhen(upcoming)}.` : ''}`}
         </p>
+        {allCards.length > 0 && (
+          <p className="review-note">
+            {active} card{active === 1 ? '' : 's'} in the deck · {learned} learned
+          </p>
+        )}
         <button type="button" className="review-continue" onClick={onBack}>
           Back
         </button>
@@ -94,6 +123,11 @@ export function MistakesDeckScreen({ onBack }: { onBack: () => void }) {
       <button type="button" className="review-continue" disabled={!answered} onClick={next}>
         {index + 1 < queue.length ? 'Next card' : 'Finish'}
       </button>
+      {answered && !item.repeat && (
+        <button type="button" className="review-secondary" onClick={retireCurrent}>
+          I've got this one: remove it
+        </button>
+      )}
     </main>
   )
 }

@@ -28,6 +28,8 @@ import './ReviewScreen.css'
 type Props = {
   game: GameRecord
   onContinue: () => void
+  /** Opened from Past games: the way out goes back to the list. */
+  fromHistory?: boolean
 }
 
 const RATING_ORDER: MoveRating[] = ['best', 'good', 'inaccuracy', 'mistake', 'blunder']
@@ -40,7 +42,7 @@ const COUNT_LABELS: Record<MoveRating, [one: string, many: string]> = {
   blunder: ['Blunder', 'Blunders'],
 }
 
-export function ReviewScreen({ game, onContinue }: Props) {
+export function ReviewScreen({ game, onContinue, fromHistory = false }: Props) {
   const [evals, setEvals] = useState<PositionEval[] | null>(null)
   const [progress, setProgress] = useState({ done: 0, total: game.moves.length + 1 })
   const [failed, setFailed] = useState(false)
@@ -85,8 +87,11 @@ export function ReviewScreen({ game, onContinue }: Props) {
   // Real errors (mistakes and blunders) go into the mistakes deck. Done as
   // soon as the analysis is in, so they're kept even if the review is skipped.
   useEffect(() => {
+    // The worst errors first (blunders before mistakes), then keep the top few.
+    const severity = (m: ReviewMoment) => (m.rating === 'blunder' ? 2 : 1)
     const cards = moments
       .filter((m) => qualifiesForDeck(m.rating))
+      .sort((a, b) => severity(b) - severity(a))
       .slice(0, MAX_CARDS_PER_GAME)
       .map((m) => newCard(m, { gameId: game.id, ply: m.ply, rating: m.rating, moveLabel: m.moveLabel }))
     if (cards.length) addCardsIfNew(cards).catch((err) => console.error('Deck save failed', err))
@@ -94,12 +99,14 @@ export function ReviewScreen({ game, onContinue }: Props) {
 
   const resultLine = outcome
     ? outcome.winner === null
-      ? 'Drawn — replayed next.'
+      ? fromHistory
+        ? 'Drawn.'
+        : 'Drawn — replayed next.'
       : outcome.winner === player
         ? 'You won.'
         : 'You lost.'
     : ''
-  const finalLabel = outcome?.winner === null ? 'Replay' : 'Continue'
+  const finalLabel = fromHistory ? 'Back to past games' : outcome?.winner === null ? 'Replay' : 'Continue'
 
   function goTo(next: number) {
     setStep(next)
@@ -133,7 +140,7 @@ export function ReviewScreen({ game, onContinue }: Props) {
   // The review is optional (Joseph's decision, Sep 2026): skip straight on.
   const skipButton = (
     <button type="button" className="review-skip" onClick={onContinue}>
-      Skip
+      {fromHistory ? 'Back' : 'Skip'}
     </button>
   )
 

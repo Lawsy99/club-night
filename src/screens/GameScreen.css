@@ -134,7 +134,14 @@
 
 .game-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+}
+
+/* The status line sits inside the (already padded) header */
+.game-header .game-status {
+  padding: 0;
+  margin-top: 4px;
 }
 
 .help-actions button {

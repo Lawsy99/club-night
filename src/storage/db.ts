@@ -2,7 +2,7 @@
 // database). No accounts, no servers.
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb'
 import type { GameRecord } from '../logic/gameRecord'
-import type { MistakeCard } from '../logic/mistakesDeck'
+import { planAdditions, type MistakeCard } from '../logic/mistakesDeck'
 import type { PositionEval } from '../logic/review'
 
 /** A finished game in the archive, with its review analysis once done. */
@@ -77,6 +77,12 @@ export async function archiveGame(game: GameRecord): Promise<void> {
   await database.put('games', { ...existing, ...game, finishedAt: existing?.finishedAt ?? Date.now() })
 }
 
+/** Every finished game, newest first. */
+export async function listArchivedGames(): Promise<ArchivedGame[]> {
+  const games = await (await db()).getAllFromIndex('games', 'finishedAt')
+  return games.reverse()
+}
+
 export async function getArchivedGame(id: string): Promise<ArchivedGame | null> {
   return (await (await db()).get('games', id)) ?? null
 }
@@ -87,12 +93,14 @@ export async function saveGameAnalysis(id: string, evals: PositionEval[]): Promi
   if (existing) await database.put('games', { ...existing, evals })
 }
 
-/** Adds cards to the deck, leaving any that already exist (and their schedule) alone. */
+/**
+ * Adds cards to the deck, following the deck's rules (no duplicates, a size
+ * limit that retires the oldest). Existing cards keep their schedule.
+ */
 export async function addCardsIfNew(cards: MistakeCard[]): Promise<void> {
   const tx = (await db()).transaction('cards', 'readwrite')
-  for (const card of cards) {
-    if (!(await tx.store.getKey(card.id))) await tx.store.put(card)
-  }
+  const { add, retire } = planAdditions(await tx.store.getAll(), cards)
+  for (const card of [...add, ...retire]) await tx.store.put(card)
   await tx.done
 }
 

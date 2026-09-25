@@ -85,6 +85,14 @@
   font-size: 15px;
 }
 
+.setup-history {
+  border-color: #4a5a50;
+}
+
+.setup-history span {
+  color: var(--muted);
+}
+
 .setup-screen .build-stamp {
   margin: 0;
   padding: 0;

@@ -10,6 +10,7 @@ import {
   type GameRecord,
 } from '../logic/gameRecord'
 import {
+  type ArchivedGame,
   archiveGame,
   loadCurrentGame,
   loadScreen,
@@ -19,10 +20,11 @@ import {
 } from '../storage/db'
 import { GameScreen } from './GameScreen'
 import { MistakesDeckScreen } from './MistakesDeckScreen'
+import { PastGamesScreen } from './PastGamesScreen'
 import { ReviewScreen } from './ReviewScreen'
 import { TestSetupScreen } from './TestSetupScreen'
 
-const VIEWS = ['game', 'review', 'setup', 'deck'] as const
+const VIEWS = ['game', 'review', 'setup', 'deck', 'history'] as const
 type View = (typeof VIEWS)[number]
 
 export function TestFlow() {
@@ -30,6 +32,8 @@ export function TestFlow() {
   // The current (or most recently finished) game
   const [game, setGame] = useState<GameRecord | null>(null)
   const [view, setView] = useState<View>('game')
+  // A past game opened from the list (not saved: reopening returns to the list)
+  const [pastGame, setPastGame] = useState<ArchivedGame | null>(null)
 
   useEffect(() => {
     requestPersistentStorage()
@@ -78,6 +82,23 @@ export function TestFlow() {
 
   if (view === 'deck') return <MistakesDeckScreen onBack={() => setView('setup')} />
 
+  if (view === 'history') {
+    if (pastGame) {
+      return (
+        <ReviewScreen
+          key={pastGame.id}
+          game={upgradeGameRecord(pastGame)}
+          fromHistory
+          onContinue={() => {
+            setPastGame(null)
+            window.scrollTo({ top: 0 })
+          }}
+        />
+      )
+    }
+    return <PastGamesScreen onOpen={setPastGame} onBack={() => setView('setup')} />
+  }
+
   if (!game || view === 'setup') {
     return (
       <TestSetupScreen
@@ -85,6 +106,7 @@ export function TestFlow() {
         initialLevelId={game?.levelId ?? DEFAULT_TEST_LEVEL_ID}
         onStart={(stage, levelId) => startGame(newGameRecord(nextPlayerColour(game), levelId, stage))}
         onOpenDeck={() => setView('deck')}
+        onOpenHistory={() => setView('history')}
       />
     )
   }
@@ -99,7 +121,8 @@ export function TestFlow() {
       game={game}
       setGame={setGame}
       onReview={() => setView('review')}
-      onSkipReview={() => afterGame(game)}
+      onRematch={() => startGame(newGameRecord(nextPlayerColour(game), game.levelId, game.stage))}
+      onChangeOpponent={() => setView('setup')}
     />
   )
 }

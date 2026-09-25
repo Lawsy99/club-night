@@ -192,7 +192,7 @@ There are two kinds of game, mirroring real club life: friendlies are practice w
 | --- | --- | --- |
 | Setting | Casual club-night games | League matches, cup ties, ladder challenges, tournament rounds |
 | Help | Assisted or guided stage | None |
-| Clock | Never | Act 1: none. Act 2 onwards: 30 minutes each, plus 10 seconds per move |
+| Clock | Never | None by default. Before a gauntlet or boss match, the player may switch one on (see Clocks) |
 | Chatter during play | Yes, rationed | None. Characters speak only before and after |
 | Changes rating | No | Yes |
 | Losing | Still counts towards progress | Replay the match |
@@ -205,12 +205,11 @@ Rules for every game:
 
 ### Clocks and thinking time
 
-**Which games are timed:**
+**Which games are timed** (revised Sep 2026, Joseph's decision: no timers unless the player asks):
 
-- Friendlies are always untimed.
-- Act 1 is entirely untimed, including the knockout cup, so new players can settle in.
-- From Act 2, matches use a clock: **30 minutes each, plus 10 seconds added after every move** (the added time is called an increment, and it stops games being decided by a frantic scramble). Real league games are longer, but this keeps a game under about an hour on a phone.
-- Settings offers other lengths (15 minutes plus 10 seconds, or 45 minutes plus 15 seconds), and an option to turn clocks off entirely.
+- No game has a clock by default: friendlies, ordinary matches, trial night, everything.
+- The only exception is the "final" matches of each section (gauntlet matches and bosses). Just before one starts, the player may switch a clock on for that game: **30 minutes each, plus 10 seconds added after every move** (the added time is called an increment, and it stops games being decided by a frantic scramble). It is off unless chosen.
+- Settings may offer other lengths (15 minutes plus 10 seconds, or 45 minutes plus 15 seconds) for when a clock is chosen.
 
 **Clock rules:**
 
@@ -233,7 +232,7 @@ The engine finds its move almost instantly; the app then waits a human-like amou
 - Characters differ: **Priya** takes long thinks once her preparation runs out and can get into time trouble; **Oscar** plays fast; **Clive** plays quickly once pieces are swapped off; **Vera** spreads her time evenly and is never short.
 - When a bot is very short of time, it plays slightly weaker, as humans do. The same happens in reverse: time pressure is real for the player too.
 
-Dialogue about clocks (pressing the clock with the wrong hand, starting your clock) is tagged for timed games only.
+Dialogue about clocks (pressing the clock with the wrong hand, starting your clock) is tagged for timed games only, so it appears only when the player has switched a clock on.
 
 ### The help stages
 
@@ -495,7 +494,8 @@ Explanations are built from engine facts (material lost, a piece left undefended
 ### The mistakes deck
 
 - Each of the biggest moments that was a mistake or blunder becomes a card: the position before the error, with the task "find the best move".
-- At most 3 cards are added per game. Positions where the better move was only slightly better are skipped, so the deck stays about real errors.
+- At most 2 cards are added per game (the worst errors). Positions where the better move was only slightly better are skipped, so the deck stays about real errors.
+- The deck stays small (revised Sep 2026, so it never fills up): the same position is never added twice; at most 30 cards are active, and adding beyond that retires the oldest; a sitting shows at most 10 cards; a card retires once its next review would be 30+ days away; and the player can remove any card with "I've got this one".
 - Cards come back on a schedule worked out by FSRS: soon after a wrong answer, and at growing intervals after right answers, until they're retired.
 - Due cards appear as a short warm-up at the start of some chapters (up to 5 cards), and the deck is always available from the home screen.
 - Boss-loss puzzle sets draw on cards from games against that boss.
@@ -742,6 +742,6 @@ These are proposals, needed before the Act 1 story outline.
 - [ ] How accuracy and results are blended on trial night
 - [ ] Character offsets, and the gauntlet and boss strengths
 - [ ] Whether repeat gauntlet runs need shortening
-- [ ] How clocks change win chances in the timed acts, and whether bosses need adjusting for it
+- [ ] How an optional clock changes win chances in gauntlet and boss games, and whether they need adjusting for it
 - [ ] How much the style boosts change each character's play
 - [ ] Dialogue frequency during friendlies

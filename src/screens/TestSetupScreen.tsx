@@ -14,6 +14,7 @@ type Props = {
   initialLevelId: string
   onStart: (stage: HelpStageId, levelId: string) => void
   onOpenDeck: () => void
+  onOpenHistory: () => void
 }
 
 const STAGE_DETAILS: Record<HelpStageId, string> = {
@@ -22,7 +23,7 @@ const STAGE_DETAILS: Record<HelpStageId, string> = {
   real: 'No help at all.',
 }
 
-export function TestSetupScreen({ playerColour, initialLevelId, onStart, onOpenDeck }: Props) {
+export function TestSetupScreen({ playerColour, initialLevelId, onStart, onOpenDeck, onOpenHistory }: Props) {
   const [levelId, setLevelId] = useState(initialLevelId)
   const [deck, setDeck] = useState<{ due: number; total: number } | null>(null)
 
@@ -68,6 +69,11 @@ export function TestSetupScreen({ playerColour, initialLevelId, onStart, onOpenD
               ? `${deck.due} due`
               : `${deck.total} card${deck.total === 1 ? '' : 's'}, none due`}
         </span>
+      </button>
+
+      <button type="button" className="setup-deck setup-history" onClick={onOpenHistory}>
+        <strong>Past games</strong>
+        <span>Review any game ›</span>
       </button>
 
       <p className="build-stamp">Version: {BUILD_LABEL}</p>
