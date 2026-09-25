@@ -1,6 +1,7 @@
 // Phase 1 test game against plain Stockfish. Colours swap on every new game.
 // Saving, resuming and the help stages arrive in steps 3 and 4.
 import { useEffect, useMemo, useState } from 'react'
+import { BUILD_LABEL } from '../buildInfo'
 import { Board } from '../components/Board'
 import {
   DEFAULT_TEST_LEVEL_ID,
@@ -92,6 +93,8 @@ export function GameScreen() {
           </select>
         </label>
       </div>
+
+      <p className="build-stamp">Version: {BUILD_LABEL}</p>
     </main>
   )
 }

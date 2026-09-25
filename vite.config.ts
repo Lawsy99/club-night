@@ -7,4 +7,8 @@ export default defineConfig({
   // GitHub Pages serves the app from /club-night/ (the repository name),
   // so every built file path must start with that.
   base: '/club-night/',
+  define: {
+    // Shown on screen so it's obvious whether the phone has the latest version.
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+  },
 })
