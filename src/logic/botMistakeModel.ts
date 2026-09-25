@@ -59,6 +59,8 @@ export function pickBotMove(
   legalMoves: readonly string[],
   rating: number,
   random: () => number = Math.random,
+  /** Optional style nudges, one per candidate (1 = no change). */
+  styleWeights?: readonly number[],
 ): string | null {
   if (legalMoves.length === 0) return null
   const { carelessness, looseness } = mistakeProfile(rating)
@@ -68,7 +70,7 @@ export function pickBotMove(
   // Softmax over the candidates: better moves are likelier, but a move only
   // `looseness` worse is still picked about a third as often.
   const best = Math.max(...candidates.map((c) => c.cp))
-  const weights = candidates.map((c) => Math.exp((c.cp - best) / looseness))
+  const weights = candidates.map((c, i) => Math.exp((c.cp - best) / looseness) * (styleWeights?.[i] ?? 1))
   let roll = random() * weights.reduce((a, b) => a + b, 0)
   for (let i = 0; i < candidates.length; i++) {
     roll -= weights[i]

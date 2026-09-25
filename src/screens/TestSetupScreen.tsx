@@ -1,8 +1,10 @@
-// TEMPORARY (Phase 1–3): choose a help stage and opponent strength for a test
+// TEMPORARY (Phases 1–3): choose an opponent and a help stage for a test
 // game. Deleted in Phase 4, when the path decides what comes next.
 import { useEffect, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
+import { CHARACTERS, characterRating } from '../data/characters'
 import { HELP_STAGE_ORDER, HELP_STAGES, type HelpStageId } from '../data/helpStages'
+import { characterOpponentId, resolveOpponent } from '../data/opponents'
 import { TEST_OPPONENT_LEVELS } from '../data/testOpponents'
 import type { Colour } from '../logic/game'
 import { dueCards } from '../logic/mistakesDeck'
@@ -11,8 +13,11 @@ import './TestSetupScreen.css'
 
 type Props = {
   playerColour: Colour
-  initialLevelId: string
-  onStart: (stage: HelpStageId, levelId: string) => void
+  initialOpponentId: string
+  /** Stand-in for the player's rating until phase 4; characters scale from it. */
+  baseline: number
+  onBaselineChange: (baseline: number) => void
+  onStart: (stage: HelpStageId, opponentId: string, rating: number) => void
   onOpenDeck: () => void
   onOpenHistory: () => void
 }
@@ -23,8 +28,11 @@ const STAGE_DETAILS: Record<HelpStageId, string> = {
   real: 'No help at all.',
 }
 
-export function TestSetupScreen({ playerColour, initialLevelId, onStart, onOpenDeck, onOpenHistory }: Props) {
-  const [levelId, setLevelId] = useState(initialLevelId)
+const BASELINE_RANGE = { min: 400, max: 2400, step: 100 }
+
+export function TestSetupScreen(props: Props) {
+  const { playerColour, initialOpponentId, baseline, onBaselineChange, onStart, onOpenDeck, onOpenHistory } = props
+  const [opponentId, setOpponentId] = useState(initialOpponentId)
   const [deck, setDeck] = useState<{ due: number; total: number } | null>(null)
 
   useEffect(() => {
@@ -33,6 +41,14 @@ export function TestSetupScreen({ playerColour, initialLevelId, onStart, onOpenD
       .catch(() => setDeck(null))
   }, [])
 
+  // A character's rating comes from the baseline; a practice level's is fixed.
+  const ratingFor = (id: string) => {
+    const opponent = resolveOpponent(id)
+    return opponent.character ? characterRating(opponent.character, baseline) : opponent.rating
+  }
+  const changeBaseline = (delta: number) =>
+    onBaselineChange(Math.min(BASELINE_RANGE.max, Math.max(BASELINE_RANGE.min, baseline + delta)))
+
   return (
     <main className="setup-screen">
       <header>
@@ -40,20 +56,44 @@ export function TestSetupScreen({ playerColour, initialLevelId, onStart, onOpenD
         <p>You'll play {playerColour === 'w' ? 'White' : 'Black'}. Colours alternate every game.</p>
       </header>
 
+      <div className="setup-baseline">
+        <span>
+          Your level <small>(until ratings arrive)</small>
+        </span>
+        <div className="stepper">
+          <button type="button" aria-label="Lower" onClick={() => changeBaseline(-BASELINE_RANGE.step)}>
+            −
+          </button>
+          <strong>{baseline}</strong>
+          <button type="button" aria-label="Higher" onClick={() => changeBaseline(BASELINE_RANGE.step)}>
+            +
+          </button>
+        </div>
+      </div>
+
       <label className="setup-level">
         <span>Opponent</span>
-        <select value={levelId} onChange={(e) => setLevelId(e.target.value)}>
-          {TEST_OPPONENT_LEVELS.map((l) => (
-            <option key={l.id} value={l.id}>
-              {l.label} · {l.rating}
-            </option>
-          ))}
+        <select value={opponentId} onChange={(e) => setOpponentId(e.target.value)}>
+          <optgroup label="Club members">
+            {CHARACTERS.map((c) => (
+              <option key={c.id} value={characterOpponentId(c.id)}>
+                {c.name} · {characterRating(c, baseline)}
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label="Practice">
+            {TEST_OPPONENT_LEVELS.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.label} · {l.rating}
+              </option>
+            ))}
+          </optgroup>
         </select>
       </label>
 
       <div className="setup-stages">
         {HELP_STAGE_ORDER.map((id) => (
-          <button key={id} type="button" onClick={() => onStart(id, levelId)}>
+          <button key={id} type="button" onClick={() => onStart(id, opponentId, ratingFor(opponentId))}>
             <strong>{HELP_STAGES[id].label}</strong>
             <span>{STAGE_DETAILS[id]}</span>
           </button>

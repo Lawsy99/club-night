@@ -1,6 +1,6 @@
 // The game screen: opponent and player bars around the board, status, and
-// whatever help the stage allows. The opponent is a rated test level until
-// the characters arrive later in Phase 3.
+// whatever help the stage allows. The opponent is a club character or a
+// practice level.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
 import { Board, type BoardArrow } from '../components/Board'
@@ -10,7 +10,7 @@ import { HINT_ARROW_COLOUR, lineArrows } from '../components/lineArrows'
 import { MoveStrip } from '../components/MoveStrip'
 import { PlayerStrip } from '../components/PlayerStrip'
 import { HELP_STAGES } from '../data/helpStages'
-import { findLevel } from '../data/testOpponents'
+import { resolveOpponent } from '../data/opponents'
 import { analysePosition } from '../engine/analysis'
 import { getMaia, type MaiaStatus } from '../engine/maia/maia'
 import { chooseOpponentMove } from '../engine/opponent'
@@ -52,7 +52,7 @@ const PLAYED_ARROW_COLOUR = 'rgba(208, 59, 59, 0.75)'
 
 export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponent }: Props) {
   const stage = HELP_STAGES[game.stage]
-  const level = findLevel(game.levelId)
+  const opponent = resolveOpponent(game.levelId, game.opponentRating)
   const [engineError, setEngineError] = useState<string | null>(null)
   const [pending, setPending] = useState<PendingMove | null>(null)
   const [hint, setHint] = useState<{ fen: string; step: 1 | 2 } | null>(null)
@@ -82,12 +82,12 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
 
   // Maia (800+) is a one-off download: show its progress while it arrives.
   useEffect(() => {
-    if (level.engine !== 'maia') return
+    if (opponent.engine !== 'maia') return
     const maia = getMaia()
     setMaiaStatus(maia.status)
     maia.load()
     return maia.onStatus(setMaiaStatus)
-  }, [level.engine])
+  }, [opponent.engine])
 
   const commitMove = (uci: string) => setGame((g) => (g ? withMove(g, uci) : g))
 
@@ -96,7 +96,7 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
   useEffect(() => {
     if (!opponentToMove) return
     let cancelled = false // set if the game changes before the engine replies
-    chooseOpponentMove(fen, level)
+    chooseOpponentMove(fen, game.moves, opponent)
       .then(({ move, maiaMs: ms }) => {
         if (cancelled) return
         if (ms !== undefined) setMaiaMs(ms)
@@ -107,7 +107,7 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- commitMove only uses setGame
-  }, [opponentToMove, fen, level])
+  }, [opponentToMove, fen, opponent.id, opponent.rating])
 
   /** The player dropped a piece: check it for a blunder if the stage says so. */
   function handlePlayerMove(uci: string) {
@@ -190,7 +190,7 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
           : downloading
             ? downloadLabel(maiaStatus)
             : opponentToMove
-              ? `${level.label} is thinking…`
+              ? `${opponent.name} is thinking…`
               : `Your move${chess.inCheck() ? ' · check' : ''}`
 
   const stageLabel =
@@ -209,8 +209,8 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
       </header>
 
       <PlayerStrip
-        name={level.label}
-        rating={level.rating}
+        name={opponent.name}
+        rating={opponent.rating}
         fen={fen}
         side={opponentColour}
         thinking={opponentToMove && !downloading}

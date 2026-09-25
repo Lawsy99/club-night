@@ -8,8 +8,10 @@ export type GameRecord = {
   /** Moves so far, in UCI form. The position is rebuilt from these. */
   moves: string[]
   playerColour: Colour
-  /** Test opponent strength (Phase 1 only; characters replace it in Phase 3). */
+  /** Who the opponent is: a practice level id, or "char:<id>" for a character. */
   levelId: string
+  /** The opponent's rating when the game began (fixed for the whole game). */
+  opponentRating?: number
   stage: HelpStageId
   takebacksUsed: number
   startedAt: number
@@ -21,12 +23,14 @@ export function newGameRecord(
   playerColour: Colour,
   levelId: string,
   stage: HelpStageId,
+  opponentRating?: number,
 ): GameRecord {
   return {
     id: crypto.randomUUID(),
     moves: [],
     playerColour,
     levelId,
+    opponentRating,
     stage,
     takebacksUsed: 0,
     startedAt: Date.now(),

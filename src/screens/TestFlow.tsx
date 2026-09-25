@@ -1,6 +1,7 @@
 // TEMPORARY (Phase 1–3): loads the saved game, and moves between the test
 // setup screen, the game and its review. Replaced by the path engine in Phase 4.
 import { useEffect, useState } from 'react'
+import { DEFAULT_BASELINE } from '../data/opponents'
 import { DEFAULT_TEST_LEVEL_ID } from '../data/testOpponents'
 import {
   newGameRecord,
@@ -12,9 +13,11 @@ import {
 import {
   type ArchivedGame,
   archiveGame,
+  loadBaseline,
   loadCurrentGame,
   loadScreen,
   requestPersistentStorage,
+  saveBaseline,
   saveCurrentGame,
   saveScreen,
 } from '../storage/db'
@@ -34,11 +37,13 @@ export function TestFlow() {
   const [view, setView] = useState<View>('game')
   // A past game opened from the list (not saved: reopening returns to the list)
   const [pastGame, setPastGame] = useState<ArchivedGame | null>(null)
+  const [baseline, setBaseline] = useState(DEFAULT_BASELINE)
 
   useEffect(() => {
     requestPersistentStorage()
-    Promise.all([loadCurrentGame(), loadScreen()])
-      .then(([saved, screen]) => {
+    Promise.all([loadCurrentGame(), loadScreen(), loadBaseline()])
+      .then(([saved, screen, savedBaseline]) => {
+        if (savedBaseline) setBaseline(savedBaseline)
         const upgraded = saved ? upgradeGameRecord(saved) : null
         const resumable = upgraded && isResumable(upgraded) ? upgraded : null
         setGame(resumable)
@@ -71,13 +76,14 @@ export function TestFlow() {
     setView('game')
   }
 
+  /** Same opponent, same help, same strength; colours swap. */
+  const again = (previous: GameRecord) =>
+    startGame(newGameRecord(nextPlayerColour(previous), previous.levelId, previous.stage, previous.opponentRating))
+
   /** After a game (reviewed or not): draws replay straight away, otherwise pick the next. */
   const afterGame = (finished: GameRecord) => {
-    if (outcomeOf(finished)?.winner === null) {
-      startGame(newGameRecord(nextPlayerColour(finished), finished.levelId, finished.stage))
-    } else {
-      setView('setup')
-    }
+    if (outcomeOf(finished)?.winner === null) again(finished)
+    else setView('setup')
   }
 
   if (view === 'deck') return <MistakesDeckScreen onBack={() => setView('setup')} />
@@ -103,8 +109,15 @@ export function TestFlow() {
     return (
       <TestSetupScreen
         playerColour={nextPlayerColour(game)}
-        initialLevelId={game?.levelId ?? DEFAULT_TEST_LEVEL_ID}
-        onStart={(stage, levelId) => startGame(newGameRecord(nextPlayerColour(game), levelId, stage))}
+        initialOpponentId={game?.levelId ?? DEFAULT_TEST_LEVEL_ID}
+        baseline={baseline}
+        onBaselineChange={(b) => {
+          setBaseline(b)
+          saveBaseline(b).catch((err) => console.error('Save failed', err))
+        }}
+        onStart={(stage, opponentId, rating) =>
+          startGame(newGameRecord(nextPlayerColour(game), opponentId, stage, rating))
+        }
         onOpenDeck={() => setView('deck')}
         onOpenHistory={() => setView('history')}
       />
@@ -121,7 +134,7 @@ export function TestFlow() {
       game={game}
       setGame={setGame}
       onReview={() => setView('review')}
-      onRematch={() => startGame(newGameRecord(nextPlayerColour(game), game.levelId, game.stage))}
+      onRematch={() => again(game)}
       onChangeOpponent={() => setView('setup')}
     />
   )

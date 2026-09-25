@@ -2,7 +2,7 @@
 // (the analysis is kept, so reviewed games open instantly).
 import { useEffect, useState } from 'react'
 import { HELP_STAGES } from '../data/helpStages'
-import { findLevel } from '../data/testOpponents'
+import { resolveOpponent } from '../data/opponents'
 import { outcomeOf } from '../logic/gameRecord'
 import { gameAccuracy, reviewMoves } from '../logic/review'
 import { listArchivedGames, type ArchivedGame } from '../storage/db'
@@ -52,7 +52,7 @@ export function PastGamesScreen({ onOpen, onBack }: Props) {
 }
 
 function PastGameRow({ game }: { game: ArchivedGame }) {
-  const level = findLevel(game.levelId)
+  const opponent = resolveOpponent(game.levelId, game.opponentRating)
   const outcome = safeOutcome(game)
   const result = !outcome ? '–' : outcome.winner === null ? 'Draw' : outcome.winner === game.playerColour ? 'Won' : 'Lost'
   const accuracy =
@@ -66,7 +66,7 @@ function PastGameRow({ game }: { game: ArchivedGame }) {
       <span className={`past-result ${result.toLowerCase()}`}>{result}</span>
       <span className="past-main">
         <strong>
-          vs {level.label} <span className="past-rating">{level.rating}</span>
+          vs {opponent.name} <span className="past-rating">{opponent.rating}</span>
         </strong>
         <span className="past-meta">
           {date} · {HELP_STAGES[game.stage]?.label ?? 'Real'} · {game.playerColour === 'w' ? 'White' : 'Black'} ·{' '}

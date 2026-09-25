@@ -35,6 +35,43 @@
   font-size: 16px;
 }
 
+.setup-baseline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.setup-baseline small {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+}
+
+.stepper strong {
+  min-width: 48px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.stepper button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid #4a5a50;
+  border-radius: 10px;
+  background: #2b3931;
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+}
+
 .setup-stages {
   display: flex;
   flex-direction: column;
