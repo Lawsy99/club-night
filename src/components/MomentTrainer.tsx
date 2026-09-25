@@ -5,22 +5,12 @@ import { Chess } from 'chess.js'
 import { useState } from 'react'
 import { analysePosition } from '../engine/analysis'
 import { flipScore, winChance } from '../logic/evaluation'
-import { applyUci, type Colour } from '../logic/game'
+import { applyUci } from '../logic/game'
+import type { Answer } from '../logic/mistakesDeck'
+import type { Moment } from '../logic/moment'
 import { Board } from './Board'
 import { HINT_ARROW_COLOUR } from './lineArrows'
 import './MomentTrainer.css'
-
-export type Moment = {
-  fenBefore: string
-  playerColour: Colour
-  /** What the player actually played (UCI) and how it was written. */
-  played: string
-  playedSan: string
-  bestMove: string
-  /** The best available position value for the player, in centipawns. */
-  bestCp: number
-  explanation: string
-}
 
 /**
  * How close to the engine's best an answer must be to count as right, in
@@ -32,7 +22,13 @@ const TRIES = 2
 
 type Result = 'solved' | 'revealed'
 
-export function MomentTrainer({ moment, onFinished }: { moment: Moment; onFinished?: (r: Result) => void }) {
+type Props = {
+  moment: Moment
+  /** Told how it went: solved first time, on the second try, or revealed. */
+  onFinished?: (answer: Answer) => void
+}
+
+export function MomentTrainer({ moment, onFinished }: Props) {
   const [triesLeft, setTriesLeft] = useState(TRIES)
   const [checking, setChecking] = useState(false)
   const [feedback, setFeedback] = useState<string | null>(null)
@@ -42,7 +38,7 @@ export function MomentTrainer({ moment, onFinished }: { moment: Moment; onFinish
 
   function finish(kind: Result, fen: string, move: string) {
     setResult({ kind, fen, move })
-    onFinished?.(kind)
+    onFinished?.(kind === 'revealed' ? 'revealed' : triesLeft === TRIES ? 'first-try' : 'second-try')
   }
 
   async function handleAttempt(uci: string) {

@@ -11,10 +11,11 @@ import {
 } from '../logic/gameRecord'
 import { archiveGame, loadCurrentGame, requestPersistentStorage, saveCurrentGame } from '../storage/db'
 import { GameScreen } from './GameScreen'
+import { MistakesDeckScreen } from './MistakesDeckScreen'
 import { ReviewScreen } from './ReviewScreen'
 import { TestSetupScreen } from './TestSetupScreen'
 
-type View = 'game' | 'review' | 'setup'
+type View = 'game' | 'review' | 'setup' | 'deck'
 
 export function TestFlow() {
   const [loaded, setLoaded] = useState(false)
@@ -48,12 +49,15 @@ export function TestFlow() {
     setView('game')
   }
 
+  if (view === 'deck') return <MistakesDeckScreen onBack={() => setView('setup')} />
+
   if (!game || view === 'setup') {
     return (
       <TestSetupScreen
         playerColour={nextPlayerColour(game)}
         initialLevelId={game?.levelId ?? DEFAULT_TEST_LEVEL_ID}
         onStart={(stage, levelId) => startGame(newGameRecord(nextPlayerColour(game), levelId, stage))}
+        onOpenDeck={() => setView('deck')}
       />
     )
   }

@@ -4,7 +4,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Board } from '../components/Board'
 import { FullGameView } from '../components/FullGameView'
-import { MomentTrainer, type Moment } from '../components/MomentTrainer'
+import { MomentTrainer } from '../components/MomentTrainer'
+import type { Moment } from '../logic/moment'
 import { analyseGame } from '../engine/reviewAnalysis'
 import { explainGoodMove, explainMistake } from '../logic/explain'
 import { describeOutcome, replay, type Colour } from '../logic/game'
@@ -19,7 +20,8 @@ import {
   type PositionEval,
   type ReviewedMove,
 } from '../logic/review'
-import { getArchivedGame, saveGameAnalysis } from '../storage/db'
+import { MAX_CARDS_PER_GAME, newCard, qualifiesForDeck } from '../logic/mistakesDeck'
+import { addCardsIfNew, getArchivedGame, saveGameAnalysis } from '../storage/db'
 import '../components/ratings.css'
 import './ReviewScreen.css'
 
@@ -79,6 +81,16 @@ export function ReviewScreen({ game, onContinue }: Props) {
     [reviewed, evals, player],
   )
   const best = useMemo(() => (reviewed ? bestMoveOfGame(reviewed, player) : null), [reviewed, player])
+
+  // Real errors (mistakes and blunders) go into the mistakes deck. Done as
+  // soon as the analysis is in, so they're kept even if the review is skipped.
+  useEffect(() => {
+    const cards = moments
+      .filter((m) => qualifiesForDeck(m.rating))
+      .slice(0, MAX_CARDS_PER_GAME)
+      .map((m) => newCard(m, { gameId: game.id, ply: m.ply, rating: m.rating, moveLabel: m.moveLabel }))
+    if (cards.length) addCardsIfNew(cards).catch((err) => console.error('Deck save failed', err))
+  }, [moments, game.id])
 
   const resultLine = outcome
     ? outcome.winner === null
@@ -245,7 +257,7 @@ export function ReviewScreen({ game, onContinue }: Props) {
   )
 }
 
-type ReviewMoment = Moment & { rating: MoveRating; moveLabel: string }
+type ReviewMoment = Moment & { ply: number; rating: MoveRating; moveLabel: string }
 
 function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colour): ReviewMoment {
   const forPlayer = (cp: number) => (player === 'w' ? cp : -cp)
@@ -266,6 +278,7 @@ function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colou
       cpBefore,
       cpAfter,
     }),
+    ply: m.ply,
     rating: m.rating,
     moveLabel: moveLabel(m),
   }

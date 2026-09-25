@@ -2,6 +2,7 @@
 // database). No accounts, no servers.
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb'
 import type { GameRecord } from '../logic/gameRecord'
+import type { MistakeCard } from '../logic/mistakesDeck'
 import type { PositionEval } from '../logic/review'
 
 /** A finished game in the archive, with its review analysis once done. */
@@ -23,18 +24,30 @@ interface ClubNightDB extends DBSchema {
     value: ArchivedGame
     indexes: { finishedAt: number }
   }
+  /** The mistakes deck. */
+  cards: {
+    key: string
+    value: MistakeCard
+  }
 }
 
 let dbPromise: Promise<IDBPDatabase<ClubNightDB>> | null = null
 
 function db() {
-  dbPromise ??= openDB<ClubNightDB>('club-night', 2, {
+  dbPromise ??= openDB<ClubNightDB>('club-night', 3, {
     upgrade(database, oldVersion) {
       // Each block adds what that version introduced, so older saves upgrade in place.
       if (oldVersion < 1) database.createObjectStore('state')
       if (oldVersion < 2) {
         database.createObjectStore('games', { keyPath: 'id' }).createIndex('finishedAt', 'finishedAt')
       }
+      if (oldVersion < 3) database.createObjectStore('cards', { keyPath: 'id' })
+    },
+    // If another copy of the app (e.g. an old tab) is holding the database
+    // open on an older version, let go so the upgrade isn't stuck.
+    blocking() {
+      dbPromise?.then((d) => d.close())
+      dbPromise = null
     },
   })
   return dbPromise
@@ -63,6 +76,23 @@ export async function saveGameAnalysis(id: string, evals: PositionEval[]): Promi
   const database = await db()
   const existing = await database.get('games', id)
   if (existing) await database.put('games', { ...existing, evals })
+}
+
+/** Adds cards to the deck, leaving any that already exist (and their schedule) alone. */
+export async function addCardsIfNew(cards: MistakeCard[]): Promise<void> {
+  const tx = (await db()).transaction('cards', 'readwrite')
+  for (const card of cards) {
+    if (!(await tx.store.getKey(card.id))) await tx.store.put(card)
+  }
+  await tx.done
+}
+
+export async function loadCards(): Promise<MistakeCard[]> {
+  return (await db()).getAll('cards')
+}
+
+export async function saveCard(card: MistakeCard): Promise<void> {
+  await (await db()).put('cards', card)
 }
 
 /**

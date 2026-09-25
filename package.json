@@ -15,7 +15,8 @@
     "idb": "^8.0.3",
     "react": "^19.2.8",
     "react-chessboard": "^5.12.1",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "ts-fsrs": "^5.4.2"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

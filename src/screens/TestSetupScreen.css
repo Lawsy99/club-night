@@ -66,6 +66,25 @@
   color: var(--muted);
 }
 
+.setup-deck {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  padding: 0 16px;
+  border: 1px solid #f0c95a;
+  border-radius: 12px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.setup-deck span {
+  color: #f0c95a;
+  font-size: 15px;
+}
+
 .setup-screen .build-stamp {
   margin: 0;
   padding: 0;

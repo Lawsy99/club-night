@@ -1,16 +1,19 @@
 // TEMPORARY (Phase 1–3): choose a help stage and opponent strength for a test
 // game. Deleted in Phase 4, when the path decides what comes next.
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
 import { HELP_STAGE_ORDER, HELP_STAGES, type HelpStageId } from '../data/helpStages'
 import { TEST_OPPONENT_LEVELS } from '../data/testOpponents'
 import type { Colour } from '../logic/game'
+import { dueCards } from '../logic/mistakesDeck'
+import { loadCards } from '../storage/db'
 import './TestSetupScreen.css'
 
 type Props = {
   playerColour: Colour
   initialLevelId: string
   onStart: (stage: HelpStageId, levelId: string) => void
+  onOpenDeck: () => void
 }
 
 const STAGE_DETAILS: Record<HelpStageId, string> = {
@@ -19,8 +22,15 @@ const STAGE_DETAILS: Record<HelpStageId, string> = {
   real: 'No help at all.',
 }
 
-export function TestSetupScreen({ playerColour, initialLevelId, onStart }: Props) {
+export function TestSetupScreen({ playerColour, initialLevelId, onStart, onOpenDeck }: Props) {
   const [levelId, setLevelId] = useState(initialLevelId)
+  const [deck, setDeck] = useState<{ due: number; total: number } | null>(null)
+
+  useEffect(() => {
+    loadCards()
+      .then((cards) => setDeck({ due: dueCards(cards).length, total: cards.filter((c) => !c.retired).length }))
+      .catch(() => setDeck(null))
+  }, [])
 
   return (
     <main className="setup-screen">
@@ -48,6 +58,17 @@ export function TestSetupScreen({ playerColour, initialLevelId, onStart }: Props
           </button>
         ))}
       </div>
+
+      <button type="button" className="setup-deck" onClick={onOpenDeck}>
+        <strong>Mistakes deck</strong>
+        <span>
+          {!deck || deck.total === 0
+            ? 'Empty so far'
+            : deck.due > 0
+              ? `${deck.due} due`
+              : `${deck.total} card${deck.total === 1 ? '' : 's'}, none due`}
+        </span>
+      </button>
 
       <p className="build-stamp">Version: {BUILD_LABEL}</p>
     </main>
