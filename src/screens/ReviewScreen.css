@@ -149,6 +149,28 @@
   line-height: 1.45;
 }
 
+.review-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.review-topline .review-kicker {
+  margin: 0;
+}
+
+.review-skip {
+  min-height: 44px;
+  margin-right: -10px;
+  padding: 0 10px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+
 .review-secondary {
   min-height: 44px;
   border: 1px solid #4a5a50;

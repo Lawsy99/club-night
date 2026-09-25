@@ -470,6 +470,8 @@ Positions come from a curated set, and increasingly from the player's own games:
 
 Every game, won or lost, ends with a short review. The review is where most of the learning happens, so it's quick, focused and always about the player's own moves.
 
+The review is offered, not forced: a Skip button sits beside "Review game" and in the corner of each review step (Joseph's decision, Sep 2026). A skipped game adds no cards to the mistakes deck, because the cards come from the review's analysis.
+
 ### The review
 
 1. **The character's post-game bubbles** (one or two), then the review opens.

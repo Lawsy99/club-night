@@ -9,13 +9,21 @@ import {
   upgradeGameRecord,
   type GameRecord,
 } from '../logic/gameRecord'
-import { archiveGame, loadCurrentGame, requestPersistentStorage, saveCurrentGame } from '../storage/db'
+import {
+  archiveGame,
+  loadCurrentGame,
+  loadScreen,
+  requestPersistentStorage,
+  saveCurrentGame,
+  saveScreen,
+} from '../storage/db'
 import { GameScreen } from './GameScreen'
 import { MistakesDeckScreen } from './MistakesDeckScreen'
 import { ReviewScreen } from './ReviewScreen'
 import { TestSetupScreen } from './TestSetupScreen'
 
-type View = 'game' | 'review' | 'setup' | 'deck'
+const VIEWS = ['game', 'review', 'setup', 'deck'] as const
+type View = (typeof VIEWS)[number]
 
 export function TestFlow() {
   const [loaded, setLoaded] = useState(false)
@@ -25,10 +33,15 @@ export function TestFlow() {
 
   useEffect(() => {
     requestPersistentStorage()
-    loadCurrentGame()
-      .then((saved) => {
+    Promise.all([loadCurrentGame(), loadScreen()])
+      .then(([saved, screen]) => {
         const upgraded = saved ? upgradeGameRecord(saved) : null
-        setGame(upgraded && isResumable(upgraded) ? upgraded : null)
+        const resumable = upgraded && isResumable(upgraded) ? upgraded : null
+        setGame(resumable)
+        // A game in progress always reopens on the board; after a game,
+        // reopen wherever the player was (review, setup or deck).
+        const finished = resumable ? outcomeOf(resumable) !== null : true
+        if (finished && VIEWS.includes(screen as View)) setView(screen as View)
       })
       .catch(() => setGame(null))
       .finally(() => setLoaded(true))
@@ -42,11 +55,25 @@ export function TestFlow() {
     if (outcomeOf(game)) archiveGame(game).catch((err) => console.error('Archive failed', err))
   }, [game])
 
+  // Remember which screen is open, too.
+  useEffect(() => {
+    if (loaded) saveScreen(view).catch((err) => console.error('Save failed', err))
+  }, [view, loaded])
+
   if (!loaded) return <main className="game-screen loading">Setting up the board…</main>
 
   const startGame = (next: GameRecord) => {
     setGame(next)
     setView('game')
+  }
+
+  /** After a game (reviewed or not): draws replay straight away, otherwise pick the next. */
+  const afterGame = (finished: GameRecord) => {
+    if (outcomeOf(finished)?.winner === null) {
+      startGame(newGameRecord(nextPlayerColour(finished), finished.levelId, finished.stage))
+    } else {
+      setView('setup')
+    }
   }
 
   if (view === 'deck') return <MistakesDeckScreen onBack={() => setView('setup')} />
@@ -63,23 +90,18 @@ export function TestFlow() {
   }
 
   if (view === 'review') {
-    return (
-      <ReviewScreen
-        key={game.id}
-        game={game}
-        onContinue={() => {
-          // Draws are replayed straight away with the same settings.
-          if (outcomeOf(game)?.winner === null) {
-            startGame(newGameRecord(nextPlayerColour(game), game.levelId, game.stage))
-          } else {
-            setView('setup')
-          }
-        }}
-      />
-    )
+    return <ReviewScreen key={game.id} game={game} onContinue={() => afterGame(game)} />
   }
 
-  return <GameScreen key={game.id} game={game} setGame={setGame} onReview={() => setView('review')} />
+  return (
+    <GameScreen
+      key={game.id}
+      game={game}
+      setGame={setGame}
+      onReview={() => setView('review')}
+      onSkipReview={() => afterGame(game)}
+    />
+  )
 }
 
 /** A saved game we can't replay (e.g. from an older version) is discarded. */

@@ -31,14 +31,15 @@ import './GameScreen.css'
 type Props = {
   game: GameRecord
   setGame: React.Dispatch<React.SetStateAction<GameRecord | null>>
-  /** Every game ends with a review. */
+  /** Games end with a review, which the player may skip. */
   onReview: () => void
+  onSkipReview: () => void
 }
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
 type PendingMove = { uci: string; fenAfter: string; warning: string | null }
 
-export function GameScreen({ game, setGame, onReview }: Props) {
+export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
   const stage = HELP_STAGES[game.stage]
   const level = TEST_OPPONENT_LEVELS.find((l) => l.id === game.levelId) ?? TEST_OPPONENT_LEVELS[0]
   const [engineError, setEngineError] = useState<string | null>(null)
@@ -248,9 +249,14 @@ export function GameScreen({ game, setGame, onReview }: Props) {
 
       <div className="game-actions">
         {outcome ? (
-          <button type="button" className="primary" onClick={onReview}>
-            Review game
-          </button>
+          <>
+            <button type="button" className="primary" onClick={onReview}>
+              Review game
+            </button>
+            <button type="button" onClick={onSkipReview}>
+              Skip review
+            </button>
+          </>
         ) : (
           <ResignButton onResign={() => setGame((g) => (g ? withResignation(g, g.playerColour) : g))} />
         )}

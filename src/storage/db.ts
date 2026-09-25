@@ -13,10 +13,10 @@ export type ArchivedGame = GameRecord & {
 }
 
 interface ClubNightDB extends DBSchema {
-  /** Small named values, e.g. the game in progress. */
+  /** Small named values: the game in progress, and which screen was open. */
   state: {
-    key: 'currentGame'
-    value: GameRecord
+    key: 'currentGame' | 'screen'
+    value: GameRecord | string
   }
   /** Every finished game. */
   games: {
@@ -54,11 +54,20 @@ function db() {
 }
 
 export async function loadCurrentGame(): Promise<GameRecord | null> {
-  return (await (await db()).get('state', 'currentGame')) ?? null
+  return ((await (await db()).get('state', 'currentGame')) as GameRecord | undefined) ?? null
 }
 
 export async function saveCurrentGame(game: GameRecord): Promise<void> {
   await (await db()).put('state', game, 'currentGame')
+}
+
+/** Which screen was open, so a closed app reopens in the same place. */
+export async function loadScreen(): Promise<string | null> {
+  return ((await (await db()).get('state', 'screen')) as string | undefined) ?? null
+}
+
+export async function saveScreen(screen: string): Promise<void> {
+  await (await db()).put('state', screen, 'screen')
 }
 
 /** Adds a finished game to the archive (keeping any analysis already saved). */

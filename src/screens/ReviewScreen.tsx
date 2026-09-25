@@ -130,14 +130,24 @@ export function ReviewScreen({ game, onContinue }: Props) {
     </button>
   )
 
+  // The review is optional (Joseph's decision, Sep 2026): skip straight on.
+  const skipButton = (
+    <button type="button" className="review-skip" onClick={onContinue}>
+      Skip
+    </button>
+  )
+
   if (reviewed && step >= 1 && step <= moments.length) {
     const moment = moments[step - 1]
     return (
       <main className="review-screen with-board">
         <header>
-          <p className="review-kicker">
-            Biggest moment {step} of {moments.length}
-          </p>
+          <div className="review-topline">
+            <p className="review-kicker">
+              Biggest moment {step} of {moments.length}
+            </p>
+            {skipButton}
+          </div>
           <h1>
             {moment.moveLabel}{' '}
             <span className={`review-pill rating-${moment.rating}`}>{RATING_LABELS[moment.rating]}</span>
@@ -191,7 +201,10 @@ export function ReviewScreen({ game, onContinue }: Props) {
   return (
     <main className="review-screen">
       <header>
-        <h1>Review</h1>
+        <div className="review-topline">
+          <h1>Review</h1>
+          {skipButton}
+        </div>
         <p className="review-result">
           {resultLine} {outcome && <span>{describeOutcome(outcome)}</span>}
         </p>
