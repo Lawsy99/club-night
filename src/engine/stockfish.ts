@@ -100,7 +100,15 @@ class StockfishEngine {
       const listen = (line: string) => {
         const info = parseInfoLine(line)
         if (info) {
-          lines.set(info.rank, info) // later (deeper) lines replace earlier ones
+          // Deeper lines replace shallower ones; at equal depth, keep the fuller line.
+          const known = lines.get(info.rank)
+          if (
+            !known ||
+            info.depth > known.depth ||
+            (info.depth === known.depth && info.pv.length >= known.pv.length)
+          ) {
+            lines.set(info.rank, info)
+          }
           return
         }
         const best = parseBestMove(line)

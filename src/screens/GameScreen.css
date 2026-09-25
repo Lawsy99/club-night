@@ -7,7 +7,6 @@
 
 .game-header,
 .game-status,
-.last-move,
 .best-line,
 .game-actions {
   padding: 0 16px;
@@ -49,16 +48,83 @@
   min-width: 0;
 }
 
+.move-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 26px;
+  padding: 0 16px;
+}
+
 .last-move {
   margin: 0;
   font-size: 14px;
   color: var(--muted);
 }
 
+/* The rating of the player's latest move, coloured by quality */
+.move-rating {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #1f2a24;
+}
+
+.rating-best {
+  background: #7fc47a;
+}
+
+.rating-good {
+  background: #c9d8b8;
+}
+
+.rating-inaccuracy {
+  background: #f0d35a;
+}
+
+.rating-mistake {
+  background: #f0a04a;
+}
+
+.rating-blunder {
+  background: #e0604f;
+  color: #fff;
+}
+
 .best-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   margin: 0;
   font-size: 14px;
-  line-height: 1.4;
+}
+
+.best-line-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.best-line-key i {
+  display: inline-block;
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+  margin-left: 4px;
+}
+
+.key-yours {
+  background: rgb(40, 120, 200);
+}
+
+.key-theirs {
+  background: rgb(225, 130, 40);
 }
 
 .build-stamp {

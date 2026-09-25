@@ -245,6 +245,11 @@ Dialogue about clocks (pressing the clock with the wrong hand, starting your clo
 | Takebacks | Unlimited | 3 per game | None |
 | Blunder warning | When a move gives away 2 pawns' worth of advantage or more, or allows mate | Only when a move loses a piece or allows mate | None |
 | Plan pause | Around move 10, once the opening is over | Off | Off |
+| Move rating (after each of your moves: Best move, Good, Inaccuracy, Mistake, Blunder) | On | On | On |
+
+**The move rating** appears in every game type, including real matches (Joseph's decision, Sep 2026: a one-word verdict after a move is committed helps learning without giving much away). It uses the same Lichess-style grading as the review. When characters arrive (phase 6), decide whether they voice it in friendlies, and whether it stays a neutral label in matches, where characters don't speak during play.
+
+**The best-line panel** is shown on the board as arrows for the next few moves (your moves blue, the opponent's orange, each fainter than the last), with the score as text below.
 
 **The blunder warning** appears after the player drops a piece but before the move is confirmed: "This leaves your knight undefended. Play it anyway?" The player can confirm or take the move back. A warning shown in the guided stage does not use up a takeback.
 

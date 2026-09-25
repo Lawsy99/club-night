@@ -23,13 +23,15 @@ type Props = {
   onMove: (uci: string) => void
   /** Hint step 1: the square of the piece to move. */
   hintSquare?: string | null
-  /** Hint step 2: the move itself, drawn as an arrow (UCI, e.g. "g1f3"). */
-  hintMove?: string | null
+  /** Arrows to draw (hints, the best line). */
+  arrows?: BoardArrow[]
 }
+
+export type BoardArrow = { from: string; to: string; colour: string }
 
 const LIGHT = '#ece4cf'
 const DARK = '#86a07a'
-const HINT_COLOUR = 'rgba(40, 120, 200, 0.85)'
+const HINT_OUTLINE = 'rgba(40, 120, 200, 0.85)'
 
 export function Board({
   fen,
@@ -38,7 +40,7 @@ export function Board({
   lastMove,
   onMove,
   hintSquare = null,
-  hintMove = null,
+  arrows = [],
 }: Props) {
   // Legal moves depend only on the current position, so a FEN is enough here.
   const chess = useMemo(() => new Chess(fen), [fen])
@@ -90,9 +92,7 @@ export function Board({
   }
 
   const squareStyles = buildSquareStyles(chess, selected, targets, lastMove, hintSquare)
-  const arrows = hintMove
-    ? [{ startSquare: hintMove.slice(0, 2), endSquare: hintMove.slice(2, 4), color: HINT_COLOUR }]
-    : []
+  const boardArrows = arrows.map((a) => ({ startSquare: a.from, endSquare: a.to, color: a.colour }))
 
   return (
     <div className="board-wrap">
@@ -103,7 +103,7 @@ export function Board({
           lightSquareStyle: { backgroundColor: LIGHT },
           darkSquareStyle: { backgroundColor: DARK },
           squareStyles,
-          arrows,
+          arrows: boardArrows,
           allowDrawingArrows: false,
           allowDragOffBoard: false,
           allowAutoScroll: false,
@@ -148,7 +148,7 @@ function buildSquareStyles(
       backgroundImage: 'radial-gradient(circle, rgba(210, 40, 30, 0.85) 25%, rgba(210, 40, 30, 0) 75%)',
     })
   }
-  if (hintSquare) add(hintSquare, { boxShadow: `inset 0 0 0 4px ${HINT_COLOUR}` })
+  if (hintSquare) add(hintSquare, { boxShadow: `inset 0 0 0 4px ${HINT_OUTLINE}` })
   if (selected) add(selected, { backgroundColor: 'rgba(40, 90, 60, 0.55)' })
   for (const sq of targets) {
     const capture = chess.get(sq) !== undefined

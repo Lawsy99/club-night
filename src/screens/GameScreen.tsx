@@ -2,17 +2,20 @@
 // Opponent is plain Stockfish for Phase 1; characters arrive in Phase 3.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
-import { Board } from '../components/Board'
+import { Board, type BoardArrow } from '../components/Board'
 import { BlunderWarning } from '../components/BlunderWarning'
 import { EvalBar } from '../components/EvalBar'
+import { HINT_ARROW_COLOUR, lineArrows } from '../components/lineArrows'
 import { HELP_STAGES } from '../data/helpStages'
 import { TEST_OPPONENT_LEVELS } from '../data/testOpponents'
 import { analysePosition } from '../engine/analysis'
 import { chooseTestOpponentMove } from '../engine/testOpponent'
 import { useAnalysis } from '../engine/useAnalysis'
+import { useMoveRating } from '../engine/useMoveRating'
 import { assessMove, describeBlunder } from '../logic/blunder'
 import { flipScore, formatScore, scoreFor } from '../logic/evaluation'
-import { describeOutcome, formatLine, getOutcome, replay, type GameOutcome } from '../logic/game'
+import { describeOutcome, getOutcome, replay, type GameOutcome } from '../logic/game'
+import { RATING_LABELS } from '../logic/moveRating'
 import {
   canTakeBack,
   outcomeOf,
@@ -51,11 +54,12 @@ export function GameScreen({ game, setGame, onNewGame, onReplay }: Props) {
   const playersTurn = !outcome && chess.turn() === game.playerColour
   const opponentToMove = !outcome && !playersTurn
 
-  // Engine analysis of the current position, for whichever help is on.
-  const wantsAnalysis =
-    !outcome &&
-    (stage.evalBar || (playersTurn && (stage.hints || stage.bestLine || stage.blunderWarning !== null)))
+  // Engine analysis of the current position. On the player's turn it always
+  // runs quietly in the background, so their move can be rated straight
+  // away; on the opponent's turn only the evaluation bar needs it.
+  const wantsAnalysis = !outcome && (playersTurn || stage.evalBar)
   const analysis = useAnalysis(fen, wantsAnalysis)
+  const ratedMove = useMoveRating(game.moves, game.playerColour)
 
   const commitMove = (uci: string) => setGame((g) => (g ? withMove(g, uci) : g))
 
@@ -119,6 +123,16 @@ export function GameScreen({ game, setGame, onNewGame, onReplay }: Props) {
   const hintStep = hint?.fen === fen && !pending ? hint.step : 0
   const hintMove = playersTurn ? analysis.current?.bestMove ?? null : null
 
+  const bestLineShown = showBestLine && stage.bestLine && !outcome && !pending
+  const arrows: BoardArrow[] = [
+    ...(bestLineShown && analysis.current
+      ? lineArrows(analysis.current.pv, analysis.current.sideToMove, game.playerColour)
+      : []),
+    ...(hintStep === 2 && hintMove
+      ? [{ from: hintMove.slice(0, 2), to: hintMove.slice(2, 4), colour: HINT_ARROW_COLOUR }]
+      : []),
+  ]
+
   const status = engineError
     ? engineError
     : outcome
@@ -157,7 +171,7 @@ export function GameScreen({ game, setGame, onNewGame, onReplay }: Props) {
             lastMove={pendingLast ?? (last ? { from: last.from, to: last.to } : null)}
             onMove={handlePlayerMove}
             hintSquare={hintStep === 1 && hintMove ? hintMove.slice(0, 2) : null}
-            hintMove={hintStep === 2 ? hintMove : null}
+            arrows={arrows}
           />
           {pending?.warning && (
             <BlunderWarning
@@ -169,13 +183,29 @@ export function GameScreen({ game, setGame, onNewGame, onReplay }: Props) {
         </div>
       </div>
 
-      <p className="last-move">{last ? `Last move: ${last.san}` : 'Tap a piece, then a square. Or drag.'}</p>
+      <div className="move-info">
+        <span className="last-move">
+          {last ? `Last move: ${last.san}` : 'Tap a piece, then a square. Or drag.'}
+        </span>
+        {ratedMove && (
+          <span className={`move-rating rating-${ratedMove.rating}`}>
+            {ratedMove.san} · {RATING_LABELS[ratedMove.rating]}
+          </span>
+        )}
+      </div>
 
-      {showBestLine && stage.bestLine && !outcome && (
+      {bestLineShown && (
         <p className="best-line">
-          {analysis.current
-            ? `Best line (${formatScore(scoreFor(game.playerColour, analysis.current.sideToMove, analysis.current.score))} for you): ${formatLine(fen, analysis.current.pv)}`
-            : 'Working out the best line…'}
+          {analysis.current ? (
+            <>
+              Best line · {formatScore(scoreFor(game.playerColour, analysis.current.sideToMove, analysis.current.score))} for you
+              <span className="best-line-key">
+                <i className="key-yours" /> you <i className="key-theirs" /> them
+              </span>
+            </>
+          ) : (
+            'Working out the best line…'
+          )}
         </p>
       )}
 

@@ -19,6 +19,11 @@ describe('parseInfoLine', () => {
     expect(parseInfoLine(line)?.rank).toBe(1)
   })
 
+  it('ignores provisional (bound) results', () => {
+    expect(parseInfoLine('info depth 14 score cp 40 upperbound nodes 1 pv d2d4')).toBeNull()
+    expect(parseInfoLine('info depth 14 score cp 40 lowerbound nodes 1 pv d2d4')).toBeNull()
+  })
+
   it('ignores lines without a scored line', () => {
     expect(parseInfoLine('info string NNUE evaluation using nn.nnue')).toBeNull()
     expect(parseInfoLine('info depth 10 currmove e2e4 currmovenumber 1')).toBeNull()

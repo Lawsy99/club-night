@@ -20,6 +20,9 @@ export type PvLine = {
 export function parseInfoLine(line: string): PvLine | null {
   if (!line.startsWith('info ') || !line.includes(' pv ')) return null
   const words = line.split(' ')
+  // "upperbound"/"lowerbound" lines are provisional mid-search guesses, often
+  // with a cut-short line; only exact results are worth keeping.
+  if (words.includes('upperbound') || words.includes('lowerbound')) return null
   const get = (key: string) => {
     const i = words.indexOf(key)
     return i === -1 ? undefined : words[i + 1]
