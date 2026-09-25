@@ -138,7 +138,7 @@
   padding: 2px 10px;
   border-radius: 999px;
   background: var(--rating);
-  color: #1f2a24;
+  color: var(--rating-ink);
   font-size: 14px;
   font-weight: 600;
   vertical-align: middle;
@@ -147,6 +147,21 @@
 .review-explanation {
   margin: 0;
   line-height: 1.45;
+}
+
+.review-secondary {
+  min-height: 44px;
+  border: 1px solid #4a5a50;
+  border-radius: 12px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.review-screen.with-board > .review-secondary {
+  margin-left: 16px;
+  margin-right: 16px;
 }
 
 .review-continue:disabled {

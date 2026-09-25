@@ -1,0 +1,60 @@
+.eval-graph {
+  margin: 0;
+  padding: 0 16px;
+}
+
+.eval-graph figcaption {
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.eval-graph svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  background: #26332b;
+  /* The whole graph is the touch target; stop the page scrolling while scrubbing */
+  touch-action: none;
+  cursor: pointer;
+}
+
+.graph-mid {
+  stroke: #3c4d43;
+  stroke-width: 1;
+}
+
+.graph-area {
+  fill: rgba(232, 228, 216, 0.12);
+}
+
+.graph-line {
+  fill: none;
+  stroke: #e8e4d8;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.graph-cursor {
+  stroke: #a8a596;
+  stroke-width: 1;
+}
+
+/* 2px ring in the graph's surface colour keeps overlapping dots apart */
+.graph-marker {
+  fill: var(--rating);
+  stroke: #26332b;
+  stroke-width: 2;
+}
+
+.graph-current {
+  fill: none;
+  stroke: #e8e4d8;
+  stroke-width: 2;
+}
+
+.eval-graph figcaption span {
+  font-size: 12px;
+  opacity: 0.8;
+}

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { HELP_STAGES } from '../data/helpStages'
 import { assessMove, describeBlunder } from './blunder'
-import { formatScore, scoreFor, winChance } from './evaluation'
+import { formatCp, formatScore, scoreFor, winChance } from './evaluation'
 
 const cp = (value: number) => ({ type: 'cp' as const, value })
 const mate = (value: number) => ({ type: 'mate' as const, value })
@@ -56,6 +56,13 @@ describe('evaluation display', () => {
     expect(formatScore(cp(2))).toBe('0.0')
     expect(formatScore(mate(3))).toBe('M3')
     expect(formatScore(mate(-2))).toBe('−M2')
+  })
+
+  it('formats stored centipawns, including mates', () => {
+    expect(formatCp(143)).toBe('+1.4')
+    expect(formatCp(9997)).toBe('M3')
+    expect(formatCp(-9998)).toBe('−M2')
+    expect(formatCp(-10000)).toBe('#')
   })
 
   it("converts to either side's point of view", () => {

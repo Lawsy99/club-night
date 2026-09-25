@@ -3,12 +3,13 @@
 // biggest moments (find a better move), and the best move of the game.
 import { useEffect, useMemo, useState } from 'react'
 import { Board } from '../components/Board'
+import { FullGameView } from '../components/FullGameView'
 import { MomentTrainer, type Moment } from '../components/MomentTrainer'
 import { analyseGame } from '../engine/reviewAnalysis'
 import { explainGoodMove, explainMistake } from '../logic/explain'
 import { describeOutcome, replay, type Colour } from '../logic/game'
 import { outcomeOf, type GameRecord } from '../logic/gameRecord'
-import { RATING_LABELS, type MoveRating } from '../logic/moveRating'
+import { RATING_GLYPHS, RATING_LABELS, type MoveRating } from '../logic/moveRating'
 import {
   bestMoveOfGame,
   biggestMoments,
@@ -44,6 +45,7 @@ export function ReviewScreen({ game, onContinue }: Props) {
   // 0 = summary, 1…n = the moments, n + 1 = best move of the game
   const [step, setStep] = useState(0)
   const [momentDone, setMomentDone] = useState(false)
+  const [fullGame, setFullGame] = useState(false)
 
   // Use saved analysis if this game was reviewed before; otherwise run it.
   useEffect(() => {
@@ -94,6 +96,27 @@ export function ReviewScreen({ game, onContinue }: Props) {
   }
 
   // --- The steps -----------------------------------------------------------
+
+  if (fullGame && reviewed && evals) {
+    return (
+      <FullGameView
+        moves={game.moves}
+        evals={evals}
+        reviewed={reviewed}
+        playerColour={player}
+        onBack={() => {
+          setFullGame(false)
+          window.scrollTo({ top: 0 })
+        }}
+      />
+    )
+  }
+
+  const fullGameLink = (
+    <button type="button" className="review-secondary" onClick={() => setFullGame(true)}>
+      Step through the whole game
+    </button>
+  )
 
   if (reviewed && step >= 1 && step <= moments.length) {
     const moment = moments[step - 1]
@@ -147,6 +170,7 @@ export function ReviewScreen({ game, onContinue }: Props) {
         <button type="button" className="review-continue" onClick={onContinue}>
           {finalLabel}
         </button>
+        {fullGameLink}
       </main>
     )
   }
@@ -202,11 +226,14 @@ export function ReviewScreen({ game, onContinue }: Props) {
       )}
 
       {reviewed ? (
-        <button type="button" className="review-continue" onClick={() => goTo(1)}>
-          {moments.length > 0
-            ? `Your biggest moment${moments.length === 1 ? '' : 's'} (${moments.length})`
-            : 'Best move of the game'}
-        </button>
+        <>
+          <button type="button" className="review-continue" onClick={() => goTo(1)}>
+            {moments.length > 0
+              ? `Your biggest moment${moments.length === 1 ? '' : 's'} (${moments.length})`
+              : 'Best move of the game'}
+          </button>
+          {fullGameLink}
+        </>
       ) : (
         failed && (
           <button type="button" className="review-continue" onClick={onContinue}>
@@ -244,8 +271,9 @@ function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colou
   }
 }
 
-/** "14. Bxf7" or "14… Nf6". */
+/** "14. Bxf7??" or "14… Nf6", with the usual annotation mark. */
 function moveLabel(m: ReviewedMove): string {
   const number = Math.floor(m.ply / 2) + 1
-  return m.mover === 'w' ? `${number}. ${m.san}` : `${number}… ${m.san}`
+  const san = m.san + RATING_GLYPHS[m.rating]
+  return m.mover === 'w' ? `${number}. ${san}` : `${number}… ${san}`
 }

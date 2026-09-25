@@ -35,6 +35,18 @@ export function winChance(score: Score): number {
   return 1 / (1 + Math.exp(-0.00368208 * cp))
 }
 
+/**
+ * Formats a stored centipawn value (mates stored as ±(10,000 − moves), see
+ * toCentipawns), e.g. "+1.4" or "M3".
+ */
+export function formatCp(cp: number): string {
+  if (Math.abs(cp) >= MATE_CP - 100) {
+    const moves = MATE_CP - Math.abs(cp)
+    return formatScore({ type: 'mate', value: moves === 0 ? 0 : Math.sign(cp) * moves })
+  }
+  return formatScore({ type: 'cp', value: cp })
+}
+
 /** "+1.4", "−0.3", "M3", "−M2" — the usual way to show an evaluation. */
 export function formatScore(score: Score): string {
   if (score.type === 'mate') {

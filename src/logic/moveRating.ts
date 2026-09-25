@@ -31,6 +31,15 @@ export function rateMove({ bestBefore, after, playedBestMove }: RatingInput): Mo
   return drop <= 0.01 ? 'best' : 'good'
 }
 
+/** Standard chess annotation marks, shown after the move (e.g. "Ng5??"). */
+export const RATING_GLYPHS: Record<MoveRating, string> = {
+  best: '',
+  good: '',
+  inaccuracy: '?!',
+  mistake: '?',
+  blunder: '??',
+}
+
 export const RATING_LABELS: Record<MoveRating, string> = {
   best: 'Best move',
   good: 'Good',

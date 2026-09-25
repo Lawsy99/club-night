@@ -1,20 +1,28 @@
-/* Move-rating colours, shared by the game screen and the review. */
+/* Move-rating colours, shared by the game screen and the review. The three
+   error grades use the validated status steps (warning / serious / critical);
+   they never carry meaning alone: every use also shows the label or the
+   chess annotation (?!, ?, ??). */
 .rating-best {
   --rating: #7fc47a;
+  --rating-ink: #1f2a24;
 }
 
 .rating-good {
   --rating: #c9d8b8;
+  --rating-ink: #1f2a24;
 }
 
 .rating-inaccuracy {
-  --rating: #f0d35a;
+  --rating: #fab219;
+  --rating-ink: #1f2a24;
 }
 
 .rating-mistake {
-  --rating: #f0a04a;
+  --rating: #ec835a;
+  --rating-ink: #1f2a24;
 }
 
 .rating-blunder {
-  --rating: #e0604f;
+  --rating: #d03b3b;
+  --rating-ink: #ffffff;
 }

@@ -15,7 +15,7 @@ import { useMoveRating } from '../engine/useMoveRating'
 import { assessMove, describeBlunder } from '../logic/blunder'
 import { flipScore, formatScore, scoreFor } from '../logic/evaluation'
 import { describeOutcome, getOutcome, replay, type GameOutcome } from '../logic/game'
-import { RATING_LABELS } from '../logic/moveRating'
+import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
 import {
   canTakeBack,
   outcomeOf,
@@ -193,7 +193,8 @@ export function GameScreen({ game, setGame, onReview }: Props) {
         </span>
         {ratedMove && (
           <span className={`move-rating rating-${ratedMove.rating}`}>
-            {ratedMove.san} · {RATING_LABELS[ratedMove.rating]}
+            {ratedMove.san}
+            {RATING_GLYPHS[ratedMove.rating]} · {RATING_LABELS[ratedMove.rating]}
           </span>
         )}
       </div>
