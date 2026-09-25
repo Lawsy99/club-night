@@ -44,7 +44,7 @@ export function TestSetupScreen({ playerColour, initialLevelId, onStart, onOpenD
         <select value={levelId} onChange={(e) => setLevelId(e.target.value)}>
           {TEST_OPPONENT_LEVELS.map((l) => (
             <option key={l.id} value={l.id}>
-              Stockfish · {l.label}
+              {l.label} · {l.rating}
             </option>
           ))}
         </select>

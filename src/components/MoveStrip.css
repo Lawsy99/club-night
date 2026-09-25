@@ -1,0 +1,30 @@
+.move-strip {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 0 16px;
+  list-style: none;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-size: 14px;
+  color: var(--muted);
+  scrollbar-width: none;
+}
+
+.move-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.move-strip.empty {
+  overflow: visible;
+}
+
+.move-strip .num {
+  margin-right: 3px;
+  opacity: 0.7;
+}
+
+.move-strip li.latest {
+  color: var(--text);
+  font-weight: 600;
+}

@@ -26,7 +26,8 @@ home screen), later wrapped as iOS and Android apps with Capacitor.
 - React + TypeScript, built with Vite.
 - chess.js for rules; react-chessboard or cm-chessboard for the board.
 - Stockfish, single-threaded web (WASM) build, always inside a Web Worker.
-- Maia-2 in the browser for human-like opponents (added in phase 3).
+- Maia-3 in the browser (onnxruntime-web, single-threaded, in a Web Worker) for
+  human-like opponents from 800 up (phase 3; chosen over Maia-2, see design doc).
 - Lichess puzzle database subset; Lichess openings dataset.
 - ts-fsrs for the mistakes deck.
 - All saving on the device (IndexedDB). No accounts, no servers.
@@ -56,4 +57,4 @@ home screen), later wrapped as iOS and Android apps with Capacitor.
 Only build the current phase. Don't add features from later phases early.
 
 ## Current phase
-Phase 2 — Review and mistakes deck (Phases 0–1 done: live at https://lawsy99.github.io/club-night/)
+Phase 3 — Opponents (Phases 0–2 done: live at https://lawsy99.github.io/club-night/)

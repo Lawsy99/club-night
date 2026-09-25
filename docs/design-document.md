@@ -29,7 +29,7 @@ The app starts as a web app installed to the iPhone home screen, then becomes pr
 | Chess rules | chess.js | Handles legal moves, check, mate, draws. Permissive licence |
 | Board | react-chessboard or cm-chessboard | Touch-friendly, permissive licences |
 | Analysis engine | Stockfish (single-threaded web version) | Evaluation bar, hints, blunder warnings, reviews, low-level bots. Single-threaded because it is the most reliable version in iPhone Safari |
-| Human-like engine | Maia-2, run in the browser | Plays like real people at a chosen rating, roughly 1100 to 1900 |
+| Human-like engine | Maia-3, run in the browser (onnxruntime-web) | Plays like real people at a chosen rating, roughly 700 to 2500. Chosen over Maia-2 in Sep 2026: its makers recommend it for new projects, it is more accurate, and a ready-made browser version exists |
 | Puzzles | A subset of the Lichess puzzle database | Public domain, tagged by theme and rating |
 | Opening names | Lichess openings dataset | Public domain |
 | Mistakes deck scheduling | FSRS (ts-fsrs library) | The scheduling method used by Anki |
@@ -137,9 +137,9 @@ Boss and gauntlet strengths are set separately, in Stakes. Nobody goes below 200
 
 | Strength | Engine | How it plays |
 | --- | --- | --- |
-| Below 1100 | Custom bots built on Stockfish | Stockfish lists its top candidate moves. A rating-based mistake model then picks weaker ones at human-like rates. At 200 to 400 the bot often leaves pieces undefended and misses the player's threats. At 600 it defends pieces but walks into forks. At 800 to 1000 it sees one-move tactics but misses two-move ones. |
-| 1100 to about 2000 | Maia-2 at the target rating | Maia-2 gives the likelihood a human at that rating plays each move. The bot picks from those likelihoods, so its mistakes are human mistakes. The exact top of Maia-2's range is confirmed during the build. |
-| Above that | Stockfish at limited strength, blended with Maia-2 | Only needed for very strong players. |
+| Below 800 | Custom bots built on Stockfish | Stockfish lists its top candidate moves. A rating-based mistake model then picks weaker ones at human-like rates. At 200 to 400 the bot often leaves pieces undefended and misses the player's threats. At 600 it defends pieces but walks into forks. At 800 to 1000 it sees one-move tactics but misses two-move ones. |
+| 800 to about 2500 | Maia-3 at the target rating | Maia-3 gives the likelihood a human at that rating plays each move. The bot picks from those likelihoods, so its mistakes are human mistakes. (Switch-over lowered from 1100 in Sep 2026, since Maia-3 covers lower ratings than older Maia.) |
+| Above that | Stockfish at limited strength, blended with Maia-3 | Only needed for very strong players. |
 
 ### Styles
 

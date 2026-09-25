@@ -18,6 +18,23 @@
   font-weight: 600;
 }
 
+.opponent-rating {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.peek-button {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid rgb(25, 95, 185);
+  border-radius: 10px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
 .stage-label {
   margin: 2px 0 0;
   font-size: 13px;

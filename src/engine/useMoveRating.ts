@@ -1,13 +1,23 @@
 // React hook: the rating of the player's most recent move, worked out in the
 // background after it's played. Shown in every stage (Joseph's decision,
 // Sep 2026), so it never delays the move itself.
+import { Chess } from 'chess.js'
 import { useEffect, useMemo, useState } from 'react'
 import { flipScore } from '../logic/evaluation'
-import { getOutcome, replay, type Colour } from '../logic/game'
+import { applyUci, getOutcome, replay, type Colour } from '../logic/game'
 import { rateMove, type MoveRating } from '../logic/moveRating'
 import { analysePosition } from './analysis'
 
-export type RatedMove = { san: string; rating: MoveRating }
+export type RatedMove = {
+  san: string
+  rating: MoveRating
+  /** The move played (UCI) and the position before it, to show a better move. */
+  played: string
+  fenBefore: string
+  /** The engine's choice in that position, if it differed from the move played. */
+  betterMove: string | null
+  betterSan: string | null
+}
 
 export function useMoveRating(moves: readonly string[], playerColour: Colour): RatedMove | null {
   // The player's latest move: moves alternate, White first.
@@ -29,8 +39,11 @@ export function useMoveRating(moves: readonly string[], playerColour: Colour): R
     const played = moves[index]
     const san = after.history().at(-1) ?? played
 
-    const finish = (rating: MoveRating | null) => {
-      if (!cancelled && rating) setResult({ key, rated: { san, rating } })
+    const fenBefore = before.fen()
+    const finish = (rating: MoveRating | null, betterMove: string | null = null) => {
+      if (cancelled || !rating) return
+      const betterSan = betterMove ? (applyUci(new Chess(fenBefore), betterMove)?.san ?? null) : null
+      setResult({ key, rated: { san, rating, played, fenBefore, betterMove, betterSan } })
     }
 
     const outcome = getOutcome(after)
@@ -39,16 +52,15 @@ export function useMoveRating(moves: readonly string[], playerColour: Colour): R
       // other endings (e.g. stalemate) aren't rated.
       finish(outcome.reason === 'checkmate' ? 'best' : null)
     } else {
-      Promise.all([analysePosition(before.fen()), analysePosition(after.fen())])
+      Promise.all([analysePosition(fenBefore), analysePosition(after.fen())])
         .then(([b, a]) => {
           if (!b || !a) return finish(null)
-          finish(
-            rateMove({
-              bestBefore: b.score,
-              after: flipScore(a.score), // back to the player's point of view
-              playedBestMove: b.bestMove === played,
-            }),
-          )
+          const rating = rateMove({
+            bestBefore: b.score,
+            after: flipScore(a.score), // back to the player's point of view
+            playedBestMove: b.bestMove === played,
+          })
+          finish(rating, b.bestMove && b.bestMove !== played ? b.bestMove : null)
         })
         .catch(() => finish(null))
     }

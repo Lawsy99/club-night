@@ -1,21 +1,24 @@
-// The game screen: board, status, and whatever help the stage allows.
-// Opponent is plain Stockfish for Phase 1; characters arrive in Phase 3.
+// The game screen: opponent and player bars around the board, status, and
+// whatever help the stage allows. The opponent is a rated test level until
+// the characters arrive later in Phase 3.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
 import { Board, type BoardArrow } from '../components/Board'
 import { BlunderWarning } from '../components/BlunderWarning'
 import { EvalBar } from '../components/EvalBar'
 import { HINT_ARROW_COLOUR, lineArrows } from '../components/lineArrows'
+import { MoveStrip } from '../components/MoveStrip'
+import { PlayerStrip } from '../components/PlayerStrip'
 import { HELP_STAGES } from '../data/helpStages'
-import { TEST_OPPONENT_LEVELS } from '../data/testOpponents'
+import { findLevel } from '../data/testOpponents'
 import { analysePosition } from '../engine/analysis'
-import { chooseTestOpponentMove } from '../engine/testOpponent'
+import { getMaia, type MaiaStatus } from '../engine/maia/maia'
+import { chooseOpponentMove } from '../engine/opponent'
 import { useAnalysis } from '../engine/useAnalysis'
 import { useMoveRating } from '../engine/useMoveRating'
 import { assessMove, describeBlunder } from '../logic/blunder'
 import { flipScore, formatScore, scoreFor } from '../logic/evaluation'
 import { describeOutcome, getOutcome, replay, type GameOutcome } from '../logic/game'
-import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
 import {
   canTakeBack,
   outcomeOf,
@@ -25,6 +28,7 @@ import {
   withTakeback,
   type GameRecord,
 } from '../logic/gameRecord'
+import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
 import '../components/ratings.css'
 import './GameScreen.css'
 
@@ -39,22 +43,30 @@ type Props = {
 /** A move the player has dropped but not yet confirmed (blunder check). */
 type PendingMove = { uci: string; fenAfter: string; warning: string | null }
 
+/** Arrow colour for "the move you played" when showing a better one. */
+const PLAYED_ARROW_COLOUR = 'rgba(208, 59, 59, 0.75)'
+
 export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
   const stage = HELP_STAGES[game.stage]
-  const level = TEST_OPPONENT_LEVELS.find((l) => l.id === game.levelId) ?? TEST_OPPONENT_LEVELS[0]
+  const level = findLevel(game.levelId)
   const [engineError, setEngineError] = useState<string | null>(null)
   const [pending, setPending] = useState<PendingMove | null>(null)
   const [hint, setHint] = useState<{ fen: string; step: 1 | 2 } | null>(null)
   const [showBestLine, setShowBestLine] = useState(false)
+  const [peekKey, setPeekKey] = useState<string | null>(null)
+  const [maiaStatus, setMaiaStatus] = useState<MaiaStatus>({ state: 'idle' })
+  const [maiaMs, setMaiaMs] = useState<number | null>(null)
   const checkToken = useRef(0)
 
   // Everything on screen is derived from the saved game.
   const chess = useMemo(() => replay(game.moves), [game.moves])
   const fen = chess.fen()
+  const sans = useMemo(() => chess.history(), [chess])
   const outcome = outcomeOf(game)
   const last = chess.history({ verbose: true }).at(-1)
   const playersTurn = !outcome && chess.turn() === game.playerColour
   const opponentToMove = !outcome && !playersTurn
+  const opponentColour = game.playerColour === 'w' ? 'b' : 'w'
 
   // Engine analysis of the current position. On the player's turn it always
   // runs quietly in the background, so their move can be rated straight
@@ -63,6 +75,15 @@ export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
   const analysis = useAnalysis(fen, wantsAnalysis)
   const ratedMove = useMoveRating(game.moves, game.playerColour)
 
+  // Maia (800+) is a one-off download: show its progress while it arrives.
+  useEffect(() => {
+    if (level.engine !== 'maia') return
+    const maia = getMaia()
+    setMaiaStatus(maia.status)
+    maia.load()
+    return maia.onStatus(setMaiaStatus)
+  }, [level.engine])
+
   const commitMove = (uci: string) => setGame((g) => (g ? withMove(g, uci) : g))
 
   // When it's the opponent's turn (including straight after resuming),
@@ -70,9 +91,11 @@ export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
   useEffect(() => {
     if (!opponentToMove) return
     let cancelled = false // set if the game changes before the engine replies
-    chooseTestOpponentMove(fen, level)
-      .then((move) => {
-        if (!cancelled && move) commitMove(move)
+    chooseOpponentMove(fen, level)
+      .then(({ move, maiaMs: ms }) => {
+        if (cancelled) return
+        if (ms !== undefined) setMaiaMs(ms)
+        if (move) commitMove(move)
       })
       .catch((err: Error) => setEngineError(err.message))
     return () => {
@@ -125,27 +148,45 @@ export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
   const hintStep = hint?.fen === fen && !pending ? hint.step : 0
   const hintMove = playersTurn ? analysis.current?.bestMove ?? null : null
 
-  const bestLineShown = showBestLine && stage.bestLine && !outcome && !pending
+  // Assisted: after a weaker move, the player can look back at what was better.
+  const canPeek =
+    stage.id === 'assisted' &&
+    ratedMove !== null &&
+    ratedMove.betterMove !== null &&
+    ['inaccuracy', 'mistake', 'blunder'].includes(ratedMove.rating)
+  const peeking = canPeek && peekKey === ratedMove.fenBefore && !pending
+
+  const bestLineShown = showBestLine && stage.bestLine && !outcome && !pending && !peeking
   const bestLine =
     bestLineShown && analysis.current
       ? lineArrows(analysis.current.pv, analysis.current.sideToMove, game.playerColour)
       : null
-  const arrows: BoardArrow[] = [
-    ...(bestLine?.arrows ?? []),
-    ...(hintStep === 2 && hintMove
-      ? [{ from: hintMove.slice(0, 2), to: hintMove.slice(2, 4), colour: HINT_ARROW_COLOUR }]
-      : []),
-  ]
+  const arrows: BoardArrow[] = peeking
+    ? [
+        { from: ratedMove.played.slice(0, 2), to: ratedMove.played.slice(2, 4), colour: PLAYED_ARROW_COLOUR },
+        { from: ratedMove.betterMove!.slice(0, 2), to: ratedMove.betterMove!.slice(2, 4), colour: HINT_ARROW_COLOUR },
+      ]
+    : [
+        ...(bestLine?.arrows ?? []),
+        ...(hintStep === 2 && hintMove
+          ? [{ from: hintMove.slice(0, 2), to: hintMove.slice(2, 4), colour: HINT_ARROW_COLOUR }]
+          : []),
+      ]
 
+  const downloading = maiaStatus.state === 'downloading' && opponentToMove
   const status = engineError
     ? engineError
     : outcome
       ? `${describeOutcome(outcome)} ${resultForPlayer(outcome, game)}`
-      : pending && !pending.warning
-        ? 'Checking your move…'
-        : opponentToMove
-          ? 'Thinking…'
-          : `Your move${chess.inCheck() ? ' · check' : ''}`
+      : peeking
+        ? `Before ${ratedMove.san}: ${ratedMove.betterSan} (blue) was better.`
+        : pending && !pending.warning
+          ? 'Checking your move…'
+          : downloading
+            ? downloadLabel(maiaStatus)
+            : opponentToMove
+              ? `${level.label} is thinking…`
+              : `Your move${chess.inCheck() ? ' · check' : ''}`
 
   const stageLabel =
     stage.takebacks > 0 && Number.isFinite(stage.takebacks)
@@ -153,26 +194,35 @@ export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
       : `${stage.label} · ${stage.summary}`
 
   const pendingLast = pending ? { from: pending.uci.slice(0, 2), to: pending.uci.slice(2, 4) } : null
+  const boardFen = peeking ? ratedMove.fenBefore : pending ? pending.fenAfter : fen
 
   return (
     <main className="game-screen">
       <header className="game-header">
-        <h1>Test game vs Stockfish · {level.label}</h1>
-        <p className="stage-label">
-          {stageLabel} · you play {game.playerColour === 'w' ? 'White' : 'Black'}
-        </p>
+        <h1>
+          vs {level.label} <span className="opponent-rating">{level.rating}</span>
+        </h1>
+        <p className="stage-label">{stageLabel}</p>
       </header>
 
       <p className={outcome ? 'game-status game-over' : 'game-status'}>{status}</p>
+
+      <PlayerStrip
+        name={level.label}
+        rating={level.rating}
+        fen={fen}
+        side={opponentColour}
+        thinking={opponentToMove && !downloading}
+      />
 
       <div className="board-row">
         {stage.evalBar && <EvalBar analysis={analysis.latest} playerColour={game.playerColour} />}
         <div className="board-cell">
           <Board
-            fen={pending ? pending.fenAfter : fen}
+            fen={boardFen}
             orientation={game.playerColour === 'w' ? 'white' : 'black'}
-            movableColour={outcome || pending ? null : game.playerColour}
-            lastMove={pendingLast ?? (last ? { from: last.from, to: last.to } : null)}
+            movableColour={outcome || pending || peeking ? null : game.playerColour}
+            lastMove={peeking ? null : (pendingLast ?? (last ? { from: last.from, to: last.to } : null))}
             onMove={handlePlayerMove}
             hintSquare={hintStep === 1 && hintMove ? hintMove.slice(0, 2) : null}
             arrows={arrows}
@@ -188,17 +238,27 @@ export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
         </div>
       </div>
 
-      <div className="move-info">
-        <span className="last-move">
-          {last ? `Last move: ${last.san}` : 'Tap a piece, then a square. Or drag.'}
-        </span>
-        {ratedMove && (
+      <PlayerStrip name="You" fen={fen} side={game.playerColour} />
+
+      <MoveStrip sans={sans} />
+
+      {ratedMove && (
+        <div className="move-info">
           <span className={`move-rating rating-${ratedMove.rating}`}>
             {ratedMove.san}
             {RATING_GLYPHS[ratedMove.rating]} · {RATING_LABELS[ratedMove.rating]}
           </span>
-        )}
-      </div>
+          {canPeek && (
+            <button
+              type="button"
+              className="peek-button"
+              onClick={() => setPeekKey(peeking ? null : ratedMove.fenBefore)}
+            >
+              {peeking ? 'Back to the game' : 'See better move'}
+            </button>
+          )}
+        </div>
+      )}
 
       {bestLineShown && (
         <p className="best-line">
@@ -220,7 +280,7 @@ export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
           {stage.hints && (
             <button
               type="button"
-              disabled={!hintMove || hintStep === 2 || pending !== null}
+              disabled={!hintMove || hintStep === 2 || pending !== null || peeking}
               onClick={() => setHint({ fen, step: hintStep === 0 ? 1 : 2 })}
             >
               {hintStep === 0 ? 'Hint' : 'Show move'}
@@ -230,7 +290,10 @@ export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
             <button
               type="button"
               disabled={!canTakeBack(game) || pending !== null}
-              onClick={() => setGame((g) => (g ? withTakeback(g) : g))}
+              onClick={() => {
+                setPeekKey(null)
+                setGame((g) => (g ? withTakeback(g) : g))
+              }}
             >
               Take back
             </button>
@@ -262,9 +325,18 @@ export function GameScreen({ game, setGame, onReview, onSkipReview }: Props) {
         )}
       </div>
 
-      <p className="build-stamp">Version: {BUILD_LABEL}</p>
+      <p className="build-stamp">
+        Version: {BUILD_LABEL}
+        {maiaMs !== null && ` · opponent model ${maiaMs} ms`}
+      </p>
     </main>
   )
+}
+
+function downloadLabel(status: MaiaStatus): string {
+  if (status.state !== 'downloading' || !status.total) return 'Getting your opponent ready…'
+  const mb = (n: number) => Math.round(n / 1_000_000)
+  return `First time only: downloading your opponent (${mb(status.loaded)} of ${mb(status.total)} MB)…`
 }
 
 function resultForPlayer(outcome: GameOutcome, game: GameRecord): string {
