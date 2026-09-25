@@ -57,6 +57,26 @@
   cursor: pointer;
 }
 
+.level-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* 16 px text stops iOS Safari zooming in when the picker is tapped */
+.level-picker select {
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid #4a5a50;
+  border-radius: 10px;
+  background: #2b3931;
+  color: var(--text);
+  font-size: 16px;
+}
+
 .game-actions button:disabled {
   opacity: 0.4;
   cursor: default;
