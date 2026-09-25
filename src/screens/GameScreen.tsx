@@ -124,10 +124,12 @@ export function GameScreen({ game, setGame, onNewGame, onReplay }: Props) {
   const hintMove = playersTurn ? analysis.current?.bestMove ?? null : null
 
   const bestLineShown = showBestLine && stage.bestLine && !outcome && !pending
-  const arrows: BoardArrow[] = [
-    ...(bestLineShown && analysis.current
+  const bestLine =
+    bestLineShown && analysis.current
       ? lineArrows(analysis.current.pv, analysis.current.sideToMove, game.playerColour)
-      : []),
+      : null
+  const arrows: BoardArrow[] = [
+    ...(bestLine?.arrows ?? []),
     ...(hintStep === 2 && hintMove
       ? [{ from: hintMove.slice(0, 2), to: hintMove.slice(2, 4), colour: HINT_ARROW_COLOUR }]
       : []),
@@ -172,6 +174,7 @@ export function GameScreen({ game, setGame, onNewGame, onReplay }: Props) {
             onMove={handlePlayerMove}
             hintSquare={hintStep === 1 && hintMove ? hintMove.slice(0, 2) : null}
             arrows={arrows}
+            badges={bestLine?.badges}
           />
           {pending?.warning && (
             <BlunderWarning

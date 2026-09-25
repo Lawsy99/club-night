@@ -25,9 +25,13 @@ type Props = {
   hintSquare?: string | null
   /** Arrows to draw (hints, the best line). */
   arrows?: BoardArrow[]
+  /** Small numbered circles in a corner of a square (best-line order). */
+  badges?: SquareBadge[]
 }
 
 export type BoardArrow = { from: string; to: string; colour: string }
+/** corner: 0 top-left, 1 top-right, 2 bottom-left, 3 bottom-right. */
+export type SquareBadge = { square: string; label: string; colour: string; corner: number }
 
 const LIGHT = '#ece4cf'
 const DARK = '#86a07a'
@@ -41,6 +45,7 @@ export function Board({
   onMove,
   hintSquare = null,
   arrows = [],
+  badges = [],
 }: Props) {
   // Legal moves depend only on the current position, so a FEN is enough here.
   const chess = useMemo(() => new Chess(fen), [fen])
@@ -91,7 +96,7 @@ export function Board({
     setPendingPromotion(null)
   }
 
-  const squareStyles = buildSquareStyles(chess, selected, targets, lastMove, hintSquare)
+  const squareStyles = buildSquareStyles(chess, selected, targets, lastMove, hintSquare, badges)
   const boardArrows = arrows.map((a) => ({ startSquare: a.from, endSquare: a.to, color: a.colour }))
 
   return (
@@ -130,33 +135,62 @@ function buildSquareStyles(
   targets: Square[],
   lastMove: { from: string; to: string } | null,
   hintSquare: string | null,
+  badges: SquareBadge[],
 ): Record<string, CSSProperties> {
   const styles: Record<string, CSSProperties> = {}
   const add = (sq: string, style: CSSProperties) => {
     styles[sq] = { ...styles[sq], ...style }
+  }
+  // Markers are background-image layers, collected per square so several can
+  // stack (e.g. a badge on a legal-move dot). Tints use backgroundColor; never
+  // the `background` shorthand, which React warns about mixing.
+  const layers: Record<string, { image: string; position: string; size: string }[]> = {}
+  const addLayer = (sq: string, image: string, position = 'center', size = '100% 100%') => {
+    ;(layers[sq] ??= []).push({ image, position, size })
   }
 
   if (lastMove) {
     add(lastMove.from, { backgroundColor: 'rgba(222, 190, 70, 0.45)' })
     add(lastMove.to, { backgroundColor: 'rgba(222, 190, 70, 0.55)' })
   }
-  // Tints use backgroundColor and markers use backgroundImage, so they layer
-  // (never the `background` shorthand, which React warns about mixing).
+  for (const badge of badges) {
+    addLayer(badge.square, badgeImage(badge), BADGE_CORNERS[badge.corner % 4], '34% 34%')
+  }
   const checked = checkedKingSquare(chess)
   if (checked) {
-    add(checked, {
-      backgroundImage: 'radial-gradient(circle, rgba(210, 40, 30, 0.85) 25%, rgba(210, 40, 30, 0) 75%)',
-    })
+    addLayer(checked, 'radial-gradient(circle, rgba(210, 40, 30, 0.85) 25%, rgba(210, 40, 30, 0) 75%)')
   }
   if (hintSquare) add(hintSquare, { boxShadow: `inset 0 0 0 4px ${HINT_OUTLINE}` })
   if (selected) add(selected, { backgroundColor: 'rgba(40, 90, 60, 0.55)' })
   for (const sq of targets) {
     const capture = chess.get(sq) !== undefined
-    add(sq, {
-      backgroundImage: capture
+    addLayer(
+      sq,
+      capture
         ? 'radial-gradient(circle, transparent 58%, rgba(20, 50, 30, 0.45) 60%)'
         : 'radial-gradient(circle, rgba(20, 50, 30, 0.45) 22%, transparent 24%)',
+    )
+  }
+
+  for (const [sq, list] of Object.entries(layers)) {
+    add(sq, {
+      backgroundImage: list.map((l) => l.image).join(', '),
+      backgroundPosition: list.map((l) => l.position).join(', '),
+      backgroundSize: list.map((l) => l.size).join(', '),
+      backgroundRepeat: 'no-repeat',
     })
   }
   return styles
+}
+
+const BADGE_CORNERS = ['3% 3%', '97% 3%', '3% 97%', '97% 97%']
+
+/** A small filled circle with a number, as an inline SVG image. */
+function badgeImage({ label, colour }: SquareBadge): string {
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">` +
+    `<circle cx="10" cy="10" r="9" fill="${colour}" stroke="white" stroke-width="1.5"/>` +
+    `<text x="10" y="14.2" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="white">${label}</text>` +
+    `</svg>`
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
 }
