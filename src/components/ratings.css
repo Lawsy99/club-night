@@ -1,0 +1,20 @@
+/* Move-rating colours, shared by the game screen and the review. */
+.rating-best {
+  --rating: #7fc47a;
+}
+
+.rating-good {
+  --rating: #c9d8b8;
+}
+
+.rating-inaccuracy {
+  --rating: #f0d35a;
+}
+
+.rating-mistake {
+  --rating: #f0a04a;
+}
+
+.rating-blunder {
+  --rating: #e0604f;
+}

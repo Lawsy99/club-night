@@ -71,27 +71,7 @@
   font-weight: 600;
   white-space: nowrap;
   color: #1f2a24;
-}
-
-.rating-best {
-  background: #7fc47a;
-}
-
-.rating-good {
-  background: #c9d8b8;
-}
-
-.rating-inaccuracy {
-  background: #f0d35a;
-}
-
-.rating-mistake {
-  background: #f0a04a;
-}
-
-.rating-blunder {
-  background: #e0604f;
-  color: #fff;
+  background: var(--rating);
 }
 
 .best-line {

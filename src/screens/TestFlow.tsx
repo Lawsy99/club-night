@@ -1,5 +1,5 @@
 // TEMPORARY (Phase 1–3): loads the saved game, and moves between the test
-// setup screen and the game. Replaced by the path engine in Phase 4.
+// setup screen, the game and its review. Replaced by the path engine in Phase 4.
 import { useEffect, useState } from 'react'
 import { DEFAULT_TEST_LEVEL_ID } from '../data/testOpponents'
 import {
@@ -9,15 +9,18 @@ import {
   upgradeGameRecord,
   type GameRecord,
 } from '../logic/gameRecord'
-import { loadCurrentGame, requestPersistentStorage, saveCurrentGame } from '../storage/db'
+import { archiveGame, loadCurrentGame, requestPersistentStorage, saveCurrentGame } from '../storage/db'
 import { GameScreen } from './GameScreen'
+import { ReviewScreen } from './ReviewScreen'
 import { TestSetupScreen } from './TestSetupScreen'
+
+type View = 'game' | 'review' | 'setup'
 
 export function TestFlow() {
   const [loaded, setLoaded] = useState(false)
   // The current (or most recently finished) game
   const [game, setGame] = useState<GameRecord | null>(null)
-  const [choosing, setChoosing] = useState(false)
+  const [view, setView] = useState<View>('game')
 
   useEffect(() => {
     requestPersistentStorage()
@@ -30,35 +33,49 @@ export function TestFlow() {
       .finally(() => setLoaded(true))
   }, [])
 
-  // Save after every change, so closing the app loses nothing.
+  // Save after every change, so closing the app loses nothing; finished
+  // games also go into the archive for reviews (and, later, stats).
   useEffect(() => {
-    if (game) saveCurrentGame(game).catch((err) => console.error('Save failed', err))
+    if (!game) return
+    saveCurrentGame(game).catch((err) => console.error('Save failed', err))
+    if (outcomeOf(game)) archiveGame(game).catch((err) => console.error('Archive failed', err))
   }, [game])
 
   if (!loaded) return <main className="game-screen loading">Setting up the board…</main>
 
-  if (!game || choosing) {
+  const startGame = (next: GameRecord) => {
+    setGame(next)
+    setView('game')
+  }
+
+  if (!game || view === 'setup') {
     return (
       <TestSetupScreen
         playerColour={nextPlayerColour(game)}
         initialLevelId={game?.levelId ?? DEFAULT_TEST_LEVEL_ID}
-        onStart={(stage, levelId) => {
-          setGame(newGameRecord(nextPlayerColour(game), levelId, stage))
-          setChoosing(false)
+        onStart={(stage, levelId) => startGame(newGameRecord(nextPlayerColour(game), levelId, stage))}
+      />
+    )
+  }
+
+  if (view === 'review') {
+    return (
+      <ReviewScreen
+        key={game.id}
+        game={game}
+        onContinue={() => {
+          // Draws are replayed straight away with the same settings.
+          if (outcomeOf(game)?.winner === null) {
+            startGame(newGameRecord(nextPlayerColour(game), game.levelId, game.stage))
+          } else {
+            setView('setup')
+          }
         }}
       />
     )
   }
 
-  return (
-    <GameScreen
-      key={game.id}
-      game={game}
-      setGame={setGame}
-      onNewGame={() => setChoosing(true)}
-      onReplay={() => setGame(newGameRecord(nextPlayerColour(game), game.levelId, game.stage))}
-    />
-  )
+  return <GameScreen key={game.id} game={game} setGame={setGame} onReview={() => setView('review')} />
 }
 
 /** A saved game we can't replay (e.g. from an older version) is discarded. */

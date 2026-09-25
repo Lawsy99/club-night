@@ -25,19 +25,20 @@ import {
   withTakeback,
   type GameRecord,
 } from '../logic/gameRecord'
+import '../components/ratings.css'
 import './GameScreen.css'
 
 type Props = {
   game: GameRecord
   setGame: React.Dispatch<React.SetStateAction<GameRecord | null>>
-  onNewGame: () => void
-  onReplay: () => void
+  /** Every game ends with a review. */
+  onReview: () => void
 }
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
 type PendingMove = { uci: string; fenAfter: string; warning: string | null }
 
-export function GameScreen({ game, setGame, onNewGame, onReplay }: Props) {
+export function GameScreen({ game, setGame, onReview }: Props) {
   const stage = HELP_STAGES[game.stage]
   const level = TEST_OPPONENT_LEVELS.find((l) => l.id === game.levelId) ?? TEST_OPPONENT_LEVELS[0]
   const [engineError, setEngineError] = useState<string | null>(null)
@@ -246,12 +247,8 @@ export function GameScreen({ game, setGame, onNewGame, onReplay }: Props) {
 
       <div className="game-actions">
         {outcome ? (
-          <button
-            type="button"
-            className="primary"
-            onClick={outcome.winner === null ? onReplay : onNewGame}
-          >
-            {outcome.winner === null ? 'Replay' : 'New game'}
+          <button type="button" className="primary" onClick={onReview}>
+            Review game
           </button>
         ) : (
           <ResignButton onResign={() => setGame((g) => (g ? withResignation(g, g.playerColour) : g))} />

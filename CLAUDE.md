@@ -56,4 +56,4 @@ home screen), later wrapped as iOS and Android apps with Capacitor.
 Only build the current phase. Don't add features from later phases early.
 
 ## Current phase
-Phase 1 — Chess core (Phase 0 done: live at https://lawsy99.github.io/club-night/)
+Phase 2 — Review and mistakes deck (Phases 0–1 done: live at https://lawsy99.github.io/club-night/)
