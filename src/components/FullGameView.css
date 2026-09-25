@@ -65,8 +65,12 @@
   border-radius: 10px;
   background: #2b3931;
   color: var(--text);
-  font-size: 18px;
   cursor: pointer;
+}
+
+.full-game-controls button svg {
+  display: block;
+  margin: 0 auto;
 }
 
 .full-game-controls button:disabled {

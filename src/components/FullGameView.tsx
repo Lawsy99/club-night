@@ -8,6 +8,7 @@ import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
 import type { PositionEval, ReviewedMove } from '../logic/review'
 import { Board } from './Board'
 import { EvalGraph } from './EvalGraph'
+import { SkipIcon, StepIcon } from './StepIcons'
 import './FullGameView.css'
 import './ratings.css'
 
@@ -76,16 +77,16 @@ export function FullGameView({ moves, evals, reviewed, playerColour, onBack }: P
 
       <div className="full-game-controls">
         <button type="button" aria-label="Start" onClick={() => step(0)} disabled={index === 0}>
-          ⏮
+          <SkipIcon flip />
         </button>
         <button type="button" aria-label="Previous move" onClick={() => step(index - 1)} disabled={index === 0}>
-          ◀
+          <StepIcon flip />
         </button>
         <button type="button" aria-label="Next move" onClick={() => step(index + 1)} disabled={index === last}>
-          ▶
+          <StepIcon />
         </button>
         <button type="button" aria-label="End" onClick={() => step(last)} disabled={index === last}>
-          ⏭
+          <SkipIcon />
         </button>
       </div>
 
