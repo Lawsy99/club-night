@@ -41,10 +41,10 @@ type Props = {
   setGame: React.Dispatch<React.SetStateAction<GameRecord | null>>
   /** Games end with a review, which the player may skip. */
   onReview: () => void
-  /** Straight into another game against the same opponent (colours swap). */
-  onRematch: () => void
-  /** Back to choose a different opponent. */
-  onChangeOpponent: () => void
+  /** Skip the review and carry on (a draw: replay straight away). */
+  onContinue: () => void
+  /** The player's rating, shown in their name bar (none during trial night). */
+  playerRating?: number
 }
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
@@ -53,7 +53,7 @@ type PendingMove = { uci: string; fenAfter: string; warning: string | null }
 /** Arrow colour for "the move you played" when showing a better one. */
 const PLAYED_ARROW_COLOUR = 'rgba(208, 59, 59, 0.75)'
 
-export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponent }: Props) {
+export function GameScreen({ game, setGame, onReview, onContinue, playerRating }: Props) {
   const stage = HELP_STAGES[game.stage]
   const opponent = resolveOpponent(game.levelId, game.opponentRating)
   const [engineError, setEngineError] = useState<string | null>(null)
@@ -254,6 +254,11 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
   return (
     <main className="game-screen">
       <header className="game-header">
+        {game.path && (
+          <p className="game-title">
+            {game.path.label} <span>· {game.path.location}</span>
+          </p>
+        )}
         <p className="stage-label">{stageLabel}</p>
         <p className={outcome ? 'game-status game-over' : 'game-status'}>{status}</p>
       </header>
@@ -315,7 +320,7 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
         </div>
       </div>
 
-      <PlayerStrip name="You" fen={fen} side={game.playerColour} />
+      <PlayerStrip name="You" rating={playerRating} fen={fen} side={game.playerColour} />
 
       <MoveStrip sans={sans} />
 
@@ -393,11 +398,8 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
             <button type="button" className="primary" onClick={onReview}>
               Review game
             </button>
-            <button type="button" onClick={onRematch}>
-              {outcome.winner === null ? 'Replay' : 'Rematch'}
-            </button>
-            <button type="button" onClick={onChangeOpponent}>
-              Change opponent
+            <button type="button" onClick={onContinue}>
+              {outcome.winner === null ? 'Replay' : 'Continue'}
             </button>
           </>
         ) : (

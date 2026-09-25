@@ -128,6 +128,28 @@ export function bestMoveOfGame(
   return best && { move: best.move, punished: best.punished }
 }
 
+/**
+ * Average advantage given away per move, in centipawns (100 = a pawn), for
+ * one side. Positions beyond ±10 pawns are capped, so throwing away part of
+ * a completely won game doesn't swamp the average.
+ */
+export function averageCentipawnLoss(
+  moves: readonly string[],
+  evals: readonly PositionEval[],
+  side: Colour,
+): number | null {
+  const cap = (cp: number) => Math.max(-1000, Math.min(1000, cp))
+  const losses: number[] = []
+  for (let ply = 0; ply < moves.length; ply++) {
+    const mover: Colour = ply % 2 === 0 ? 'w' : 'b'
+    if (mover !== side) continue
+    const before = cap(forMover(evals[ply].cp, mover))
+    const after = cap(forMover(evals[ply + 1].cp, mover))
+    losses.push(Math.max(0, before - after))
+  }
+  return losses.length ? losses.reduce((a, b) => a + b, 0) / losses.length : null
+}
+
 export function ratingCounts(moves: readonly ReviewedMove[], side: Colour): Record<MoveRating, number> {
   const counts: Record<MoveRating, number> = { best: 0, good: 0, inaccuracy: 0, mistake: 0, blunder: 0 }
   for (const m of moves) if (m.mover === side) counts[m.rating]++

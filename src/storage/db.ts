@@ -3,6 +3,7 @@
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb'
 import type { GameRecord } from '../logic/gameRecord'
 import { planAdditions, type MistakeCard } from '../logic/mistakesDeck'
+import type { Progress } from '../logic/path'
 import type { PositionEval } from '../logic/review'
 
 /** A finished game in the archive, with its review analysis once done. */
@@ -13,10 +14,10 @@ export type ArchivedGame = GameRecord & {
 }
 
 interface ClubNightDB extends DBSchema {
-  /** Small named values: the game in progress, which screen was open, the test baseline. */
+  /** Small named values: the game in progress, which screen was open, progress on the path. */
   state: {
-    key: 'currentGame' | 'screen' | 'baseline'
-    value: GameRecord | string | number
+    key: 'currentGame' | 'screen' | 'baseline' | 'progress'
+    value: GameRecord | string | number | Progress
   }
   /** Every finished game. */
   games: {
@@ -61,14 +62,22 @@ export async function saveCurrentGame(game: GameRecord): Promise<void> {
   await (await db()).put('state', game, 'currentGame')
 }
 
-/** The stand-in rating the test screen uses until real ratings arrive (phase 4). */
-export async function loadBaseline(): Promise<number | null> {
-  const value = await (await db()).get('state', 'baseline')
-  return typeof value === 'number' ? value : null
+/** The player's progress along the path (rating, act, chapter, cup…). */
+export async function loadProgress(): Promise<Progress | null> {
+  const value = await (await db()).get('state', 'progress')
+  return value && typeof value === 'object' && 'stage' in value ? (value as Progress) : null
 }
 
-export async function saveBaseline(baseline: number): Promise<void> {
-  await (await db()).put('state', baseline, 'baseline')
+export async function saveProgress(progress: Progress): Promise<void> {
+  await (await db()).put('state', progress, 'progress')
+}
+
+/** Playtest tool: forget progress and the current game (the archive and deck stay). */
+export async function resetProgress(): Promise<void> {
+  const database = await db()
+  await database.delete('state', 'progress')
+  await database.delete('state', 'currentGame')
+  await database.delete('state', 'screen')
 }
 
 /** Which screen was open, so a closed app reopens in the same place. */

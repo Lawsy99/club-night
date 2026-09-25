@@ -1,0 +1,249 @@
+// The path: the player's progress through Act 1, and the one thing that comes
+// next (design document, "The path", "How friendlies move you forward",
+// "Stakes"). Pure state + functions; the Home screen asks `nextStep` and the
+// game flow reports results back.
+import { ACT_1, TRIAL_OPPONENTS } from '../data/act1'
+import { characterRating, findCharacter } from '../data/characters'
+import { rateGame, type PlayerRating } from './glicko2'
+import { valveAdjustment, type RealGameResult } from './safetyValve'
+import {
+  firstOpponentRating,
+  nextTrialOpponentRating,
+  TRIAL_LENGTH,
+  trialEstimate,
+  type Experience,
+  type TrialGame,
+} from './trialNight'
+
+export type Progress = {
+  version: 1
+  stage: 'welcome' | 'trial' | 'act' | 'act-complete'
+  trial: { first: number; games: TrialGame[] } | null
+  rating: PlayerRating | null
+  /** The act's baseline: scaling opponents are measured from it. */
+  baseline: number
+  /** Fixed characters' ratings, set once from the Act 1 baseline. */
+  fixedRatings: Record<string, number>
+  /** Index into the act's chapters; equal to their count once the cup begins. */
+  chapter: number
+  lessonDone: boolean
+  /** Friendlies against the current chapter's opponent. */
+  friendlies: { played: number; wonGuided: boolean }
+  /** Characters whose chapter the player has finished: met, so their friendlies become optional later. */
+  met: string[]
+  /** Match lost at least once in this chapter (a guided friendly is then offered). */
+  matchLost: boolean
+  cup: { round: number; bossRating: number; bossAttempts: number } | null
+  /** Real games since the safety valve last moved (or the act began). */
+  recentReal: RealGameResult[]
+}
+
+export const NEW_PROGRESS: Progress = {
+  version: 1,
+  stage: 'welcome',
+  trial: null,
+  rating: null,
+  baseline: 1000,
+  fixedRatings: {},
+  chapter: 0,
+  lessonDone: false,
+  friendlies: { played: 0, wonGuided: false },
+  met: [],
+  matchLost: false,
+  cup: null,
+  recentReal: [],
+}
+
+export type StepKind = 'trial' | 'friendly' | 'match' | 'cup-round' | 'boss'
+
+/** What a game counts as on the path. Stored with the game. */
+export type PathGame = {
+  kind: StepKind
+  opponent: string
+  rating: number
+  stage: 'assisted' | 'guided' | 'real'
+  label: string
+  location: string
+}
+
+export type NextStep =
+  | { kind: 'welcome' }
+  | { kind: 'lesson'; chapterTitle: string; topic: string; location: string }
+  | { kind: 'play'; game: PathGame; optionalFriendly: PathGame | null; note: string | null }
+  | { kind: 'act-complete' }
+
+const GAUNTLET_OFFSETS = [-75, -50, -25]
+const BOSS_OFFSET = 25
+
+/** An opponent's strength right now (fixed characters keep their Act 1 number). */
+export function opponentRating(p: Progress, id: string): number {
+  if (p.fixedRatings[id] !== undefined) return p.fixedRatings[id]
+  const character = findCharacter(id)
+  return character ? characterRating(character, p.baseline) : p.baseline
+}
+
+const nameOf = (id: string) => findCharacter(id)?.name ?? id
+const rounded = (r: number) => Math.max(200, Math.round(r / 5) * 5)
+
+export function nextStep(p: Progress): NextStep {
+  if (p.stage === 'welcome') return { kind: 'welcome' }
+  if (p.stage === 'act-complete') return { kind: 'act-complete' }
+
+  if (p.stage === 'trial' && p.trial) {
+    const n = p.trial.games.length
+    const opponent = TRIAL_OPPONENTS[n]
+    return {
+      kind: 'play',
+      game: {
+        kind: 'trial',
+        opponent,
+        rating: nextTrialOpponentRating(p.trial.games, p.trial.first),
+        stage: 'real',
+        label: `Trial night · game ${n + 1} of ${TRIAL_LENGTH} vs ${nameOf(opponent)}`,
+        location: 'The Red Lion',
+      },
+      optionalFriendly: null,
+      note: null,
+    }
+  }
+
+  const chapters = ACT_1.chapters
+  if (p.chapter < chapters.length) {
+    const ch = chapters[p.chapter]
+    if (!p.lessonDone) {
+      return { kind: 'lesson', chapterTitle: ch.title, topic: ch.lesson, location: ch.location }
+    }
+    const rating = opponentRating(p, ch.opponent)
+    const friendly = (stage: 'assisted' | 'guided'): PathGame => ({
+      kind: 'friendly',
+      opponent: ch.opponent,
+      rating,
+      stage,
+      label: `Friendly vs ${nameOf(ch.opponent)}`,
+      location: ch.location,
+    })
+    const match: PathGame = { kind: 'match', opponent: ch.opponent, rating, stage: 'real', label: ch.matchLabel, location: ch.location }
+    const met = p.met.includes(ch.opponent)
+    const unlocked = met || p.friendlies.wonGuided || p.friendlies.played >= 3
+    if (!unlocked) {
+      // First friendly against someone new is assisted; after that, guided.
+      return { kind: 'play', game: friendly(p.friendlies.played === 0 ? 'assisted' : 'guided'), optionalFriendly: null, note: null }
+    }
+    return {
+      kind: 'play',
+      game: match,
+      optionalFriendly: friendly('guided'),
+      note: p.matchLost ? 'Replay the match, or warm up with a friendly first.' : null,
+    }
+  }
+
+  // The knockout cup: three rounds, then the final (the boss).
+  const cup = p.cup ?? startCup(p).cup!
+  const g = ACT_1.gauntlet
+  if (cup.round < g.rounds.length) {
+    const round = g.rounds[cup.round]
+    return {
+      kind: 'play',
+      game: {
+        kind: 'cup-round',
+        opponent: round.opponent,
+        rating: rounded(p.baseline + GAUNTLET_OFFSETS[cup.round]),
+        stage: 'real',
+        label: round.label,
+        location: g.location,
+      },
+      optionalFriendly: null,
+      note: cup.bossAttempts > 0 ? `Qualifying again for the final (attempt ${cup.bossAttempts + 1}).` : null,
+    }
+  }
+  const boss: PathGame = { kind: 'boss', opponent: g.boss.opponent, rating: cup.bossRating, stage: 'real', label: g.boss.label, location: g.location }
+  // Support grows after boss losses; the boss never gets easier (design: "Support after boss losses").
+  const studyFriendly: PathGame | null =
+    cup.bossAttempts >= 2 ? { ...boss, kind: 'friendly', stage: 'assisted', label: `Assisted friendly vs ${nameOf(g.boss.opponent)}` } : null
+  return { kind: 'play', game: boss, optionalFriendly: studyFriendly, note: bossNote(cup.bossAttempts) }
+}
+
+function bossNote(attempts: number): string | null {
+  if (attempts === 0) return null
+  if (attempts === 1) return 'Scouting report (placeholder): he plays the Najdorf against 1.e4. Watch the phase where you lost last time.'
+  if (attempts === 2) return 'You can study him first in an assisted friendly.'
+  return 'Targeted puzzles on his favourite ideas arrive with lessons (phase 5). The study friendly is still available.'
+}
+
+function startCup(p: Progress): Progress {
+  return { ...p, cup: p.cup ?? { round: 0, bossRating: rounded(p.baseline + BOSS_OFFSET), bossAttempts: 0 } }
+}
+
+// --- Events -----------------------------------------------------------------
+
+export function beginTrial(p: Progress, experience: Experience, statedRating?: number): Progress {
+  return { ...p, stage: 'trial', trial: { first: firstOpponentRating(experience, statedRating), games: [] } }
+}
+
+export function completeLesson(p: Progress): Progress {
+  return { ...p, lessonDone: true }
+}
+
+/**
+ * Records a finished game (draws are replayed, so only wins and losses come
+ * here). `accuracyStrength` is the strength the moves suggested, if analysed.
+ */
+export function recordGame(p: Progress, game: PathGame, won: boolean, accuracyStrength: number | null): Progress {
+  if (game.kind === 'trial') return recordTrialGame(p, game, won, accuracyStrength)
+
+  if (game.kind === 'friendly') {
+    // Friendlies never change the rating; they always count towards progress.
+    const inChapter = p.chapter < ACT_1.chapters.length && game.opponent === ACT_1.chapters[p.chapter].opponent
+    return {
+      ...p,
+      friendlies: inChapter
+        ? { played: p.friendlies.played + 1, wonGuided: p.friendlies.wonGuided || (won && game.stage === 'guided') }
+        : p.friendlies,
+    }
+  }
+
+  // Real games: rating, then the safety valve (never during the cup).
+  let next = rateReal(p, game.rating, won, accuracyStrength)
+  if (game.kind === 'match') {
+    if (won) {
+      const met = next.met.includes(game.opponent) ? next.met : [...next.met, game.opponent]
+      next = { ...next, met, chapter: next.chapter + 1, lessonDone: false, friendlies: { played: 0, wonGuided: false }, matchLost: false }
+      if (next.chapter >= ACT_1.chapters.length) next = startCup(next)
+    } else {
+      next = { ...next, matchLost: true }
+    }
+    return next
+  }
+  const cup = next.cup ?? startCup(next).cup!
+  if (game.kind === 'cup-round') {
+    return { ...next, cup: won ? { ...cup, round: cup.round + 1 } : cup }
+  }
+  // Boss: win the act, or back to qualifying (boss strength stays fixed).
+  return won ? { ...next, stage: 'act-complete' } : { ...next, cup: { ...cup, round: 0, bossAttempts: cup.bossAttempts + 1 } }
+}
+
+function recordTrialGame(p: Progress, game: PathGame, won: boolean, accuracyStrength: number | null): Progress {
+  if (!p.trial) return p
+  const games = [...p.trial.games, { opponentRating: game.rating, won, accuracyStrength }]
+  if (games.length < TRIAL_LENGTH) return { ...p, trial: { ...p.trial, games } }
+
+  // Trial night done: starting rating, the Act 1 baseline, and the fixed characters.
+  const { start } = trialEstimate(games, p.trial.first)
+  const baseline = Math.round(start.rating)
+  const fixedRatings: Record<string, number> = {}
+  for (const id of ['marjorie', 'clive', 'graham']) {
+    const c = findCharacter(id)
+    if (c) fixedRatings[id] = characterRating(c, baseline)
+  }
+  return { ...p, stage: 'act', trial: { ...p.trial, games }, rating: start, baseline, fixedRatings, recentReal: [] }
+}
+
+function rateReal(p: Progress, opponentRatingValue: number, won: boolean, accuracyStrength: number | null): Progress {
+  const rating = p.rating ? rateGame(p.rating, opponentRatingValue, won ? 1 : 0) : p.rating
+  const recentReal = [...p.recentReal, { won, accuracyStrength }]
+  const inCup = p.chapter >= ACT_1.chapters.length
+  const shift = inCup ? 0 : valveAdjustment(recentReal, p.baseline)
+  return shift
+    ? { ...p, rating, baseline: p.baseline + shift, recentReal: [] }
+    : { ...p, rating, recentReal: recentReal.slice(-10) }
+}

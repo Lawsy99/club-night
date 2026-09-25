@@ -57,4 +57,4 @@ home screen), later wrapped as iOS and Android apps with Capacitor.
 Only build the current phase. Don't add features from later phases early.
 
 ## Current phase
-Phase 3 — Opponents (Phases 0–2 done: live at https://lawsy99.github.io/club-night/)
+Phase 4 — Progression (Phases 0–3 done: live at https://lawsy99.github.io/club-night/)

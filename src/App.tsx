@@ -1,7 +1,7 @@
-import { TestFlow } from './screens/TestFlow'
+import { AppFlow } from './screens/AppFlow'
 
 function App() {
-  return <TestFlow />
+  return <AppFlow />
 }
 
 export default App

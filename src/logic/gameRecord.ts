@@ -2,6 +2,7 @@
 // exactly. Pure functions only; saving itself lives in src/storage.
 import { HELP_STAGES, type HelpStageId } from '../data/helpStages'
 import { applyUci, getOutcome, replay, type Colour, type GameOutcome } from './game'
+import type { PathGame } from './path'
 
 export type GameRecord = {
   id: string
@@ -23,6 +24,10 @@ export type GameRecord = {
   opponentEvals?: number[]
   /** Full move number of the opponent's latest draw offer, so it doesn't pester. */
   opponentLastOfferMove?: number
+  /** What this game counts as on the path (friendly, match, cup round…). */
+  path?: PathGame
+  /** Set once the result has been recorded on the path, so it's never counted twice. */
+  resultRecorded?: boolean
 }
 
 export function newGameRecord(

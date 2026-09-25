@@ -30,6 +30,8 @@ type Props = {
   onContinue: () => void
   /** Opened from Past games: the way out goes back to the list. */
   fromHistory?: boolean
+  /** For rated games: the player's rating before and after this result. */
+  ratingChange?: { from: number; to: number } | null
 }
 
 const RATING_ORDER: MoveRating[] = ['best', 'good', 'inaccuracy', 'mistake', 'blunder']
@@ -42,7 +44,7 @@ const COUNT_LABELS: Record<MoveRating, [one: string, many: string]> = {
   blunder: ['Blunder', 'Blunders'],
 }
 
-export function ReviewScreen({ game, onContinue, fromHistory = false }: Props) {
+export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChange = null }: Props) {
   const [evals, setEvals] = useState<PositionEval[] | null>(null)
   const [progress, setProgress] = useState({ done: 0, total: game.moves.length + 1 })
   const [failed, setFailed] = useState(false)
@@ -215,6 +217,13 @@ export function ReviewScreen({ game, onContinue, fromHistory = false }: Props) {
         <p className="review-result">
           {resultLine} {outcome && <span>{describeOutcome(outcome)}</span>}
         </p>
+        {ratingChange && (
+          <p className={`review-rating ${ratingChange.to >= ratingChange.from ? 'up' : 'down'}`}>
+            Rating {Math.round(ratingChange.from)} → {Math.round(ratingChange.to)} (
+            {ratingChange.to >= ratingChange.from ? '+' : '−'}
+            {Math.abs(Math.round(ratingChange.to) - Math.round(ratingChange.from))})
+          </p>
+        )}
       </header>
 
       {failed ? (

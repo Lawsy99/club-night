@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  averageCentipawnLoss,
   bestMoveOfGame,
   biggestMoments,
   gameAccuracy,
@@ -54,6 +55,13 @@ describe('reviewMoves', () => {
     expect(best?.punished).toBe(true) // it punished g4??
     // White's only "best" moves were routine opening moves: no highlight.
     expect(bestMoveOfGame(reviewed, 'w')).toBeNull()
+  })
+
+  it('works out the average advantage given away, capped', () => {
+    // White: f3 lost 90, g4 lost 950 (capped at the 10-pawn limit) → (90 + 950) / 2
+    expect(averageCentipawnLoss(moves, evals, 'w')).toBe(520)
+    // Black: e5 gave away 10 (+60 → +50), Qh4# nothing → 5
+    expect(averageCentipawnLoss(moves, evals, 'b')).toBe(5)
   })
 
   it('works out accuracy and counts per side', () => {

@@ -25,6 +25,19 @@
   color: var(--muted);
 }
 
+.review-rating {
+  margin: 8px 0 0;
+  font-weight: 600;
+}
+
+.review-rating.up {
+  color: #7fc47a;
+}
+
+.review-rating.down {
+  color: #ec835a;
+}
+
 .review-note {
   margin: 0;
   font-size: 14px;
