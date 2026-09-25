@@ -87,6 +87,47 @@ export function gameAccuracy(moves: readonly ReviewedMove[], side: Colour): numb
   return Math.round((mean + harmonic) / 2)
 }
 
+/** How much a move cost the mover, in winning chances (0–1). */
+export const dropOf = (m: ReviewedMove) => m.winBefore - m.winAfter
+
+/**
+ * The player's biggest errors (at most `count`), in the order they happened.
+ * Only real errors count: an inaccuracy or worse.
+ */
+export function biggestMoments(moves: readonly ReviewedMove[], side: Colour, count = 3): ReviewedMove[] {
+  return moves
+    .filter((m) => m.mover === side && ['inaccuracy', 'mistake', 'blunder'].includes(m.rating))
+    .sort((a, b) => dropOf(b) - dropOf(a))
+    .slice(0, count)
+    .sort((a, b) => a.ply - b.ply)
+}
+
+/** Opening moves (the first 5 each) are usually routine, not highlights. */
+const OPENING_PLIES = 10
+
+/**
+ * The player's best moment: a top-rated move, preferring the one that
+ * punished the opponent's biggest error just before it. Routine opening
+ * moves don't count unless they punished something.
+ */
+export function bestMoveOfGame(
+  moves: readonly ReviewedMove[],
+  side: Colour,
+): { move: ReviewedMove; punished: boolean } | null {
+  let best: { move: ReviewedMove; punished: boolean; score: number } | null = null
+  for (const m of moves) {
+    if (m.mover !== side || m.rating !== 'best') continue
+    const previous = moves[m.ply - 1]
+    const theirError = previous ? dropOf(previous) : 0
+    const punished = theirError >= 0.1
+    if (m.ply < OPENING_PLIES && !punished) continue
+    // Punishing an error counts most; otherwise prefer moves that leave you better off.
+    const score = theirError * 2 + m.winAfter
+    if (!best || score > best.score) best = { move: m, punished, score }
+  }
+  return best && { move: best.move, punished: best.punished }
+}
+
 export function ratingCounts(moves: readonly ReviewedMove[], side: Colour): Record<MoveRating, number> {
   const counts: Record<MoveRating, number> = { best: 0, good: 0, inaccuracy: 0, mistake: 0, blunder: 0 }
   for (const m of moves) if (m.mover === side) counts[m.rating]++

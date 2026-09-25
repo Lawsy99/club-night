@@ -111,6 +111,49 @@
   text-align: right;
 }
 
+/* Steps with a board: the board runs edge to edge, text keeps its margins */
+.review-screen.with-board {
+  padding: 16px 0 24px;
+  gap: 14px;
+}
+
+.review-screen.with-board header,
+.review-screen.with-board > p,
+.review-screen.with-board > .review-continue {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.review-kicker {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.review-pill {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--rating);
+  color: #1f2a24;
+  font-size: 14px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.review-explanation {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.review-continue:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .review-continue {
   min-height: 48px;
   border: none;

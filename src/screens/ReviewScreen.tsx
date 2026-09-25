@@ -1,12 +1,23 @@
 // The post-game review. Every game, won or lost, ends here: Stockfish checks
-// every move (with a progress bar), then the summary. The three biggest
-// moments, best move and full-game view follow in later Phase 2 steps.
+// every move (with a progress bar), then a short sequence: summary, your
+// biggest moments (find a better move), and the best move of the game.
 import { useEffect, useMemo, useState } from 'react'
+import { Board } from '../components/Board'
+import { MomentTrainer, type Moment } from '../components/MomentTrainer'
 import { analyseGame } from '../engine/reviewAnalysis'
-import { describeOutcome, type Colour } from '../logic/game'
+import { explainGoodMove, explainMistake } from '../logic/explain'
+import { describeOutcome, replay, type Colour } from '../logic/game'
 import { outcomeOf, type GameRecord } from '../logic/gameRecord'
-import type { MoveRating } from '../logic/moveRating'
-import { gameAccuracy, ratingCounts, reviewMoves, type PositionEval } from '../logic/review'
+import { RATING_LABELS, type MoveRating } from '../logic/moveRating'
+import {
+  bestMoveOfGame,
+  biggestMoments,
+  gameAccuracy,
+  ratingCounts,
+  reviewMoves,
+  type PositionEval,
+  type ReviewedMove,
+} from '../logic/review'
 import { getArchivedGame, saveGameAnalysis } from '../storage/db'
 import '../components/ratings.css'
 import './ReviewScreen.css'
@@ -30,6 +41,9 @@ export function ReviewScreen({ game, onContinue }: Props) {
   const [evals, setEvals] = useState<PositionEval[] | null>(null)
   const [progress, setProgress] = useState({ done: 0, total: game.moves.length + 1 })
   const [failed, setFailed] = useState(false)
+  // 0 = summary, 1…n = the moments, n + 1 = best move of the game
+  const [step, setStep] = useState(0)
+  const [momentDone, setMomentDone] = useState(false)
 
   // Use saved analysis if this game was reviewed before; otherwise run it.
   useEffect(() => {
@@ -54,18 +68,90 @@ export function ReviewScreen({ game, onContinue }: Props) {
     }
   }, [game.id, game.moves])
 
+  const player = game.playerColour
+  const opponent: Colour = player === 'w' ? 'b' : 'w'
   const outcome = outcomeOf(game)
   const reviewed = useMemo(() => (evals ? reviewMoves(game.moves, evals) : null), [evals, game.moves])
-  const opponent: Colour = game.playerColour === 'w' ? 'b' : 'w'
+  const moments = useMemo(
+    () => (reviewed && evals ? biggestMoments(reviewed, player).map((m) => toMoment(m, evals, player)) : []),
+    [reviewed, evals, player],
+  )
+  const best = useMemo(() => (reviewed ? bestMoveOfGame(reviewed, player) : null), [reviewed, player])
 
   const resultLine = outcome
     ? outcome.winner === null
       ? 'Drawn — replayed next.'
-      : outcome.winner === game.playerColour
+      : outcome.winner === player
         ? 'You won.'
         : 'You lost.'
     : ''
+  const finalLabel = outcome?.winner === null ? 'Replay' : 'Continue'
 
+  function goTo(next: number) {
+    setStep(next)
+    setMomentDone(false)
+    window.scrollTo({ top: 0 })
+  }
+
+  // --- The steps -----------------------------------------------------------
+
+  if (reviewed && step >= 1 && step <= moments.length) {
+    const moment = moments[step - 1]
+    return (
+      <main className="review-screen with-board">
+        <header>
+          <p className="review-kicker">
+            Biggest moment {step} of {moments.length}
+          </p>
+          <h1>
+            {moment.moveLabel}{' '}
+            <span className={`review-pill rating-${moment.rating}`}>{RATING_LABELS[moment.rating]}</span>
+          </h1>
+        </header>
+        <MomentTrainer key={step} moment={moment} onFinished={() => setMomentDone(true)} />
+        <button
+          type="button"
+          className="review-continue"
+          disabled={!momentDone}
+          onClick={() => goTo(step + 1)}
+        >
+          {step < moments.length ? 'Next moment' : 'Best move of the game'}
+        </button>
+      </main>
+    )
+  }
+
+  if (reviewed && step === moments.length + 1) {
+    return (
+      <main className="review-screen with-board">
+        <header>
+          <p className="review-kicker">Best move of the game</p>
+          {best && <h1>{moveLabel(best.move)}</h1>}
+        </header>
+        {best ? (
+          <>
+            <Board
+              fen={replay(game.moves.slice(0, best.move.ply + 1)).fen()}
+              orientation={player === 'w' ? 'white' : 'black'}
+              movableColour={null}
+              lastMove={{ from: best.move.uci.slice(0, 2), to: best.move.uci.slice(2, 4) }}
+              onMove={() => {}}
+            />
+            <p className="review-explanation">
+              {explainGoodMove(best.move.fenBefore, best.move.uci, best.punished)}
+            </p>
+          </>
+        ) : (
+          <p className="review-note">No standout move this time. Next game.</p>
+        )}
+        <button type="button" className="review-continue" onClick={onContinue}>
+          {finalLabel}
+        </button>
+      </main>
+    )
+  }
+
+  // Summary (and the progress bar while analysing).
   return (
     <main className="review-screen">
       <header>
@@ -93,16 +179,14 @@ export function ReviewScreen({ game, onContinue }: Props) {
       ) : (
         <section className="review-summary">
           <div className="accuracy">
-            <span className="accuracy-value">{gameAccuracy(reviewed, game.playerColour) ?? '–'}%</span>
+            <span className="accuracy-value">{gameAccuracy(reviewed, player) ?? '–'}%</span>
             <span className="accuracy-label">your accuracy</span>
-            <span className="accuracy-opponent">
-              Opponent: {gameAccuracy(reviewed, opponent) ?? '–'}%
-            </span>
+            <span className="accuracy-opponent">Opponent: {gameAccuracy(reviewed, opponent) ?? '–'}%</span>
           </div>
 
           <ul className="rating-counts">
             {RATING_ORDER.map((rating) => {
-              const count = ratingCounts(reviewed, game.playerColour)[rating]
+              const count = ratingCounts(reviewed, player)[rating]
               return (
                 <li key={rating} className={`rating-${rating}`}>
                   <span className="dot" />
@@ -112,12 +196,56 @@ export function ReviewScreen({ game, onContinue }: Props) {
               )
             })}
           </ul>
+
+          {moments.length === 0 && <p className="review-note">No big mistakes this game.</p>}
         </section>
       )}
 
-      <button type="button" className="review-continue" onClick={onContinue}>
-        {outcome?.winner === null ? 'Replay' : 'Continue'}
-      </button>
+      {reviewed ? (
+        <button type="button" className="review-continue" onClick={() => goTo(1)}>
+          {moments.length > 0
+            ? `Your biggest moment${moments.length === 1 ? '' : 's'} (${moments.length})`
+            : 'Best move of the game'}
+        </button>
+      ) : (
+        failed && (
+          <button type="button" className="review-continue" onClick={onContinue}>
+            {finalLabel}
+          </button>
+        )
+      )}
     </main>
   )
+}
+
+type ReviewMoment = Moment & { rating: MoveRating; moveLabel: string }
+
+function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colour): ReviewMoment {
+  const forPlayer = (cp: number) => (player === 'w' ? cp : -cp)
+  const cpBefore = forPlayer(evals[m.ply].cp)
+  const cpAfter = forPlayer(evals[m.ply + 1].cp)
+  return {
+    fenBefore: m.fenBefore,
+    playerColour: player,
+    played: m.uci,
+    playedSan: m.san,
+    bestMove: m.bestMove ?? m.uci,
+    bestCp: cpBefore,
+    explanation: explainMistake({
+      fenBefore: m.fenBefore,
+      played: m.uci,
+      bestMove: m.bestMove,
+      reply: evals[m.ply + 1].bestMove,
+      cpBefore,
+      cpAfter,
+    }),
+    rating: m.rating,
+    moveLabel: moveLabel(m),
+  }
+}
+
+/** "14. Bxf7" or "14… Nf6". */
+function moveLabel(m: ReviewedMove): string {
+  const number = Math.floor(m.ply / 2) + 1
+  return m.mover === 'w' ? `${number}. ${m.san}` : `${number}… ${m.san}`
 }

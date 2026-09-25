@@ -1,0 +1,35 @@
+.moment {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.moment p {
+  margin: 0;
+  padding: 0 16px;
+}
+
+.moment-prompt {
+  font-weight: 500;
+}
+
+.moment-tries {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.moment-verdict {
+  font-weight: 600;
+}
+
+.moment-verdict.solved {
+  color: #7fc47a;
+}
+
+.moment-verdict.revealed {
+  color: #f0c95a;
+}
+
+.moment-explanation {
+  line-height: 1.45;
+}

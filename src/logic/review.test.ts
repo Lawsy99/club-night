@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { gameAccuracy, moveAccuracy, ratingCounts, reviewMoves, type PositionEval } from './review'
+import {
+  bestMoveOfGame,
+  biggestMoments,
+  gameAccuracy,
+  moveAccuracy,
+  ratingCounts,
+  reviewMoves,
+  type PositionEval,
+} from './review'
 
 const ev = (cp: number, bestMove: string | null = null): PositionEval => ({ cp, bestMove })
 
@@ -35,6 +43,17 @@ describe('reviewMoves', () => {
     expect(reviewed[2].mover).toBe('w')
     expect(reviewed[2].rating).toBe('blunder')
     expect(reviewed[3].rating).toBe('best') // played the engine's move
+  })
+
+  it('picks the biggest moments and the best move', () => {
+    // In the order they happened; 1.f3 is an inaccuracy, 2.g4 the blunder.
+    expect(biggestMoments(reviewed, 'w').map((m) => m.san)).toEqual(['f3', 'g4'])
+    expect(biggestMoments(reviewed, 'w', 1).map((m) => m.san)).toEqual(['g4'])
+    const best = bestMoveOfGame(reviewed, 'b')
+    expect(best?.move.san).toBe('Qh4#')
+    expect(best?.punished).toBe(true) // it punished g4??
+    // White's only "best" moves were routine opening moves: no highlight.
+    expect(bestMoveOfGame(reviewed, 'w')).toBeNull()
   })
 
   it('works out accuracy and counts per side', () => {
