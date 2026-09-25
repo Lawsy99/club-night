@@ -73,6 +73,24 @@ export function checkedKingSquare(chess: Chess): Square | null {
   return chess.findPiece({ type: 'k', color: chess.turn() })[0] ?? null
 }
 
+/**
+ * Turns an engine line (UCI moves from `fen`) into readable notation,
+ * e.g. "12. Nf3 Nc6 13. Bb5" or "12… Nc6 13. Bb5".
+ */
+export function formatLine(fen: string, uciMoves: readonly string[], maxMoves = 8): string {
+  const chess = new Chess(fen)
+  const parts: string[] = []
+  for (const [i, uci] of uciMoves.slice(0, maxMoves).entries()) {
+    const moveNumber = chess.moveNumber()
+    const whiteToMove = chess.turn() === 'w'
+    const move = applyUci(chess, uci)
+    if (!move) break
+    if (whiteToMove) parts.push(`${moveNumber}. ${move.san}`)
+    else parts.push(i === 0 ? `${moveNumber}… ${move.san}` : move.san)
+  }
+  return parts.join(' ')
+}
+
 /** Plain-English description of a finished game, for the result banner. */
 export function describeOutcome(outcome: GameOutcome): string {
   const side = (c: Colour) => (c === 'w' ? 'White' : 'Black')

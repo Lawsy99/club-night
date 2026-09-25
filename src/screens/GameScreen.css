@@ -8,13 +8,14 @@
 .game-header,
 .game-status,
 .last-move,
+.best-line,
 .game-actions {
   padding: 0 16px;
 }
 
 .game-header h1 {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -34,10 +35,30 @@
   color: #f0c95a;
 }
 
+/* Evaluation bar and board side by side, filling the width together */
+.board-row {
+  display: flex;
+  width: 100%;
+  max-width: 536px;
+  margin: 0 auto;
+}
+
+.board-cell {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
 .last-move {
   margin: 0;
   font-size: 14px;
   color: var(--muted);
+}
+
+.best-line {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .build-stamp {
@@ -53,10 +74,14 @@
   gap: 8px;
 }
 
+.help-actions button {
+  flex: 1;
+}
+
 /* Buttons meet the 44 px minimum touch target */
 .game-actions button {
   min-height: 44px;
-  padding: 0 18px;
+  padding: 0 14px;
   border: 1px solid #4a5a50;
   border-radius: 10px;
   background: #2b3931;
@@ -65,24 +90,8 @@
   cursor: pointer;
 }
 
-.level-picker {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-  font-size: 14px;
-  color: var(--muted);
-}
-
-/* 16 px text stops iOS Safari zooming in when the picker is tapped */
-.level-picker select {
-  min-height: 44px;
-  padding: 0 10px;
-  border: 1px solid #4a5a50;
-  border-radius: 10px;
-  background: #2b3931;
-  color: var(--text);
-  font-size: 16px;
+.game-actions button.active {
+  border-color: #f0c95a;
 }
 
 .game-actions button.primary {

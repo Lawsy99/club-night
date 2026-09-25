@@ -1,69 +1,63 @@
-// Phase 1 test game against plain Stockfish. The game is saved after every
-// move and resumed on launch. Help stages arrive in step 4.
+// The game screen: board, status, and whatever help the stage allows.
+// Opponent is plain Stockfish for Phase 1; characters arrive in Phase 3.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
 import { Board } from '../components/Board'
-import { DEFAULT_TEST_LEVEL_ID, TEST_OPPONENT_LEVELS } from '../data/testOpponents'
+import { BlunderWarning } from '../components/BlunderWarning'
+import { EvalBar } from '../components/EvalBar'
+import { HELP_STAGES } from '../data/helpStages'
+import { TEST_OPPONENT_LEVELS } from '../data/testOpponents'
+import { analysePosition } from '../engine/analysis'
 import { chooseTestOpponentMove } from '../engine/testOpponent'
-import { describeOutcome, replay, type GameOutcome } from '../logic/game'
+import { useAnalysis } from '../engine/useAnalysis'
+import { assessMove, describeBlunder } from '../logic/blunder'
+import { flipScore, formatScore, scoreFor } from '../logic/evaluation'
+import { describeOutcome, formatLine, getOutcome, replay, type GameOutcome } from '../logic/game'
 import {
-  newGameRecord,
-  nextPlayerColour,
+  canTakeBack,
   outcomeOf,
+  takebacksLeft,
   withMove,
   withResignation,
+  withTakeback,
   type GameRecord,
 } from '../logic/gameRecord'
-import { loadCurrentGame, requestPersistentStorage, saveCurrentGame } from '../storage/db'
 import './GameScreen.css'
 
-export function GameScreen() {
-  // null while the saved game is loading from the device
-  const [game, setGame] = useState<GameRecord | null>(null)
-
-  useEffect(() => {
-    requestPersistentStorage()
-    loadCurrentGame()
-      .then((saved) => setGame(saved && isResumable(saved) ? saved : newGameRecord('w', DEFAULT_TEST_LEVEL_ID)))
-      .catch(() => setGame(newGameRecord('w', DEFAULT_TEST_LEVEL_ID)))
-  }, [])
-
-  // Save after every change, so closing the app loses nothing.
-  useEffect(() => {
-    if (game) saveCurrentGame(game).catch((err) => console.error('Save failed', err))
-  }, [game])
-
-  if (!game) return <main className="game-screen loading">Setting up the board…</main>
-  return <TestGame game={game} setGame={setGame} />
-}
-
-/** A saved game we can't replay (e.g. from an older version) is discarded. */
-function isResumable(game: GameRecord): boolean {
-  try {
-    outcomeOf(game)
-    return true
-  } catch {
-    return false
-  }
-}
-
-type TestGameProps = {
+type Props = {
   game: GameRecord
   setGame: React.Dispatch<React.SetStateAction<GameRecord | null>>
+  onNewGame: () => void
+  onReplay: () => void
 }
 
-function TestGame({ game, setGame }: TestGameProps) {
-  const [engineError, setEngineError] = useState<string | null>(null)
+/** A move the player has dropped but not yet confirmed (blunder check). */
+type PendingMove = { uci: string; fenAfter: string; warning: string | null }
+
+export function GameScreen({ game, setGame, onNewGame, onReplay }: Props) {
+  const stage = HELP_STAGES[game.stage]
   const level = TEST_OPPONENT_LEVELS.find((l) => l.id === game.levelId) ?? TEST_OPPONENT_LEVELS[0]
+  const [engineError, setEngineError] = useState<string | null>(null)
+  const [pending, setPending] = useState<PendingMove | null>(null)
+  const [hint, setHint] = useState<{ fen: string; step: 1 | 2 } | null>(null)
+  const [showBestLine, setShowBestLine] = useState(false)
+  const checkToken = useRef(0)
 
   // Everything on screen is derived from the saved game.
   const chess = useMemo(() => replay(game.moves), [game.moves])
   const fen = chess.fen()
   const outcome = outcomeOf(game)
   const last = chess.history({ verbose: true }).at(-1)
-  const opponentToMove = !outcome && chess.turn() !== game.playerColour
+  const playersTurn = !outcome && chess.turn() === game.playerColour
+  const opponentToMove = !outcome && !playersTurn
 
-  const addMove = (uci: string) => setGame((g) => (g ? withMove(g, uci) : g))
+  // Engine analysis of the current position, for whichever help is on.
+  const wantsAnalysis =
+    !outcome &&
+    (stage.evalBar || (playersTurn && (stage.hints || stage.bestLine || stage.blunderWarning !== null)))
+  const analysis = useAnalysis(fen, wantsAnalysis)
+
+  const commitMove = (uci: string) => setGame((g) => (g ? withMove(g, uci) : g))
 
   // When it's the opponent's turn (including straight after resuming),
   // ask the engine, in the background, for a move.
@@ -72,69 +66,163 @@ function TestGame({ game, setGame }: TestGameProps) {
     let cancelled = false // set if the game changes before the engine replies
     chooseTestOpponentMove(fen, level)
       .then((move) => {
-        if (!cancelled && move) addMove(move)
+        if (!cancelled && move) commitMove(move)
       })
       .catch((err: Error) => setEngineError(err.message))
     return () => {
       cancelled = true
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- addMove is stable in effect
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- commitMove only uses setGame
   }, [opponentToMove, fen, level])
 
-  function startNextGame() {
-    setGame(newGameRecord(nextPlayerColour(game), game.levelId))
+  /** The player dropped a piece: check it for a blunder if the stage says so. */
+  function handlePlayerMove(uci: string) {
+    const rule = stage.blunderWarning
+    const chessAfter = replay([...game.moves, uci])
+    // No warning in Real, or when the move ends the game.
+    if (!rule || getOutcome(chessAfter)) {
+      commitMove(uci)
+      return
+    }
+    const token = ++checkToken.current
+    const fenAfter = chessAfter.fen()
+    setPending({ uci, fenAfter, warning: null })
+
+    const finish = (warning: string | null) => {
+      if (token !== checkToken.current) return // superseded
+      if (warning) {
+        setPending({ uci, fenAfter, warning })
+      } else {
+        setPending(null)
+        commitMove(uci)
+      }
+    }
+    Promise.all([analysePosition(fen), analysePosition(fenAfter)])
+      .then(([before, after]) => {
+        if (!before || !after) return finish(null)
+        // Both scores from the player's point of view.
+        const kind = assessMove({ bestBefore: before.score, after: flipScore(after.score) }, rule)
+        finish(kind ? describeBlunder(kind, fenAfter, after.bestMove) : null)
+      })
+      // If the engine fails, never block the player's move.
+      .catch(() => finish(null))
   }
+
+  function resolveWarning(playIt: boolean) {
+    if (pending && playIt) commitMove(pending.uci)
+    // Taking it back here is free: it doesn't use up a takeback.
+    setPending(null)
+    setHint(null)
+  }
+
+  // A hint belongs to one position, and disappears once a move is made.
+  const hintStep = hint?.fen === fen && !pending ? hint.step : 0
+  const hintMove = playersTurn ? analysis.current?.bestMove ?? null : null
 
   const status = engineError
     ? engineError
     : outcome
       ? `${describeOutcome(outcome)} ${resultForPlayer(outcome, game)}`
-      : opponentToMove
-        ? 'Thinking…'
-        : `Your move${chess.inCheck() ? ' · check' : ''}`
+      : pending && !pending.warning
+        ? 'Checking your move…'
+        : opponentToMove
+          ? 'Thinking…'
+          : `Your move${chess.inCheck() ? ' · check' : ''}`
+
+  const stageLabel =
+    stage.takebacks > 0 && Number.isFinite(stage.takebacks)
+      ? `${stage.label} · ${takebacksLeft(game)} takeback${takebacksLeft(game) === 1 ? '' : 's'} left`
+      : `${stage.label} · ${stage.summary}`
+
+  const pendingLast = pending ? { from: pending.uci.slice(0, 2), to: pending.uci.slice(2, 4) } : null
 
   return (
     <main className="game-screen">
       <header className="game-header">
-        <h1>Test game vs Stockfish</h1>
+        <h1>Test game vs Stockfish · {level.label}</h1>
         <p className="stage-label">
-          You play {game.playerColour === 'w' ? 'White' : 'Black'} · no help yet
+          {stageLabel} · you play {game.playerColour === 'w' ? 'White' : 'Black'}
         </p>
       </header>
 
       <p className={outcome ? 'game-status game-over' : 'game-status'}>{status}</p>
 
-      <Board
-        fen={fen}
-        orientation={game.playerColour === 'w' ? 'white' : 'black'}
-        movableColour={outcome ? null : game.playerColour}
-        lastMove={last ? { from: last.from, to: last.to } : null}
-        onMove={addMove}
-      />
+      <div className="board-row">
+        {stage.evalBar && <EvalBar analysis={analysis.latest} playerColour={game.playerColour} />}
+        <div className="board-cell">
+          <Board
+            fen={pending ? pending.fenAfter : fen}
+            orientation={game.playerColour === 'w' ? 'white' : 'black'}
+            movableColour={outcome || pending ? null : game.playerColour}
+            lastMove={pendingLast ?? (last ? { from: last.from, to: last.to } : null)}
+            onMove={handlePlayerMove}
+            hintSquare={hintStep === 1 && hintMove ? hintMove.slice(0, 2) : null}
+            hintMove={hintStep === 2 ? hintMove : null}
+          />
+          {pending?.warning && (
+            <BlunderWarning
+              message={pending.warning}
+              onPlayAnyway={() => resolveWarning(true)}
+              onTakeBack={() => resolveWarning(false)}
+            />
+          )}
+        </div>
+      </div>
 
       <p className="last-move">{last ? `Last move: ${last.san}` : 'Tap a piece, then a square. Or drag.'}</p>
 
+      {showBestLine && stage.bestLine && !outcome && (
+        <p className="best-line">
+          {analysis.current
+            ? `Best line (${formatScore(scoreFor(game.playerColour, analysis.current.sideToMove, analysis.current.score))} for you): ${formatLine(fen, analysis.current.pv)}`
+            : 'Working out the best line…'}
+        </p>
+      )}
+
+      {!outcome && (stage.hints || stage.takebacks > 0 || stage.bestLine) && (
+        <div className="game-actions help-actions">
+          {stage.hints && (
+            <button
+              type="button"
+              disabled={!hintMove || hintStep === 2 || pending !== null}
+              onClick={() => setHint({ fen, step: hintStep === 0 ? 1 : 2 })}
+            >
+              {hintStep === 0 ? 'Hint' : 'Show move'}
+            </button>
+          )}
+          {stage.takebacks > 0 && (
+            <button
+              type="button"
+              disabled={!canTakeBack(game) || pending !== null}
+              onClick={() => setGame((g) => (g ? withTakeback(g) : g))}
+            >
+              Take back
+            </button>
+          )}
+          {stage.bestLine && (
+            <button
+              type="button"
+              className={showBestLine ? 'active' : undefined}
+              onClick={() => setShowBestLine((s) => !s)}
+            >
+              Best line
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="game-actions">
         {outcome ? (
-          <button type="button" className="primary" onClick={startNextGame}>
+          <button
+            type="button"
+            className="primary"
+            onClick={outcome.winner === null ? onReplay : onNewGame}
+          >
             {outcome.winner === null ? 'Replay' : 'New game'}
           </button>
         ) : (
           <ResignButton onResign={() => setGame((g) => (g ? withResignation(g, g.playerColour) : g))} />
         )}
-        <label className="level-picker">
-          <span>Opponent</span>
-          <select
-            value={game.levelId}
-            onChange={(e) => setGame((g) => (g ? { ...g, levelId: e.target.value } : g))}
-          >
-            {TEST_OPPONENT_LEVELS.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.label}
-              </option>
-            ))}
-          </select>
-        </label>
       </div>
 
       <p className="build-stamp">Version: {BUILD_LABEL}</p>

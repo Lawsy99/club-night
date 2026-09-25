@@ -21,12 +21,25 @@ type Props = {
   movableColour: Colour | null
   lastMove: { from: string; to: string } | null
   onMove: (uci: string) => void
+  /** Hint step 1: the square of the piece to move. */
+  hintSquare?: string | null
+  /** Hint step 2: the move itself, drawn as an arrow (UCI, e.g. "g1f3"). */
+  hintMove?: string | null
 }
 
 const LIGHT = '#ece4cf'
 const DARK = '#86a07a'
+const HINT_COLOUR = 'rgba(40, 120, 200, 0.85)'
 
-export function Board({ fen, orientation, movableColour, lastMove, onMove }: Props) {
+export function Board({
+  fen,
+  orientation,
+  movableColour,
+  lastMove,
+  onMove,
+  hintSquare = null,
+  hintMove = null,
+}: Props) {
   // Legal moves depend only on the current position, so a FEN is enough here.
   const chess = useMemo(() => new Chess(fen), [fen])
   const [selected, setSelected] = useState<Square | null>(null)
@@ -76,7 +89,10 @@ export function Board({ fen, orientation, movableColour, lastMove, onMove }: Pro
     setPendingPromotion(null)
   }
 
-  const squareStyles = buildSquareStyles(chess, selected, targets, lastMove)
+  const squareStyles = buildSquareStyles(chess, selected, targets, lastMove, hintSquare)
+  const arrows = hintMove
+    ? [{ startSquare: hintMove.slice(0, 2), endSquare: hintMove.slice(2, 4), color: HINT_COLOUR }]
+    : []
 
   return (
     <div className="board-wrap">
@@ -87,6 +103,7 @@ export function Board({ fen, orientation, movableColour, lastMove, onMove }: Pro
           lightSquareStyle: { backgroundColor: LIGHT },
           darkSquareStyle: { backgroundColor: DARK },
           squareStyles,
+          arrows,
           allowDrawingArrows: false,
           allowDragOffBoard: false,
           allowAutoScroll: false,
@@ -112,6 +129,7 @@ function buildSquareStyles(
   selected: Square | null,
   targets: Square[],
   lastMove: { from: string; to: string } | null,
+  hintSquare: string | null,
 ): Record<string, CSSProperties> {
   const styles: Record<string, CSSProperties> = {}
   const add = (sq: string, style: CSSProperties) => {
@@ -130,6 +148,7 @@ function buildSquareStyles(
       backgroundImage: 'radial-gradient(circle, rgba(210, 40, 30, 0.85) 25%, rgba(210, 40, 30, 0) 75%)',
     })
   }
+  if (hintSquare) add(hintSquare, { boxShadow: `inset 0 0 0 4px ${HINT_COLOUR}` })
   if (selected) add(selected, { backgroundColor: 'rgba(40, 90, 60, 0.55)' })
   for (const sq of targets) {
     const capture = chess.get(sq) !== undefined

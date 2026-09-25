@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   applyUci,
   checkedKingSquare,
+  formatLine,
   getOutcome,
   isPromotion,
   legalTargets,
@@ -57,6 +58,20 @@ describe('illegal moves', () => {
     const chess = new Chess()
     expect(applyUci(chess, 'e2e5')).toBeNull()
     expect(() => replay(['e2e4', 'e2e4'])).toThrow()
+  })
+})
+
+describe('formatLine', () => {
+  it('writes an engine line in normal notation', () => {
+    expect(formatLine(new Chess().fen(), ['e2e4', 'e7e5', 'g1f3'])).toBe('1. e4 e5 2. Nf3')
+  })
+
+  it('starts with an ellipsis when Black is to move', () => {
+    expect(formatLine(replay(['e2e4']).fen(), ['c7c5', 'g1f3'])).toBe('1… c5 2. Nf3')
+  })
+
+  it('stops at an impossible move rather than crashing', () => {
+    expect(formatLine(new Chess().fen(), ['e2e4', 'e2e4'])).toBe('1. e4')
   })
 })
 

@@ -1,0 +1,56 @@
+.eval-bar {
+  position: relative;
+  flex: 0 0 16px;
+  overflow: hidden;
+  /* The empty part of the bar is the opponent's colour */
+  background: #3a3a3a;
+}
+
+.eval-bar.player-black {
+  background: #f4f1e8;
+}
+
+.eval-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f4f1e8;
+  transition: height 0.4s ease;
+}
+
+.eval-bar.player-black .eval-fill {
+  background: #3a3a3a;
+}
+
+/* The number sits inside the bigger share, in a colour that shows up on it */
+.eval-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  font-size: 9px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  padding: 3px 0;
+}
+
+.eval-label.at-bottom {
+  bottom: 0;
+}
+
+.eval-label.at-top {
+  top: 0;
+}
+
+.player-white .eval-label.at-bottom,
+.player-black .eval-label.at-top {
+  color: #3a3a3a;
+}
+
+.player-white .eval-label.at-top,
+.player-black .eval-label.at-bottom {
+  color: #f4f1e8;
+}

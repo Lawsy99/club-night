@@ -1,0 +1,48 @@
+/* Sits over the board so the position stays visible above and below it */
+.blunder-backdrop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 10;
+}
+
+.blunder-card {
+  width: 100%;
+  max-width: 320px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.blunder-message {
+  margin: 0 0 14px;
+  line-height: 1.4;
+}
+
+.blunder-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.blunder-actions button {
+  flex: 1;
+  min-height: 44px;
+  border: 1px solid #4a5a50;
+  border-radius: 10px;
+  background: #2b3931;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.blunder-actions button.take-back {
+  background: #f0c95a;
+  border-color: #f0c95a;
+  color: #1f2a24;
+  font-weight: 600;
+}

@@ -1,0 +1,75 @@
+.setup-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 16px;
+}
+
+.setup-screen h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.setup-screen header p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.setup-level {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* 16 px text stops iOS Safari zooming in when the picker is tapped */
+.setup-level select {
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid #4a5a50;
+  border-radius: 10px;
+  background: #2b3931;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.setup-stages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.setup-stages button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: 64px;
+  padding: 12px 16px;
+  border: 1px solid #4a5a50;
+  border-radius: 12px;
+  background: #2b3931;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.setup-stages button strong {
+  font-size: 18px;
+}
+
+.setup-stages button span {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.setup-screen .build-stamp {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  color: var(--muted);
+  opacity: 0.6;
+}
