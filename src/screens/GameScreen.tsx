@@ -18,17 +18,20 @@ import { useAnalysis } from '../engine/useAnalysis'
 import { useMoveRating } from '../engine/useMoveRating'
 import { useWakeLock } from './useWakeLock'
 import { assessMove, describeBlunder } from '../logic/blunder'
-import { flipScore, formatScore, scoreFor } from '../logic/evaluation'
+import { flipScore, formatScore, scoreFor, toCentipawns } from '../logic/evaluation'
 import { describeOutcome, getOutcome, replay, type GameOutcome } from '../logic/game'
 import {
   canTakeBack,
   outcomeOf,
   takebacksLeft,
+  withDrawAgreed,
   withMove,
+  withOpponentEval,
   withResignation,
   withTakeback,
   type GameRecord,
 } from '../logic/gameRecord'
+import { acceptsDraw, piecesLeft, shouldOfferDraw, shouldResign } from '../logic/opponentDecisions'
 import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
 import '../components/ratings.css'
 import './GameScreen.css'
@@ -60,6 +63,9 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
   const [peekKey, setPeekKey] = useState<string | null>(null)
   const [maiaStatus, setMaiaStatus] = useState<MaiaStatus>({ state: 'idle' })
   const [maiaMs, setMaiaMs] = useState<number | null>(null)
+  // The opponent's speech bubble: a draw offer, or their answer to the player's.
+  const [bubble, setBubble] = useState<{ kind: 'offer' | 'declined' | 'thinking' } | null>(null)
+  const [playerOfferMove, setPlayerOfferMove] = useState<number | null>(null)
   const checkToken = useRef(0)
 
   // Everything on screen is derived from the saved game.
@@ -89,25 +95,69 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
     return maia.onStatus(setMaiaStatus)
   }, [opponent.engine])
 
-  const commitMove = (uci: string) => setGame((g) => (g ? withMove(g, uci) : g))
+  const commitMove = (uci: string) => {
+    // Playing on declines any offer on the table, as over the board.
+    setBubble(null)
+    setGame((g) => (g ? withMove(g, uci) : g))
+  }
 
-  // When it's the opponent's turn (including straight after resuming),
-  // ask the engine, in the background, for a move.
+  // When it's the opponent's turn (including straight after resuming): it
+  // weighs up the position (resigning if hopeless), moves, and may offer a draw.
   useEffect(() => {
     if (!opponentToMove) return
     let cancelled = false // set if the game changes before the engine replies
-    chooseOpponentMove(fen, game.moves, opponent)
-      .then(({ move, maiaMs: ms }) => {
-        if (cancelled) return
-        if (ms !== undefined) setMaiaMs(ms)
-        if (move) commitMove(move)
+    ;(async () => {
+      const view = await analysePosition(fen).catch(() => null)
+      const cp = view ? toCentipawns(view.score) : 0 // the opponent's own point of view
+      if (cancelled) return
+      if (shouldResign(opponent.character, [...(game.opponentEvals ?? []), cp])) {
+        setGame((g) => (g ? withResignation(g, opponentColour) : g))
+        return
+      }
+      const { move, maiaMs: ms } = await chooseOpponentMove(fen, game.moves, opponent)
+      if (cancelled || !move) return
+      if (ms !== undefined) setMaiaMs(ms)
+      const offer = shouldOfferDraw(opponent.character, {
+        evalCp: cp,
+        moveNumber: chess.moveNumber(),
+        piecesLeft: piecesLeft(fen),
+        lastOfferMove: game.opponentLastOfferMove,
       })
-      .catch((err: Error) => setEngineError(err.message))
+      setGame((g) => {
+        if (!g) return g
+        const next = withMove(withOpponentEval(g, cp), move)
+        return offer ? { ...next, opponentLastOfferMove: chess.moveNumber() } : next
+      })
+      if (offer) setBubble({ kind: 'offer' })
+    })().catch((err: Error) => setEngineError(err.message))
     return () => {
       cancelled = true
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- commitMove only uses setGame
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the position and opponent
   }, [opponentToMove, fen, opponent.id, opponent.rating])
+
+  // A refusal fades after a few seconds.
+  useEffect(() => {
+    if (bubble?.kind !== 'declined') return
+    const timer = window.setTimeout(() => setBubble(null), 3500)
+    return () => window.clearTimeout(timer)
+  }, [bubble])
+
+  /** The player offers a draw: the opponent accepts only if clearly worse. */
+  async function offerDraw() {
+    setBubble({ kind: 'thinking' })
+    const view = await analysePosition(fen).catch(() => null)
+    // Analysis is from the side to move; turn it into the opponent's view.
+    const sideCp = view ? toCentipawns(view.score) : 0
+    const opponentCp = chess.turn() === opponentColour ? sideCp : -sideCp
+    if (acceptsDraw(opponent.character, opponentCp)) {
+      setBubble(null)
+      setGame((g) => (g ? withDrawAgreed(g) : g))
+    } else {
+      setBubble({ kind: 'declined' })
+      setPlayerOfferMove(chess.moveNumber())
+    }
+  }
 
   /** The player dropped a piece: check it for a blunder if the stage says so. */
   function handlePlayerMove(uci: string) {
@@ -215,6 +265,32 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
         side={opponentColour}
         thinking={opponentToMove && !downloading}
       />
+
+      {bubble && !outcome && (
+        <div className="speech-bubble" role="status">
+          {bubble.kind === 'offer' ? (
+            <>
+              <span className="speech">“Draw?”</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setBubble(null)
+                  setGame((g) => (g ? withDrawAgreed(g) : g))
+                }}
+              >
+                Accept
+              </button>
+              <button type="button" onClick={() => setBubble(null)}>
+                Decline
+              </button>
+            </>
+          ) : bubble.kind === 'thinking' ? (
+            <span className="speech">…</span>
+          ) : (
+            <span className="speech">“I'll play on.”</span>
+          )}
+        </div>
+      )}
 
       <div className="board-row">
         {stage.evalBar && <EvalBar analysis={analysis.latest} playerColour={game.playerColour} />}
@@ -325,7 +401,21 @@ export function GameScreen({ game, setGame, onReview, onRematch, onChangeOpponen
             </button>
           </>
         ) : (
-          <ResignButton onResign={() => setGame((g) => (g ? withResignation(g, g.playerColour) : g))} />
+          <>
+            <ResignButton onResign={() => setGame((g) => (g ? withResignation(g, g.playerColour) : g))} />
+            <button
+              type="button"
+              disabled={
+                pending !== null ||
+                bubble !== null ||
+                // After a refusal, wait five moves before asking again.
+                (playerOfferMove !== null && chess.moveNumber() - playerOfferMove < 5)
+              }
+              onClick={offerDraw}
+            >
+              Offer draw
+            </button>
+          </>
         )}
       </div>
 

@@ -18,6 +18,50 @@
   font-weight: 600;
 }
 
+/* The opponent's speech bubble, under their name bar */
+.speech-bubble {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 16px;
+  padding: 6px 8px 6px 14px;
+  border-radius: 14px;
+  background: #ece4cf;
+  color: #1f2a24;
+  position: relative;
+}
+
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 22px;
+  border: 6px solid transparent;
+  border-top: 0;
+  border-bottom-color: #ece4cf;
+}
+
+.speech-bubble .speech {
+  flex: 1;
+  font-weight: 600;
+}
+
+.speech-bubble button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid #1f2a24;
+  border-radius: 10px;
+  background: none;
+  color: #1f2a24;
+  font: inherit;
+  cursor: pointer;
+}
+
+.speech-bubble button:first-of-type {
+  background: #1f2a24;
+  color: #ece4cf;
+}
+
 .opponent-rating {
   font-weight: 400;
   color: var(--muted);

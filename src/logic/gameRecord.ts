@@ -17,6 +17,12 @@ export type GameRecord = {
   startedAt: number
   /** Set when the game ends in a way the board can't show (resignation). */
   resignedBy?: Colour
+  /** Both sides agreed a draw (replayed, like any draw). */
+  drawAgreed?: boolean
+  /** The opponent's view of the position at each of its turns (centipawns), newest last. */
+  opponentEvals?: number[]
+  /** Full move number of the opponent's latest draw offer, so it doesn't pester. */
+  opponentLastOfferMove?: number
 }
 
 export function newGameRecord(
@@ -53,6 +59,16 @@ export function withMove(game: GameRecord, uci: string): GameRecord {
 export function withResignation(game: GameRecord, by: Colour): GameRecord {
   if (outcomeOf(game)) return game
   return { ...game, resignedBy: by }
+}
+
+export function withDrawAgreed(game: GameRecord): GameRecord {
+  if (outcomeOf(game)) return game
+  return { ...game, drawAgreed: true }
+}
+
+/** Remembers the opponent's latest evaluation (only the last few matter). */
+export function withOpponentEval(game: GameRecord, cp: number): GameRecord {
+  return { ...game, opponentEvals: [...(game.opponentEvals ?? []), cp].slice(-5) }
 }
 
 /** Whose move number `index` was (moves alternate, White first). */
@@ -93,6 +109,7 @@ export function outcomeOf(game: GameRecord): GameOutcome | null {
   if (game.resignedBy) {
     return { winner: opposite(game.resignedBy), reason: 'resignation' }
   }
+  if (game.drawAgreed) return { winner: null, reason: 'agreement' }
   return getOutcome(replay(game.moves))
 }
 

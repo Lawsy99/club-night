@@ -10,7 +10,7 @@ import { Chess, type Move, type Square } from 'chess.js'
 export type Colour = 'w' | 'b'
 export type PromotionPiece = 'q' | 'r' | 'b' | 'n'
 
-export type DrawReason = 'stalemate' | 'threefold' | 'insufficient' | 'fifty-move'
+export type DrawReason = 'stalemate' | 'threefold' | 'insufficient' | 'fifty-move' | 'agreement'
 export type GameOutcome =
   | { winner: Colour; reason: 'checkmate' | 'resignation' }
   | { winner: null; reason: DrawReason }
@@ -107,5 +107,7 @@ export function describeOutcome(outcome: GameOutcome): string {
       return 'Same position three times. Draw.'
     case 'fifty-move':
       return 'Fifty moves without a capture or pawn move. Draw.'
+    case 'agreement':
+      return 'Draw agreed.'
   }
 }

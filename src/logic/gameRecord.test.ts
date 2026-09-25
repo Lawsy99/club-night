@@ -7,7 +7,9 @@ import {
   nextPlayerColour,
   outcomeOf,
   takebacksLeft,
+  withDrawAgreed,
   withMove,
+  withOpponentEval,
   withResignation,
   withTakeback,
 } from './gameRecord'
@@ -30,6 +32,18 @@ describe('game records', () => {
     const game = withResignation(play(['e2e4']), 'w')
     expect(outcomeOf(game)).toEqual({ winner: 'b', reason: 'resignation' })
     expect(withMove(game, 'e7e5').moves).toEqual(['e2e4'])
+  })
+
+  it('record an agreed draw, which is replayed like any draw', () => {
+    const game = withDrawAgreed(play(['e2e4', 'e7e5']))
+    expect(outcomeOf(game)).toEqual({ winner: null, reason: 'agreement' })
+    expect(withMove(game, 'g1f3').moves).toHaveLength(2)
+  })
+
+  it('keep only the last few opponent evaluations', () => {
+    let game = play([])
+    for (const cp of [1, 2, 3, 4, 5, 6, 7]) game = withOpponentEval(game, cp)
+    expect(game.opponentEvals).toEqual([3, 4, 5, 6, 7])
   })
 
   it('report draws so they can be replayed', () => {
