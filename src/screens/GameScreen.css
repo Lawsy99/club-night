@@ -1,0 +1,63 @@
+.game-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 0 16px;
+}
+
+.game-header,
+.game-status,
+.last-move,
+.game-actions {
+  padding: 0 16px;
+}
+
+.game-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.stage-label {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.game-status {
+  margin: 0;
+  min-height: 24px;
+  font-weight: 500;
+}
+
+.game-status.game-over {
+  color: #f0c95a;
+}
+
+.last-move {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.game-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Buttons meet the 44 px minimum touch target */
+.game-actions button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #4a5a50;
+  border-radius: 10px;
+  background: #2b3931;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.game-actions button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
