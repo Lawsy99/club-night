@@ -3,7 +3,7 @@
 import { Chess } from 'chess.js'
 import { OPENING_BOOKS } from '../data/openingBooks'
 import { toUci, type Colour } from './game'
-import { detectOpening } from './planPause'
+import { detectOpening } from './openings'
 
 /** "1. e4 e5 2. Nf3" → ["e2e4", "e7e5", "g1f3"]. Throws on an illegal move. */
 export function parseLine(line: string): string[] {

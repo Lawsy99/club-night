@@ -43,8 +43,9 @@ describe('the club ladder', () => {
 
   it('moves Priya below the player at the story moment, not before', () => {
     const p = withRating(1200)
-    const before = clubLadder({ ...p, chapter: 4 })
-    const after = clubLadder({ ...p, chapter: 5 })
+    // Her story week is week 8 (index 7); the change comes once it's done.
+    const before = clubLadder({ ...p, chapter: 7 })
+    const after = clubLadder({ ...p, chapter: 8 })
     expect(ladderChanges(before, after)).toEqual([{ kind: 'passed', id: 'priya', name: 'Priya' }])
   })
 })

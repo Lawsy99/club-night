@@ -2,7 +2,7 @@
 // studies the player's games. From 10 real games on, he steers towards the
 // opening where the player scores worst, and Coach Pemberton says so.
 import type { Colour } from './game'
-import { detectOpening } from './planPause'
+import { detectOpening } from './openings'
 
 export type PlayedGame = { sans: readonly string[]; playerColour: Colour; won: boolean; rated: boolean }
 

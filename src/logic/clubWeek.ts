@@ -4,7 +4,8 @@ import { ACT_1 } from '../data/act1'
 import { SESSIONS } from '../data/clubWeek'
 import { matchUnlocked, type Progress } from './path'
 
-export type SlotState = 'done' | 'today' | 'later'
+/** 'optional': practice night in a week with someone you already know (Saturday is open anyway). */
+export type SlotState = 'done' | 'today' | 'later' | 'optional'
 export type Slot = { key: string; day: string; name: string; state: SlotState }
 export type Week = { title: string; subtitle: string; slots: Slot[] }
 
@@ -17,13 +18,16 @@ export function clubWeek(p: Progress): Week | null {
   if (p.stage === 'act' && p.chapter < chapters.length) {
     const ch = chapters[p.chapter]
     const open = matchUnlocked(p)
+    const met = p.met.includes(ch.opponent)
     const state = (done: boolean, today: boolean): SlotState => (done ? 'done' : today ? 'today' : 'later')
+    const practice: SlotState =
+      met && p.friendlies.played === 0 ? (p.lessonDone ? 'optional' : 'later') : state(p.lessonDone && open, p.lessonDone && !open)
     return {
       title: `Week ${p.chapter + 1}`,
       subtitle: ch.title,
       slots: [
         { key: 'coaching', day: 'Tue', name: SESSIONS.coaching.short, state: state(p.lessonDone, !p.lessonDone) },
-        { key: 'practice', day: 'Thu', name: SESSIONS.practice.short, state: state(p.lessonDone && open, p.lessonDone && !open) },
+        { key: 'practice', day: 'Thu', name: SESSIONS.practice.short, state: practice },
         { key: 'match', day: 'Sat', name: SESSIONS.match.short, state: state(false, p.lessonDone && open) },
       ],
     }

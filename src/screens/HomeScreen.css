@@ -182,6 +182,10 @@
   font-weight: 500;
 }
 
+.club-week-day.optional {
+  color: var(--muted);
+}
+
 .club-week-day.later {
   color: var(--muted);
   border-style: dashed;
@@ -315,7 +319,7 @@
   cursor: pointer;
 }
 
-/* The act strip opens the story so far */
+/* This week's heading opens the club calendar */
 .act-progress-button {
   display: block;
   width: 100%;

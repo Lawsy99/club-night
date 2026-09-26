@@ -2,7 +2,7 @@
 // next (design document, "The path", "How friendlies move you forward",
 // "Stakes"). Pure state + functions; the Home screen asks `nextStep` and the
 // game flow reports results back.
-import { ACT_1, TRIAL_FINALE, TRIAL_OPPONENTS } from '../data/act1'
+import { ACT_1, storyWeeksBefore, TRIAL_FINALE, TRIAL_OPPONENTS } from '../data/act1'
 import { characterRating, findCharacter, storyOffset } from '../data/characters'
 import { MEMBERS } from '../data/members'
 import { sessionLabel } from '../data/clubWeek'
@@ -130,7 +130,8 @@ export function opponentRating(p: Progress, id: string): number {
   const character = findCharacter(id)
   if (!character) return p.baseline
   const you = p.rating ? p.rating.rating : p.baseline
-  return rounded(you + storyOffset(character, p.chapter))
+  // The story's distance depends on how many story weeks have passed, not weeks in total.
+  return rounded(you + storyOffset(character, storyWeeksBefore(p.chapter)))
 }
 
 const nameOf = (id: string) => findCharacter(id)?.name ?? id

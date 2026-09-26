@@ -4,7 +4,7 @@
 // archive; the screen does the loading.
 import type { Colour } from './game'
 import { piecesLeft } from './opponentDecisions'
-import { detectOpening } from './planPause'
+import { detectOpening } from './openings'
 import { gameAccuracy, type ReviewedMove } from './review'
 
 export type StatsGame = {

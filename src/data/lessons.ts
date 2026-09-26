@@ -7,7 +7,7 @@
 // follows the player's puzzle rating.
 
 export type Lesson = {
-  /** Matches the chapter id in act1.ts. */
+  /** Matches the week's id in act1.ts (c1 to c7 story weeks, w3 and so on club weeks). */
   id: string
   title: string
   /** One or two short lines, about exactly what the puzzles will test. */
@@ -74,6 +74,63 @@ export const LESSONS: Lesson[] = [
     intro: "Toby's Najdorf, Catalan and Nimzo lead to sharp tactics. Forks, pins, discoveries: find them first.",
     openings: ['najdorf', 'catalan', 'nimzo'],
     themes: ['fork', 'pin', 'discoveredAttack'],
+    count: 5,
+  },
+  // Club weeks (between the story weeks): general topics every club player needs.
+  {
+    id: 'w3',
+    title: 'Back-rank mates',
+    intro: 'Club players forget their back rank. Marjorie never does. Learn to spot it, for both sides.',
+    themes: ['backRankMate'],
+    count: 4,
+  },
+  {
+    id: 'w5',
+    title: 'Removing the defender',
+    intro: 'Take the piece doing the defending, and whatever it was guarding falls.',
+    themes: ['capturingDefender'],
+    count: 4,
+  },
+  {
+    id: 'w7',
+    title: 'Skewers',
+    intro: 'The valuable piece has to move, and the one behind it goes.',
+    themes: ['skewer'],
+    count: 4,
+  },
+  {
+    id: 'w9',
+    title: 'King and pawn endings',
+    intro: 'Clive swaps everything off, so you will end up here. Count carefully.',
+    themes: ['pawnEndgame'],
+    count: 4,
+  },
+  {
+    id: 'w11',
+    title: 'Deflection',
+    intro: 'Pull a defender away from its job, and the rest follows.',
+    themes: ['deflection'],
+    count: 4,
+  },
+  {
+    id: 'w12',
+    title: 'Trapped pieces',
+    intro: 'A piece with nowhere to go is a piece you can win. Look before you chase.',
+    themes: ['trappedPiece'],
+    count: 4,
+  },
+  {
+    id: 'w14',
+    title: 'Rook endings',
+    intro: 'Graham will reach a rook ending if he can. Most games do. Active rooks win them.',
+    themes: ['rookEndgame'],
+    count: 4,
+  },
+  {
+    id: 'w15',
+    title: 'Mate in two',
+    intro: 'Before the cup: a forcing move first, then the king has nowhere left to go.',
+    themes: ['mateIn2'],
     count: 5,
   },
 ]

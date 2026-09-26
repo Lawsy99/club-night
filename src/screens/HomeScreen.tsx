@@ -34,8 +34,8 @@ type Props = {
   ladder: Rung[] | null
   ladderNews: LadderNews[]
   onOpenLadder: () => void
-  /** The story so far (tap the act strip). */
-  onOpenDiary: () => void
+  /** The club calendar (tap this week's heading). */
+  onOpenCalendar: () => void
   onPlay: (game: PathGame) => void
   onStartLesson: () => void
   onTargetedPuzzles: () => void
@@ -70,7 +70,7 @@ export function HomeScreen(props: Props) {
     ladder,
     ladderNews,
     onOpenLadder,
-    onOpenDiary,
+    onOpenCalendar,
     onPlay,
     onStartLesson,
     onTargetedPuzzles,
@@ -126,7 +126,7 @@ export function HomeScreen(props: Props) {
 
       {!progress.playerName && <MissingName onSave={onSetName} />}
 
-      <button type="button" className="act-progress-button" onClick={onOpenDiary} aria-label="The story so far">
+      <button type="button" className="act-progress-button" onClick={onOpenCalendar} aria-label="Club calendar">
         <ActProgress progress={progress} />
       </button>
 
@@ -212,6 +212,7 @@ function ActProgress({ progress }: { progress: Progress }) {
             <span className="club-week-name">{s.name}</span>
             {s.state === 'done' && <span className="club-week-tick" aria-label="done">✓︎</span>}
             {s.state === 'today' && <span className="club-week-tonight">tonight</span>}
+            {s.state === 'optional' && <span className="club-week-tonight">optional</span>}
           </li>
         ))}
       </ol>

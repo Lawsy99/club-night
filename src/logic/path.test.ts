@@ -139,9 +139,9 @@ describe('the path', () => {
     expect(opponentRating(improved, 'toby')).toBe(1550)
     // Fixed characters don't follow: the player climbs past them.
     expect(opponentRating(improved, 'graham')).toBe(opponentRating(p, 'graham'))
-    // Priya is just above until the player has beaten her (chapter 5), then just below.
-    expect(opponentRating({ ...p, chapter: 4 }, 'priya')).toBe(1220)
-    expect(opponentRating({ ...p, chapter: 5 }, 'priya')).toBe(1180)
+    // Priya is just above until the player has beaten her (her story week is week 8), then just below.
+    expect(opponentRating({ ...p, chapter: 7 }, 'priya')).toBe(1220)
+    expect(opponentRating({ ...p, chapter: 8 }, 'priya')).toBe(1180)
   })
 
   it('offers the match straight away against someone already met', () => {

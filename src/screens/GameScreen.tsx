@@ -8,7 +8,6 @@ import { BlunderWarning } from '../components/BlunderWarning'
 import { EvalBar } from '../components/EvalBar'
 import { HINT_ARROW_COLOUR, lineArrows } from '../components/lineArrows'
 import { MoveStrip } from '../components/MoveStrip'
-import { PlanPause } from '../components/PlanPause'
 import { DemoBoard } from '../components/DemoBoard'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
 import { buildDemo } from '../logic/demo'
@@ -40,7 +39,6 @@ import {
   type GameRecord,
 } from '../logic/gameRecord'
 import { acceptsDraw, piecesLeft, shouldOfferDraw, shouldResign } from '../logic/opponentDecisions'
-import { planFor, shouldPausePlan } from '../logic/planPause'
 import {
   chatterAllowed,
   LONG_THINK_GAP_MOVES,
@@ -49,7 +47,7 @@ import {
   mostImportant,
   TENSION_MOVES,
 } from '../logic/dialogue'
-import { detectOpening } from '../logic/planPause'
+import { detectOpening } from '../logic/openings'
 import { triggersFor } from '../logic/gameTriggers'
 import { useDialogue } from './useDialogue'
 import { Chess } from 'chess.js'
@@ -444,17 +442,9 @@ export function GameScreen({
 
   const pendingLast = pending ?{ from: pending.uci.slice(0, 2), to: pending.uci.slice(2, 4) } : null
 
-  // The plan pause: once per assisted game, around move 10, if we have plans for this opening.
-  const planSet =
-    !pending &&
-    shouldPausePlan({
-      stage: game.stage,
-      alreadyDone: !!game.planPauseDone,
-      moveNumber: chess.moveNumber(),
-      playersTurn,
-    })
-      ? planFor(sans, game.playerColour)
-      : null
+  // (The plan pause was removed, Sep 2026: its plans didn't respond to the
+  // actual position. Plans now come from the characters' plan hints, which
+  // follow the opening on the board.)
   const boardFen = peeking ? ratedMove.fenBefore : pending ? pending.fenAfter : fen
 
   // The scouting report plays out on the board before the game (YouTube-teacher style).
@@ -551,16 +541,13 @@ export function GameScreen({
           <Board
             fen={boardFen}
             orientation={game.playerColour === 'w' ? 'white' : 'black'}
-            movableColour={outcome || pending || peeking || planSet || showScouting ? null : game.playerColour}
+            movableColour={outcome || pending || peeking || showScouting ? null : game.playerColour}
             lastMove={peeking ? null : (pendingLast ?? (last ? { from: last.from, to: last.to } : null))}
             onMove={handlePlayerMove}
             hintSquare={hintStep === 1 && hintMove ? hintMove.slice(0, 2) : null}
             arrows={arrows}
             badges={bestLine?.badges}
           />
-          {planSet && (
-            <PlanPause plans={planSet} onDone={() => setGame((g) => (g ? { ...g, planPauseDone: true } : g))} />
-          )}
           {pending?.warning && (
             <BlunderWarning
               message={pending.warning}
