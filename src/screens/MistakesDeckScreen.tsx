@@ -9,7 +9,6 @@ import {
   MAX_CARDS_PER_SESSION,
   nextDue,
   warmupCards,
-  retireCard,
   type Answer,
   type MistakeCard,
 } from '../logic/mistakesDeck'
@@ -73,15 +72,8 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
     window.scrollTo({ top: 0 })
   }
 
-  /** "I've got this one": retire the card for good, and skip its practice repeat. */
-  function retireCurrent() {
-    if (!queue) return
-    const retired = retireCard(queue[index].card)
-    saveCard(retired).catch((err) => console.error('Card save failed', err))
-    setAllCards((cards) => cards.map((c) => (c.id === retired.id ? retired : c)))
-    setQueue((q) => (q ? q.filter((it, i) => i <= index || it.card.id !== retired.id) : q))
-    next()
-  }
+  // (No "I've got this one" button, Sep 2026: every position is shown once and
+  // then retired anyway, so getting it right is how it goes.)
 
   if (!queue) return <main className="review-screen">Opening the deck…</main>
 
@@ -155,11 +147,6 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
       <button type="button" className="review-continue" disabled={!answered} onClick={next}>
         {index + 1 < queue.length ? 'Next card' : 'Finish'}
       </button>
-      {answered && !item.repeat && (
-        <button type="button" className="review-secondary" onClick={retireCurrent}>
-          I've got this one: remove it
-        </button>
-      )}
     </main>
   )
 }
