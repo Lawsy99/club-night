@@ -10,7 +10,7 @@
 }
 
 .graph-grid {
-  stroke: #3a4a40;
+  stroke: var(--line-soft);
   stroke-width: 1;
 }
 
@@ -21,7 +21,7 @@
 
 .graph-line {
   fill: none;
-  stroke: #f0c95a;
+  stroke: var(--brass);
   stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
@@ -34,8 +34,8 @@
 }
 
 .graph-dot {
-  fill: #f0c95a;
-  stroke: #1f2a24;
+  fill: var(--brass);
+  stroke: var(--ink);
   stroke-width: 2;
 }
 

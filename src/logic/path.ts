@@ -5,6 +5,7 @@
 import { ACT_1, TRIAL_FINALE, TRIAL_OPPONENTS } from '../data/act1'
 import { characterRating, findCharacter, storyOffset } from '../data/characters'
 import { MEMBERS } from '../data/members'
+import { sessionLabel } from '../data/clubWeek'
 import { findLesson } from '../data/lessons'
 import { rateGame, type PlayerRating } from './glicko2'
 import { valveAdjustment, type RealGameResult } from './safetyValve'
@@ -181,7 +182,7 @@ export function nextStep(p: Progress): NextStep {
         chapterId: ch.id,
         chapterTitle: ch.title,
         topic: findLesson(ch.id)?.title ?? ch.title,
-        location: ch.location,
+        location: sessionLabel('coaching'),
       }
     }
     const rating = opponentRating(p, ch.opponent)
@@ -190,8 +191,8 @@ export function nextStep(p: Progress): NextStep {
       opponent: ch.opponent,
       rating,
       stage,
-      label: `Friendly vs ${nameOf(ch.opponent)}`,
-      location: ch.location,
+      label: `Practice game vs ${nameOf(ch.opponent)}`,
+      location: sessionLabel('practice'),
       chapter: ch.id,
     })
     const match: PathGame = {
@@ -200,11 +201,10 @@ export function nextStep(p: Progress): NextStep {
       rating,
       stage: 'real',
       label: ch.matchLabel,
-      location: ch.location,
+      location: sessionLabel('match'),
       chapter: ch.id,
     }
-    const met = p.met.includes(ch.opponent)
-    const unlocked = met || p.friendlies.wonGuided || p.friendlies.played >= 3
+    const unlocked = matchUnlocked(p)
     if (!unlocked) {
       // First friendly against someone new is assisted; after that, guided.
       return { kind: 'play', game: friendly(p.friendlies.played === 0 ? 'assisted' : 'guided'), optionalFriendly: null, note: null }
@@ -247,6 +247,16 @@ export function nextStep(p: Progress): NextStep {
   const targetedPuzzles =
     cup.bossAttempts >= 3 ? { title: `Puzzles from ${nameOf(g.boss.opponent)}'s openings`, openings: BOSS_OPENINGS[g.boss.opponent] ?? [] } : null
   return { kind: 'play', game: boss, optionalFriendly: studyFriendly, note: bossNote(cup.bossAttempts), targetedPuzzles }
+}
+
+/**
+ * Has this week's match (Saturday) opened? After winning a guided practice
+ * game, or three practice games, or straight away against someone already met.
+ */
+export function matchUnlocked(p: Progress): boolean {
+  const ch = ACT_1.chapters[p.chapter]
+  if (!ch) return false
+  return p.met.includes(ch.opponent) || p.friendlies.wonGuided || p.friendlies.played >= 3
 }
 
 /** The opening families each boss plays (for the targeted puzzle set). */

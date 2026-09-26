@@ -14,9 +14,9 @@
   width: 100%;
   min-height: 64px;
   padding: 10px 12px;
-  border: 1px solid #4a5a50;
+  border: 1px solid var(--line);
   border-radius: 12px;
-  background: #2b3931;
+  background: var(--panel);
   color: var(--text);
   font: inherit;
   text-align: left;

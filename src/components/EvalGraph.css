@@ -14,14 +14,14 @@
   width: 100%;
   height: auto;
   border-radius: 8px;
-  background: #26332b;
+  background: var(--card);
   /* The whole graph is the touch target; stop the page scrolling while scrubbing */
   touch-action: none;
   cursor: pointer;
 }
 
 .graph-mid {
-  stroke: #3c4d43;
+  stroke: var(--line-soft);
   stroke-width: 1;
 }
 
@@ -44,7 +44,7 @@
 /* 2px ring in the graph's surface colour keeps overlapping dots apart */
 .graph-marker {
   fill: var(--rating);
-  stroke: #26332b;
+  stroke: var(--card);
   stroke-width: 2;
 }
 

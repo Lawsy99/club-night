@@ -25,7 +25,7 @@
 .diary-kicker {
   margin: 0;
   font-size: 13px;
-  color: #f0c95a;
+  color: var(--brass);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -54,7 +54,7 @@
   bottom: 18px;
   left: 17px;
   width: 2px;
-  background: #3a4a40;
+  background: var(--line-soft);
 }
 
 .diary-entry {
@@ -71,14 +71,14 @@
   height: 36px;
   flex: 0 0 36px;
   border-radius: 50%;
-  background: #1f2a24;
+  background: var(--ink);
 }
 
 .diary-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #3a4a40;
+  background: var(--line-soft);
 }
 
 .diary-text {
@@ -99,14 +99,14 @@
 }
 
 .diary-entry.next .diary-face {
-  box-shadow: 0 0 0 2px #f0c95a;
+  box-shadow: 0 0 0 2px var(--brass);
 }
 
 .diary-next {
-  color: #f0c95a;
+  color: var(--brass);
 }
 
 .diary-entry.later .diary-text strong {
-  color: #6f7f74;
+  color: var(--muted-dim);
   font-weight: 500;
 }

@@ -296,7 +296,19 @@ The app is one fixed path through four acts. The home screen shows only what com
 
 ### Chapters
 
-A chapter is roughly one week at the club, or one fixture. It is a short fixed sequence of steps. The usual pattern is:
+**Revised Sep 2026 (Joseph): the club week.** Each chapter is a week at Wexley, run as a real club runs, and Home shows it as a small calendar (replacing the row of chapter letters):
+
+| Night | Session | What happens |
+| --- | --- | --- |
+| Tuesday | Coaching night | Pemberton's lesson and puzzles, with a mistakes-deck warm-up ("drills") first when cards are due |
+| Thursday | Practice night | Practice games against the week's opponent, with help. Saturday opens after winning a guided one, or after three |
+| Saturday | Match day | The match, rated, no help |
+
+The cup is "Cup week" (round 1, round 2, semi-final, final). Trial night keeps its own strip. The week header ("Week 3 · Junior night ›") opens the story so far.
+
+**The look (Sep 2026): "club mat".** Bottle green and buff from the roll-up vinyl boards English clubs use, with brass as the one accent; headings in a serif (Fraunces, bundled with the app); the board framed like the mat. Tonight's session sits on a buff card in dark ink. Wood and slate boards remain in Settings.
+
+A chapter is a short fixed sequence of steps. The usual pattern is:
 
 1. **Lesson** (about 2 minutes): one idea, then 3 to 5 themed puzzles.
 2. **Friendlies** against the chapter's opponent, with help.

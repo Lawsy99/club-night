@@ -19,9 +19,9 @@
 .name-field input {
   min-height: 48px;
   padding: 0 14px;
-  border: 1px solid #4a5a50;
+  border: 1px solid var(--line);
   border-radius: 12px;
-  background: #2b3931;
+  background: var(--panel);
   color: var(--text);
   font: inherit;
   font-size: 16px;
@@ -29,5 +29,5 @@
 
 .name-field input:focus {
   outline: none;
-  border-color: #f0c95a;
+  border-color: var(--brass);
 }

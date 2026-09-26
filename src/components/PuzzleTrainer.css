@@ -19,7 +19,7 @@
 }
 
 .puzzle-prompt.helped {
-  color: #f0c95a;
+  color: var(--brass);
 }
 
 .puzzle-meta {

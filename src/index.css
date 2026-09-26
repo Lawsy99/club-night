@@ -1,8 +1,27 @@
-/* App-wide base styles. Designed for iPhone first (390 × 844). */
+/* App-wide base styles. Designed for iPhone first (390 × 844).
+ *
+ * The look is "club mat" (Joseph, Sep 2026): the bottle-green and buff of a
+ * roll-up vinyl tournament board, with brass for anything that matters.
+ * Headings in a serif (Fraunces), everything else in the phone's own font.
+ */
 :root {
-  --bg: #1f2a24;
-  --text: #e8e4d8;
-  --muted: #a8a596;
+  /* Surfaces, darkest to lightest */
+  --bg: #173324;
+  --card: #1f3f2d;
+  --panel: #264a36;
+  --line-soft: #2c5440;
+  --line: #3f6a51;
+  /* Light: the buff of the mat, and dark ink for text on it */
+  --buff: #efe6c8;
+  --ink: #16301f;
+  /* Brass: the one accent */
+  --brass: #d0a847;
+  /* Text on the green */
+  --text: #efe6c8;
+  --muted: #a9bba8;
+  --muted-dim: #6f8a78;
+
+  --serif: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
 
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
@@ -15,6 +34,14 @@
 body {
   margin: 0;
   background: var(--bg);
+}
+
+/* Headings speak in the club's voice: a warm serif. */
+h1,
+h2 {
+  font-family: var(--serif);
+  font-weight: 560;
+  letter-spacing: -0.005em;
 }
 
 #root {

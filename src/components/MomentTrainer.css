@@ -27,7 +27,7 @@
 }
 
 .moment-verdict.revealed {
-  color: #f0c95a;
+  color: var(--brass);
 }
 
 .moment-explanation {

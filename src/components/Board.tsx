@@ -100,7 +100,7 @@ export function Board({
   const boardArrows = arrows.map((a) => ({ startSquare: a.from, endSquare: a.to, color: a.colour }))
 
   return (
-    <div className="board-wrap">
+    <div className="board-wrap" style={{ background: colours.frame }}>
       <Chessboard
         options={{
           position: fen,

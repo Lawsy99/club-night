@@ -13,14 +13,16 @@
 
 .home-kicker {
   margin: 0;
-  font-size: 13px;
-  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brass);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .home-header h1 {
   margin: 2px 0 0;
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 30px;
 }
 
 .home-rating {
@@ -32,7 +34,9 @@
 }
 
 .home-rating strong {
-  font-size: 28px;
+  font-family: var(--serif);
+  font-weight: 560;
+  font-size: 30px;
   color: var(--text);
   line-height: 1;
 }
@@ -41,7 +45,7 @@
   margin: 0;
   padding: 8px 12px;
   border-radius: 10px;
-  background: #26332b;
+  background: var(--card);
   font-weight: 600;
 }
 
@@ -75,7 +79,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 1px solid #4a5a50;
+  border: 1px solid var(--line);
   color: var(--muted);
   font-size: 11px;
   font-weight: 700;
@@ -87,17 +91,100 @@
 }
 
 .act-dot.done {
-  background: #4a5a50;
+  background: var(--line);
   color: var(--text);
 }
 
 .act-dot.current {
-  border: 2px solid #f0c95a;
-  color: #f0c95a;
+  border: 2px solid var(--brass);
+  color: var(--brass);
 }
 
-.act-dot.cup {
+/* The club week: this week's three sessions, like a fixture card */
+.club-week {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.club-week-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+}
+
+.club-week-head strong {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 560;
+}
+
+.club-week-head span {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.club-week-days {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.club-week-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  min-height: 52px;
+  padding: 7px 4px 6px;
+  border-radius: 8px;
+  background: var(--card);
+  border: 1px solid var(--line-soft);
   font-size: 13px;
+  text-align: center;
+}
+
+.club-week-dow {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.club-week-day.done {
+  color: var(--muted);
+}
+
+.club-week-tick {
+  color: var(--brass);
+  font-size: 12px;
+}
+
+.club-week-day.today {
+  background: var(--brass);
+  border-color: var(--brass);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.club-week-day.today .club-week-dow {
+  color: var(--ink);
+}
+
+.club-week-tonight {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.club-week-day.later {
+  color: var(--muted);
+  border-style: dashed;
 }
 
 .next-record {
@@ -112,8 +199,8 @@
   margin: 2px 6px 0;
   padding: 12px 14px 10px;
   border-radius: 4px;
-  background: #ece4cf;
-  color: #1f2a24;
+  background: var(--buff);
+  color: var(--ink);
   transform: rotate(-0.6deg);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 }
@@ -125,7 +212,7 @@
 }
 
 .noticeboard p span {
-  color: #4a5a50;
+  color: var(--line);
   font-style: italic;
 }
 
@@ -147,29 +234,47 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
+/* Tonight's session: a buff card, like the mat itself, in dark ink */
 .next-card {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 18px 16px;
-  border: 1px solid #f0c95a;
-  border-radius: 16px;
-  background: #26332b;
+  padding: 16px 16px 18px;
+  border-radius: 14px;
+  background: var(--buff);
+  color: var(--ink);
 }
 
 .next-kind {
   margin: 0;
-  font-size: 13px;
-  color: #f0c95a;
+  font-size: 11px;
+  font-weight: 600;
+  color: #8a6a1e;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
 }
 
 .next-card h2 {
   margin: 0;
-  font-size: 21px;
-  font-weight: 600;
-  line-height: 1.25;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.next-card .next-rating,
+.next-card .next-stage,
+.next-card .next-note,
+.next-card .next-record {
+  color: #56685a;
+}
+
+.next-card .next-play {
+  background: var(--ink);
+  color: var(--buff);
+}
+
+.next-card .next-secondary {
+  border-color: #b9ae8a;
+  color: var(--ink);
 }
 
 .next-opponent {
@@ -202,8 +307,8 @@
   margin-top: 4px;
   border: none;
   border-radius: 12px;
-  background: #f0c95a;
-  color: #1f2a24;
+  background: var(--brass);
+  color: var(--ink);
   font: inherit;
   font-weight: 600;
   font-size: 17px;
@@ -227,9 +332,9 @@
 /* Milestones: quiet, one line each, gone after the next game */
 .milestone-banner {
   padding: 10px 14px;
-  border-left: 3px solid #f0c95a;
+  border-left: 3px solid var(--brass);
   border-radius: 6px;
-  background: #26332b;
+  background: var(--card);
 }
 
 .milestone-banner p {
@@ -248,17 +353,17 @@
   flex-direction: column;
   gap: 10px;
   padding: 14px;
-  border: 1px solid #4a5a50;
+  border: 1px solid var(--line);
   border-radius: 14px;
-  background: #26332b;
+  background: var(--card);
 }
 
 .missing-name button {
   min-height: 44px;
   border: none;
   border-radius: 12px;
-  background: #f0c95a;
-  color: #1f2a24;
+  background: var(--brass);
+  color: var(--ink);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -271,7 +376,7 @@
 
 .next-secondary {
   min-height: 44px;
-  border: 1px solid #4a5a50;
+  border: 1px solid var(--line);
   border-radius: 12px;
   background: none;
   color: var(--text);
@@ -292,9 +397,9 @@
   gap: 2px;
   min-height: 64px;
   padding: 10px 12px;
-  border: 1px solid #4a5a50;
+  border: 1px solid var(--line);
   border-radius: 12px;
-  background: #2b3931;
+  background: var(--panel);
   color: var(--text);
   font: inherit;
   text-align: left;
@@ -327,7 +432,7 @@
   width: 100%;
   min-height: 44px;
   margin-bottom: 8px;
-  border: 1px solid #4a5a50;
+  border: 1px solid var(--line);
   border-radius: 10px;
   background: none;
   color: var(--text);

@@ -4,6 +4,10 @@
   width: 100%;
   max-width: 520px;
   margin: 0 auto;
+  box-sizing: border-box;
+  /* The mat's printed border (colour set by the board style) */
+  padding: 5px;
+  border-radius: 4px;
   /* Stop iOS treating drags on the board as page scrolls or text selection */
   touch-action: none;
   user-select: none;
@@ -45,7 +49,7 @@
   padding: 6px;
   border: none;
   border-radius: 8px;
-  background: #ece4cf;
+  background: var(--buff);
   cursor: pointer;
 }
 

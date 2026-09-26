@@ -18,6 +18,8 @@ import { dueCards } from '../logic/mistakesDeck'
 import { wantsWarmup, type NextStep, type PathGame, type Progress } from '../logic/path'
 import { WARMUP_CARDS } from '../logic/mistakesDeck'
 import { TRIAL_LENGTH } from '../logic/trialNight'
+import { clubWeek } from '../logic/clubWeek'
+import { sessionLabel } from '../data/clubWeek'
 import { headToHead, loadCards } from '../storage/db'
 import './HomeScreen.css'
 
@@ -53,7 +55,7 @@ type Props = {
 const KIND_LABELS: Record<PathGame['kind'], string> = {
   trial: 'Trial night',
   exhibition: 'Trial night',
-  friendly: 'Friendly',
+  friendly: 'Practice night',
   match: 'Match',
   'cup-round': 'Knockout cup',
   boss: 'Cup final',
@@ -194,28 +196,25 @@ function ActProgress({ progress }: { progress: Progress }) {
       </div>
     )
   }
-  if (progress.stage !== 'act' && progress.stage !== 'act-complete') return null
-  const chapters = ACT_1.chapters
-  const inCup = progress.chapter >= chapters.length
+  // The club week: a small calendar of this week's sessions (Joseph, Sep 2026).
+  // No act numbers on screen: it plays as one continuous story.
+  const week = clubWeek(progress)
+  if (!week) return null
   return (
-    // No act numbers on screen (Joseph): it plays as one continuous story.
-    <div className="act-progress">
-      <span className="act-label">Story ›</span>
-      {chapters.map((ch, i) => (
-        <span
-          key={ch.id}
-          className={`act-dot lettered ${i < progress.chapter ? 'done' : i === progress.chapter ? 'current' : ''}`}
-          title={findCharacter(ch.opponent)?.name}
-        >
-          {findCharacter(ch.opponent)?.name[0]}
-        </span>
-      ))}
-      <span
-        className={`act-dot lettered cup ${progress.stage === 'act-complete' ? 'done' : inCup ? 'current' : ''}`}
-        title="Knockout cup"
-      >
-        {'★︎'}
-      </span>
+    <div className="club-week">
+      <p className="club-week-head">
+        <strong>{week.title}</strong> <span>{week.subtitle} ›</span>
+      </p>
+      <ol className="club-week-days">
+        {week.slots.map((s) => (
+          <li key={s.key} className={`club-week-day ${s.state}`}>
+            {s.day && <span className="club-week-dow">{s.day}</span>}
+            <span className="club-week-name">{s.name}</span>
+            {s.state === 'done' && <span className="club-week-tick" aria-label="done">✓︎</span>}
+            {s.state === 'today' && <span className="club-week-tonight">tonight</span>}
+          </li>
+        ))}
+      </ol>
     </div>
   )
 }
@@ -253,10 +252,8 @@ function WarmupCard({ due, onStart, onSkip }: { due: number; onStart: () => void
   const count = Math.min(due, WARMUP_CARDS)
   return (
     <section className="next-card">
-      <p className="next-kind">Warm-up · before the lesson</p>
-      <h2>
-        {count} of your old mistakes
-      </h2>
+      <p className="next-kind">{sessionLabel('coaching')} · drills first</p>
+      <h2>{count} positions from your own games</h2>
       <p className="next-opponent">
         <Portrait who="pemberton" size={44} />
         <span>
@@ -306,7 +303,7 @@ function NextCard({
   if (next.kind === 'lesson') {
     return (
       <section className="next-card">
-        <p className="next-kind">Lesson · {next.location}</p>
+        <p className="next-kind">{next.location}</p>
         <h2>{next.topic}</h2>
         <p className="next-opponent">
           <Portrait who="pemberton" size={44} />
@@ -363,7 +360,8 @@ function PlayCard({
   return (
     <section className="next-card">
       <p className="next-kind">
-        {KIND_LABELS[game.kind]} · {game.location}
+        {/* Club-week games already say which night it is ("Thursday · practice night"). */}
+        {game.kind === 'friendly' || game.kind === 'match' ? game.location : `${KIND_LABELS[game.kind]} · ${game.location}`}
       </p>
       <h2>{game.label}</h2>
       <p className="next-opponent">
@@ -385,7 +383,7 @@ function PlayCard({
       </button>
       {optionalFriendly && (
         <button type="button" className="next-secondary" onClick={() => onPlay(optionalFriendly)}>
-          {optionalFriendly.stage === 'assisted' ? 'Study him first: assisted friendly' : 'Play a friendly first'}
+          {optionalFriendly.stage === 'assisted' ? 'Study him first: a practice game, help on' : 'Another practice game first'}
         </button>
       )}
       {next.targetedPuzzles && (

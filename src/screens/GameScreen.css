@@ -35,8 +35,8 @@
   max-width: 340px;
   padding: 14px 16px;
   border-radius: 14px;
-  background: #ece4cf;
-  color: #1f2a24;
+  background: var(--buff);
+  color: var(--ink);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
@@ -46,7 +46,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #4a5a50;
+  color: var(--line);
 }
 
 .scouting-line {
@@ -57,7 +57,7 @@
 .scouting-by {
   margin: 0 0 12px;
   font-size: 13px;
-  color: #4a5a50;
+  color: var(--line);
   text-align: right;
   font-style: italic;
 }
@@ -67,8 +67,8 @@
   min-height: 48px;
   border: none;
   border-radius: 10px;
-  background: #1f2a24;
-  color: #ece4cf;
+  background: var(--ink);
+  color: var(--buff);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -83,8 +83,8 @@
   padding: 8px 14px;
   border: none;
   border-radius: 14px;
-  background: #ece4cf;
-  color: #1f2a24;
+  background: var(--buff);
+  color: var(--ink);
   font: inherit;
   text-align: left;
   position: relative;
@@ -99,7 +99,7 @@
   left: 22px;
   border: 6px solid transparent;
   border-top: 0;
-  border-bottom-color: #ece4cf;
+  border-bottom-color: var(--buff);
 }
 
 .talk-words {
@@ -112,7 +112,7 @@
 .talk-speaker {
   font-size: 12px;
   font-weight: 600;
-  color: #4a5a50;
+  color: var(--line);
 }
 
 @keyframes talk-in {
@@ -130,8 +130,8 @@
   margin: 0 16px;
   padding: 6px 8px 6px 14px;
   border-radius: 14px;
-  background: #ece4cf;
-  color: #1f2a24;
+  background: var(--buff);
+  color: var(--ink);
   position: relative;
 }
 
@@ -142,7 +142,7 @@
   left: 22px;
   border: 6px solid transparent;
   border-top: 0;
-  border-bottom-color: #ece4cf;
+  border-bottom-color: var(--buff);
 }
 
 .speech-bubble .speech {
@@ -153,17 +153,17 @@
 .speech-bubble button {
   min-height: 44px;
   padding: 0 14px;
-  border: 1px solid #1f2a24;
+  border: 1px solid var(--ink);
   border-radius: 10px;
   background: none;
-  color: #1f2a24;
+  color: var(--ink);
   font: inherit;
   cursor: pointer;
 }
 
 .speech-bubble button:first-of-type {
-  background: #1f2a24;
-  color: #ece4cf;
+  background: var(--ink);
+  color: var(--buff);
 }
 
 .game-title {
@@ -207,7 +207,7 @@
 }
 
 .game-status.game-over {
-  color: #f0c95a;
+  color: var(--brass);
 }
 
 /* Evaluation bar and board side by side, filling the width together */
@@ -258,7 +258,7 @@
 }
 
 .book-note strong {
-  color: #f0c95a;
+  color: var(--brass);
   font-weight: 600;
 }
 
@@ -323,22 +323,22 @@
 .game-actions button {
   min-height: 44px;
   padding: 0 14px;
-  border: 1px solid #4a5a50;
+  border: 1px solid var(--line);
   border-radius: 10px;
-  background: #2b3931;
+  background: var(--panel);
   color: var(--text);
   font: inherit;
   cursor: pointer;
 }
 
 .game-actions button.active {
-  border-color: #f0c95a;
+  border-color: var(--brass);
 }
 
 .game-actions button.primary {
-  background: #f0c95a;
-  border-color: #f0c95a;
-  color: #1f2a24;
+  background: var(--brass);
+  border-color: var(--brass);
+  color: var(--ink);
   font-weight: 600;
 }
 

@@ -64,7 +64,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid #33423a;
+  border-bottom: 1px solid var(--line-soft);
   font-size: 15px;
 }
 
@@ -94,7 +94,7 @@
 .stats-bar {
   height: 8px;
   border-radius: 4px;
-  background: #33423a;
+  background: var(--line-soft);
   overflow: hidden;
 }
 
@@ -102,7 +102,7 @@
   display: block;
   height: 100%;
   border-radius: 4px;
-  background: #f0c95a;
+  background: var(--brass);
 }
 
 .stats-bar-value {

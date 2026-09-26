@@ -4,22 +4,22 @@
    chess annotation (?!, ?, ??). */
 .rating-best {
   --rating: #7fc47a;
-  --rating-ink: #1f2a24;
+  --rating-ink: var(--ink);
 }
 
 .rating-good {
   --rating: #c9d8b8;
-  --rating-ink: #1f2a24;
+  --rating-ink: var(--ink);
 }
 
 .rating-inaccuracy {
   --rating: #fab219;
-  --rating-ink: #1f2a24;
+  --rating-ink: var(--ink);
 }
 
 .rating-mistake {
   --rating: #ec835a;
-  --rating-ink: #1f2a24;
+  --rating-ink: var(--ink);
 }
 
 .rating-blunder {
