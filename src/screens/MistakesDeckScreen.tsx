@@ -75,7 +75,7 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
   // (No "I've got this one" button, Sep 2026: every position is shown once and
   // then retired anyway, so getting it right is how it goes.)
 
-  if (!queue) return <main className="review-screen">Opening the deck…</main>
+  if (!queue) return <main className="review-screen">Setting up the positions…</main>
 
   const item = queue[index]
   if (!item) {
@@ -89,9 +89,7 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
           <header>
             <h1>Warm-up done</h1>
           </header>
-          <p className="review-note">
-            Next week’s will be from this week’s games.
-          </p>
+          <p className="review-note">That’s the warm-up. On to tonight’s lesson.</p>
           <button type="button" className="review-continue" onClick={onDone ?? onBack}>
             On to the lesson
           </button>
@@ -133,7 +131,7 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
         </button>
         <p className="review-kicker">
           {warmup ? 'Warm-up · ' : ''}
-          {item.repeat ? 'One more go' : `Card ${index + 1} of ${queue.length}`}
+          {item.repeat ? 'One more go' : `Position ${index + 1} of ${queue.length}`}
         </p>
       </header>
       <h1 className="deck-title">
@@ -145,7 +143,7 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
       <p className="deck-source">From a game on {formatDate(card.createdAt)}</p>
       <MomentTrainer key={`${index}-${card.id}`} moment={card} onFinished={handleFinished} />
       <button type="button" className="review-continue" disabled={!answered} onClick={next}>
-        {index + 1 < queue.length ? 'Next card' : 'Finish'}
+        {index + 1 < queue.length ? 'Next position' : 'Finish'}
       </button>
     </main>
   )

@@ -20,8 +20,12 @@ export const WARMUP_LINES: readonly string[] = [
   'Tea’s brewing. Do these while it stews.',
 ]
 
+/** The first week: the only games so far are from trial night. */
+export const FIRST_WARMUP_LINE = 'Something from trial night. Let’s see what you do with it now you’ve had a week.'
+
 /** This week's line: steady within a week, different from last week's. */
 export function warmupLine(week: number): string {
+  if (week === 0) return FIRST_WARMUP_LINE
   // Stepping by a number with no common factor with the list length visits
   // every line before repeating, and never shows the same one two weeks running.
   const step = 5

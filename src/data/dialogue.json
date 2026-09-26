@@ -1309,6 +1309,48 @@
   "once": true
  },
  {
+  "id": "story-trial-marjorie",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "You must be new. I’m Marjorie. The kettle’s on after, if you’re staying.",
+  "expression": "pleased",
+  "conditions": {
+   "flags": [
+    "kind:trial"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-trial-dex",
+  "character": "dex",
+  "trigger": "game_start",
+  "text": "New? Cool. I’ll go easy. That’s a lie, I don’t know how.",
+  "expression": "smug",
+  "conditions": {
+   "flags": [
+    "kind:trial"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-trial-clive",
+  "character": "clive",
+  "trigger": "game_start",
+  "text": "Clive. Evening. Shall we?",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "kind:trial"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
   "id": "story-c1-marjorie",
   "character": "marjorie",
   "trigger": "game_start",

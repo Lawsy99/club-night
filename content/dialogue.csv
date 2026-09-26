@@ -120,6 +120,9 @@ bg-marjorie-start,marjorie,,game_start,"Bill was asking after you. He asks after
 bg-graham-start,graham,,game_start,"Ray wants the big room on Thursdays for the juniors. I've said we'll see.",neutral,,,,2,,,1,
 bg-clive-start,clive,,game_start,"Malcolm's in on Saturday, apparently. For the league. He won't play us.",neutral,,,,2,,,1,
 story-trial-graham,graham,,game_start,"Your name's down. I checked the spelling. Scoresheet, please.",neutral,,,,,,kind:trial,1,yes
+story-trial-marjorie,marjorie,,game_start,"You must be new. I’m Marjorie. The kettle’s on after, if you’re staying.",pleased,,,,,,kind:trial,1,yes
+story-trial-dex,dex,,game_start,"New? Cool. I’ll go easy. That’s a lie, I don’t know how.",smug,,,,,,kind:trial,1,yes
+story-trial-clive,clive,,game_start,"Clive. Evening. Shall we?",neutral,,,,,,kind:trial,1,yes
 story-c1-marjorie,marjorie,,game_start,"We used to need both rooms, you know. Phones off, love.",neutral,,,,,,kind:match chapter:c1,1,yes
 story-c2-dex,dex,,game_loss,(Dex picks up his phone. The little red light is on.),neutral,,,,,,kind:match chapter:c2,1,yes
 story-c3-neil,oscar,neil,game_loss,We asked Mr Pemberton about coaching. His Tuesdays are taken.,neutral,,,,,,kind:match chapter:c3,1,yes

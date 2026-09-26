@@ -1,6 +1,7 @@
 // Graham asks for your name for the membership list. Used on the welcome
 // screen, and on Home for anyone who started before names existed.
 import { MAX_NAME_LENGTH } from '../logic/playerName'
+import { Portrait } from './Portrait'
 import './NameField.css'
 
 type Props = {
@@ -14,7 +15,10 @@ export function NameField({ value, onChange, prompt }: Props) {
   return (
     <label className="name-field">
       <span className="name-field-prompt">
-        <strong>Graham</strong> “{prompt}”
+        <Portrait who="graham" size={36} />
+        <span>
+          <strong>Graham</strong> “{prompt}”
+        </span>
       </span>
       {/* 16 px text stops iOS Safari zooming in on focus */}
       <input

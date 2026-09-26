@@ -4,8 +4,8 @@
 import { Chess } from 'chess.js'
 import { useEffect, useState } from 'react'
 import { analysePosition } from '../engine/analysis'
-import { flipScore, winChance } from '../logic/evaluation'
-import { explainBestMove } from '../logic/explain'
+import { flipScore, toCentipawns, winChance } from '../logic/evaluation'
+import { explainBestMove, explainMistake } from '../logic/explain'
 import { applyUci } from '../logic/game'
 import type { Answer } from '../logic/mistakesDeck'
 import type { Moment } from '../logic/moment'
@@ -15,10 +15,13 @@ import './MomentTrainer.css'
 
 /**
  * How close to the engine's best an answer must be to count as right, in
- * winning chances: about 0.1 of a pawn in a level position. Strict enough that
- * an aimless move like a3 doesn't pass, loose enough for real alternatives.
+ * winning chances: about 0.2 of a pawn in a level position (loosened Sep 2026:
+ * sound alternatives like a natural defending move were being turned down).
+ * Strict enough that an aimless move like a3 still doesn't pass.
  */
-const ACCEPT_DROP = 0.025
+const ACCEPT_DROP = 0.05
+/** Within this, a wrong answer is called "close": playable, not the best. */
+const CLOSE_DROP = 0.12
 /** Three tries: two plain, then a third with the piece to move highlighted. */
 const TRIES = 3
 
@@ -86,6 +89,8 @@ export function MomentTrainer({ moment, onFinished }: Props) {
 
     setChecking(true)
     setFeedback(null)
+    // Why the attempt falls short, if the board says (e.g. it leaves something loose).
+    let whyNot = ''
     try {
       const analysis = await analysePosition(after.fen())
       // The attempt's value for the player (the analysis is from the opponent's side).
@@ -96,6 +101,18 @@ export function MomentTrainer({ moment, onFinished }: Props) {
           : 0.5
       const bestChance = winChance({ type: 'cp', value: moment.bestCp })
       if (bestChance - attemptChance <= ACCEPT_DROP) return finish('solved', after.fen(), uci)
+      if (bestChance - attemptChance <= CLOSE_DROP) whyNot = ' Close: that’s playable, but there’s something stronger.'
+      else if (analysis) {
+        const reason = explainMistake({
+          fenBefore: moment.fenBefore,
+          played: uci,
+          bestMove: null,
+          reply: analysis.bestMove,
+          cpBefore: moment.bestCp,
+          cpAfter: toCentipawns(flipScore(analysis.score)),
+        })
+        if (!reason.startsWith('There was a stronger move')) whyNot = ` ${reason}`
+      }
     } finally {
       setChecking(false)
     }
@@ -107,9 +124,9 @@ export function MomentTrainer({ moment, onFinished }: Props) {
       applyUci(best, moment.bestMove)
       finish('revealed', best.fen(), moment.bestMove)
     } else if (left === 1) {
-      setFeedback('Not quite. Last try: the piece to move is highlighted.')
+      setFeedback(`Not quite.${whyNot} Last try: the piece to move is highlighted.`)
     } else {
-      setFeedback('Not quite. Try again.')
+      setFeedback(`Not quite.${whyNot} Try again.`)
     }
   }
 

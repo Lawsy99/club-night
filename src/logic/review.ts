@@ -6,6 +6,9 @@ import { winChance } from './evaluation'
 import { applyUci, type Colour } from './game'
 import { rateMove, type MoveRating } from './moveRating'
 
+/** Games shorter than this (in single moves) aren't reviewed: nothing to grade. */
+export const SHORTEST_REVIEW = 8
+
 /** The engine's verdict on one position of the game. */
 export type PositionEval = {
   /** From White's point of view, in centipawns; mates are ±10,000-ish. */

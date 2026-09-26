@@ -10,7 +10,7 @@ import { explainGoodMove } from '../logic/explain'
 import { describeOutcome, replay, type Colour } from '../logic/game'
 import { outcomeOf, type GameRecord } from '../logic/gameRecord'
 import { RATING_LABELS, type MoveRating } from '../logic/moveRating'
-import { bestMoveOfGame, gameAccuracy, ratingCounts, reviewMoves, type PositionEval } from '../logic/review'
+import { bestMoveOfGame, gameAccuracy, ratingCounts, reviewMoves, SHORTEST_REVIEW, type PositionEval } from '../logic/review'
 import { cardId, cardsFromMoments, gameMoments, moveLabel } from '../logic/mistakeCards'
 import { addCardsIfNew, getArchivedGame, retireCardById, saveGameAnalysis } from '../storage/db'
 import '../components/ratings.css'
@@ -24,9 +24,6 @@ type Props = {
   /** For rated games: the player's rating before and after this result. */
   ratingChange?: { from: number; to: number } | null
 }
-
-/** Games shorter than this (in single moves) aren't graded. */
-const SHORTEST_REVIEW = 8
 
 const RATING_ORDER: MoveRating[] = ['best', 'good', 'inaccuracy', 'mistake', 'blunder']
 

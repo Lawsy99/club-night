@@ -9,6 +9,7 @@ import { LadderCard } from '../components/ClubLadder'
 import { describeNews, type LadderNews, type Rung } from '../logic/ladder'
 import type { Milestone } from '../logic/milestones'
 import { cleanName } from '../logic/playerName'
+import { playtestOn, setPlaytestOn } from '../logic/playtest'
 import { TRIAL_NOTE } from '../data/act1'
 import { findCharacter } from '../data/characters'
 import { characterOpponentId } from '../data/opponents'
@@ -52,17 +53,6 @@ type Props = {
   onResume: () => void
 }
 
-/** Remembers (on this phone only) that the playtest tools are switched on. */
-const PLAYTEST_KEY = 'club-night-playtest'
-
-function readPlaytest(): boolean {
-  try {
-    return localStorage.getItem(PLAYTEST_KEY) === 'on'
-  } catch {
-    return false
-  }
-}
-
 const KIND_LABELS: Record<PathGame['kind'], string> = {
   trial: 'Trial night',
   exhibition: 'Trial night',
@@ -98,16 +88,12 @@ export function HomeScreen(props: Props) {
   } = props
   // Past errors waiting to be put right (the coach's warm-ups on Tuesday).
   const [waiting, setWaiting] = useState(0)
-  const [playtestOn, setPlaytestOn] = useState(readPlaytest)
+  // The hidden playtest tools: remembered on this phone (logic/playtest.ts).
+  const [playtest, setPlaytestState] = useState(playtestOn)
   const stampTaps = useRef(0)
   const setPlaytest = (on: boolean) => {
+    setPlaytestState(on)
     setPlaytestOn(on)
-    try {
-      if (on) localStorage.setItem(PLAYTEST_KEY, 'on')
-      else localStorage.removeItem(PLAYTEST_KEY)
-    } catch {
-      // Storage blocked: the tools just won't be remembered.
-    }
   }
   const tapStamp = () => {
     stampTaps.current += 1
@@ -187,7 +173,7 @@ export function HomeScreen(props: Props) {
 
       {/* Playtest tools: switched on by tapping the version line five times,
           and they stay on (on this phone) until hidden again. */}
-      {playtestOn && (
+      {playtest && (
         <details className="playtest" open>
           <summary>Playtest tools</summary>
           <p>For testing the path quickly.</p>

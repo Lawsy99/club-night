@@ -5,15 +5,21 @@
 }
 
 .name-field-prompt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   font-size: 15px;
   line-height: 1.4;
 }
 
+/* Speaker names look the same everywhere: small, brass, capitals */
 .name-field-prompt strong {
   display: block;
   font-size: 12px;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--brass);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .name-field input {

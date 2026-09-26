@@ -34,6 +34,8 @@ import { assessMove, describeBlunder } from '../logic/blunder'
 import { flipScore, scoreFor, toCentipawns } from '../logic/evaluation'
 import { describeOutcome, getOutcome, replay, type GameOutcome } from '../logic/game'
 import { drawRule } from '../logic/path'
+import { playtestOn } from '../logic/playtest'
+import { SHORTEST_REVIEW } from '../logic/review'
 import {
   canTakeBack,
   outcomeOf,
@@ -276,7 +278,8 @@ export function GameScreen({
   // own ending. (Draws that count or don't count go to the review too; only
   // knockout draws are replayed straight away.)
   const drawReplays = !!outcome && outcome.winner === null && (!game.path || drawRule(game.path.kind) === 'replay')
-  const reviewNext = !!outcome && !isExhibition && !drawReplays
+  // (A game over in a handful of moves has nothing to review: just carry on.)
+  const reviewNext = !!outcome && !isExhibition && !drawReplays && game.moves.length >= SHORTEST_REVIEW
   useEffect(() => {
     if (!reviewNext || viewPly !== null) return
     const t = window.setTimeout(onReview, REVIEW_DELAY_MS)
@@ -540,10 +543,20 @@ export function GameScreen({
               ? `${opponent.name} is thinking…`
               : `Your move${chess.inCheck() ? ' · check' : ''}`
 
+  // Games without help say what they are, not "Real" (an internal name).
+  const realLabel: Record<string, string> = {
+    trial: 'Trial night',
+    exhibition: 'Just for fun',
+    match: 'Best of three',
+    'cup-round': 'Knockout cup',
+    boss: 'Cup final',
+  }
   const stageLabel =
     stage.takebacks > 0 && Number.isFinite(stage.takebacks)
       ? `${stage.label} · ${takebacksLeft(game)} takeback${takebacksLeft(game) === 1 ? '' : 's'} left`
-      : `${stage.label} · ${stage.summary}`
+      : stage.id === 'real'
+        ? `${realLabel[game.path?.kind ?? ''] ?? 'Match'} · no help`
+        : `${stage.label} · ${stage.summary}`
 
   // Full-help games only (the game with Pemberton): the next move of the
   // opening the player usually plays, while the game is still following it.
@@ -808,7 +821,8 @@ export function GameScreen({
 
       <p className="build-stamp">
         Version: {BUILD_LABEL}
-        {maiaMs !== null && ` · opponent model ${maiaMs} ms`}
+        {/* Engine timing, for testing on a phone: only with the playtest tools on. */}
+        {maiaMs !== null && playtestOn() && ` · opponent model ${maiaMs} ms`}
       </p>
     </main>
   )
