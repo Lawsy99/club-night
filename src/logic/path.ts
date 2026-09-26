@@ -45,6 +45,18 @@ export type Progress = {
   repertoire?: Repertoire
   /** The chapter whose mistakes-deck warm-up has been done (or skipped). */
   warmupDone?: string
+  /** The rating after each change, oldest first, for the stats graph (older saves start empty). */
+  ratingHistory?: RatingPoint[]
+}
+
+export type RatingPoint = { at: number; rating: number }
+
+/** Plenty for a graph; older points are dropped. */
+const MAX_HISTORY = 300
+
+function withHistory(p: Progress, rating: PlayerRating | null, at = Date.now()): RatingPoint[] | undefined {
+  if (!rating) return p.ratingHistory
+  return [...(p.ratingHistory ?? []), { at, rating: Math.round(rating.rating) }].slice(-MAX_HISTORY)
 }
 
 /** A chapter opens with a warm-up when at least this many deck cards are due. */
@@ -316,15 +328,24 @@ function settleTrial(p: Progress, games: TrialGame[]): Progress {
     const c = findCharacter(id)
     if (c) fixedRatings[id] = characterRating(c, baseline)
   }
-  return { ...p, trial: { ...p.trial, games }, rating: start, baseline, fixedRatings, recentReal: [] }
+  return {
+    ...p,
+    trial: { ...p.trial, games },
+    rating: start,
+    baseline,
+    fixedRatings,
+    recentReal: [],
+    ratingHistory: withHistory(p, start),
+  }
 }
 
 function rateReal(p: Progress, opponentRatingValue: number, won: boolean, accuracyStrength: number | null): Progress {
   const rating = p.rating ? rateGame(p.rating, opponentRatingValue, won ? 1 : 0) : p.rating
+  const ratingHistory = withHistory(p, rating)
   const recentReal = [...p.recentReal, { won, accuracyStrength }]
   const inCup = p.chapter >= ACT_1.chapters.length
   const shift = inCup ? 0 : valveAdjustment(recentReal, p.baseline)
   return shift
-    ? { ...p, rating, baseline: p.baseline + shift, recentReal: [] }
-    : { ...p, rating, recentReal: recentReal.slice(-10) }
+    ? { ...p, rating, ratingHistory, baseline: p.baseline + shift, recentReal: [] }
+    : { ...p, rating, ratingHistory, recentReal: recentReal.slice(-10) }
 }

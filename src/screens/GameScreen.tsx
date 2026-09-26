@@ -52,6 +52,7 @@ import { Chess } from 'chess.js'
 import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
 import { repertoireHint, sanInWords } from '../logic/repertoire'
 import type { Repertoire } from '../data/repertoire'
+import type { Chatter } from '../logic/settings'
 import '../components/ratings.css'
 import './GameScreen.css'
 
@@ -68,6 +69,8 @@ type Props = {
   playerName?: string
   /** What the player plays: its next move is noted in assisted and guided games. */
   repertoire?: Repertoire
+  /** How much the characters say (Settings). */
+  chatter?: Chatter
 }
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
@@ -76,12 +79,22 @@ type PendingMove = { uci: string; fenAfter: string; warning: string | null }
 /** Arrow colour for "the move you played" when showing a better one. */
 const PLAYED_ARROW_COLOUR = 'rgba(208, 59, 59, 0.75)'
 
-export function GameScreen({ game, setGame, onReview, onContinue, playerRating, playerName, repertoire }: Props) {
+export function GameScreen({
+  game,
+  setGame,
+  onReview,
+  onContinue,
+  playerRating,
+  playerName,
+  repertoire,
+  chatter = 'full',
+}: Props) {
   const stage = HELP_STAGES[game.stage]
   const isExhibition = game.path?.kind === 'exhibition'
   const opponent = resolveOpponent(game.levelId, game.opponentRating, isExhibition)
-  // Trial night: characters speak only before and after the game (design: "Trial night").
-  const quietGame = game.path?.kind === 'trial' || isExhibition
+  // Nothing said during the game on trial night (design: "Trial night"), or
+  // when the player has turned chatter down in Settings.
+  const quietGame = game.path?.kind === 'trial' || isExhibition || chatter !== 'full'
   const [engineError, setEngineError] = useState<string | null>(null)
   // Bumped to try the opponent's move again after something failed (never stuck "thinking").
   const [moveAttempt, setMoveAttempt] = useState(0)
@@ -137,6 +150,7 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating, 
     rematch: talk.rematch,
     losingStreak: talk.losingStreak,
     playerName,
+    storyOnly: chatter === 'off',
   })
   // Where this game sits in the story, so chapter lines ("kind:match chapter:c3") can be picked.
   const storyFlags = game.path
@@ -368,6 +382,7 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating, 
   // their first move (the opening line is still showing), and not too often.
   useEffect(() => {
     if (!opponentToMove || downloading || engineError || !opponent.character || game.moves.length < 2) return
+    if (chatter !== 'full') return // the thinking dots still show
     if (game.moves.length - lastThinkLineAt.current < LONG_THINK_GAP_MOVES * 2) return
     const t = window.setTimeout(() => {
       if (dialogue.speak('long_think', true)) {

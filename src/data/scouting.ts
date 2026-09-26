@@ -71,4 +71,6 @@ export const OPENING_NAMES: Record<string, string> = {
   catalan: 'the Catalan',
   sicilian: 'the Sicilian',
   nimzo: 'the Nimzo-Indian',
+  'caro-kann': 'the Caro-Kann',
+  kid: "the King's Indian",
 }

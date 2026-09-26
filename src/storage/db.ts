@@ -7,6 +7,8 @@ import { planAdditions, type MistakeCard } from '../logic/mistakesDeck'
 import type { PlayerRating } from '../logic/glicko2'
 import type { Progress } from '../logic/path'
 import type { PositionEval } from '../logic/review'
+import { DEFAULT_SETTINGS, type Settings } from '../logic/settings'
+import type { Backup } from '../logic/backup'
 
 /** A finished game in the archive, with its review analysis once done. */
 export type ArchivedGame = GameRecord & {
@@ -18,8 +20,8 @@ export type ArchivedGame = GameRecord & {
 interface ClubNightDB extends DBSchema {
   /** Small named values: the game in progress, which screen was open, progress on the path. */
   state: {
-    key: 'currentGame' | 'screen' | 'baseline' | 'progress' | 'puzzles' | 'dialogue'
-    value: GameRecord | string | number | Progress | PuzzleProgress | DialogueHistory
+    key: 'currentGame' | 'screen' | 'baseline' | 'progress' | 'puzzles' | 'dialogue' | 'settings'
+    value: GameRecord | string | number | Progress | PuzzleProgress | DialogueHistory | Settings
   }
   /** Every finished game. */
   games: {
@@ -187,6 +189,48 @@ export async function loadCards(): Promise<MistakeCard[]> {
 
 export async function saveCard(card: MistakeCard): Promise<void> {
   await (await db()).put('cards', card)
+}
+
+// --- Settings ----------------------------------------------------------------
+
+export async function loadSettings(): Promise<Settings> {
+  const value = await (await db()).get('state', 'settings')
+  return value && typeof value === 'object' && 'chatter' in value ? { ...DEFAULT_SETTINGS, ...(value as Settings) } : DEFAULT_SETTINGS
+}
+
+export async function saveSettings(settings: Settings): Promise<void> {
+  await (await db()).put('state', settings, 'settings')
+}
+
+// --- Backup (design document, "Keeping it safe") ------------------------------
+
+/** Everything on the device, in one object, for the backup file. */
+export async function exportAll(): Promise<Backup> {
+  const database = await db()
+  const keys = await database.getAllKeys('state')
+  const state: Record<string, unknown> = {}
+  for (const key of keys) state[key] = await database.get('state', key)
+  return {
+    app: 'club-night',
+    version: 1,
+    exportedAt: Date.now(),
+    state,
+    games: await database.getAll('games'),
+    cards: await database.getAll('cards'),
+  }
+}
+
+/** Replaces everything on the device with a backup (already checked by parseBackup). */
+export async function importAll(backup: Backup): Promise<void> {
+  const database = await db()
+  const tx = database.transaction(['state', 'games', 'cards'], 'readwrite')
+  await Promise.all([tx.objectStore('state').clear(), tx.objectStore('games').clear(), tx.objectStore('cards').clear()])
+  for (const [key, value] of Object.entries(backup.state)) {
+    await tx.objectStore('state').put(value as never, key as never)
+  }
+  for (const game of backup.games) await tx.objectStore('games').put(game as ArchivedGame)
+  for (const card of backup.cards) await tx.objectStore('cards').put(card as MistakeCard)
+  await tx.done
 }
 
 /**

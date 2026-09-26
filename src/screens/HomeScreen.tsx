@@ -29,6 +29,8 @@ type Props = {
   onTargetedPuzzles: () => void
   onOpenDeck: () => void
   onOpenHistory: () => void
+  onOpenStats: () => void
+  onOpenSettings: () => void
   /** For players who started before names were asked for. */
   onSetName: (name: string) => void
   /** Answering "Right. What do you play?" at the start of Act 1. */
@@ -59,6 +61,8 @@ export function HomeScreen(props: Props) {
     onTargetedPuzzles,
     onOpenDeck,
     onOpenHistory,
+    onOpenStats,
+    onOpenSettings,
     onSetName,
     onSetRepertoire,
     onStartWarmup,
@@ -117,6 +121,14 @@ export function HomeScreen(props: Props) {
         <button type="button" onClick={onOpenHistory}>
           <strong>Past games</strong>
           <span>Review any game</span>
+        </button>
+        <button type="button" onClick={onOpenStats}>
+          <strong>Stats</strong>
+          <span>Rating, record, openings</span>
+        </button>
+        <button type="button" onClick={onOpenSettings}>
+          <strong>Settings</strong>
+          <span>Chatter, backup</span>
         </button>
       </nav>
 

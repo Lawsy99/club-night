@@ -15,11 +15,13 @@ type Options = {
   rematch: number
   losingStreak: number
   playerName?: string
+  /** Chatter set to Off: only story beats are said. */
+  storyOnly?: boolean
 }
 
 const FADE_MS = 4000
 
-export function useDialogue({ character, gameType, act, rematch, losingStreak, playerName }: Options) {
+export function useDialogue({ character, gameType, act, rematch, losingStreak, playerName, storyOnly = false }: Options) {
   const [line, setLine] = useState<SpokenLine | null>(null)
   const history = useRef<DialogueHistory | null>(null)
   const counter = useRef(0)
@@ -43,7 +45,11 @@ export function useDialogue({ character, gameType, act, rematch, losingStreak, p
     (trigger: Trigger, stay = false, flags: readonly string[] = []): boolean => {
       if (!character) return false
       const h = history.current ?? { recent: [], onceShown: [] }
-      const chosen = selectLine(DIALOGUE, { character, trigger, act, gameType, rematch, losingStreak, flags, playerName }, h)
+      const chosen = selectLine(
+        DIALOGUE,
+        { character, trigger, act, gameType, rematch, losingStreak, flags, playerName, storyOnly },
+        h,
+      )
       if (!chosen) return false
       history.current = rememberLine(h, chosen)
       saveDialogueHistory(history.current).catch(() => undefined)
@@ -55,7 +61,7 @@ export function useDialogue({ character, gameType, act, rematch, losingStreak, p
       })
       return true
     },
-    [character, act, gameType, rematch, losingStreak, playerName],
+    [character, act, gameType, rematch, losingStreak, playerName, storyOnly],
   )
 
   const dismiss = useCallback(() => setLine(null), [])

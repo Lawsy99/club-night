@@ -1,0 +1,111 @@
+.stats-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 16px 16px 32px;
+}
+
+.stats-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.stats-back {
+  min-height: 44px;
+  padding: 0 4px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.stats-screen h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.stats-screen h2 {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.stats-note {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.stats-big {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.stats-big strong {
+  color: var(--text);
+  font-size: 22px;
+}
+
+.stats-records {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stats-records li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #33423a;
+  font-size: 15px;
+}
+
+.stats-records li > span:last-child {
+  color: var(--muted);
+  text-align: right;
+}
+
+.stats-name {
+  font-weight: 600;
+}
+
+.stats-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stats-bar-row {
+  display: grid;
+  grid-template-columns: 96px 1fr minmax(44px, auto);
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.stats-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: #33423a;
+  overflow: hidden;
+}
+
+.stats-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: #f0c95a;
+}
+
+.stats-bar-value {
+  color: var(--muted);
+  text-align: right;
+}

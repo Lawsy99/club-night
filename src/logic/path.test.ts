@@ -92,6 +92,14 @@ describe('the path', () => {
     expect(step.optionalFriendly?.stage).toBe('guided')
   })
 
+  it('keeps a rating history: the starting rating, then each rated game', () => {
+    let p = completeLesson(throughTrial())
+    expect(p.ratingHistory).toHaveLength(1)
+    p = recordGame(p, { ...nextGame(p).game, kind: 'match' }, true, null)
+    expect(p.ratingHistory).toHaveLength(2)
+    expect(p.ratingHistory!.at(-1)!.rating).toBe(Math.round(p.rating!.rating))
+  })
+
   it('friendlies never change the rating; matches do', () => {
     let p = completeLesson(throughTrial())
     const before = p.rating!.rating

@@ -72,6 +72,8 @@ export type DialogueContext = {
   flags: readonly string[]
   /** Lines containing {name} are only used when we know it. */
   playerName?: string
+  /** Chatter set to Off: only story beats. */
+  storyOnly?: boolean
 }
 
 /** A line's text with the player's name filled in. */
@@ -103,6 +105,7 @@ export function selectLine(
   // Story beats (lines tied to a chapter or a kind of game) come before general chatter.
   const story = available.filter(isStoryBeat)
   if (story.length > 0) available = story
+  else if (ctx.storyOnly) return null
   const fresh = available.filter((l) => !history.recent.includes(l.id))
   // Nothing repeats until the whole set has been used; then it starts again.
   const pool = fresh.length > 0 ? fresh : available

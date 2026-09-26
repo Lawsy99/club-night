@@ -37,9 +37,12 @@ import {
   requestPersistentStorage,
   resetProgress,
   saveCurrentGame,
+  loadSettings,
   saveProgress,
   saveScreen,
+  saveSettings,
 } from '../storage/db'
+import { DEFAULT_SETTINGS, type Settings } from '../logic/settings'
 import { GameScreen } from './GameScreen'
 import { HomeScreen } from './HomeScreen'
 import { LessonScreen } from './LessonScreen'
@@ -47,9 +50,11 @@ import { MistakesDeckScreen } from './MistakesDeckScreen'
 import { PastGamesScreen } from './PastGamesScreen'
 import { PuzzleSetScreen } from './PuzzleSetScreen'
 import { ReviewScreen } from './ReviewScreen'
+import { SettingsScreen } from './SettingsScreen'
+import { StatsScreen } from './StatsScreen'
 import { WelcomeScreen } from './WelcomeScreen'
 
-const VIEWS = ['home', 'game', 'review', 'deck', 'warmup', 'history', 'lesson', 'puzzles'] as const
+const VIEWS = ['home', 'game', 'review', 'deck', 'warmup', 'history', 'lesson', 'puzzles', 'stats', 'settings'] as const
 type View = (typeof VIEWS)[number]
 
 /**
@@ -68,6 +73,13 @@ export function AppFlow() {
   const [view, setView] = useState<View>('home')
   const [pastGame, setPastGame] = useState<ArchivedGame | null>(null)
   const [lastChange, setLastChange] = useState<{ from: number; to: number } | null>(null)
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+
+  useEffect(() => {
+    loadSettings()
+      .then(setSettings)
+      .catch(() => undefined)
+  }, [])
 
   useEffect(() => {
     requestPersistentStorage()
@@ -178,6 +190,19 @@ export function AppFlow() {
   }
 
   if (view === 'deck') return <MistakesDeckScreen onBack={() => setView('home')} />
+  if (view === 'stats') return <StatsScreen progress={progress} onBack={() => setView('home')} />
+  if (view === 'settings') {
+    return (
+      <SettingsScreen
+        settings={settings}
+        onChange={(s) => {
+          setSettings(s)
+          saveSettings(s).catch((err) => console.error('Save failed', err))
+        }}
+        onBack={() => setView('home')}
+      />
+    )
+  }
 
   // The chapter's warm-up: done (or abandoned) either way, then on to the lesson.
   const finishWarmup = () => {
@@ -250,6 +275,7 @@ export function AppFlow() {
         playerRating={progress.rating ? Math.round(progress.rating.rating) : undefined}
         playerName={progress.playerName}
         repertoire={progress.repertoire}
+        chatter={settings.chatter}
         onReview={() => setView('review')}
         onContinue={() => void finishGame(game)}
       />
@@ -266,6 +292,8 @@ export function AppFlow() {
       onTargetedPuzzles={() => setView('puzzles')}
       onOpenDeck={() => setView('deck')}
       onOpenHistory={() => setView('history')}
+      onOpenStats={() => setView('stats')}
+      onOpenSettings={() => setView('settings')}
       onSetName={(playerName) => updateProgress({ ...progress, playerName })}
       onSetRepertoire={(repertoire) => updateProgress({ ...progress, repertoire })}
       onStartWarmup={() => setView('warmup')}
