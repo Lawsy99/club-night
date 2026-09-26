@@ -242,6 +242,7 @@ export function AppFlow() {
         setGame={setGame}
         playerRating={progress.rating ? Math.round(progress.rating.rating) : undefined}
         playerName={progress.playerName}
+        repertoire={progress.repertoire}
         onReview={() => setView('review')}
         onContinue={() => void finishGame(game)}
       />
@@ -259,6 +260,7 @@ export function AppFlow() {
       onOpenDeck={() => setView('deck')}
       onOpenHistory={() => setView('history')}
       onSetName={(playerName) => updateProgress({ ...progress, playerName })}
+      onSetRepertoire={(repertoire) => updateProgress({ ...progress, repertoire })}
       onSkipStep={() => {
         setLastChange(null)
         if (next.kind === 'lesson') updateProgress(completeLesson(progress))

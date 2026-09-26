@@ -15,6 +15,14 @@ export type PlanSet = { prompt: string; options: PlanOption[] }
 /** Keyed by opening, then by the PLAYER's colour. */
 export const PLANS: Record<string, Partial<Record<'w' | 'b', PlanSet>>> = {
   london: {
+    w: {
+      prompt: 'Your London is set up. What now?',
+      options: [
+        { label: 'Knight to e5, then build up on the kingside', quality: 'best', verdict: "The London's main idea. A knight on e5 that can't be moved is worth a lot." },
+        { label: 'Prepare the e4 break with Nbd2 and Qe2', quality: 'ok', verdict: 'Solid and sensible. It opens the centre on your terms.' },
+        { label: 'Swap off your bishop from f4', quality: 'poor', verdict: "That bishop is the point of the London. Keep it." },
+      ],
+    },
     b: {
       prompt: 'Her London is set up. What now?',
       options: [
@@ -144,7 +152,35 @@ export const PLANS: Record<string, Partial<Record<'w' | 'b', PlanSet>>> = {
       ],
     },
   },
+  'caro-kann': {
+    b: {
+      prompt: 'The Caro-Kann. Solid so far. Your plan?',
+      options: [
+        { label: 'Finish developing, then break with ...c5', quality: 'best', verdict: 'The classical way. Solid first, then hit the centre.' },
+        { label: 'Swap pieces towards an endgame', quality: 'ok', verdict: 'Your pawns are in good shape for an endgame. Reasonable.' },
+        { label: 'Push ...g5 and attack', quality: 'poor', verdict: 'Not with this structure. Your strength is being solid.' },
+      ],
+    },
+  },
+  kid: {
+    b: {
+      prompt: "The King's Indian. White has the centre. Your plan?",
+      options: [
+        { label: 'Strike with ...e5, then go for the king with ...f5', quality: 'best', verdict: "That's the King's Indian. Hit the centre, then attack." },
+        { label: 'Hit the centre with ...c5 instead', quality: 'ok', verdict: 'A reasonable alternative, and a sharp one.' },
+        { label: 'Wait and let White expand', quality: 'poor', verdict: 'White will take the whole board. You have to hit back.' },
+      ],
+    },
+  },
   sicilian: {
+    b: {
+      prompt: 'The Sicilian. How do you play it?',
+      options: [
+        { label: 'Counterattack on the queenside with ...b5 and the open c-file', quality: 'best', verdict: "Right. That's what the Sicilian is for. The c-file is yours." },
+        { label: 'Break in the centre with ...d5 when it is safe', quality: 'ok', verdict: "A good freeing move, if you've prepared it properly." },
+        { label: 'Castle queenside and sit tight', quality: 'poor', verdict: 'Your queenside pawns have already moved. That king has no cover.' },
+      ],
+    },
     w: {
       prompt: 'The Sicilian. How will you play it?',
       options: [
@@ -185,10 +221,13 @@ export const OPENING_PATTERNS: [key: string, pattern: string[]][] = [
   ['italian', ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4']],
   ['petroff', ['e4', 'e5', 'Nf3', 'Nf6']],
   ['french', ['e4', 'e6']],
+  ['caro-kann', ['e4', 'c6']],
   ['sicilian', ['e4', 'c5']],
   ['london', ['d4', '*', 'Bf4']],
   ['catalan', ['d4', '*', 'c4', 'e6', 'g3']],
   ['nimzo', ['d4', 'Nf6', 'c4', 'e6', 'Nc3', 'Bb4']],
+  ['kid', ['d4', 'Nf6', 'c4', 'g6']],
+  ['kid', ['d4', 'Nf6', 'Nf3', 'g6']],
   ['qgd', ['d4', 'd5', 'c4', 'e6']],
   ['qgd', ['d4', 'Nf6', 'c4', 'e6', 'Nf3', 'd5']],
   ['qgd', ['d4', 'd5', 'Nf3', 'Nf6', 'c4', 'e6']],

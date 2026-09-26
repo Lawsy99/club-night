@@ -244,6 +244,18 @@
   background: var(--rating);
 }
 
+/* The player's own opening: its next move, in words */
+.book-note {
+  margin: 0 16px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.book-note strong {
+  color: #f0c95a;
+  font-weight: 600;
+}
+
 .best-line {
   display: flex;
   align-items: center;

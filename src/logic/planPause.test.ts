@@ -16,7 +16,10 @@ describe('plan pause', () => {
 
   it('offers plans for the player’s side, or nothing', () => {
     expect(planFor(['d4', 'd5', 'Bf4'], 'b')?.options).toHaveLength(3)
-    expect(planFor(['d4', 'd5', 'Bf4'], 'w')).toBeNull() // no London plans written for its own side
+    // The player's own London (from their repertoire) has plans too.
+    expect(planFor(['d4', 'd5', 'Bf4'], 'w')?.prompt).toContain('Your London')
+    // Nothing written for White against the French from the Black side.
+    expect(planFor(['e4', 'e6'], 'b')).toBeNull()
   })
 
   it('always has exactly one best plan per set', () => {

@@ -4,6 +4,8 @@
 import { useEffect, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
 import { NameField } from '../components/NameField'
+import { RepertoireCard } from '../components/RepertoireCard'
+import type { Repertoire } from '../data/repertoire'
 import { cleanName } from '../logic/playerName'
 import { ACT_1 } from '../data/act1'
 import { findCharacter } from '../data/characters'
@@ -28,6 +30,8 @@ type Props = {
   onOpenHistory: () => void
   /** For players who started before names were asked for. */
   onSetName: (name: string) => void
+  /** Answering "Right. What do you play?" at the start of Act 1. */
+  onSetRepertoire: (r: Repertoire) => void
   onSkipStep: () => void
   onReset: () => void
 }
@@ -52,6 +56,7 @@ export function HomeScreen(props: Props) {
     onOpenDeck,
     onOpenHistory,
     onSetName,
+    onSetRepertoire,
     onSkipStep,
     onReset,
   } = props
@@ -88,7 +93,11 @@ export function HomeScreen(props: Props) {
 
       <ActProgress progress={progress} />
 
-      <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} onTargetedPuzzles={onTargetedPuzzles} />
+      {progress.stage === 'act' && !progress.repertoire ? (
+        <RepertoireCard onChoose={onSetRepertoire} />
+      ) : (
+        <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} onTargetedPuzzles={onTargetedPuzzles} />
+      )}
 
       <Noticeboard progress={progress} next={next} />
 

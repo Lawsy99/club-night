@@ -50,6 +50,8 @@ import { triggersFor } from '../logic/gameTriggers'
 import { useDialogue } from './useDialogue'
 import { Chess } from 'chess.js'
 import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
+import { repertoireHint, sanInWords } from '../logic/repertoire'
+import type { Repertoire } from '../data/repertoire'
 import '../components/ratings.css'
 import './GameScreen.css'
 
@@ -64,6 +66,8 @@ type Props = {
   playerRating?: number
   /** The player's name, for their name bar and for lines that use it. */
   playerName?: string
+  /** What the player plays: its next move is noted in assisted and guided games. */
+  repertoire?: Repertoire
 }
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
@@ -72,7 +76,7 @@ type PendingMove = { uci: string; fenAfter: string; warning: string | null }
 /** Arrow colour for "the move you played" when showing a better one. */
 const PLAYED_ARROW_COLOUR = 'rgba(208, 59, 59, 0.75)'
 
-export function GameScreen({ game, setGame, onReview, onContinue, playerRating, playerName }: Props) {
+export function GameScreen({ game, setGame, onReview, onContinue, playerRating, playerName, repertoire }: Props) {
   const stage = HELP_STAGES[game.stage]
   const isExhibition = game.path?.kind === 'exhibition'
   const opponent = resolveOpponent(game.levelId, game.opponentRating, isExhibition)
@@ -395,7 +399,14 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating, 
       ? `${stage.label} · ${takebacksLeft(game)} takeback${takebacksLeft(game) === 1 ? '' : 's'} left`
       : `${stage.label} · ${stage.summary}`
 
-  const pendingLast = pending ? { from: pending.uci.slice(0, 2), to: pending.uci.slice(2, 4) } : null
+  // Assisted and guided games only (no help in real games): the next move of
+  // the player's own opening, while the game is still following it.
+  const bookNote =
+    (stage.id === 'assisted' || stage.id === 'guided') && playersTurn && !pending && !peeking
+      ? repertoireHint(sans, game.playerColour, repertoire)
+      : null
+
+  const pendingLast = pending ?{ from: pending.uci.slice(0, 2), to: pending.uci.slice(2, 4) } : null
 
   // The plan pause: once per assisted game, around move 10, if we have plans for this opening.
   const planSet =
@@ -520,6 +531,12 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating, 
       <PlayerStrip name={playerName ?? 'You'} rating={playerRating} fen={fen} side={game.playerColour} />
 
       <MoveStrip sans={sans} />
+
+      {bookNote && (
+        <p className="book-note">
+          Your {bookNote.opening.replace(/^the /, '')}: next, <strong>{sanInWords(bookNote.san)}</strong>
+        </p>
+      )}
 
       {ratedMove && (
         <div className="move-info">
