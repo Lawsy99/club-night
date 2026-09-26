@@ -6,6 +6,7 @@ import { BUILD_LABEL } from '../buildInfo'
 import { NameField } from '../components/NameField'
 import { RepertoireCard } from '../components/RepertoireCard'
 import type { Repertoire } from '../data/repertoire'
+import type { Milestone } from '../logic/milestones'
 import { cleanName } from '../logic/playerName'
 import { ACT_1 } from '../data/act1'
 import { findCharacter } from '../data/characters'
@@ -24,6 +25,8 @@ type Props = {
   next: NextStep
   /** The last rated game's rating change, shown once (e.g. 1245 → 1257). */
   lastChange: { from: number; to: number } | null
+  /** Milestones reached in the game just finished (shown once). */
+  milestones: Milestone[]
   onPlay: (game: PathGame) => void
   onStartLesson: () => void
   onTargetedPuzzles: () => void
@@ -56,6 +59,7 @@ export function HomeScreen(props: Props) {
     progress,
     next,
     lastChange,
+    milestones,
     onPlay,
     onStartLesson,
     onTargetedPuzzles,
@@ -98,6 +102,14 @@ export function HomeScreen(props: Props) {
       </header>
 
       {lastChange && <RatingChange {...lastChange} />}
+
+      {milestones.length > 0 && (
+        <aside className="milestone-banner" role="status">
+          {milestones.map((m) => (
+            <p key={m.id}>{m.text}</p>
+          ))}
+        </aside>
+      )}
 
       {!progress.playerName && <MissingName onSave={onSetName} />}
 

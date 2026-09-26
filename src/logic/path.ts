@@ -47,6 +47,10 @@ export type Progress = {
   warmupDone?: string
   /** The rating after each change, oldest first, for the stats graph (older saves start empty). */
   ratingHistory?: RatingPoint[]
+  /** Milestones reached (ids from logic/milestones.ts), each shown once. */
+  milestones?: string[]
+  /** Something for the next opponent to notice ("rating"), said once at the start of the next game. */
+  notice?: string | null
 }
 
 export type RatingPoint = { at: number; rating: number }

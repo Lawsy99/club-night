@@ -43,6 +43,8 @@ export type GameRecord = {
     lastLineMove: number | null
     startSaid: boolean
     endSaid: boolean
+    /** A milestone for the character to notice at the start ("rating"). */
+    notice?: string
   }
 }
 

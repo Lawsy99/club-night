@@ -1820,5 +1820,104 @@
   },
   "weight": 1,
   "once": true
+ },
+ {
+  "id": "notice-rating-marjorie",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "Your rating's gone up, I see. Good for you.",
+  "expression": "pleased",
+  "conditions": {
+   "flags": [
+    "notice:rating"
+   ]
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "notice-rating-dex",
+  "character": "dex",
+  "trigger": "game_start",
+  "text": "Rating's going up then. Don't make it weird.",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "notice:rating"
+   ]
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "notice-rating-oscar",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "game_start",
+  "text": "Your rating's up, I see. So is Oscar's, of course.",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "notice:rating"
+   ]
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "notice-rating-clive",
+  "character": "clive",
+  "trigger": "game_start",
+  "text": "Rating's up, I hear. It's only a number.",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "notice:rating"
+   ]
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "notice-rating-priya",
+  "character": "priya",
+  "trigger": "game_start",
+  "text": "Your rating's gone up. What are you reading?",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "notice:rating"
+   ]
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "notice-rating-graham",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "Your rating's gone up. I've updated the website.",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "notice:rating"
+   ]
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "notice-rating-toby",
+  "character": "toby",
+  "trigger": "game_start",
+  "text": "Rating's up! Genuinely made up for you, mate.",
+  "expression": "smug",
+  "conditions": {
+   "flags": [
+    "notice:rating"
+   ]
+  },
+  "weight": 1,
+  "once": false
  }
 ]

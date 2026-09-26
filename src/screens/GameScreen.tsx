@@ -153,9 +153,11 @@ export function GameScreen({
     storyOnly: chatter === 'off',
   })
   // Where this game sits in the story, so chapter lines ("kind:match chapter:c3") can be picked.
-  const storyFlags = game.path
-    ? [`kind:${game.path.kind}`, ...(game.path.chapter ? [`chapter:${game.path.chapter}`] : [])]
-    : []
+  const storyFlags = [
+    ...(game.path ? [`kind:${game.path.kind}`] : []),
+    ...(game.path?.chapter ? [`chapter:${game.path.chapter}`] : []),
+    ...(game.talk?.notice ? [`notice:${game.talk.notice}`] : []),
+  ]
   // The long-think stage direction: whether one is showing, and when the last was.
   const thinkLineShown = useRef(false)
   const lastThinkLineAt = useRef(-99)

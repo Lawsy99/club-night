@@ -224,6 +224,24 @@
   cursor: pointer;
 }
 
+/* Milestones: quiet, one line each, gone after the next game */
+.milestone-banner {
+  padding: 10px 14px;
+  border-left: 3px solid #f0c95a;
+  border-radius: 6px;
+  background: #26332b;
+}
+
+.milestone-banner p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.milestone-banner p + p {
+  margin-top: 4px;
+}
+
 /* Graham asking an older save for a name */
 .missing-name {
   display: flex;

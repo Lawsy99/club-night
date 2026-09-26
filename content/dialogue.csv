@@ -161,3 +161,10 @@ story-c6-graham,graham,,game_loss,"Fair result. I've put a draft team sheet up. 
 story-c7-toby,toby,,game_start,"No pressure, mate. I've made you a study, by the way. I'll send it over.",pleased,,,,,,kind:match chapter:c7,1,yes
 story-final-start,toby,,game_start,(Marjorie has got the good set out.),neutral,,,,,,kind:boss,1,yes
 story-final-won,toby,,game_loss,"(Pemberton shakes your hand, then goes to find Toby.)",annoyed,,,,,,kind:boss,1,yes
+notice-rating-marjorie,marjorie,,game_start,"Your rating's gone up, I see. Good for you.",pleased,,,,,,notice:rating,1,
+notice-rating-dex,dex,,game_start,Rating's going up then. Don't make it weird.,neutral,,,,,,notice:rating,1,
+notice-rating-oscar,oscar,neil,game_start,"Your rating's up, I see. So is Oscar's, of course.",neutral,,,,,,notice:rating,1,
+notice-rating-clive,clive,,game_start,"Rating's up, I hear. It's only a number.",neutral,,,,,,notice:rating,1,
+notice-rating-priya,priya,,game_start,Your rating's gone up. What are you reading?,neutral,,,,,,notice:rating,1,
+notice-rating-graham,graham,,game_start,"Your rating's gone up. I've updated the website.",neutral,,,,,,notice:rating,1,
+notice-rating-toby,toby,,game_start,"Rating's up! Genuinely made up for you, mate.",smug,,,,,,notice:rating,1,

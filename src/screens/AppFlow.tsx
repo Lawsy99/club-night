@@ -21,7 +21,10 @@ import {
   type Progress,
 } from '../logic/path'
 import { replay } from '../logic/game'
-import { averageCentipawnLoss } from '../logic/review'
+import { averageCentipawnLoss, ratingCounts, reviewMoves } from '../logic/review'
+import { newMilestones, noticeFor, type Milestone } from '../logic/milestones'
+import { ACT_1 } from '../data/act1'
+import { CHARACTERS } from '../data/characters'
 import { rivalTarget } from '../logic/rival'
 import { scoutingReport } from '../logic/scouting'
 import { strengthFromAccuracy } from '../logic/trialNight'
@@ -74,6 +77,7 @@ export function AppFlow() {
   const [pastGame, setPastGame] = useState<ArchivedGame | null>(null)
   const [lastChange, setLastChange] = useState<{ from: number; to: number } | null>(null)
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+  const [milestoneBanner, setMilestoneBanner] = useState<Milestone[]>([])
 
   useEffect(() => {
     loadSettings()
@@ -120,6 +124,10 @@ export function AppFlow() {
 
   const startPathGame = async (pathGame: PathGame) => {
     setLastChange(null)
+    setMilestoneBanner([])
+    // Something for the characters to notice (e.g. the rating passing a hundred), said once.
+    const notice = progress.notice ?? undefined
+    if (notice) updateProgress({ ...progress, notice: null })
     const opponentId = characterOpponentId(pathGame.opponent)
     // Head-to-head so far, for dialogue ("Third time lucky…").
     const h2h = await headToHead(opponentId).catch(() => ({ played: 0, wins: 0, losses: 0, theirStreak: 0 }))
@@ -144,7 +152,15 @@ export function AppFlow() {
       path: pathGame,
       scouting,
       rivalPrefer: target && target.colour === record.playerColour ? target.opening : undefined,
-      talk: { rematch: h2h.played + 1, losingStreak: h2h.theirStreak, lines: 0, lastLineMove: null, startSaid: false, endSaid: false },
+      talk: {
+        rematch: h2h.played + 1,
+        losingStreak: h2h.theirStreak,
+        lines: 0,
+        lastLineMove: null,
+        startSaid: false,
+        endSaid: false,
+        notice,
+      },
     })
     setView('game')
   }
@@ -166,9 +182,19 @@ export function AppFlow() {
       const archived = await getArchivedGame(finished.id).catch(() => null)
       const loss = archived?.evals ? averageCentipawnLoss(finished.moves, archived.evals, finished.playerColour) : null
       const accuracyStrength = loss === null ? null : strengthFromAccuracy(loss)
-      const next = recordGame(progress, finished.path, won, accuracyStrength)
+      let next = recordGame(progress, finished.path, won, accuracyStrength)
       if (isRated(finished.path) && progress.rating && next.rating) {
         setLastChange({ from: progress.rating.rating, to: next.rating.rating })
+      }
+      // Milestones: a small banner on Home, and the characters may notice next game.
+      const reached = await gameMilestones(finished, won, progress, next, archived).catch(() => [])
+      if (reached.length > 0) {
+        next = {
+          ...next,
+          milestones: [...(next.milestones ?? []), ...reached.map((m) => m.id)],
+          notice: noticeFor(reached) ?? next.notice,
+        }
+        setMilestoneBanner(reached)
       }
       updateProgress(next)
       setGame({ ...finished, resultRecorded: true })
@@ -287,6 +313,7 @@ export function AppFlow() {
       progress={progress}
       next={next}
       lastChange={lastChange}
+      milestones={milestoneBanner}
       onPlay={startPathGame}
       onStartLesson={() => setView('lesson')}
       onTargetedPuzzles={() => setView('puzzles')}
@@ -314,6 +341,57 @@ export function AppFlow() {
           .catch((err) => console.error('Reset failed', err))
       }}
     />
+  )
+}
+
+/** Which milestones this finished game reaches (see logic/milestones.ts for the rules). */
+async function gameMilestones(
+  finished: GameRecord,
+  won: boolean,
+  before: Progress,
+  after: Progress,
+  archived: ArchivedGame | null,
+): Promise<Milestone[]> {
+  const path = finished.path
+  if (!path) return []
+  const real = path.kind !== 'friendly' && path.kind !== 'exhibition'
+  const opponent = path.opponent
+  const regulars = ACT_1.chapters.map((c) => c.opponent).filter((id) => id !== 'toby')
+  // Regulars beaten in a real game, from the archive, plus this game.
+  const beaten = new Set<string>()
+  for (const g of await listArchivedGames()) {
+    try {
+      const o = outcomeOf(g)
+      const kind = g.path?.kind
+      if (o && o.winner === g.playerColour && kind && kind !== 'friendly' && kind !== 'exhibition') {
+        beaten.add(g.levelId.replace(/^char:/, ''))
+      }
+    } catch {
+      // unreadable old game: skip
+    }
+  }
+  if (won && real) beaten.add(opponent)
+  const evals = archived?.evals
+  const reviewed = evals && evals.length === finished.moves.length + 1 ? reviewMoves(finished.moves, evals) : null
+  const counts = reviewed ? ratingCounts(reviewed, finished.playerColour) : null
+  const names = Object.fromEntries(CHARACTERS.map((c) => [c.id, c.name]))
+  return newMilestones(
+    {
+      won: won && real,
+      rated: isRated(path),
+      opponent,
+      opponentName: names[opponent] ?? null,
+      opponentRating: path.rating,
+      ratingBefore: before.rating ? Math.round(before.rating.rating) : null,
+      ratingAfter: after.rating ? Math.round(after.rating.rating) : null,
+      theirStreakBefore: finished.talk?.losingStreak ?? 0,
+      regularsBeaten: [...beaten],
+      regulars,
+      fixedRatings: after.fixedRatings,
+      errors: counts ? counts.mistake + counts.blunder : null,
+    },
+    before.milestones ?? [],
+    names,
   )
 }
 

@@ -118,9 +118,12 @@ export function selectLine(
   return pool[pool.length - 1]
 }
 
-/** A line written for a particular moment in the story ("chapter:c3", "kind:boss"). */
+/**
+ * A line written for a particular moment in the story ("chapter:c3",
+ * "kind:boss"), or noticing the player's progress ("notice:rating").
+ */
 function isStoryBeat(line: DialogueLine): boolean {
-  return !!line.conditions.flags?.some((f) => f.startsWith('chapter:') || f.startsWith('kind:'))
+  return !!line.conditions.flags?.some((f) => f.startsWith('chapter:') || f.startsWith('kind:') || f.startsWith('notice:'))
 }
 
 function conditionsMet(line: DialogueLine, ctx: DialogueContext): boolean {
