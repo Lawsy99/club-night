@@ -3,7 +3,7 @@
 // rest of the writing: what happened, not what it means.
 
 export const DIARY: Record<string, string> = {
-  trial: 'Four games and a rating. Then a quick one against Toby, who is also new. It didn’t count.',
+  trial: 'Four games and a rating. Then a quick one against Toby, who is also new. It didn’t count. Some members only come in for the league.',
   c1: 'Beat Marjorie in a club match. The club used to need both rooms.',
   c2: 'Beat Dex. His phone was recording.',
   c3: 'Beat Oscar. Neil asked about coaching; Pemberton’s Tuesdays are taken.',

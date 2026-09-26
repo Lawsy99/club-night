@@ -12,13 +12,13 @@ export const NOTICEBOARD: Record<string, Notice> = {
   'trial-finale': { speaker: 'Graham', text: "Toby isn't on the membership list yet. Strictly speaking, that game is unofficial." },
   c1: { speaker: 'Graham', text: 'Reminder: subs are due. Not now. After.' },
   c2: { speaker: 'Graham', text: 'Filming on club nights requires the committee’s permission. Forms are available. From me.' },
-  c3: { speaker: 'Neil', text: "Junior night Thursday. Oscar's coach says he's ahead of schedule." },
+  c3: { speaker: 'Neil', text: "Junior night Thursday. Ray says Oscar's ahead of schedule. We'd prefer Mr Pemberton." },
   c4: { speaker: 'Coach Pemberton', text: "Going over Toby's game after club tonight. Anyone else's after, if there's time." },
   c5: { speaker: 'Priya', text: "Has anyone got the new edition? Chapter nine's changed." },
   c6: { speaker: 'Graham', text: "The pub want another eight pounds a night. I've done a spreadsheet." },
   // After Graham's chapter: the pencilled team sheet (favouritism, never stated).
   c7: { speaker: 'Graham', text: 'Draft league team, in pencil. Board two: Toby. Other boards to follow.' },
-  cup: { speaker: 'Marjorie', text: "Knockout cup draw's up. I did the draw. It's all above board." },
+  cup: { speaker: 'Marjorie', text: "Knockout cup draw's up. I did the draw. Malcolm sends his apologies. He always does." },
   final: { speaker: 'Coach Pemberton', text: "Final's Tuesday. I'll look at yours after. Toby's had a very interesting Najdorf." },
   // The act's last beat: the ladder goes up, and Toby is already at the top.
   complete: { speaker: 'Graham', text: 'The club ladder is now up. Toby has kindly agreed to start at the top.' },

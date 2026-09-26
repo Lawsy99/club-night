@@ -14,8 +14,8 @@ export type Member = {
 }
 
 export const MEMBERS: Member[] = [
-  { id: 'malcolm', name: 'Malcolm', note: 'Board one. Comes in for league nights.', offset: 320 },
-  { id: 'ray', name: 'Ray', note: 'League regular. Thursdays, mostly.', offset: 190 },
-  { id: 'sheila', name: 'Sheila', note: 'Here for the company.', offset: -240 },
-  { id: 'bill', name: 'Bill', note: 'A member since 1974.', offset: -330 },
+  { id: 'malcolm', name: 'Malcolm', note: 'Board one. Only in for league matches.', offset: 320 },
+  { id: 'ray', name: 'Ray', note: 'Runs junior night on Thursdays.', offset: 190 },
+  { id: 'sheila', name: 'Sheila', note: 'Does the raffle. Plays when asked.', offset: -240 },
+  { id: 'bill', name: 'Bill', note: 'A member since 1974. Remembers everyone.', offset: -330 },
 ]
