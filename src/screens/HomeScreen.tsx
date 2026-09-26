@@ -163,7 +163,12 @@ export function HomeScreen(props: Props) {
             type="button"
             className="danger"
             onClick={() => {
-              if (window.confirm('Reset all progress, including your rating? Past games are kept.')) onReset()
+              if (
+                window.confirm(
+                  'Start again from the beginning? This clears your rating, the story, past games and your records with everyone. Settings are kept.',
+                )
+              )
+                onReset()
             }}
           >
             Reset progress

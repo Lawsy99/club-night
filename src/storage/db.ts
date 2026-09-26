@@ -133,11 +133,21 @@ function lostOnBoard(g: ArchivedGame): boolean {
 }
 
 /** Playtest tool: forget progress and the current game (the archive and deck stay). */
+/**
+ * A fresh start: the story, every past game (so records with each person
+ * start again), warm-up positions, the puzzle rating and which lines people
+ * have already said. Settings (board, sound, chatter) are kept.
+ */
 export async function resetProgress(): Promise<void> {
   const database = await db()
-  await database.delete('state', 'progress')
-  await database.delete('state', 'currentGame')
-  await database.delete('state', 'screen')
+  const tx = database.transaction(['state', 'games', 'cards'], 'readwrite')
+  const state = tx.objectStore('state')
+  await Promise.all([
+    ...(['progress', 'currentGame', 'screen', 'puzzles', 'dialogue', 'baseline'] as const).map((key) => state.delete(key)),
+    tx.objectStore('games').clear(),
+    tx.objectStore('cards').clear(),
+  ])
+  await tx.done
 }
 
 /** Which screen was open, so a closed app reopens in the same place. */

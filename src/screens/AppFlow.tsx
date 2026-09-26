@@ -398,6 +398,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
             setProgress(NEW_PROGRESS)
             setGame(null)
             setLastChange(null)
+            setMilestoneBanner([])
+            setLadderNews([])
             setView('home')
           })
           .catch((err) => console.error('Reset failed', err))
