@@ -31,20 +31,6 @@
   color: var(--muted);
 }
 
-.repertoire-portrait {
-  /* Never squashed by long text beside it */
-  flex: 0 0 44px;
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #ece4cf;
-  color: #1f2a24;
-  font-weight: 700;
-  font-size: 20px;
-}
-
 .repertoire-card fieldset {
   display: flex;
   flex-direction: column;

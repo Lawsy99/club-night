@@ -2,6 +2,7 @@
 // and the player picks a plan. Coach Pemberton gives a one-line verdict.
 import { useMemo, useState } from 'react'
 import type { PlanOption, PlanSet } from '../data/plans'
+import { Portrait } from './Portrait'
 import './PlanPause.css'
 
 type Props = {
@@ -35,9 +36,11 @@ export function PlanPause({ plans, onDone }: Props) {
         ) : (
           <>
             <div className={`plan-verdict ${chosen.quality}`}>
-              <span className="plan-portrait" aria-hidden="true">
-                P
-              </span>
+              <Portrait
+                who="pemberton"
+                size={36}
+                expression={chosen.quality === 'best' ? 'pleased' : chosen.quality === 'poor' ? 'annoyed' : 'neutral'}
+              />
               <p>
                 <strong>Coach Pemberton:</strong> {chosen.verdict}
               </p>

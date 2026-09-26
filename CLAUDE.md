@@ -57,4 +57,6 @@ home screen), later wrapped as iOS and Android apps with Capacitor.
 Only build the current phase. Don't add features from later phases early.
 
 ## Current phase
-Phase 6 — Dialogue and story (Phases 0–5 done: live at https://lawsy99.github.io/club-night/)
+Phase 7 — Art, stats and polish (Phases 0–6 done: live at https://lawsy99.github.io/club-night/).
+Story review with Joseph is ongoing in `docs/story-outline.md` (open: Graham as the
+Taylor Doose figure, Vera's surname). Writing style: understated, no em dashes.

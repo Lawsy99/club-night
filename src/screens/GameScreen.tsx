@@ -13,6 +13,7 @@ import { DemoBoard } from '../components/DemoBoard'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
 import { buildDemo } from '../logic/demo'
 import { PlayerStrip } from '../components/PlayerStrip'
+import { Portrait } from '../components/Portrait'
 import { HELP_STAGES } from '../data/helpStages'
 import { resolveOpponent } from '../data/opponents'
 import { analysePosition } from '../engine/analysis'
@@ -152,6 +153,9 @@ export function GameScreen({
     playerName,
     storyOnly: chatter === 'off',
   })
+  // The opponent's face shows the expression of their current line.
+  const opponentFace =
+    dialogue.line && dialogue.line.face === opponent.character?.id ? dialogue.line.expression : 'neutral'
   // Where this game sits in the story, so chapter lines ("kind:match chapter:c3") can be picked.
   const storyFlags = [
     ...(game.path ? [`kind:${game.path.kind}`] : []),
@@ -479,6 +483,7 @@ export function GameScreen({
       </header>
 
       <PlayerStrip
+        portrait={opponent.character ? <Portrait who={opponent.character.id} size={36} expression={opponentFace} /> : undefined}
         name={opponent.name}
         rating={opponent.unrated ? 'unrated' : opponent.rating}
         fen={fen}
@@ -488,8 +493,14 @@ export function GameScreen({
 
       {dialogue.line && !bubble && (
         <button type="button" className="talk-bubble" onClick={dialogue.dismiss} key={dialogue.line.key}>
-          {dialogue.line.speaker && <span className="talk-speaker">{dialogue.line.speaker}</span>}
-          <span>{dialogue.line.text.startsWith('(') ? dialogue.line.text : `“${dialogue.line.text}”`}</span>
+          {/* Someone else speaking (e.g. Neil): their small face beside the words. */}
+          {dialogue.line.face !== opponent.character?.id && (
+            <Portrait who={dialogue.line.face} size={28} expression={dialogue.line.expression} />
+          )}
+          <span className="talk-words">
+            {dialogue.line.speaker && <span className="talk-speaker">{dialogue.line.speaker}</span>}
+            <span>{dialogue.line.text.startsWith('(') ? dialogue.line.text : `“${dialogue.line.text}”`}</span>
+          </span>
         </button>
       )}
 

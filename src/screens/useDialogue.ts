@@ -3,10 +3,18 @@
 // tap (start and end lines stay until tapped).
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DIALOGUE, SPEAKER_NAMES } from '../data/dialogue'
-import { fillName, rememberLine, selectLine, type DialogueHistory, type Trigger } from '../logic/dialogue'
+import { fillName, rememberLine, selectLine, type DialogueHistory, type Expression, type Trigger } from '../logic/dialogue'
 import { loadDialogueHistory, saveDialogueHistory } from '../storage/db'
 
-export type SpokenLine = { text: string; speaker: string | null; key: number }
+export type SpokenLine = {
+  text: string
+  /** Someone other than the opponent (e.g. Neil), by display name. */
+  speaker: string | null
+  /** Whose face to show (character or speaker id), and how they look saying it. */
+  face: string
+  expression: Expression
+  key: number
+}
 
 type Options = {
   character: string | undefined
@@ -57,6 +65,8 @@ export function useDialogue({ character, gameType, act, rematch, losingStreak, p
       setLine({
         text: fillName(chosen.text, playerName),
         speaker: chosen.speaker ? (SPEAKER_NAMES[chosen.speaker] ?? chosen.speaker) : null,
+        face: chosen.speaker ?? chosen.character,
+        expression: chosen.expression,
         key: ++counter.current,
       })
       return true

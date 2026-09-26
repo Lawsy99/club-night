@@ -1,6 +1,7 @@
 // The name bar above (opponent) and below (player) the board: name, rating,
 // the pieces they've captured and their material lead.
 import type { PieceSymbol } from 'chess.js'
+import type { ReactNode } from 'react'
 import { materialFor } from '../logic/material'
 import type { Colour } from '../logic/game'
 import './PlayerStrip.css'
@@ -14,12 +15,15 @@ type Props = {
   fen: string
   side: Colour
   thinking?: boolean
+  /** The opponent's face (their expression follows what they say). */
+  portrait?: ReactNode
 }
 
-export function PlayerStrip({ name, rating, fen, side, thinking = false }: Props) {
+export function PlayerStrip({ name, rating, fen, side, thinking = false, portrait }: Props) {
   const { captured, lead } = materialFor(fen, side)
   return (
     <div className="player-strip">
+      {portrait}
       <span className={`player-dot ${side === 'w' ? 'white' : 'black'}`} aria-hidden="true" />
       <span className="player-name">{name}</span>
       {rating !== undefined && <span className="player-rating">{rating}</span>}

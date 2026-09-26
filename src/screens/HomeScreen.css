@@ -180,20 +180,6 @@
 }
 
 /* Placeholder portrait until the portraits are drawn (phase 7) */
-.next-portrait {
-  /* Never squashed by long text beside it */
-  flex: 0 0 44px;
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #ece4cf;
-  color: #1f2a24;
-  font-weight: 700;
-  font-size: 20px;
-}
-
 .next-rating {
   color: var(--muted);
 }

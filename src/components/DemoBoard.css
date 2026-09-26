@@ -26,18 +26,6 @@
 }
 
 /* Placeholder portrait until the portraits are drawn (phase 7) */
-.demo-portrait {
-  flex: 0 0 40px;
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #1f2a24;
-  color: #ece4cf;
-  font-weight: 700;
-}
-
 .demo-nav {
   display: grid;
   grid-template-columns: 1fr 2fr;

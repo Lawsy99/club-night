@@ -89,18 +89,6 @@
   box-shadow: inset 4px 0 0 #d03b3b;
 }
 
-.plan-portrait {
-  flex: 0 0 32px;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #1f2a24;
-  color: #ece4cf;
-  font-weight: 700;
-}
-
 .plan-best {
   margin: 10px 0 0;
   font-size: 14px;

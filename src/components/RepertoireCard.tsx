@@ -2,6 +2,7 @@
 // repertoire at the start of Act 1 (design document, "Your repertoire").
 import { useState } from 'react'
 import { REPERTOIRE_CHOICES, type Repertoire, type RepertoireSlot } from '../data/repertoire'
+import { Portrait } from './Portrait'
 import './RepertoireCard.css'
 
 const QUESTIONS: { slot: RepertoireSlot; label: string }[] = [
@@ -17,9 +18,7 @@ export function RepertoireCard({ onChoose }: { onChoose: (r: Repertoire) => void
     <section className="repertoire-card">
       <p className="repertoire-kicker">One question first</p>
       <p className="repertoire-ask">
-        <span className="repertoire-portrait" aria-hidden="true">
-          P
-        </span>
+        <Portrait who="pemberton" size={44} />
         <span>
           <strong>Coach Pemberton</strong>“Right. What do you play?”
         </span>

@@ -5,6 +5,7 @@ import { Chess } from 'chess.js'
 import { useEffect, useMemo, useState } from 'react'
 import { applyUci } from '../logic/game'
 import { Board, type BoardArrow } from './Board'
+import { Portrait } from './Portrait'
 import './DemoBoard.css'
 
 export type DemoStep = {
@@ -22,8 +23,9 @@ type Props = {
   /** Shown on the last step's button. */
   finishLabel: string
   onFinish: () => void
-  /** Who's talking, e.g. Coach Pemberton. */
+  /** Who's talking, e.g. Coach Pemberton, and their portrait. */
   speaker?: string
+  speakerId?: string
 }
 
 const MOVE_MS = 900
@@ -39,7 +41,15 @@ function positions(startFen: string | undefined, steps: DemoStep[]) {
   )
 }
 
-export function DemoBoard({ startFen, steps, orientation, finishLabel, onFinish, speaker = 'Coach Pemberton' }: Props) {
+export function DemoBoard({
+  startFen,
+  steps,
+  orientation,
+  finishLabel,
+  onFinish,
+  speaker = 'Coach Pemberton',
+  speakerId = 'pemberton',
+}: Props) {
   const frames = useMemo(() => positions(startFen, steps), [startFen, steps])
   const initial = useMemo(() => new Chess(startFen).fen(), [startFen])
   const [step, setStep] = useState(0)
@@ -76,10 +86,7 @@ export function DemoBoard({ startFen, steps, orientation, finishLabel, onFinish,
         arrows={stepDone && steps[step].arrow ? [steps[step].arrow] : []}
       />
       <div className="demo-caption">
-        <span className="demo-portrait" aria-hidden="true">
-          {/* Surname initial: "Coach Pemberton" → P (placeholder portrait) */}
-          {speaker.split(' ').at(-1)?.[0]}
-        </span>
+        <Portrait who={speakerId} size={40} expression={last && stepDone ? 'pleased' : 'neutral'} />
         <div>
           <strong>{speaker}</strong>
           <p>{steps[step].caption}</p>

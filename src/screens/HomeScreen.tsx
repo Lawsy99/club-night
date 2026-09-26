@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
 import { NameField } from '../components/NameField'
+import { Portrait } from '../components/Portrait'
 import { RepertoireCard } from '../components/RepertoireCard'
 import type { Repertoire } from '../data/repertoire'
 import type { Milestone } from '../logic/milestones'
@@ -244,9 +245,7 @@ function WarmupCard({ due, onStart, onSkip }: { due: number; onStart: () => void
         {count} of your old mistakes
       </h2>
       <p className="next-opponent">
-        <span className="next-portrait" aria-hidden="true">
-          P
-        </span>
+        <Portrait who="pemberton" size={44} />
         <span>
           <strong>Coach Pemberton</strong>{' '}
           <span className="next-rating">“A few from your own games first.”</span>
@@ -297,9 +296,7 @@ function NextCard({
         <p className="next-kind">Lesson · {next.location}</p>
         <h2>{next.topic}</h2>
         <p className="next-opponent">
-          <span className="next-portrait" aria-hidden="true">
-            P
-          </span>
+          <Portrait who="pemberton" size={44} />
           <span>
             <strong>Coach Pemberton</strong> <span className="next-rating">one example, then puzzles</span>
           </span>
@@ -357,9 +354,7 @@ function PlayCard({
       </p>
       <h2>{game.label}</h2>
       <p className="next-opponent">
-        <span className="next-portrait" aria-hidden="true">
-          {character?.name[0] ?? '?'}
-        </span>
+        <Portrait who={game.opponent} size={44} />
         <span>
           <strong>{character?.name ?? game.opponent}</strong>{' '}
           <span className="next-rating">{game.kind === 'exhibition' ? 'unrated' : game.rating}</span>

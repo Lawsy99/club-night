@@ -77,9 +77,8 @@
 /* What the opponent says: tap to dismiss */
 .talk-bubble {
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
+  gap: 8px;
   margin: 0 16px;
   padding: 8px 14px;
   border: none;
@@ -101,6 +100,13 @@
   border: 6px solid transparent;
   border-top: 0;
   border-bottom-color: #ece4cf;
+}
+
+.talk-words {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
 }
 
 .talk-speaker {
