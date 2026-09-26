@@ -1,7 +1,7 @@
 // Home: one large "Next" card (design document, "The home screen"), the
 // player's rating, and small links to the mistakes deck and past games.
 // There is deliberately no free-play mode: the path decides what's next.
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
 import { NameField } from '../components/NameField'
 import { Portrait } from '../components/Portrait'
@@ -48,6 +48,17 @@ type Props = {
   onReset: () => void
 }
 
+/** Remembers (on this phone only) that the playtest tools are switched on. */
+const PLAYTEST_KEY = 'club-night-playtest'
+
+function readPlaytest(): boolean {
+  try {
+    return localStorage.getItem(PLAYTEST_KEY) === 'on'
+  } catch {
+    return false
+  }
+}
+
 const KIND_LABELS: Record<PathGame['kind'], string> = {
   trial: 'Trial night',
   exhibition: 'Trial night',
@@ -81,7 +92,21 @@ export function HomeScreen(props: Props) {
   } = props
   // Past errors waiting to be put right (the coach's warm-ups on Tuesday).
   const [waiting, setWaiting] = useState(0)
-  const [stampTaps, setStampTaps] = useState(0)
+  const [playtestOn, setPlaytestOn] = useState(readPlaytest)
+  const stampTaps = useRef(0)
+  const setPlaytest = (on: boolean) => {
+    setPlaytestOn(on)
+    try {
+      if (on) localStorage.setItem(PLAYTEST_KEY, 'on')
+      else localStorage.removeItem(PLAYTEST_KEY)
+    } catch {
+      // Storage blocked: the tools just won't be remembered.
+    }
+  }
+  const tapStamp = () => {
+    stampTaps.current += 1
+    if (stampTaps.current >= 5) setPlaytest(true)
+  }
 
   useEffect(() => {
     loadCards()
@@ -151,8 +176,9 @@ export function HomeScreen(props: Props) {
         </button>
       </nav>
 
-      {/* Playtest tools: hidden unless the version line is tapped five times. */}
-      {stampTaps >= 5 && (
+      {/* Playtest tools: switched on by tapping the version line five times,
+          and they stay on (on this phone) until hidden again. */}
+      {playtestOn && (
         <details className="playtest" open>
           <summary>Playtest tools</summary>
           <p>For testing the path quickly.</p>
@@ -173,12 +199,15 @@ export function HomeScreen(props: Props) {
           >
             Reset progress
           </button>
+          <button type="button" onClick={() => setPlaytest(false)}>
+            Hide playtest tools
+          </button>
         </details>
       )}
 
-      <p className="build-stamp" onClick={() => setStampTaps((n) => n + 1)}>
+      <button type="button" className="build-stamp" onClick={tapStamp}>
         Version: {BUILD_LABEL}
-      </p>
+      </button>
     </main>
   )
 }

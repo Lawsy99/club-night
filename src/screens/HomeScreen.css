@@ -413,10 +413,20 @@
   color: #ec835a;
 }
 
+/* The version line doubles as the (hidden) way into the playtest tools, so
+   it's a full-width, finger-sized button that looks like plain text. */
 .home-screen .build-stamp {
+  display: block;
+  width: 100%;
+  min-height: 44px;
   margin: 0;
   padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
   font-size: 12px;
+  text-align: left;
   color: var(--muted);
   opacity: 0.6;
+  cursor: default;
 }
