@@ -8,6 +8,7 @@ import { BlunderWarning } from '../components/BlunderWarning'
 import { EvalBar } from '../components/EvalBar'
 import { HINT_ARROW_COLOUR, lineArrows } from '../components/lineArrows'
 import { MoveStrip } from '../components/MoveStrip'
+import { PlanPause } from '../components/PlanPause'
 import { PlayerStrip } from '../components/PlayerStrip'
 import { HELP_STAGES } from '../data/helpStages'
 import { resolveOpponent } from '../data/opponents'
@@ -32,6 +33,7 @@ import {
   type GameRecord,
 } from '../logic/gameRecord'
 import { acceptsDraw, piecesLeft, shouldOfferDraw, shouldResign } from '../logic/opponentDecisions'
+import { planFor, shouldPausePlan } from '../logic/planPause'
 import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
 import '../components/ratings.css'
 import './GameScreen.css'
@@ -249,6 +251,18 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
       : `${stage.label} · ${stage.summary}`
 
   const pendingLast = pending ? { from: pending.uci.slice(0, 2), to: pending.uci.slice(2, 4) } : null
+
+  // The plan pause: once per assisted game, around move 10, if we have plans for this opening.
+  const planSet =
+    !pending &&
+    shouldPausePlan({
+      stage: game.stage,
+      alreadyDone: !!game.planPauseDone,
+      moveNumber: chess.moveNumber(),
+      playersTurn,
+    })
+      ? planFor(sans, game.playerColour)
+      : null
   const boardFen = peeking ? ratedMove.fenBefore : pending ? pending.fenAfter : fen
 
   return (
@@ -303,13 +317,16 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
           <Board
             fen={boardFen}
             orientation={game.playerColour === 'w' ? 'white' : 'black'}
-            movableColour={outcome || pending || peeking ? null : game.playerColour}
+            movableColour={outcome || pending || peeking || planSet ? null : game.playerColour}
             lastMove={peeking ? null : (pendingLast ?? (last ? { from: last.from, to: last.to } : null))}
             onMove={handlePlayerMove}
             hintSquare={hintStep === 1 && hintMove ? hintMove.slice(0, 2) : null}
             arrows={arrows}
             badges={bestLine?.badges}
           />
+          {planSet && (
+            <PlanPause plans={planSet} onDone={() => setGame((g) => (g ? { ...g, planPauseDone: true } : g))} />
+          )}
           {pending?.warning && (
             <BlunderWarning
               message={pending.warning}

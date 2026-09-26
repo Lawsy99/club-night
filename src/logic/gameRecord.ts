@@ -28,6 +28,8 @@ export type GameRecord = {
   path?: PathGame
   /** Set once the result has been recorded on the path, so it's never counted twice. */
   resultRecorded?: boolean
+  /** The assisted game's plan pause has happened (it comes once per game). */
+  planPauseDone?: boolean
 }
 
 export function newGameRecord(
