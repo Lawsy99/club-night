@@ -560,6 +560,10 @@ export function GameScreen({
   // Looking back through the moves: an earlier position, shown but not playable.
   const viewed = viewing ? replay(game.moves.slice(0, viewPly!)) : null
   const viewedLast = viewed?.history({ verbose: true }).at(-1)
+  // Looking back: the analysis bar shows how things stood at that point
+  // (Joseph, Sep 2026), not the live position.
+  const viewedAnalysis = useAnalysis(viewed ? viewed.fen() : fen, viewing && stage.evalBar)
+  const barAnalysis = viewing ? viewedAnalysis.latest : analysis.latest
   const boardFen = viewed ? viewed.fen() : peeking ? ratedMove.fenBefore : pending ? pending.fenAfter : fen
 
   // The scouting report plays out on the board before the game (YouTube-teacher style).
@@ -652,7 +656,7 @@ export function GameScreen({
       )}
 
       <div className="board-row">
-        {stage.evalBar && <EvalBar analysis={analysis.latest} playerColour={game.playerColour} />}
+        {stage.evalBar && <EvalBar analysis={barAnalysis} playerColour={game.playerColour} />}
         <div className="board-cell">
           <Board
             fen={boardFen}
