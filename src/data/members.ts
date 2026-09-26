@@ -14,11 +14,12 @@ export type Member = {
   note: string
   /** From the player's starting rating (set once after trial night). */
   offset: number
+  pronoun: 'him' | 'her'
 }
 
 export const MEMBERS: Member[] = [
-  { id: 'malcolm', name: 'Malcolm', note: 'Board one. Only in for league matches.', offset: 320 },
-  { id: 'ray', name: 'Ray', note: 'Runs junior night on Thursdays.', offset: 190 },
-  { id: 'sheila', name: 'Sheila', note: 'Does the raffle. Plays when asked.', offset: -240 },
-  { id: 'bill', name: 'Bill', note: 'A member since 1974. Remembers everyone.', offset: -330 },
+  { id: 'malcolm', name: 'Malcolm', note: 'Board one. Only in for league matches.', offset: 320, pronoun: 'him' },
+  { id: 'ray', name: 'Ray', note: 'Runs junior night on Thursdays.', offset: 190, pronoun: 'him' },
+  { id: 'sheila', name: 'Sheila', note: 'Does the raffle. Plays when asked.', offset: -240, pronoun: 'her' },
+  { id: 'bill', name: 'Bill', note: 'A member since 1974. Remembers everyone.', offset: -330, pronoun: 'him' },
 ]

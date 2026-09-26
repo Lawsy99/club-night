@@ -1,6 +1,7 @@
 // The club ladder, drawn as rungs rather than a table: faces, ratings, the
 // player picked out in gold, and a bar showing how close the next rung is.
 // A compact card for Home (you, and the people either side) and the full list.
+import { useState } from 'react'
 import { nextRung, YOU, type LadderNews, type Rung } from '../logic/ladder'
 import { Portrait } from './Portrait'
 import './ClubLadder.css'
@@ -18,13 +19,40 @@ function Face({ rung, size }: { rung: Rung; size: number }) {
   return <Portrait who={rung.id} size={size} />
 }
 
-function Row({ rung, place, news }: { rung: Rung; place: number; news?: LadderNews }) {
-  return (
-    <li className={`ladder-row ${rung.id === YOU ? 'is-you' : ''} ${news ? `news-${news.kind}` : ''}`}>
+function Row({
+  rung,
+  place,
+  news,
+  detail,
+  open,
+  onToggle,
+}: {
+  rung: Rung
+  place: number
+  news?: LadderNews
+  /** Your history together, shown when the row is tapped (full ladder only). */
+  detail?: string
+  open?: boolean
+  onToggle?: () => void
+}) {
+  const inner = (
+    <>
       <span className="ladder-place">{place}</span>
       <Face rung={rung} size={36} />
       <span className="ladder-name">{rung.name}</span>
       <span className="ladder-rating">{rung.rating}</span>
+    </>
+  )
+  return (
+    <li className={`ladder-row ${rung.id === YOU ? 'is-you' : ''} ${news ? `news-${news.kind}` : ''} ${open ? 'open' : ''}`}>
+      {onToggle ? (
+        <button type="button" className="ladder-row-button" onClick={onToggle} aria-expanded={open}>
+          {inner}
+        </button>
+      ) : (
+        inner
+      )}
+      {open && detail && <p className="ladder-detail">{detail}</p>}
     </li>
   )
 }
@@ -72,13 +100,30 @@ export function LadderCard({ ladder, news, onOpen }: { ladder: readonly Rung[]; 
   )
 }
 
-/** The whole ladder. */
-export function LadderList({ ladder, news }: { ladder: readonly Rung[]; news: LadderNews[] }) {
+/** The whole ladder. Tap someone to see your history together. */
+export function LadderList({
+  ladder,
+  news,
+  details = {},
+}: {
+  ladder: readonly Rung[]
+  news: LadderNews[]
+  details?: Record<string, string>
+}) {
+  const [open, setOpen] = useState<string | null>(null)
   return (
     <>
       <ol className="ladder-rows full">
         {ladder.map((rung, k) => (
-          <Row key={rung.id} rung={rung} place={k + 1} news={news.find((n) => n.id === rung.id)} />
+          <Row
+            key={rung.id}
+            rung={rung}
+            place={k + 1}
+            news={news.find((n) => n.id === rung.id)}
+            detail={details[rung.id]}
+            open={open === rung.id}
+            onToggle={rung.id === YOU ? undefined : () => setOpen((o) => (o === rung.id ? null : rung.id))}
+          />
         ))}
       </ol>
       <Climb ladder={ladder} />
