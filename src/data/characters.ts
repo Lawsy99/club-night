@@ -180,6 +180,23 @@ export const PRACTICE_REGULARS: Character[] = [
     offersDraw: 'rarely',
     acceptsDraws: true,
   },
+  // Terry (Joseph, Sep 2026): the club's comic relief, played straight. The
+  // Bongcloud, the Grob, Scholar's mate tries (data/openingBooks.ts). He
+  // never finds any of it funny. Once out of book he's a perfectly decent
+  // player, so he stays just below you all season: a fun game, rarely a
+  // walkover. Quick, because he's already decided.
+  {
+    id: 'terry',
+    name: 'Terry',
+    strength: 'scaling',
+    offset: -40,
+    style: 'aggressive',
+    thinkSpeed: 0.6,
+    resigns: 'plays-to-mate',
+    offersDraw: 'rarely',
+    acceptsDraws: true,
+    storyOffsets: [-40],
+  },
 ]
 
 /**

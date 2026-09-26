@@ -49,6 +49,13 @@ export const SCOUTING: Record<string, ScoutingNotes> = {
     style: "Principled. You'll have to earn every point.",
     pronoun: 'him',
   },
+  terry: {
+    asWhite:
+      "Could be the king walking out on move two, could be g4, could be the queen out early for f7. Develop, guard f7, and don't grab anything that looks free.",
+    asBlack: "Anything. If a pawn on e5 looks free after ...Nd4, it isn't. Develop and castle; he'll hand you the rest.",
+    style: "Plays nonsense with total conviction. Out of the opening, he's better than you'd think. Don't laugh until it's over.",
+    pronoun: 'him',
+  },
   toby: {
     asWhite: 'The Catalan. That bishop on g2 is the whole idea. Break out with ...c5 or ...e5.',
     asBlack: 'The Najdorf against 1.e4, the Nimzo-Indian against 1.d4. He knows them well.',

@@ -1,18 +1,36 @@
+import { Chess } from 'chess.js'
 import { describe, expect, it } from 'vitest'
 import { OPENING_BOOKS } from '../data/openingBooks'
 import { bookMove, parseLine } from './openingBook'
 
 describe('opening books', () => {
-  it('contain only legal lines, 6 to 12 moves deep', () => {
+  it('contain only legal lines, 6 to 12 moves deep (or ending in mate)', () => {
     for (const [who, book] of Object.entries(OPENING_BOOKS)) {
       for (const line of [...book.white, ...book.black]) {
         let moves: string[] = []
         expect(() => (moves = parseLine(line)), `${who}: ${line}`).not.toThrow()
         const fullMoves = Math.ceil(moves.length / 2)
-        expect(fullMoves, `${who}: ${line}`).toBeGreaterThanOrEqual(6)
+        // Terry's traps are short because they finish the game.
+        if (!line.endsWith('#')) expect(fullMoves, `${who}: ${line}`).toBeGreaterThanOrEqual(6)
         expect(fullMoves, `${who}: ${line}`).toBeLessThanOrEqual(12)
       }
     }
+  })
+
+  it('mating lines really are checkmate', () => {
+    for (const line of [...OPENING_BOOKS.terry.white, ...OPENING_BOOKS.terry.black].filter((l) => l.endsWith('#'))) {
+      const chess = new Chess()
+      for (const uci of parseLine(line)) chess.move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] })
+      expect(chess.isCheckmate(), line).toBe(true)
+    }
+  })
+
+  it('Terry plays the Bongcloud, the Grob and friends', () => {
+    const firstMoves = new Set([0, 0.3, 0.5, 0.7, 0.99].map((r) => bookMove('terry', 'w', [], () => r)))
+    expect(firstMoves).toEqual(new Set(['e2e4', 'g2g4', 'g1h3']))
+    // After 1.e4 e5 he may walk the king.
+    const second = new Set([0, 0.2, 0.5, 0.99].map((r) => bookMove('terry', 'w', ['e2e4', 'e7e5'], () => r)))
+    expect(second.has('e1e2')).toBe(true)
   })
 
   it("puts the character's own moves on the right side", () => {

@@ -3,7 +3,7 @@
 // put, so the player climbs past them for good. The main cast who scale sit
 // a set distance from the player, chosen by the story, so they're overtaken
 // only at story moments (and Toby never is). Ratings are the ones they play at.
-import { CHARACTERS } from '../data/characters'
+import { CHARACTERS, PRACTICE_REGULARS } from '../data/characters'
 import { MEMBERS } from '../data/members'
 import { opponentRating, type Progress } from './path'
 
@@ -16,8 +16,13 @@ export function clubLadder(p: Progress, playerName = 'You'): Rung[] | null {
   if (!p.rating) return null
   const cast = CHARACTERS.map((c) => ({ id: c.id, name: c.name, rating: opponentRating(p, c.id) }))
   const background = MEMBERS.map((m) => ({ id: m.id, name: m.name, rating: opponentRating(p, m.id) }))
+  // Practice-night regulars who aren't background members (Terry) join the
+  // ladder once you've played them, so meeting him is a surprise.
+  const regulars = PRACTICE_REGULARS.filter((c) => !MEMBERS.some((m) => m.id === c.id) && p.met.includes(c.id)).map(
+    (c) => ({ id: c.id, name: c.name, rating: opponentRating(p, c.id) }),
+  )
   const you = { id: YOU, name: playerName, rating: Math.round(p.rating.rating) }
-  return [...cast, ...background, you].sort((a, b) => b.rating - a.rating || (a.id === YOU ? 1 : b.id === YOU ? -1 : 0))
+  return [...cast, ...background, ...regulars, you].sort((a, b) => b.rating - a.rating || (a.id === YOU ? 1 : b.id === YOU ? -1 : 0))
 }
 
 /** The player's place (1 = top), the next person up, and how far away they are. */

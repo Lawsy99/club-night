@@ -124,6 +124,42 @@ export const OPENING_BOOKS: Record<string, OpeningBook> = {
       '1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. cxd5 cxd5 5. Nc3 Nc6 6. Bf4 Bf5',
     ],
   },
+  // Terry (Joseph, Sep 2026): the Bongcloud, the Grob, early queen raids and
+  // cheap traps, played with complete sincerity. The mating lines are short
+  // on purpose: they end the game if the player falls for them. Otherwise he
+  // drops out of book into ordinary (and quite decent) chess.
+  terry: {
+    white: [
+      // Bongcloud
+      '1. e4 e5 2. Ke2 Nf6 3. Ke1 Nxe4 4. d3 Nf6 5. Nf3 Nc6 6. Be2 d5',
+      '1. e4 c5 2. Ke2 Nc6 3. Kf3 e5 4. Kg3 Nf6 5. d3 d5 6. Nc3 d4',
+      // Grob
+      '1. g4 d5 2. Bg2 Bxg4 3. c4 c6 4. cxd5 cxd5 5. Qb3 Nc6 6. Qxb7 Nd4',
+      '1. g4 e5 2. Bg2 d5 3. c4 dxc4 4. Qa4+ Bd7 5. Qxc4 Nc6 6. d3 Nf6',
+      // Scholar's mate, and what he does when it's defended
+      '1. e4 e5 2. Qh5 Nc6 3. Bc4 Nf6 4. Qxf7#',
+      '1. e4 e5 2. Bc4 Nc6 3. Qh5 Nf6 4. Qxf7#',
+      '1. e4 e5 2. Qh5 Nc6 3. Bc4 g6 4. Qf3 Nf6 5. Qb3 Qe7 6. Nc3 Nd4',
+      // The Parachute: knight to the edge on move one
+      '1. Nh3 d5 2. g3 e5 3. f4 Bxh3 4. Bxh3 exf4 5. O-O fxg3 6. hxg3 Qd7',
+    ],
+    black: [
+      // Bongcloud, with Black
+      '1. e4 e5 2. Nf3 Ke7 3. Bc4 d6 4. d4 Nf6 5. Nc3 Ke8 6. O-O Be7',
+      // The Borg (the Grob, backwards)
+      '1. e4 g5 2. d4 Bg7 3. Bxg5 c5 4. c3 cxd4 5. cxd4 Qb6 6. Nc3 Qxb2',
+      '1. d4 g5 2. Bxg5 c5 3. dxc5 Qa5+ 4. Nc3 Qxc5 5. e4 Bg7 6. Nf3 Nc6',
+      // Blackburne Shilling: a trap that mates if White grabs the pawn
+      '1. e4 e5 2. Nf3 Nc6 3. Bc4 Nd4 4. Nxe5 Qg5 5. Nxf7 Qxg2 6. Rf1 Qxe4+ 7. Be2 Nf3#',
+      '1. e4 e5 2. Nf3 Nc6 3. Bc4 Nd4 4. Nxd4 exd4 5. c3 Qg5 6. O-O d5',
+      // Englund Gambit trap
+      '1. d4 e5 2. dxe5 Nc6 3. Nf3 Qe7 4. Bf4 Qb4+ 5. Bd2 Qxb2 6. Bc3 Bb4 7. Qd2 Bxc3 8. Qxc3 Qc1#',
+      // Fool's mate, should anyone oblige
+      '1. f3 e5 2. g4 Qh4#',
+      '1. g4 e5 2. f3 Qh4#',
+      '1. f4 e5 2. g4 Qh4#',
+    ],
+  },
   priya: { white: PRIYA_RUY, black: [...PRIYA_RUY, ...QGD] },
   oscar: { white: ITALIAN_TWO_KNIGHTS, black: ITALIAN_TWO_KNIGHTS },
 }

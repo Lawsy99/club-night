@@ -154,6 +154,17 @@ export const APPEARANCES: Record<string, Appearance> = {
     clothesColour: '#8fa1b5',
     extras: ['glasses-round'],
   },
+  // A loud shirt and hair that has given up. Pleased whichever way it goes.
+  terry: {
+    background: '#c29a6b',
+    skin: '#e8bfa0',
+    hair: '#bdb6aa',
+    hairStyle: 'messy',
+    clothes: 'shirt',
+    clothesColour: '#d0703a',
+    extras: ['glasses-square'],
+    moods: { winning: 'pleased', losing: 'surprised' },
+  },
   vera: {
     background: '#7c8290',
     skin: '#efd2c0',

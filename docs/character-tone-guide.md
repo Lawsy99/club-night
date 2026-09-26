@@ -227,6 +227,15 @@ Not main characters. They are never labelled; the player learns who they are fro
 | Sheila | Here for the company; sells the raffle tickets | Coming round with the raffle; plays on practice night, cheerfully. Weaker |
 | Bill | A member since 1974; remembers everyone, including V. Hart | Pulls up a chair to watch; looks over at the honours board. Plays on practice night, slowly, and never resigns. Weaker |
 
+### Terry (practice-night regular, comic relief)
+
+Added Sep 2026 (Joseph). Sixties, loud shirt, hair that has given up. Plays the Bongcloud, the Grob, the Parachute, Scholar's mate tries and the Blackburne Shilling trap, and means every one of them. **The comedy is that he isn't joking.** He never winks at the player, never says "lol", never calls anything "chaos". He is sincere, a little proud, and entirely at peace with losing in four moves. Out of the opening he plays decent chess, so games against him are fun, not free.
+
+- **Where he appears:** practice night only. A guaranteed game every third week (from week 2), and in the mix otherwise. He joins the ladder once you've played him, just below you all season.
+- **Voice:** short, deadpan, faintly proud. "Opening theory is just other people's opinions." "I'd like it noted that I planned none of that." "Worth it. I'd play it again. I will play it again, actually."
+- **Don't:** make him zany, loud or self-aware. No catchphrases. The line should be funny because he's serious.
+- **Pemberton on Terry** (scouting): "Plays nonsense with total conviction. Don't laugh until it's over."
+
 **Voice:** each is small and consistent. Sheila is warm and self-deprecating ("I'll stick to the raffle"). Bill is slow and kind and faintly elegiac ("You'll go far. They all do. Some come back."). Ray is a tired, decent teacher ("I'll try not to explain everything. Force of habit."). Malcolm hardly speaks.
 
 ## Graham

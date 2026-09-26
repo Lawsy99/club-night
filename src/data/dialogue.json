@@ -5490,5 +5490,371 @@
   "conditions": {},
   "weight": 1,
   "once": false
+ },
+ {
+  "id": "terry-start-01",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "I’ve been working on something. You’ll know it when you see it.",
+  "expression": "pleased",
+  "conditions": {
+   "rematch": 1
+  },
+  "weight": 3,
+  "once": true
+ },
+ {
+  "id": "terry-start-02",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "Before we start: I don’t really believe in development. As a concept.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-start-03",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "Opening theory is just other people’s opinions.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-start-04",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "I read somewhere that the king is a strong piece. I’ve decided to take that literally.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-start-05",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "Last week I lost in four moves. I stand by it.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-start-06",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "I’ve got a new one. It hasn’t got a name yet, so I’ve been calling it the Terry.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-start-07",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "Pemberton’s asked me not to show the juniors anything. Fair enough.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-start-08",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "Right. Let’s see what happens. I genuinely don’t know.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-start-09",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "{name}. You look like someone who’s read about the Sicilian. Good, that won’t help.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-start-10",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "Graham’s started a separate page for my games in the club book.",
+  "expression": "pleased",
+  "conditions": {
+   "minRematch": 3
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-start-11",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "You’ll have seen my last one. People are still talking about it. Mostly Graham.",
+  "expression": "pleased",
+  "conditions": {
+   "minRematch": 3
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-start-12",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "I’ve been reading about the Grob. Well, a page about it. Well, the title.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-win-01",
+  "character": "terry",
+  "trigger": "game_win",
+  "text": "And they say it’s unsound.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-win-02",
+  "character": "terry",
+  "trigger": "game_win",
+  "text": "I’d like it noted that I planned none of that.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-win-03",
+  "character": "terry",
+  "trigger": "game_win",
+  "text": "Don’t tell Pemberton. He’ll only ask me to explain it.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-win-04",
+  "character": "terry",
+  "trigger": "game_win",
+  "text": "The king walked, and the king was right.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-win-05",
+  "character": "terry",
+  "trigger": "game_win",
+  "text": "Every so often it works. That’s the whole point.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-win-06",
+  "character": "terry",
+  "trigger": "game_win",
+  "text": "That’s going on the fridge.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-loss-01",
+  "character": "terry",
+  "trigger": "game_loss",
+  "text": "Fair. The king went for a walk and didn’t come back.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-loss-02",
+  "character": "terry",
+  "trigger": "game_loss",
+  "text": "I stand by every move. Most of them.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-loss-03",
+  "character": "terry",
+  "trigger": "game_loss",
+  "text": "That’s the thing about my openings. They’re honest about how it’ll end.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-loss-04",
+  "character": "terry",
+  "trigger": "game_loss",
+  "text": "Worth it. I’d play it again. I will play it again, actually.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-loss-05",
+  "character": "terry",
+  "trigger": "game_loss",
+  "text": "Graham’s going to enjoy writing that down.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-loss-06",
+  "character": "terry",
+  "trigger": "game_loss",
+  "text": "Next week I’ve got something with the h-pawn. You’ve been warned.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-think-01",
+  "character": "terry",
+  "trigger": "long_think",
+  "text": "(Terry picks up his king and considers it at eye level.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-think-02",
+  "character": "terry",
+  "trigger": "long_think",
+  "text": "(Terry writes something on a beer mat and turns it face down.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-think-03",
+  "character": "terry",
+  "trigger": "long_think",
+  "text": "(Terry leans back as if the answer might be on the ceiling.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-plan-01",
+  "character": "terry",
+  "trigger": "plan_hint",
+  "text": "My king’s coming forward. Don’t ask why.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-plan-02",
+  "character": "terry",
+  "trigger": "plan_hint",
+  "text": "I’m going to push that pawn until someone stops me.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-plan-03",
+  "character": "terry",
+  "trigger": "plan_hint",
+  "text": "I haven’t castled, and I’m not going to.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-plan-04",
+  "character": "terry",
+  "trigger": "plan_hint",
+  "text": "That rook’s coming out via the h-file. It’s all planned. Loosely.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-check-01",
+  "character": "terry",
+  "trigger": "check_given",
+  "text": "Check. I always say it out loud. It’s only polite.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-castle-01",
+  "character": "terry",
+  "trigger": "castling",
+  "text": "Castled. Don’t tell anyone. It’ll ruin me.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-pblunder-01",
+  "character": "terry",
+  "trigger": "player_blunder",
+  "text": "Oh, that’s generous. I’ll take it before you change your mind.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-bblunder-01",
+  "character": "terry",
+  "trigger": "bot_blunder",
+  "text": "Ah. I did see that. Just slightly after.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-bblunder-02",
+  "character": "terry",
+  "trigger": "bot_blunder",
+  "text": "That was a sacrifice. I’ll work out what for later.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
  }
 ]

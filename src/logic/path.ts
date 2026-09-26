@@ -339,6 +339,9 @@ export function practiceOpponent(p: Progress, k: number): string {
   if (k === 0) return ch.opponent
   // Every now and then, your rival turns up (not in his own week).
   if (k === 1 && p.chapter % 4 === 2 && ch.opponent !== 'toby') return 'toby'
+  // Terry is in most Thursdays; you're guaranteed a game with him every
+  // third week (starting in week 2), and he's in the mix otherwise.
+  if (k === 2 && p.chapter % 3 === 1) return 'terry'
   const you = p.rating ? p.rating.rating : p.baseline
   const pool = [...new Set([...p.met, ...PRACTICE_REGULARS.map((c) => c.id)])].filter(
     (id) => id !== ch.opponent && id !== 'toby',
