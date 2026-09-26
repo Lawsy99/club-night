@@ -1,7 +1,9 @@
-// Settings (design document, "Screens"): how much the characters talk, and
-// the backup: export everything to one file, or restore from one.
+// Settings (design document, "Screens"): how much the characters talk, the
+// board's colours, sound, and the backup (export everything to one file, or
+// restore from one).
 import { useRef, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
+import { BOARD_THEMES, type BoardThemeId } from '../components/boardTheme'
 import { backupFileName, parseBackup, summarise } from '../logic/backup'
 import { CHATTER_OPTIONS, type Settings } from '../logic/settings'
 import { exportAll, importAll } from '../storage/db'
@@ -84,6 +86,49 @@ export function SettingsScreen({ settings, onChange, onBack }: Props) {
             >
               <strong>{o.label}</strong>
               <span>{o.detail}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2>Board</h2>
+        <div className="settings-options" role="radiogroup" aria-label="Board style">
+          {(Object.keys(BOARD_THEMES) as BoardThemeId[]).map((id) => (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={settings.board === id}
+              className={`settings-board ${settings.board === id ? 'selected' : ''}`}
+              onClick={() => onChange({ ...settings, board: id })}
+            >
+              <span className="board-swatch" aria-hidden="true">
+                <i style={{ background: BOARD_THEMES[id].light }} />
+                <i style={{ background: BOARD_THEMES[id].dark }} />
+                <i style={{ background: BOARD_THEMES[id].dark }} />
+                <i style={{ background: BOARD_THEMES[id].light }} />
+              </span>
+              <strong>{BOARD_THEMES[id].label}</strong>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2>Sound</h2>
+        <div className="settings-options" role="radiogroup" aria-label="Sound">
+          {[true, false].map((on) => (
+            <button
+              key={String(on)}
+              type="button"
+              role="radio"
+              aria-checked={settings.sound === on}
+              className={settings.sound === on ? 'selected' : undefined}
+              onClick={() => onChange({ ...settings, sound: on })}
+            >
+              <strong>{on ? 'On' : 'Off'}</strong>
+              <span>{on ? 'A soft click for each move.' : 'Silent.'}</span>
             </button>
           ))}
         </div>

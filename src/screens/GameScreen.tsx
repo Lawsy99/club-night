@@ -14,6 +14,7 @@ import { SCOUTING_DEMOS } from '../data/scoutingDemos'
 import { buildDemo } from '../logic/demo'
 import { PlayerStrip } from '../components/PlayerStrip'
 import { Portrait } from '../components/Portrait'
+import { playMoveSound } from '../components/moveSound'
 import { HELP_STAGES } from '../data/helpStages'
 import { resolveOpponent } from '../data/opponents'
 import { analysePosition } from '../engine/analysis'
@@ -188,6 +189,13 @@ export function GameScreen({
     setGame((g) => (g ? { ...g, talk: { ...talk, endSaid: true } } : g))
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once, when the game ends
   }, [!!outcome])
+
+  // A click for every move, the player's and the opponent's (not on resume).
+  const movesHeard = useRef(game.moves.length)
+  useEffect(() => {
+    if (game.moves.length > movesHeard.current && last) playMoveSound(!!last.captured)
+    movesHeard.current = game.moves.length
+  }, [game.moves.length, last])
 
   const commitMove = (uci: string) => {
     // Playing on declines any offer on the table, as over the board.

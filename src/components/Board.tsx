@@ -11,6 +11,7 @@ import {
   type Colour,
   type PromotionPiece,
 } from '../logic/game'
+import { useBoardColours } from './boardTheme'
 import { PromotionPicker } from './PromotionPicker'
 import './Board.css'
 
@@ -33,8 +34,6 @@ export type BoardArrow = { from: string; to: string; colour: string }
 /** corner: 0 top-left, 1 top-right, 2 bottom-left, 3 bottom-right. */
 export type SquareBadge = { square: string; label: string; colour: string; corner: number }
 
-const LIGHT = '#ece4cf'
-const DARK = '#86a07a'
 const HINT_OUTLINE = 'rgba(40, 120, 200, 0.85)'
 
 export function Board({
@@ -49,6 +48,7 @@ export function Board({
 }: Props) {
   // Legal moves depend only on the current position, so a FEN is enough here.
   const chess = useMemo(() => new Chess(fen), [fen])
+  const colours = useBoardColours()
   const [selected, setSelected] = useState<Square | null>(null)
   const [pendingPromotion, setPendingPromotion] = useState<{ from: Square; to: Square } | null>(null)
 
@@ -105,8 +105,8 @@ export function Board({
         options={{
           position: fen,
           boardOrientation: orientation,
-          lightSquareStyle: { backgroundColor: LIGHT },
-          darkSquareStyle: { backgroundColor: DARK },
+          lightSquareStyle: { backgroundColor: colours.light },
+          darkSquareStyle: { backgroundColor: colours.dark },
           squareStyles,
           arrows: boardArrows,
           allowDrawingArrows: false,

@@ -46,6 +46,8 @@ import {
   saveSettings,
 } from '../storage/db'
 import { DEFAULT_SETTINGS, type Settings } from '../logic/settings'
+import { BoardThemeContext } from '../components/boardTheme'
+import { setSoundEnabled } from '../components/moveSound'
 import { GameScreen } from './GameScreen'
 import { HomeScreen } from './HomeScreen'
 import { LessonScreen } from './LessonScreen'
@@ -68,7 +70,34 @@ type View = (typeof VIEWS)[number]
 const isRated = (g: PathGame | undefined) =>
   !!g && g.kind !== 'friendly' && g.kind !== 'trial' && g.kind !== 'exhibition'
 
+/**
+ * The settings live above everything else, so every board follows the
+ * chosen style and every move follows the sound setting.
+ */
 export function AppFlow() {
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+
+  useEffect(() => {
+    loadSettings()
+      .then(setSettings)
+      .catch(() => undefined)
+  }, [])
+
+  useEffect(() => setSoundEnabled(settings.sound), [settings.sound])
+
+  const changeSettings = (s: Settings) => {
+    setSettings(s)
+    saveSettings(s).catch((err) => console.error('Save failed', err))
+  }
+
+  return (
+    <BoardThemeContext.Provider value={settings.board}>
+      <Flow settings={settings} onChangeSettings={changeSettings} />
+    </BoardThemeContext.Provider>
+  )
+}
+
+function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSettings: (s: Settings) => void }) {
   const [loaded, setLoaded] = useState(false)
   const [progress, setProgress] = useState<Progress>(NEW_PROGRESS)
   // The current (or most recently finished) game
@@ -76,14 +105,7 @@ export function AppFlow() {
   const [view, setView] = useState<View>('home')
   const [pastGame, setPastGame] = useState<ArchivedGame | null>(null)
   const [lastChange, setLastChange] = useState<{ from: number; to: number } | null>(null)
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
   const [milestoneBanner, setMilestoneBanner] = useState<Milestone[]>([])
-
-  useEffect(() => {
-    loadSettings()
-      .then(setSettings)
-      .catch(() => undefined)
-  }, [])
 
   useEffect(() => {
     requestPersistentStorage()
@@ -219,14 +241,7 @@ export function AppFlow() {
   if (view === 'stats') return <StatsScreen progress={progress} onBack={() => setView('home')} />
   if (view === 'settings') {
     return (
-      <SettingsScreen
-        settings={settings}
-        onChange={(s) => {
-          setSettings(s)
-          saveSettings(s).catch((err) => console.error('Save failed', err))
-        }}
-        onBack={() => setView('home')}
-      />
+      <SettingsScreen settings={settings} onChange={onChangeSettings} onBack={() => setView('home')} />
     )
   }
 
