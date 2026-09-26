@@ -210,6 +210,20 @@
   cursor: pointer;
 }
 
+/* The act strip opens the story so far */
+.act-progress-button {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 /* Milestones: quiet, one line each, gone after the next game */
 .milestone-banner {
   padding: 10px 14px;

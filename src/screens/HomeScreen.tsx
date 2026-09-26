@@ -32,6 +32,8 @@ type Props = {
   ladder: Rung[] | null
   ladderNews: LadderNews[]
   onOpenLadder: () => void
+  /** The story so far (tap the act strip). */
+  onOpenDiary: () => void
   onPlay: (game: PathGame) => void
   onStartLesson: () => void
   onTargetedPuzzles: () => void
@@ -66,6 +68,7 @@ export function HomeScreen(props: Props) {
     ladder,
     ladderNews,
     onOpenLadder,
+    onOpenDiary,
     onPlay,
     onStartLesson,
     onTargetedPuzzles,
@@ -121,7 +124,9 @@ export function HomeScreen(props: Props) {
 
       {!progress.playerName && <MissingName onSave={onSetName} />}
 
-      <ActProgress progress={progress} />
+      <button type="button" className="act-progress-button" onClick={onOpenDiary} aria-label="The story so far">
+        <ActProgress progress={progress} />
+      </button>
 
       {wantsWarmup(progress, next, due ?? 0) ? (
         <WarmupCard due={due ?? 0} onStart={onStartWarmup} onSkip={onSkipWarmup} />

@@ -26,6 +26,7 @@ import { newMilestones, noticeFor, type Milestone } from '../logic/milestones'
 import { inferRepertoire } from '../logic/repertoire'
 import { clubLadder, ladderChanges, type LadderNews } from '../logic/ladder'
 import { LadderScreen } from './LadderScreen'
+import { DiaryScreen } from './DiaryScreen'
 import { ACT_1 } from '../data/act1'
 import { CHARACTERS } from '../data/characters'
 import { rivalTarget } from '../logic/rival'
@@ -62,7 +63,20 @@ import { SettingsScreen } from './SettingsScreen'
 import { StatsScreen } from './StatsScreen'
 import { WelcomeScreen } from './WelcomeScreen'
 
-const VIEWS = ['home', 'game', 'review', 'deck', 'warmup', 'history', 'lesson', 'puzzles', 'stats', 'settings', 'ladder'] as const
+const VIEWS = [
+  'home',
+  'game',
+  'review',
+  'deck',
+  'warmup',
+  'history',
+  'lesson',
+  'puzzles',
+  'stats',
+  'settings',
+  'ladder',
+  'diary',
+] as const
 type View = (typeof VIEWS)[number]
 
 /**
@@ -251,6 +265,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
   if (view === 'stats') return <StatsScreen progress={progress} onBack={() => setView('home')} />
   const ladder = clubLadder(progress, progress.playerName ?? 'You')
   if (view === 'ladder' && ladder) return <LadderScreen ladder={ladder} news={ladderNews} onBack={() => setView('home')} />
+  if (view === 'diary') return <DiaryScreen progress={progress} onBack={() => setView('home')} />
   if (view === 'settings') {
     return (
       <SettingsScreen settings={settings} onChange={onChangeSettings} onBack={() => setView('home')} />
@@ -343,6 +358,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       ladder={ladder}
       ladderNews={ladderNews}
       onOpenLadder={() => setView('ladder')}
+      onOpenDiary={() => setView('diary')}
       onPlay={startPathGame}
       onStartLesson={() => setView('lesson')}
       onTargetedPuzzles={() => setView('puzzles')}
