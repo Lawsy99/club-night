@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { ACT_1 } from '../data/act1'
+import { ACTS } from '../data/acts'
 import { CUTSCENES } from '../data/cutscenes'
 import { WEEK_STORY } from '../data/weekStory'
 import { storyFor } from './storyContent'
-import { storyAfterCup, storyAfterWin } from './storyQueue'
+import { storyAfterFinal, storyAfterWin } from './storyQueue'
 import { NEW_PROGRESS, recordGame, storyPlayed, weekBeat, type PathGame, type Progress } from './path'
 
 const inWeek = (chapter: number, over: Partial<Progress> = {}): Progress => ({
@@ -17,8 +17,8 @@ const inWeek = (chapter: number, over: Partial<Progress> = {}): Progress => ({
 })
 
 describe('the story through the week', () => {
-  it('has a Tuesday, a Thursday and a way out for every week', () => {
-    for (const ch of ACT_1.chapters) {
+  it('has a Tuesday, a Thursday and a way out for every week of every act', () => {
+    for (const ch of ACTS.flatMap((a) => a.chapters)) {
       expect(WEEK_STORY[ch.id], ch.id).toBeDefined()
       expect(WEEK_STORY[ch.id].wayOut.length).toBeGreaterThan(0)
     }
@@ -33,7 +33,7 @@ describe('the story through the week', () => {
   it('plays the way out, then the month’s cutscene, after winning the best of three', () => {
     expect(storyAfterWin('c1')).toEqual(['wayout:c1'])
     expect(storyAfterWin('c3')).toEqual(['wayout:c3', 'scene:month-1'])
-    expect(storyAfterCup()).toEqual(['scene:cup'])
+    expect(storyAfterFinal(1)).toEqual(['scene:cup'])
   })
 
   it('queues them when the series is won, and clears them once played', () => {
@@ -46,9 +46,10 @@ describe('the story through the week', () => {
     expect(p.storySeen).toEqual(['wayout:c3'])
   })
 
-  it('every cutscene plays after a real week (or the cup) and can be shown', () => {
+  it('every cutscene plays after a real week (or an act’s final) and can be shown', () => {
     for (const c of CUTSCENES) {
-      expect(c.after === 'cup' || ACT_1.chapters.some((ch) => ch.id === c.after), c.id).toBe(true)
+      const final = /^final:(\d)$/.exec(c.after)
+      expect(final ? Number(final[1]) <= ACTS.length : ACTS.some((a) => a.chapters.some((ch) => ch.id === c.after)), c.id).toBe(true)
       expect(storyFor(`scene:${c.id}`)?.lines.length).toBeGreaterThan(0)
     }
   })

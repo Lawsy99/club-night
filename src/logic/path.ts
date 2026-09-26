@@ -2,13 +2,14 @@
 // next (design document, "The path", "How friendlies move you forward",
 // "Stakes"). Pure state + functions; the Home screen asks `nextStep` and the
 // game flow reports results back.
-import { ACT_1, storyWeeksBefore, TRIAL_FINALE, TRIAL_OPPONENTS } from '../data/act1'
-import { characterRating, findCharacter, PRACTICE_REGULARS, storyOffset } from '../data/characters'
+import { storyWeeksBefore, TRIAL_FINALE, TRIAL_OPPONENTS } from '../data/act1'
+import { characterRating, findCharacter, LEAGUE_ONLY, PRACTICE_REGULARS, storyOffset } from '../data/characters'
 import { MEMBERS } from '../data/members'
 import { sessionLabel } from '../data/clubWeek'
 import { findLesson } from '../data/lessons'
 import { WEEK_STORY } from '../data/weekStory'
-import { storyAfterCup, storyAfterWin } from './storyQueue'
+import { actNumber, actPlan, hasNextAct } from '../data/acts'
+import { storyAfterFinal, storyAfterWin } from './storyQueue'
 import { rateGame, type PlayerRating } from './glicko2'
 import { valveAdjustment, type RealGameResult } from './safetyValve'
 import {
@@ -67,6 +68,8 @@ export type Progress = {
   storySeen?: string[]
   /** Pemberton's traps already used in coached games, so they don't repeat too soon. */
   scenariosUsed?: string[]
+  /** Which act (season) the player is in; older saves are in Act 1. */
+  act?: number
 }
 
 /**
@@ -107,7 +110,7 @@ export function storyPlayed(p: Progress, id: string): Progress {
  */
 export function weekBeat(p: Progress): { day: 'Tuesday' | 'Thursday'; text: string } | null {
   if (p.stage !== 'act') return null
-  const ch = ACT_1.chapters[p.chapter]
+  const ch = actPlan(p).chapters[p.chapter]
   const story = ch ? WEEK_STORY[ch.id] : undefined
   if (!story) return null
   if (p.friendlies.played >= PRACTICE_GAMES) return { day: 'Thursday', text: story.thursday }
@@ -188,8 +191,8 @@ export type NextStep =
       /** After a third boss loss: puzzles from the boss's openings. */
       targetedPuzzles?: { title: string; openings: string[] } | null
     }
-  | { kind: 'act-complete' }
-
+  /** The act is won. `nextAct`: another season is ready to start. */
+  | { kind: 'act-complete'; nextAct: boolean }
 
 /**
  * An opponent's strength right now, which is also their rating on the club
@@ -206,8 +209,13 @@ export function opponentRating(p: Progress, id: string): number {
   const character = findCharacter(id)
   if (!character) return p.baseline
   const you = p.rating ? p.rating.rating : p.baseline
-  // The story's distance depends on how many story weeks have passed, not weeks in total.
-  return rounded(you + storyOffset(character, storyWeeksBefore(p.chapter)))
+  // Later acts set each scaling character's distance week by week.
+  const actOffsets = actPlan(p).offsets?.[id]
+  if (actOffsets && character.strength === 'scaling') {
+    return rounded(you + actOffsets[Math.min(p.chapter, actOffsets.length - 1)])
+  }
+  // Act 1: the story's distance depends on how many story weeks have passed, not weeks in total.
+  return rounded(you + storyOffset(character, actNumber(p) === 1 ? storyWeeksBefore(p.chapter) : 99))
 }
 
 const nameOf = (id: string) => findCharacter(id)?.name ?? id
@@ -215,7 +223,7 @@ const rounded = (r: number) => Math.max(200, Math.round(r / 5) * 5)
 
 export function nextStep(p: Progress): NextStep {
   if (p.stage === 'welcome') return { kind: 'welcome' }
-  if (p.stage === 'act-complete') return { kind: 'act-complete' }
+  if (p.stage === 'act-complete') return { kind: 'act-complete', nextAct: hasNextAct(p) }
 
   if (p.stage === 'trial' && p.trial) {
     const n = p.trial.games.length
@@ -250,7 +258,7 @@ export function nextStep(p: Progress): NextStep {
     }
   }
 
-  const chapters = ACT_1.chapters
+  const chapters = actPlan(p).chapters
   if (p.chapter < chapters.length) {
     const ch = chapters[p.chapter]
     if (!p.lessonDone) {
@@ -328,9 +336,9 @@ export function nextStep(p: Progress): NextStep {
     }
   }
 
-  // The knockout cup: three rounds, then the final (the boss).
+  // The act's final week: the rounds (the cup; the last rungs of the ladder), then the final (the boss).
   const cup = p.cup ?? startCup(p).cup!
-  const g = ACT_1.gauntlet
+  const g = actPlan(p).gauntlet
   if (cup.round < g.rounds.length) {
     const round = g.rounds[cup.round]
     return {
@@ -345,7 +353,12 @@ export function nextStep(p: Progress): NextStep {
         location: g.location,
       },
       optionalFriendly: null,
-      note: cup.bossAttempts > 0 ? `Qualifying again for the final (attempt ${cup.bossAttempts + 1}).` : null,
+      note:
+        cup.bossAttempts > 0
+          ? actNumber(p) === 1
+            ? `Qualifying again for the final (attempt ${cup.bossAttempts + 1}).`
+            : `Back down a rung. Climbing again for the top (attempt ${cup.bossAttempts + 1}).`
+          : null,
     }
   }
   // The boss stays ahead of the player however they've improved, and never
@@ -365,7 +378,7 @@ export function nextStep(p: Progress): NextStep {
  * game, or three practice games, or straight away against someone already met.
  */
 export function matchUnlocked(p: Progress): boolean {
-  const ch = ACT_1.chapters[p.chapter]
+  const ch = actPlan(p).chapters[p.chapter]
   if (!ch) return false
   return p.friendlies.played >= PRACTICE_GAMES
 }
@@ -380,7 +393,7 @@ export const PRACTICE_GAMES = 3
  * reopening the app never changes who's next.
  */
 export function practiceOpponent(p: Progress, k: number): string {
-  const ch = ACT_1.chapters[p.chapter]
+  const ch = actPlan(p).chapters[p.chapter]
   if (!ch) return 'marjorie'
   if (k === 0) return ch.opponent
   // Every now and then, your rival turns up (not in his own week).
@@ -389,8 +402,9 @@ export function practiceOpponent(p: Progress, k: number): string {
   // third week (starting in week 2), and he's in the mix otherwise.
   if (k === 2 && p.chapter % 3 === 1) return 'terry'
   const you = p.rating ? p.rating.rating : p.baseline
+  // (Malcolm only comes for the league and the ladder, never practice night.)
   const pool = [...new Set([...p.met, ...PRACTICE_REGULARS.map((c) => c.id)])].filter(
-    (id) => id !== ch.opponent && id !== 'toby',
+    (id) => id !== ch.opponent && id !== 'toby' && !LEAGUE_ONLY.some((c) => c.id === id),
   )
   // One stronger than you, one weaker, as at a real club (if there are any).
   const stronger = pool.filter((id) => opponentRating(p, id) > you)
@@ -412,7 +426,7 @@ function bossNote(attempts: number): string | null {
 
 /** The boss plays at their club rating when the cup starts, then stays fixed (never drops after a loss). */
 function startCup(p: Progress): Progress {
-  const boss = ACT_1.gauntlet.boss.opponent
+  const boss = actPlan(p).gauntlet.boss.opponent
   return { ...p, cup: p.cup ?? { round: 0, bossRating: rounded(opponentRating(p, boss)), bossAttempts: 0 } }
 }
 
@@ -429,6 +443,27 @@ export function beginTrial(p: Progress, experience: Experience, statedRating?: n
 
 export function completeLesson(p: Progress): Progress {
   return { ...p, lessonDone: true }
+}
+
+/**
+ * The next season (act): the week count carries on, the characters keep
+ * their fixed ratings, and the story picks up where the last final left it.
+ */
+export function startNextAct(p: Progress): Progress {
+  if (p.stage !== 'act-complete' || !hasNextAct(p)) return p
+  return {
+    ...p,
+    act: actNumber(p) + 1,
+    stage: 'act',
+    chapter: 0,
+    lessonDone: false,
+    coachingDone: false,
+    friendlies: { played: 0, wonGuided: false },
+    matchLost: false,
+    series: { wins: 0, losses: 0 },
+    cup: null,
+    warmupDone: undefined,
+  }
 }
 
 /**
@@ -466,7 +501,7 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
 
   if (game.kind === 'friendly') {
     // Friendlies never change the rating; every practice game this week counts.
-    const ch = ACT_1.chapters[p.chapter]
+    const ch = actPlan(p).chapters[p.chapter]
     const inChapter = !!ch && (game.chapter ? game.chapter === ch.id : game.opponent === ch.opponent)
     return {
       ...p,
@@ -484,7 +519,7 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
     const series = { wins: before.wins + (won ? 1 : 0), losses: before.losses + (won ? 0 : 1) }
     if (series.wins >= SERIES_TO_WIN) {
       const met = next.met.includes(game.opponent) ? next.met : [...next.met, game.opponent]
-      const weekId = ACT_1.chapters[p.chapter]?.id
+      const weekId = actPlan(p).chapters[p.chapter]?.id
       next = {
         ...next,
         met,
@@ -497,7 +532,7 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
         matchLost: false,
         series: { wins: 0, losses: 0 },
       }
-      if (next.chapter >= ACT_1.chapters.length) next = startCup(next)
+      if (next.chapter >= actPlan(p).chapters.length) next = startCup(next)
     } else if (series.losses >= SERIES_TO_WIN) {
       // Lost the series: it's played again from 0–0.
       next = { ...next, matchLost: true, series: { wins: 0, losses: 0 } }
@@ -512,7 +547,7 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
   }
   // Boss: win the act, or back to qualifying (boss strength stays fixed).
   return won
-    ? { ...next, stage: 'act-complete', pendingStory: [...(next.pendingStory ?? []), ...storyAfterCup()] }
+    ? { ...next, stage: 'act-complete', pendingStory: [...(next.pendingStory ?? []), ...storyAfterFinal(actNumber(p))] }
     : { ...next, cup: { ...cup, round: 0, bossAttempts: cup.bossAttempts + 1, bossRating: Math.max(cup.bossRating, game.rating) } }
 }
 
@@ -555,7 +590,7 @@ function rateReal(p: Progress, opponentRatingValue: number, won: boolean, accura
   const rating = p.rating ? rateGame(p.rating, opponentRatingValue, won ? 1 : 0) : p.rating
   const ratingHistory = withHistory(p, rating)
   const recentReal = [...p.recentReal, { won, accuracyStrength }]
-  const inCup = p.chapter >= ACT_1.chapters.length
+  const inCup = p.chapter >= actPlan(p).chapters.length
   const shift = inCup ? 0 : valveAdjustment(recentReal, p.baseline)
   return shift
     ? { ...p, rating, ratingHistory, baseline: p.baseline + shift, recentReal: [] }

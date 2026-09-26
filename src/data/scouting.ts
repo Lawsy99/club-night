@@ -49,6 +49,18 @@ export const SCOUTING: Record<string, ScoutingNotes> = {
     style: "Principled. You'll have to earn every point.",
     pronoun: 'him',
   },
+  ray: {
+    asWhite: 'The Italian, played properly. He teaches it to the juniors every Thursday. Castle and don’t let him have f7.',
+    asBlack: 'The Caro-Kann against 1.e4, the Queen’s Gambit Declined against 1.d4. Solid. You’ll have to make something happen.',
+    style: 'A teacher. He won’t beat himself. Tired by nine o’clock, mind.',
+    pronoun: 'him',
+  },
+  malcolm: {
+    asWhite: "The Queen's Gambit, and he knows it better than the book. Develop, castle, and wait for a chance. It'll be small.",
+    asBlack: 'The Closed Ruy against 1.e4, the Queen’s Gambit Declined against 1.d4. Patient. Very patient.',
+    style: 'Board one. Correct, patient, and he never offers a draw. You’ll need to be better for a long time.',
+    pronoun: 'him',
+  },
   terry: {
     asWhite:
       "Could be the king walking out on move two, could be g4, could be the queen out early for f7. Develop, guard f7, and don't grab anything that looks free.",

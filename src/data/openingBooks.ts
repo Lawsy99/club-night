@@ -161,5 +161,16 @@ export const OPENING_BOOKS: Record<string, OpeningBook> = {
     ],
   },
   priya: { white: PRIYA_RUY, black: [...PRIYA_RUY, ...QGD] },
+  // Act 2: Ray (the juniors' teacher) and Malcolm (board one).
+  ray: {
+    white: ITALIAN_TWO_KNIGHTS,
+    black: [
+      // Caro-Kann
+      '1. e4 c6 2. d4 d5 3. Nc3 dxe4 4. Nxe4 Bf5 5. Ng3 Bg6 6. h4 h6 7. Nf3 Nd7',
+      '1. e4 c6 2. d4 d5 3. e5 Bf5 4. Nf3 e6 5. Be2 c5 6. Be3 Nd7',
+      ...QGD,
+    ],
+  },
+  malcolm: { white: QGD, black: [...PRIYA_RUY, ...QGD] },
   oscar: { white: ITALIAN_TWO_KNIGHTS, black: ITALIAN_TWO_KNIGHTS },
 }

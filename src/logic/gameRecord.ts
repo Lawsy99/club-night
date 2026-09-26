@@ -18,6 +18,8 @@ export type GameRecord = {
   takebacksUsed: number
   /** The coach's hints asked for in this game (the coached game allows three). */
   hintsUsed?: number
+  /** The act (season) the game was played in; older games are Act 1. */
+  act?: number
   /** A trap Pemberton announced for this coached game, and how it went once known. */
   scenario?: { id: string; result?: 'avoided' | 'escaped' | 'fell' }
   startedAt: number

@@ -4,7 +4,8 @@
 // for a beginner (two rooks) and a strong player (the Lucena position).
 // See docs/learning-plan.md.
 
-export type EndgameGoal = 'mate' | 'promote'
+/** mate: checkmate them. promote: make a queen that survives. hold: don't lose (you're defending). */
+export type EndgameGoal = 'mate' | 'promote' | 'hold'
 
 export type EndgamePosition = {
   id: string
@@ -90,6 +91,43 @@ export const ENDGAME_DRILLS: Record<string, EndgamePosition[]> = {
     },
   ],
 }
+
+// Act 2 finishing lessons: key squares, and holding a draw.
+ENDGAME_DRILLS['key-squares'] = [
+  {
+    id: 'key-square',
+    title: 'The king on a key square',
+    fen: '4k3/8/3K4/8/4P3/8/8/8 w - - 0 1',
+    goal: 'promote',
+    maxMoves: 15,
+    upTo: 9999,
+    intro: 'Your king is on a key square, two ranks in front of the pawn. From here it wins whatever they do. Keep the king ahead and the pawn follows.',
+    success: 'King in front, on a key square: the pawn walks home. Get the king there first, in any ending.',
+  },
+]
+
+ENDGAME_DRILLS.hold = [
+  {
+    id: 'opposition',
+    title: 'Holding with the opposition',
+    fen: '4k3/8/8/4K3/4P3/8/8/8 b - - 0 1',
+    goal: 'hold',
+    maxMoves: 15,
+    upTo: 1499,
+    intro: 'You’re a pawn down, but it’s a draw if you keep the opposition: stand face to face with their king, one square between, and make them move first.',
+    success: 'Held. The opposition saves more half-points than anything else in chess.',
+  },
+  {
+    id: 'philidor',
+    title: 'The Philidor position',
+    fen: '4k3/8/r7/4PK2/8/8/8/4R3 b - - 0 1',
+    goal: 'hold',
+    maxMoves: 20,
+    upTo: 9999,
+    intro: 'The famous defence: keep your rook on the sixth rank so their king can’t come forward. When the pawn advances, go to the back and check from behind.',
+    success: 'That’s the Philidor. Sixth rank, then checks from behind. Most rook endings a pawn down are drawn with it.',
+  },
+]
 
 /** The position that suits the player's rating. */
 export function endgameFor(drill: string, rating: number): EndgamePosition | undefined {

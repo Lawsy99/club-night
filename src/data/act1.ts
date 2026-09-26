@@ -26,12 +26,18 @@ export type ChapterPlan = {
 export type GauntletPlan = {
   title: string
   location: string
-  /** Cup week's note, and the note once the act is won. */
+  /** The final week's name on Home ("Cup week"). */
+  weekTitle: string
+  /** One label per round, then the final, for the week strip on Home. */
+  slots: string[]
+  /** The final week's note, and the note once the act is won. */
   note: string
   afterNote: string
-  /** The three cup rounds, against club members. */
+  /** The rounds before the final, against club members. */
   rounds: { opponent: string; label: string }[]
   boss: { opponent: string; label: string }
+  /** The Home card once the final is won. */
+  won: { heading: string; note: string }
 }
 
 export type ActPlan = {
@@ -39,25 +45,40 @@ export type ActPlan = {
   title: string
   chapters: ChapterPlan[]
   gauntlet: GauntletPlan
+  /**
+   * Acts after the first: where each scaling character sits relative to the
+   * player, week by week (index = week of the act; the final week is last).
+   * Act 1 uses each character's storyOffsets instead.
+   */
+  offsets?: Record<string, number[]>
+  /** What the Saturday match is called ("Club match vs Dex", "Ladder challenge vs Dex"). */
+  matchPrefix?: string
+  /** The button on Home that starts this act, once the one before is won. */
+  startLabel?: string
 }
 
-const story = (id: string, title: string, opponent: string, name: string, note: string): ChapterPlan => ({
+/** A story week: someone new, or a turn in the story. */
+export const storyChapter = (id: string, title: string, opponent: string, name: string, note: string, prefix = 'Club match'): ChapterPlan => ({
   id,
   kind: 'story',
   title,
   opponent,
-  matchLabel: `Club match vs ${name}`,
+  matchLabel: `${prefix} vs ${name}`,
   note,
 })
 
-const club = (id: string, title: string, opponent: string, name: string, note: string): ChapterPlan => ({
+/** An ordinary club week, with someone you already know. */
+export const clubChapter = (id: string, title: string, opponent: string, name: string, note: string, prefix = 'Club match'): ChapterPlan => ({
   id,
   kind: 'club',
   title,
   opponent,
-  matchLabel: `Club match vs ${name}`,
+  matchLabel: `${prefix} vs ${name}`,
   note,
 })
+
+const story = storyChapter
+const club = clubChapter
 
 export const ACT_1: ActPlan = {
   act: 1,
@@ -82,6 +103,8 @@ export const ACT_1: ActPlan = {
   gauntlet: {
     title: 'The club knockout cup',
     location: 'The back room of the Red Lion',
+    weekTitle: 'Cup week',
+    slots: ['Round 1', 'Round 2', 'Semi-final', 'Final'],
     note: 'Marjorie did the draw. Malcolm sends his apologies. He always does.',
     afterNote: 'The club ladder goes up next week. Toby has kindly agreed to start at the top.',
     rounds: [
@@ -92,6 +115,7 @@ export const ACT_1: ActPlan = {
       { opponent: 'priya', label: 'Cup semi-final vs Priya' },
     ],
     boss: { opponent: 'toby', label: 'Cup final vs Toby' },
+    won: { heading: 'You won the cup.', note: 'Pemberton congratulated you. Then he went to find Toby.' },
   },
 }
 

@@ -72,7 +72,7 @@ export function EndgameDrill({ position, onDone }: Props) {
 
   const over = verdict !== 'going'
   // The method stays up while you play; the count goes underneath.
-  const message = verdict === 'won' ? position.success : over ? endgameAdvice(verdict) : position.intro
+  const message = verdict === 'won' ? position.success : over ? endgameAdvice(verdict, position.goal) : position.intro
 
   return (
     <div className="coach-drill">
@@ -90,7 +90,11 @@ export function EndgameDrill({ position, onDone }: Props) {
       </div>
       {!over && (
         <p className="coach-drill-progress">
-          {thinking ? 'They’re thinking…' : `${position.maxMoves - moves} moves left`}
+          {thinking
+            ? 'They’re thinking…'
+            : position.goal === 'hold'
+              ? `Hold on for ${position.maxMoves - moves} more moves`
+              : `${position.maxMoves - moves} moves left`}
         </p>
       )}
       {over && verdict !== 'won' && (

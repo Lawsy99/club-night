@@ -137,4 +137,126 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     thursday: 'Forty people have said they’ll watch.',
     wayOut: [{ who: 'dex', text: 'Forty-one now. Don’t be rubbish.' }],
   },
+
+  // --- Act 2: the club ladder (docs/story-outline.md, "Act 2 in detail") ---
+  'a2-1': {
+    tuesday: 'Pemberton has pinned up the ladder. Toby’s name is at the top. “It saves time.”',
+    thursday: 'Graham reads out the ladder rules. There are eleven. Rule seven has a part (b).',
+    wayOut: [
+      { who: 'graham', text: 'Challenge upheld. Formally.' },
+      { text: 'Pemberton reads out the league team. Captain: Toby. You’re first reserve.' },
+    ],
+  },
+  'a2-2': {
+    tuesday: 'Toby takes the juniors’ warm-up. Pemberton watches him, not them.',
+    thursday: 'Priya brings two copies of her notes. One is for you.',
+    wayOut: [
+      { who: 'priya', text: 'I’ve started a notebook on you. It’s a compliment.' },
+      { text: 'Toby pins up the team’s first fixture: away at Castlebury.' },
+    ],
+  },
+  'a2-3': {
+    tuesday: 'Graham collects subs with a receipt book. He writes each one out in full.',
+    thursday: 'Clive challenges you. “It’s in the rules, apparently.”',
+    wayOut: [
+      { who: 'clive', text: 'Castlebury. We used to beat Castlebury.' },
+      { text: 'Toby rings with the result from Castlebury. Lost, one to three.' },
+    ],
+  },
+  'a2-4': {
+    tuesday: 'Ray is late for coaching. Junior night overran again.',
+    thursday: 'Ray watches your practice games, arms folded. Not unkindly.',
+    wayOut: [
+      { who: 'ray', text: 'You’ll do. I’ll tell Pemberton you’re ready for board four.' },
+      { text: 'Pemberton says he’ll think about it.' },
+    ],
+  },
+  'a2-5': {
+    tuesday: 'Terry asks Pemberton for some coaching. Pemberton’s Tuesdays are taken.',
+    thursday: 'Terry has prepared something for you. It has a name now.',
+    wayOut: [
+      { who: 'terry', text: 'The Terry. It needs work.' },
+      { text: 'Dex, packing up: “Did you see the numbers?” He doesn’t say which numbers.' },
+    ],
+  },
+  'a2-6': {
+    tuesday: 'Graham has found the stream. There is to be a meeting about it.',
+    thursday: 'Dex, very quietly: two hundred people watched the cup final.',
+    wayOut: [
+      { who: 'dex', text: 'Don’t make it a thing.' },
+      { text: 'On Thursday there are three new faces at the door. One of them says she saw it online.' },
+    ],
+  },
+  'a2-7': {
+    tuesday: 'Marjorie makes tea for eleven. She has to borrow cups from the bar.',
+    thursday: 'The lights are on in the second room for the first time this year.',
+    wayOut: [
+      { who: 'marjorie', text: 'Eleven. We used to have eleven, you know. Every week.' },
+      { text: 'Graham counts the subs tin twice. It’s still short.' },
+    ],
+  },
+  'a2-8': {
+    tuesday: 'Pemberton gives Oscar a lesson at last. Toby arranged it.',
+    thursday: 'Oscar has grown two inches and a hundred points.',
+    wayOut: [
+      { who: 'neil', text: 'He’s on the team. Board four. He’s eleven.' },
+      { text: 'You’re first reserve again.' },
+    ],
+  },
+  'a2-9': {
+    tuesday: 'Pemberton goes through Toby’s game from Castlebury, move by move, for the whole session.',
+    thursday: 'Priya says Toby asked her for your games. She said no.',
+    wayOut: [
+      { who: 'priya', text: 'He asked very nicely. That’s what worried me.' },
+      { text: 'A message from Toby that evening: “Sending you my study, mate. Hope it helps.”' },
+    ],
+  },
+  'a2-10': {
+    tuesday: 'The study is called “Prep: {name}”. The notes are in Pemberton’s words.',
+    thursday: 'It’s all there: your openings, your habits, what to play against you. It’s also right.',
+    wayOut: [
+      { who: 'malcolm', text: 'Whoever wrote that knows your game. Use it.' },
+      { text: 'Toby hasn’t mentioned the study. Neither has Pemberton.' },
+    ],
+  },
+  'a2-11': {
+    tuesday: 'Pemberton keeps your coached game short tonight. He has a lift to catch.',
+    thursday: 'Dex has stopped streaming Wexley games. “Doesn’t feel right. For now.”',
+    wayOut: [
+      { who: 'dex', text: 'You’re better than the study says.' },
+      { text: 'A letter from the brewery on the noticeboard. The room hire is going up again.' },
+    ],
+  },
+  'a2-12': {
+    tuesday: 'Graham calls an extraordinary general meeting. Laminated.',
+    thursday: 'Nine people come to the meeting. The motion is carried. Nobody is sure what it was.',
+    wayOut: [
+      { who: 'graham', text: 'The club is solvent. Until March.' },
+      { text: 'Toby left the meeting early. Pemberton left just after.' },
+    ],
+  },
+  'a2-13': {
+    tuesday: 'A Kingsbridge club card is pinned to the noticeboard. Nobody admits putting it there.',
+    thursday: 'Ray saw Toby’s car in the Kingsbridge car park. On a Thursday.',
+    wayOut: [
+      { who: 'neil', text: 'Kingsbridge asked about Oscar. Juniors, they said. Proper coaching.' },
+      { text: 'Neil hasn’t said no.' },
+    ],
+  },
+  'a2-14': {
+    tuesday: 'The pub gives notice. From the spring, the back room is wanted for functions.',
+    thursday: 'Clive has been looking at church halls. He has a list.',
+    wayOut: [
+      { who: 'clive', text: 'St Anne’s. Damp, but free on Tuesdays.' },
+      { text: 'Pemberton says Tuesdays at St Anne’s won’t suit him.' },
+    ],
+  },
+  'a2-15': {
+    tuesday: 'Pemberton is late for coaching. He came from Kingsbridge.',
+    thursday: 'Terry has entered you for the top of the ladder. As moral support, he says.',
+    wayOut: [
+      { who: 'terry', text: 'Whatever happens, the king walked.' },
+      { text: 'Two rungs left. Then Toby.' },
+    ],
+  },
 }

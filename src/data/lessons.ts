@@ -158,6 +158,124 @@ export const LESSONS: Lesson[] = [
   },
 ]
 
+// --- Act 2 (Sep 2026): Black openings, defence, finishing and the ideas
+// behind the tactics. Same three kinds of lesson as Act 1.
+LESSONS.push(
+  {
+    id: 'a2-1',
+    title: 'Playing Black: answering 1.e4',
+    kind: 'opening',
+    drill: 'black-e4',
+    intro: 'Half your games are with Black. Same three ideas: centre, pieces, king. Tonight, when they start with the king’s pawn.',
+    themes: [],
+    count: 0,
+  },
+  {
+    id: 'a2-2',
+    title: 'Defend first',
+    intro: 'Before your plan, theirs. Find the move that meets the threat. Only then is there time for anything else.',
+    themes: ['defensiveMove'],
+    count: 4,
+  },
+  {
+    id: 'a2-3',
+    title: 'Playing Black: answering 1.d4',
+    kind: 'opening',
+    drill: 'black-d4',
+    intro: 'The queen’s pawn. The simplest answer is Graham’s: d5, e6, develop, castle.',
+    themes: [],
+    count: 0,
+  },
+  {
+    id: 'a2-4',
+    title: 'Key squares',
+    kind: 'endgame',
+    drill: 'key-squares',
+    intro: 'In king and pawn endings, where the king stands decides everything. Win one from a key square, then count carefully.',
+    themes: ['pawnEndgame'],
+    count: 3,
+  },
+  {
+    id: 'a2-5',
+    title: 'The in-between move',
+    intro: 'Everyone expects the recapture. Before you make it, look for a check or a threat that comes first.',
+    themes: ['intermezzo'],
+    count: 4,
+  },
+  {
+    id: 'a2-6',
+    title: 'Luring a piece in',
+    intro: 'Sometimes the winning idea is to give something up, so that a piece is dragged onto the wrong square.',
+    themes: ['attraction'],
+    count: 4,
+  },
+  {
+    id: 'a2-7',
+    title: 'Loose pieces drop off',
+    intro: 'An undefended piece is a target, yours or theirs. Count the defenders before every move.',
+    themes: ['hangingPiece'],
+    count: 4,
+  },
+  {
+    id: 'a2-8',
+    title: 'The exposed king',
+    intro: 'League matches are won against kings that have lost their cover. Find the way in.',
+    themes: ['exposedKing'],
+    count: 4,
+  },
+  {
+    id: 'a2-9',
+    title: 'X-ray attacks',
+    intro: 'A rook or bishop can attack through a piece, to the square behind it. Look along the whole line.',
+    themes: ['xRayAttack'],
+    count: 4,
+  },
+  {
+    id: 'a2-10',
+    title: 'Clearing the way',
+    intro: 'Sometimes a piece is in its own side’s way. Move it, with tempo, and the one behind comes alive.',
+    themes: ['clearance'],
+    count: 4,
+  },
+  {
+    id: 'a2-11',
+    title: 'Holding a draw',
+    kind: 'endgame',
+    drill: 'hold',
+    intro: 'Being worse isn’t being lost. Tonight you defend a position a pawn down against a player who wants to win it.',
+    themes: ['defensiveMove'],
+    count: 3,
+  },
+  {
+    id: 'a2-12',
+    title: 'Zugzwang',
+    intro: 'Sometimes the best move is to make them move. Every move they have makes things worse.',
+    themes: ['zugzwang'],
+    count: 4,
+  },
+  {
+    id: 'a2-13',
+    title: 'Passed pawns must be pushed',
+    intro: 'A passed pawn is a criminal that should be kept under lock and key. Yours should be pushed.',
+    themes: ['advancedPawn', 'promotion'],
+    count: 4,
+  },
+  {
+    id: 'a2-14',
+    title: 'Mate in three',
+    intro: 'Three forcing moves. Checks first, then captures, then threats. See it all before you move.',
+    themes: ['mateIn3'],
+    count: 4,
+  },
+  {
+    id: 'a2-15',
+    title: 'The smothered mate',
+    intro: 'Before the top of the ladder: the king boxed in by its own pieces, and a knight to finish.',
+    themes: ['smotheredMate'],
+    count: 4,
+  },
+)
+
 export function findLesson(chapterId: string): Lesson | undefined {
   return LESSONS.find((l) => l.id === chapterId)
 }

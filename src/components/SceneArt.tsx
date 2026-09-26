@@ -22,9 +22,13 @@ const LABELS: Record<SceneId, string> = {
   'car-park': 'A car in the pub car park at night, in the rain',
   'honours-board': 'The club honours board',
   noticeboard: 'The club noticeboard',
+  'team-sheet': 'A team sheet in pencil on the noticeboard',
+  'league-hall': 'A bright hall full of chess tables',
+  kitchen: 'The club kitchen, with the urn and a tin on the side',
+  'empty-room': 'The club room, one chair missing',
 }
 
-const SCENES: Record<SceneId, () => ReactElement> = {
+const ACT_1_SCENES = {
   'club-room': () => (
     <>
       <rect width="320" height="200" fill="#1c3527" />
@@ -145,6 +149,115 @@ const SCENES: Record<SceneId, () => ReactElement> = {
     </>
   ),
 }
+
+// --- Act 2 --------------------------------------------------------------------
+
+const ACT_2_SCENES = {
+  // The league team sheet: four boards in pencil, reserves added in another hand.
+  'team-sheet': () => (
+    <>
+      <rect width="320" height="200" fill="#1c3527" />
+      <rect x="30" y="18" width="260" height="164" fill="#a9824f" stroke={WOOD} strokeWidth="6" />
+      <Sheet x={46} y={40} w={60} h={70} rotate={-3} />
+      <Sheet x={220} y={120} w={54} h={46} rotate={4} />
+      <rect x="116" y="28" width="96" height="144" fill="#fbf8ef" />
+      <circle cx="164" cy="32" r="3" fill={BRASS} />
+      <g fontFamily="serif" fill={INK}>
+        <text x="164" y="50" textAnchor="middle" fontSize="8" letterSpacing="1">WEXLEY A</text>
+        <text x="164" y="60" textAnchor="middle" fontSize="6" opacity="0.6">away at Castlebury</text>
+        {[1, 2, 3, 4].map((n) => (
+          <g key={n}>
+            <text x="126" y={76 + n * 13} fontSize="7">{n}.</text>
+            <line x1="136" y1={76 + n * 13} x2="200" y2={76 + n * 13} stroke="#6f6f6f" strokeOpacity="0.8" />
+          </g>
+        ))}
+        <text x="126" y="146" fontSize="6.5" opacity="0.7">Reserves:</text>
+        {/* Added in a different hand: blue, and at a slant */}
+        <path d="M160 145 q6 -6 10 0 t10 0 t10 -1" stroke="#34466a" strokeWidth="1.4" fill="none" />
+      </g>
+    </>
+  ),
+
+  // Castlebury's hall: bright strip lights, rows of boards, a clock on each.
+  'league-hall': () => (
+    <>
+      <rect width="320" height="200" fill="#223b30" />
+      {[40, 120, 200, 280].map((x) => (
+        <g key={x}>
+          <rect x={x - 26} y="14" width="52" height="4" fill={BUFF} opacity="0.9" />
+          <path d={`M${x - 40} 18 L${x + 40} 18 L${x + 60} 90 L${x - 60} 90 Z`} fill={BUFF} opacity="0.04" />
+        </g>
+      ))}
+      <rect x="110" y="30" width="100" height="16" fill={INK} stroke={BRASS} strokeWidth="1" />
+      <text x="160" y="41" textAnchor="middle" fontSize="7" fill={BRASS} fontFamily="serif" letterSpacing="1">
+        CASTLEBURY CC
+      </text>
+      <rect y="150" width="320" height="50" fill="#18291f" />
+      {[0, 1, 2].map((row) => (
+        <g key={row} transform={`translate(0 ${100 + row * 26})`}>
+          <rect x="24" y="0" width="272" height="6" fill={WOOD} />
+          {[48, 112, 176, 240].map((x) => (
+            <g key={x}>
+              <Board x={x} y={-5} />
+              {/* The clock beside each board */}
+              <rect x={x + 30} y={-7} width="9" height="7" rx="1" fill="#2a2a2a" />
+            </g>
+          ))}
+        </g>
+      ))}
+    </>
+  ),
+
+  // The kitchen: the urn, cups draining, the subs tin on the side.
+  kitchen: () => (
+    <>
+      <rect width="320" height="200" fill="#1f362a" />
+      {/* Tiles */}
+      {Array.from({ length: 8 }, (_, i) => (
+        <line key={i} x1={i * 40} y1="40" x2={i * 40} y2="120" stroke={BUFF} strokeOpacity="0.06" />
+      ))}
+      <line x1="0" y1="80" x2="320" y2="80" stroke={BUFF} strokeOpacity="0.06" />
+      {/* Worktop */}
+      <rect y="120" width="320" height="10" fill={WOOD} />
+      <rect y="130" width="320" height="70" fill="#162a1f" />
+      {/* The urn */}
+      <rect x="40" y="70" width="44" height="50" rx="6" fill="#9aa3a0" />
+      <rect x="54" y="62" width="16" height="8" rx="2" fill="#7c8583" />
+      <rect x="84" y="100" width="10" height="4" fill="#7c8583" />
+      {/* Cups upside down on the draining board */}
+      {Array.from({ length: 9 }, (_, i) => (
+        <path key={i} d={`M${120 + (i % 5) * 18} ${118 - Math.floor(i / 5) * 12} h12 l-2 -10 h-8 z`} fill={BUFF} opacity="0.85" />
+      ))}
+      {/* The subs tin */}
+      <rect x="232" y="100" width="40" height="20" rx="2" fill="#8a3f3a" />
+      <rect x="232" y="100" width="40" height="5" fill="#6f322e" />
+      <text x="252" y="115" textAnchor="middle" fontSize="6" fill={BUFF} fontFamily="serif">SUBS</text>
+    </>
+  ),
+
+  // The club room, a week after: the tables, one chair gone, a card on the board.
+  'empty-room': () => (
+    <>
+      <rect width="320" height="200" fill="#182e22" />
+      <rect x="22" y="22" width="62" height="74" fill="#0d1a24" stroke={BUFF} strokeOpacity="0.4" strokeWidth="2" />
+      <line x1="53" y1="22" x2="53" y2="96" stroke={BUFF} strokeOpacity="0.4" strokeWidth="1.5" />
+      <line x1="22" y1="59" x2="84" y2="59" stroke={BUFF} strokeOpacity="0.4" strokeWidth="1.5" />
+      {/* The noticeboard, with one small white card */}
+      <rect x="200" y="30" width="80" height="52" fill="#a9824f" stroke={WOOD} strokeWidth="3" />
+      <rect x="232" y="44" width="22" height="14" fill="#fbf8ef" />
+      <rect y="150" width="320" height="50" fill="#132519" />
+      <rect x="70" y="128" width="170" height="7" fill={WOOD} />
+      <rect x="74" y="135" width="4" height="22" fill={WOOD} />
+      <rect x="232" y="135" width="4" height="22" fill={WOOD} />
+      <Board x={140} y={123} />
+      {/* One chair on this side; where the other stood, nothing */}
+      <path d="M92 146 v30 M92 162 h18 v14" stroke={BUFF} strokeOpacity="0.5" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+      <path d="M210 176 h22" stroke={BUFF} strokeOpacity="0.15" strokeWidth="2" strokeDasharray="3 3" />
+    </>
+  ),
+}
+
+const SCENES: Record<SceneId, () => ReactElement> = { ...ACT_1_SCENES, ...ACT_2_SCENES }
 
 /** Club champions, year after year: one name ten years running, then it stops. */
 const HONOURS: [string, string][] = [

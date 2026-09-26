@@ -9,10 +9,12 @@ import { LadderCard } from '../components/ClubLadder'
 import { describeNews, type LadderNews, type Rung } from '../logic/ladder'
 import type { Milestone } from '../logic/milestones'
 import { cleanName } from '../logic/playerName'
+import { fillName } from '../logic/dialogue'
 import { playtestOn, setPlaytestOn } from '../logic/playtest'
 import { TRIAL_NOTE } from '../data/act1'
 import { findCharacter } from '../data/characters'
 import { findLesson } from '../data/lessons'
+import { ACTS, actNumber, actPlan, weeksBefore } from '../data/acts'
 import { characterOpponentId } from '../data/opponents'
 import { shownRating } from '../logic/glicko2'
 import { warmupCards } from '../logic/mistakesDeck'
@@ -52,6 +54,8 @@ type Props = {
   /** An unfinished game left with Pause: it must be finished or resigned first. */
   pausedGame: PathGame | null
   onResume: () => void
+  /** The season's final is won: start the next one. */
+  onStartNextAct: () => void
 }
 
 const KIND_LABELS: Record<PathGame['kind'], string> = {
@@ -86,6 +90,7 @@ export function HomeScreen(props: Props) {
     onReset,
     pausedGame,
     onResume,
+    onStartNextAct,
   } = props
   // Past errors waiting to be put right (the coach's warm-ups on Tuesday).
   const [waiting, setWaiting] = useState(0)
@@ -149,9 +154,16 @@ export function HomeScreen(props: Props) {
       {pausedGame ? (
         <PausedCard game={pausedGame} onResume={onResume} />
       ) : wantsWarmup(progress, next, waiting) ? (
-        <WarmupCard count={waiting} week={progress.chapter} onStart={onStartWarmup} />
+        <WarmupCard count={waiting} week={weeksBefore(progress) + progress.chapter} onStart={onStartWarmup} />
       ) : (
-        <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} onTargetedPuzzles={onTargetedPuzzles} />
+        <NextCard
+          next={next}
+          progress={progress}
+          onPlay={onPlay}
+          onStartLesson={onStartLesson}
+          onTargetedPuzzles={onTargetedPuzzles}
+          onStartNextAct={onStartNextAct}
+        />
       )}
 
       {ladder && progress.stage !== 'trial' && <LadderCard ladder={ladder} news={ladderNews} onOpen={onOpenLadder} />}
@@ -257,7 +269,7 @@ function ActProgress({ progress }: { progress: Progress }) {
           2026: little things progressing through the week). */}
       {beat ? (
         <p className="club-week-note">
-          <span className="club-week-beat">Around the club · {beat.day}</span> {beat.text}
+          <span className="club-week-beat">Around the club · {beat.day}</span> {fillName(beat.text, progress.playerName)}
         </p>
       ) : (
         week.note && <p className="club-week-note">{week.note}</p>
@@ -348,10 +360,12 @@ const LESSON_SHAPE = {
 
 function NextCard({
   next,
+  progress,
   onPlay,
   onStartLesson,
   onTargetedPuzzles,
-}: Pick<Props, 'next' | 'onPlay' | 'onStartLesson' | 'onTargetedPuzzles'>) {
+  onStartNextAct,
+}: Pick<Props, 'next' | 'progress' | 'onPlay' | 'onStartLesson' | 'onTargetedPuzzles' | 'onStartNextAct'>) {
   if (next.kind === 'lesson') {
     return (
       <section className="next-card">
@@ -370,11 +384,21 @@ function NextCard({
     )
   }
   if (next.kind === 'act-complete') {
+    // The season's final is won: its card, then the way into the next season.
+    const act = actPlan(progress)
+    const following = ACTS[actNumber(progress)]
     return (
       <section className="next-card">
-        <p className="next-kind">The club knockout cup</p>
-        <h2>You won the cup.</h2>
-        <p className="next-note">More to come. The ladder goes up next week.</p>
+        <p className="next-kind">{act.gauntlet.title}</p>
+        <h2>{act.gauntlet.won.heading}</h2>
+        <p className="next-note">{act.gauntlet.won.note}</p>
+        {next.nextAct && following ? (
+          <button type="button" className="next-play" onClick={onStartNextAct}>
+            {following.startLabel ?? 'On to the new season'}
+          </button>
+        ) : (
+          <p className="next-note">More to come.</p>
+        )}
       </section>
     )
   }

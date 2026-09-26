@@ -15,7 +15,7 @@ export function storyAfterWin(chapterId: string): StoryId[] {
   return ids
 }
 
-/** After the cup final is won. */
-export function storyAfterCup(): StoryId[] {
-  return CUTSCENES.filter((c) => c.after === 'cup').map((c) => `scene:${c.id}`)
+/** After an act's final is won (the cup in Act 1, the top of the ladder in Act 2). */
+export function storyAfterFinal(act: number): StoryId[] {
+  return CUTSCENES.filter((c) => c.after === `final:${act}`).map((c) => `scene:${c.id}`)
 }

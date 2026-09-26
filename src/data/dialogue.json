@@ -1463,6 +1463,9 @@
   "text": "(Marjorie has got the good set out.)",
   "expression": "neutral",
   "conditions": {
+   "acts": [
+    1
+   ],
    "flags": [
     "kind:boss"
    ]
@@ -1477,12 +1480,252 @@
   "text": "(Pemberton shakes your hand, then goes to find Toby.)",
   "expression": "annoyed",
   "conditions": {
+   "acts": [
+    1
+   ],
    "flags": [
     "kind:boss"
    ]
   },
   "weight": 1,
   "once": true
+ },
+ {
+  "id": "story-a2-final-start",
+  "character": "toby",
+  "trigger": "game_start",
+  "text": "Top of the ladder, then. No pressure, mate. It’s only a ladder.",
+  "expression": "smug",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:boss"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-final-won",
+  "character": "toby",
+  "trigger": "game_loss",
+  "text": "(Toby shakes your hand. He doesn’t stay for a drink. Pemberton leaves with him.)",
+  "expression": "annoyed",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:boss"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-1-graham",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "Rule seven, part (b): the player below may challenge the player above. You are, technically, above me.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-1"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-6-dex",
+  "character": "dex",
+  "trigger": "game_start",
+  "text": "If Graham asks, I’m not streaming this.",
+  "expression": "smug",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-6"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-10-malcolm",
+  "character": "malcolm",
+  "trigger": "game_start",
+  "text": "Evening. I hear you’ve been reading about yourself.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-10"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-13-neil",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "game_loss",
+  "text": "Kingsbridge have a junior squad. Twelve of them. Matching jumpers.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-13"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "malcolm-start-01",
+  "character": "malcolm",
+  "trigger": "game_start",
+  "text": "Evening.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-start-02",
+  "character": "malcolm",
+  "trigger": "game_start",
+  "text": "(Malcolm nods and fills in the top of his scoresheet.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-start-03",
+  "character": "malcolm",
+  "trigger": "game_start",
+  "text": "Board one plays the ladder too. Rules are rules.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-start-04",
+  "character": "malcolm",
+  "trigger": "game_start",
+  "text": "(Malcolm sets up the clock, although nobody asked for one.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-win-01",
+  "character": "malcolm",
+  "trigger": "game_win",
+  "text": "Good game.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-win-02",
+  "character": "malcolm",
+  "trigger": "game_win",
+  "text": "(Malcolm writes down the result and shakes your hand.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-win-03",
+  "character": "malcolm",
+  "trigger": "game_win",
+  "text": "Closer than it looked. Not much closer.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-loss-01",
+  "character": "malcolm",
+  "trigger": "game_loss",
+  "text": "Well played. You’ll be on the team.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-loss-02",
+  "character": "malcolm",
+  "trigger": "game_loss",
+  "text": "(Malcolm nods, once. From him, that’s a speech.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-loss-03",
+  "character": "malcolm",
+  "trigger": "game_loss",
+  "text": "That’s the first time in a while. Good.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-pb-01",
+  "character": "malcolm",
+  "trigger": "player_blunder",
+  "text": "(Malcolm looks up. Only briefly.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-sm-01",
+  "character": "malcolm",
+  "trigger": "strong_move",
+  "text": "Mm.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-sm-02",
+  "character": "malcolm",
+  "trigger": "strong_move",
+  "text": "(Malcolm sits back in his chair.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
  },
  {
   "id": "notice-rating-marjorie",

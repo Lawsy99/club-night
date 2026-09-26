@@ -217,6 +217,31 @@ export const COACH: Character = {
   storyOffsets: [0],
 }
 
+/**
+ * Members who play only on the ladder and for the league team, never on
+ * practice night (Act 2 onwards). Their ratings are fixed after trial night
+ * like the other background members (data/members.ts).
+ */
+export const LEAGUE_ONLY: Character[] = [
+  {
+    // Board one. Hardly speaks. Plays correct, patient chess and never offers a draw.
+    id: 'malcolm',
+    name: 'Malcolm',
+    strength: 'fixed',
+    offset: 320,
+    style: 'solid',
+    thinkSpeed: 1.1,
+    resigns: 'normal',
+    offersDraw: 'rarely',
+    acceptsDraws: false,
+  },
+]
+
 export function findCharacter(id: string): Character | undefined {
-  return CHARACTERS.find((c) => c.id === id) ?? PRACTICE_REGULARS.find((c) => c.id === id) ?? (id === COACH.id ? COACH : undefined)
+  return (
+    CHARACTERS.find((c) => c.id === id) ??
+    PRACTICE_REGULARS.find((c) => c.id === id) ??
+    LEAGUE_ONLY.find((c) => c.id === id) ??
+    (id === COACH.id ? COACH : undefined)
+  )
 }

@@ -12,6 +12,8 @@ import type { WrittenStep } from '../logic/demo'
 export type OpeningDrill = {
   id: string
   name: string
+  /** The side you play (White if not set). */
+  colour?: 'w' | 'b'
   /** Pemberton plays it through first. */
   demo: WrittenStep[]
   /** The lines you practise, as White, including his replies. */
@@ -92,6 +94,71 @@ export const OPENING_DRILLS: Record<string, OpeningDrill> = {
       Bg3: 'Step the bishop back rather than let it be swapped for a knight.',
       Be2: 'A quiet square, ready to castle.',
       'O-O': 'Castle: king safe, rook in the game.',
+    },
+    runs: 2,
+  },
+
+  // --- Act 2: the same three ideas, as Black ---
+  'black-e4': {
+    id: 'black-e4',
+    name: 'the answer to 1.e4',
+    colour: 'b',
+    demo: [
+      {
+        caption: 'Now from the other side. When White opens with the king’s pawn, meet it in the centre: pawn to e5. The same three ideas as before.',
+      },
+      { caption: 'Your own centre pawn, straight away. It stops White having the middle to themselves.', moves: '1. e4 e5' },
+      { caption: 'Their knight attacks your pawn, so a knight defends it and comes out at the same time.', moves: '2. Nf3 Nc6' },
+      { caption: 'Your bishop to its best diagonal, then the other knight. Every move develops something.', moves: '3. Bc4 Bc5 4. c3 Nf6' },
+      { caption: 'A solid d6, then castle. Your king is as safe as theirs.', moves: '5. d3 d6 6. O-O O-O' },
+      { caption: 'Against the other main moves the ideas are the same: centre, pieces, king. Now you play Black.' },
+    ],
+    lines: [
+      '1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d3 d6 6. O-O O-O',
+      '1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7',
+      '1. e4 e5 2. Nf3 Nc6 3. d4 exd4 4. Nxd4 Nf6 5. Nxc6 bxc6 6. Bd3 d5',
+    ],
+    why: {
+      e5: 'Your own centre pawn. Now the middle is shared.',
+      Nc6: 'The knight defends e5 and develops at the same time.',
+      Bc5: 'The bishop to its best diagonal, aiming at f2.',
+      Nf6: 'The other knight out, and it attacks e4.',
+      d6: 'd6 holds e5 and opens the way for your other bishop.',
+      'O-O': 'Castle: your king is safe, and a rook joins in.',
+      a6: 'a6 asks the bishop what it’s doing. It has to decide.',
+      Be7: 'A quiet square for the bishop, ready to castle.',
+      exd4: 'Take the pawn back: they gave up the centre, you don’t have to.',
+      bxc6: 'Take back towards the centre. The pawns look odd but d5 is coming.',
+      d5: 'Now d5: a centre of your own.',
+    },
+    runs: 2,
+  },
+  'black-d4': {
+    id: 'black-d4',
+    name: 'the answer to 1.d4',
+    colour: 'b',
+    demo: [
+      {
+        caption: 'When White opens with the queen’s pawn, the simplest answer is the one Graham has played for thirty years: d5, e6, and develop. The Queen’s Gambit Declined.',
+      },
+      { caption: 'Your centre pawn opposite theirs.', moves: '1. d4 d5' },
+      { caption: 'If they offer the c-pawn, you don’t have to take it. e6 holds d5 and opens your bishop.', moves: '2. c4 e6' },
+      { caption: 'Knight out, bishop out, castle. No drama.', moves: '3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O' },
+      { caption: 'h6 asks their bishop to make up its mind. Now you play Black.', moves: '6. Nf3 h6' },
+    ],
+    lines: [
+      '1. d4 d5 2. c4 e6 3. Nc3 Nf6 4. Bg5 Be7 5. e3 O-O 6. Nf3 h6',
+      '1. d4 d5 2. Nf3 Nf6 3. Bf4 e6 4. e3 Be7 5. Bd3 O-O',
+      '1. d4 d5 2. c4 e6 3. Nf3 Nf6 4. g3 Be7 5. Bg2 O-O 6. O-O dxc4',
+    ],
+    why: {
+      d5: 'Your centre pawn, opposite theirs.',
+      e6: 'e6 holds d5 and opens the way for your bishop.',
+      Nf6: 'Knight out, towards the centre.',
+      Be7: 'The bishop out, ready to castle.',
+      'O-O': 'Castle: king safe, rook in the game.',
+      h6: 'h6 asks their bishop what it wants to do.',
+      dxc4: 'Now take the pawn: they’ve castled, and you can give it back later if you need to.',
     },
     runs: 2,
   },

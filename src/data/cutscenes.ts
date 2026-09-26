@@ -5,11 +5,19 @@
 // See docs/story-outline.md, "Short cutscenes".
 import type { StoryLine } from './weekStory'
 
-export type SceneArt = 'club-room' | 'car-park' | 'honours-board' | 'noticeboard'
+export type SceneArt =
+  | 'club-room'
+  | 'car-park'
+  | 'honours-board'
+  | 'noticeboard'
+  | 'team-sheet'
+  | 'league-hall'
+  | 'kitchen'
+  | 'empty-room'
 
 export type Cutscene = {
   id: string
-  /** Plays after this week's match is won (a chapter id), or after the cup final ('cup'). */
+  /** Plays after this week's match is won (a week id), or after an act's final ("final:1"). */
   after: string
   art: SceneArt
   /** A small caption over the picture: where and when. */
@@ -54,13 +62,60 @@ export const CUTSCENES: Cutscene[] = [
   },
   {
     id: 'cup',
-    after: 'cup',
+    after: 'final:1',
     art: 'noticeboard',
     place: 'The next morning',
     lines: [
       { text: 'A new sheet on the noticeboard: Club ladder.' },
       { text: 'One name is already typed at the top.' },
       { text: 'Graham straightens it, and steps back to check.' },
+    ],
+  },
+
+  // --- Act 2: the club ladder ---
+  {
+    id: 'month-5',
+    after: 'a2-4',
+    art: 'team-sheet',
+    place: 'The noticeboard, Friday',
+    lines: [
+      { text: 'The team sheet for Castlebury, in pencil. Four boards, and a line for reserves.' },
+      { text: 'Someone has added your name under reserves, in different handwriting.' },
+      { who: 'marjorie', text: 'Well. Somebody had to.' },
+    ],
+  },
+  {
+    id: 'month-6',
+    after: 'a2-8',
+    art: 'league-hall',
+    place: 'Castlebury, away',
+    lines: [
+      { text: 'Castlebury’s hall has proper lights, and a clock on every board.' },
+      { text: 'Wexley’s team sit in a row. Oscar’s feet don’t reach the floor.' },
+      { text: 'Toby shakes every hand in the room. Pemberton watches board two all night.' },
+    ],
+  },
+  {
+    id: 'month-7',
+    after: 'a2-12',
+    art: 'kitchen',
+    place: 'The kitchen, after the meeting',
+    lines: [
+      { text: 'Marjorie washes up forty cups. Nine were used.' },
+      { text: 'The subs tin is on the side. She doesn’t open it.' },
+      { who: 'marjorie', text: 'We’ve been here before. We’ll manage.' },
+    ],
+  },
+  {
+    id: 'split',
+    after: 'final:2',
+    art: 'empty-room',
+    place: 'A week later. Tuesday.',
+    lines: [
+      { text: 'Pemberton’s chair isn’t there. Toby’s name is off the ladder.' },
+      { text: 'There’s a Kingsbridge card on the noticeboard. Nobody has taken it down.' },
+      { who: 'marjorie', text: 'Kingsbridge. Both of them. Lovely hall, apparently.' },
+      { text: 'Nobody sets up the second room.' },
     ],
   },
 ]

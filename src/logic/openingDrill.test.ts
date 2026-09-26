@@ -6,16 +6,17 @@ import { drillFinished, drillLines, drillReply, expectedMoves, openingAdvice } f
 import { parseLine } from './openingBook'
 
 describe('opening lessons', () => {
-  it('have legal demos and lines, and a reason for every White move', () => {
+  it('have legal demos and lines, and a reason for every move you play', () => {
     for (const drill of Object.values(OPENING_DRILLS)) {
       expect(() => buildDemo(drill.demo), drill.id).not.toThrow()
+      const yours = drill.colour === 'b' ? 1 : 0
       for (const line of drill.lines) {
-        const whiteMoves = line
+        const myMoves = line
           .split(/\s+/)
           .filter((t) => t && !/^\d+\.+$/.test(t))
-          .filter((_, i) => i % 2 === 0)
+          .filter((_, i) => i % 2 === yours)
         expect(() => parseLine(line), line).not.toThrow()
-        for (const san of whiteMoves) expect(drill.why[san], `${drill.id}: why ${san}?`).toBeDefined()
+        for (const san of myMoves) expect(drill.why[san], `${drill.id}: why ${san}?`).toBeDefined()
       }
     }
   })

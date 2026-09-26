@@ -130,8 +130,27 @@ story-c4-clive,clive,,game_loss,"Good game. You made something out of nothing. M
 story-c5-priya,priya,,game_loss,That wasn’t in chapter nine. Or ten.,surprised,,,,,,kind:match chapter:c5,1,yes
 story-c6-graham,graham,,game_loss,"A fair result. I shall be recording it in full.",annoyed,,,,,,kind:match chapter:c6,1,yes
 story-c7-toby,toby,,game_start,"No pressure, mate. Did you get a chance to look at the study?",pleased,,,,,,kind:match chapter:c7,1,yes
-story-final-start,toby,,game_start,(Marjorie has got the good set out.),neutral,,,,,,kind:boss,1,yes
-story-final-won,toby,,game_loss,"(Pemberton shakes your hand, then goes to find Toby.)",annoyed,,,,,,kind:boss,1,yes
+story-final-start,toby,,game_start,(Marjorie has got the good set out.),neutral,1,,,,,kind:boss,1,yes
+story-final-won,toby,,game_loss,"(Pemberton shakes your hand, then goes to find Toby.)",annoyed,1,,,,,kind:boss,1,yes
+story-a2-final-start,toby,,game_start,"Top of the ladder, then. No pressure, mate. It’s only a ladder.",smug,2,,,,,kind:boss,1,yes
+story-a2-final-won,toby,,game_loss,(Toby shakes your hand. He doesn’t stay for a drink. Pemberton leaves with him.),annoyed,2,,,,,kind:boss,1,yes
+story-a2-1-graham,graham,,game_start,"Rule seven, part (b): the player below may challenge the player above. You are, technically, above me.",neutral,2,,,,,kind:match chapter:a2-1,1,yes
+story-a2-6-dex,dex,,game_start,"If Graham asks, I’m not streaming this.",smug,2,,,,,kind:match chapter:a2-6,1,yes
+story-a2-10-malcolm,malcolm,,game_start,Evening. I hear you’ve been reading about yourself.,neutral,2,,,,,kind:match chapter:a2-10,1,yes
+story-a2-13-neil,oscar,neil,game_loss,Kingsbridge have a junior squad. Twelve of them. Matching jumpers.,neutral,2,,,,,kind:match chapter:a2-13,1,yes
+malcolm-start-01,malcolm,,game_start,Evening.,neutral,,,,,,,1,
+malcolm-start-02,malcolm,,game_start,(Malcolm nods and fills in the top of his scoresheet.),neutral,,,,,,,1,
+malcolm-start-03,malcolm,,game_start,Board one plays the ladder too. Rules are rules.,neutral,,,,,,,1,
+malcolm-start-04,malcolm,,game_start,"(Malcolm sets up the clock, although nobody asked for one.)",neutral,,,,,,,1,
+malcolm-win-01,malcolm,,game_win,Good game.,neutral,,,,,,,1,
+malcolm-win-02,malcolm,,game_win,(Malcolm writes down the result and shakes your hand.),neutral,,,,,,,1,
+malcolm-win-03,malcolm,,game_win,Closer than it looked. Not much closer.,neutral,,,,,,,1,
+malcolm-loss-01,malcolm,,game_loss,Well played. You’ll be on the team.,pleased,,,,,,,1,
+malcolm-loss-02,malcolm,,game_loss,"(Malcolm nods, once. From him, that’s a speech.)",neutral,,,,,,,1,
+malcolm-loss-03,malcolm,,game_loss,That’s the first time in a while. Good.,neutral,,,,,,,1,
+malcolm-pb-01,malcolm,,player_blunder,(Malcolm looks up. Only briefly.),neutral,,,,,,,1,
+malcolm-sm-01,malcolm,,strong_move,Mm.,surprised,,,,,,,1,
+malcolm-sm-02,malcolm,,strong_move,(Malcolm sits back in his chair.),neutral,,,,,,,1,
 notice-rating-marjorie,marjorie,,game_start,"Your rating's gone up, I see. Good for you.",pleased,,,,,,notice:rating,1,
 notice-rating-dex,dex,,game_start,Rating's going up then. Don't make it weird.,neutral,,,,,,notice:rating,1,
 notice-rating-oscar,oscar,neil,game_start,"Your rating's up, I see. So is Oscar's, of course.",neutral,,,,,,notice:rating,1,

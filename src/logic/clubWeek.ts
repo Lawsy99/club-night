@@ -1,6 +1,6 @@
 // Where the player is in the club week, for the calendar on Home: this
 // week's number and title, and each session done, tonight's, or to come.
-import { ACT_1 } from '../data/act1'
+import { actPlan, weeksBefore } from '../data/acts'
 import { SESSIONS } from '../data/clubWeek'
 import { matchUnlocked, PRACTICE_GAMES, type Progress } from './path'
 
@@ -9,19 +9,20 @@ export type Slot = { key: string; day: string; name: string; state: SlotState }
 /** `note`: one line of what else is going on at the club this week. */
 export type Week = { title: string; subtitle: string; slots: Slot[]; note?: string }
 
-const CUP_SLOTS = ['Round 1', 'Round 2', 'Semi-final', 'Final']
-
 /** This week at the club (null on trial night, which has its own strip). */
 export function clubWeek(p: Progress): Week | null {
   if (p.stage !== 'act' && p.stage !== 'act-complete') return null
-  const chapters = ACT_1.chapters
+  const act = actPlan(p)
+  const chapters = act.chapters
+  // Week numbers carry on from one season to the next (Week 17 follows the cup).
+  const weekNo = (i: number) => weeksBefore(p) + i + 1
   if (p.stage === 'act' && p.chapter < chapters.length) {
     const ch = chapters[p.chapter]
     const open = matchUnlocked(p)
     const state = (done: boolean, today: boolean): SlotState => (done ? 'done' : today ? 'today' : 'later')
     const played = Math.min(p.friendlies.played, PRACTICE_GAMES)
     return {
-      title: `Week ${p.chapter + 1}`,
+      title: `Week ${weekNo(p.chapter)}`,
       subtitle: ch.title,
       note: ch.note,
       slots: [
@@ -43,15 +44,16 @@ export function clubWeek(p: Progress): Week | null {
       ],
     }
   }
-  // The knockout cup: one round after another, then the final.
-  const round = p.stage === 'act-complete' ? CUP_SLOTS.length : (p.cup?.round ?? 0)
+  // The act's final week: one round after another, then the final.
+  const g = act.gauntlet
+  const round = p.stage === 'act-complete' ? g.slots.length : (p.cup?.round ?? 0)
   return {
-    title: 'Cup week',
-    subtitle: ACT_1.gauntlet.title,
-    note: p.stage === 'act-complete' ? ACT_1.gauntlet.afterNote : ACT_1.gauntlet.note,
-    slots: CUP_SLOTS.map((name, i) => ({
+    title: g.weekTitle,
+    subtitle: g.title,
+    note: p.stage === 'act-complete' ? g.afterNote : g.note,
+    slots: g.slots.map((name, i) => ({
       key: name,
-      day: i === CUP_SLOTS.length - 1 ? 'Sat' : '',
+      day: i === g.slots.length - 1 ? 'Sat' : '',
       name,
       state: i < round ? 'done' : i === round ? 'today' : 'later',
     })),

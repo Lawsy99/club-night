@@ -112,7 +112,9 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
           key={opening ? opening.id : example!.id}
           startFen={opening ? undefined : example!.fen}
           steps={demo}
-          orientation={opening || solverColour(example!) === 'w' ? 'white' : 'black'}
+          orientation={
+            opening ? (opening.colour === 'b' ? 'black' : 'white') : solverColour(example!) === 'w' ? 'white' : 'black'
+          }
           finishLabel="Your turn"
           onFinish={() => setPhase(opening ? 'drill' : 'puzzles')}
         />

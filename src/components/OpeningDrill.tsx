@@ -18,22 +18,26 @@ type Props = {
 }
 
 export function OpeningDrill({ drill, onDone }: Props) {
+  // You play White in the first lessons, Black in the later ones.
+  const you = drill.colour ?? 'w'
   const [moves, setMoves] = useState<string[]>([])
   const [run, setRun] = useState(1)
   const [misses, setMisses] = useState(0)
-  const [message, setMessage] = useState(`Play ${drill.name} as White. I’ll play Black.`)
+  const [message, setMessage] = useState(
+    you === 'w' ? `Play ${drill.name} as White. I’ll play Black.` : `You’re Black. I’ll start, and you play ${drill.name}.`,
+  )
   const [finished, setFinished] = useState(false)
 
   const chess = replay(moves)
   const fen = chess.fen()
   const last = chess.history({ verbose: true }).at(-1)
-  const yourTurn = chess.turn() === 'w' && !finished
+  const yourTurn = chess.turn() === you && !finished
   const expected = expectedMoves(drill, moves)
   const lineOver = drillFinished(drill, moves)
 
-  // His reply, after a moment.
+  // His move, after a moment (including the first move when you're Black).
   useEffect(() => {
-    if (chess.turn() !== 'b' || lineOver) return
+    if (chess.turn() === you || lineOver) return
     const t = window.setTimeout(() => {
       const reply = drillReply(drill, moves)
       if (reply) setMoves((m) => [...m, reply])
@@ -83,8 +87,8 @@ export function OpeningDrill({ drill, onDone }: Props) {
     <div className="coach-drill">
       <Board
         fen={fen}
-        orientation="white"
-        movableColour={yourTurn ? 'w' : null}
+        orientation={you === 'w' ? 'white' : 'black'}
+        movableColour={yourTurn ? you : null}
         lastMove={last ? { from: last.from, to: last.to } : null}
         onMove={play}
         arrows={showMove ? [{ from: expected[0].slice(0, 2), to: expected[0].slice(2, 4), colour: HINT_ARROW_COLOUR }] : []}

@@ -165,7 +165,8 @@ export function GameScreen({
   const dialogue = useDialogue({
     character: opponent.character?.id,
     gameType,
-    act: 1,
+    // Which season this game is in, so each act's story lines play in the right one.
+    act: game.act ?? 1,
     rematch: talk.rematch,
     losingStreak: talk.losingStreak,
     playerName,

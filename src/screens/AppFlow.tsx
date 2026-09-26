@@ -17,6 +17,7 @@ import {
   completeLesson,
   drawRule,
   NEW_PROGRESS,
+  startNextAct,
   storyPlayed,
   nextStep,
   recordGame,
@@ -37,6 +38,7 @@ import { storyFor } from '../logic/storyContent'
 import { collectMistakes } from '../engine/collectMistakes'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
 import { ACT_1 } from '../data/act1'
+import { actNumber } from '../data/acts'
 import { CHARACTERS } from '../data/characters'
 import { rivalTarget } from '../logic/rival'
 import { scoutingReport } from '../logic/scouting'
@@ -226,6 +228,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       rivalPrefer: target && target.colour === record.playerColour ? target.opening : undefined,
       repertoire,
       scenario: trap ? { id: trap.id } : undefined,
+      act: actNumber(progress),
       talk: {
         rematch: h2h.played + 1,
         losingStreak: h2h.theirStreak,
@@ -441,6 +444,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       onStartWarmup={() => setView('warmup')}
       pausedGame={pausedGame}
       onResume={() => setView('game')}
+      onStartNextAct={() => updateProgress(startNextAct(progress))}
       onSkipStep={() => {
         setLastChange(null)
         if (next.kind === 'lesson') updateProgress(completeLesson(progress))
