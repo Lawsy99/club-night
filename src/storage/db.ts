@@ -3,6 +3,7 @@
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb'
 import type { GameRecord } from '../logic/gameRecord'
 import { planAdditions, type MistakeCard } from '../logic/mistakesDeck'
+import type { PlayerRating } from '../logic/glicko2'
 import type { Progress } from '../logic/path'
 import type { PositionEval } from '../logic/review'
 
@@ -16,8 +17,8 @@ export type ArchivedGame = GameRecord & {
 interface ClubNightDB extends DBSchema {
   /** Small named values: the game in progress, which screen was open, progress on the path. */
   state: {
-    key: 'currentGame' | 'screen' | 'baseline' | 'progress'
-    value: GameRecord | string | number | Progress
+    key: 'currentGame' | 'screen' | 'baseline' | 'progress' | 'puzzles'
+    value: GameRecord | string | number | Progress | PuzzleProgress
   }
   /** Every finished game. */
   games: {
@@ -70,6 +71,19 @@ export async function loadProgress(): Promise<Progress | null> {
 
 export async function saveProgress(progress: Progress): Promise<void> {
   await (await db()).put('state', progress, 'progress')
+}
+
+/** Puzzle rating (tracked separately from the playing rating) and puzzles already seen. */
+export type PuzzleProgress = { rating: PlayerRating; seen: string[] }
+
+export async function loadPuzzleProgress(): Promise<PuzzleProgress | null> {
+  const value = await (await db()).get('state', 'puzzles')
+  return value && typeof value === 'object' && 'seen' in value ? (value as PuzzleProgress) : null
+}
+
+export async function savePuzzleProgress(p: PuzzleProgress): Promise<void> {
+  // Remember the most recent 3,000 seen, plenty to avoid repeats.
+  await (await db()).put('state', { ...p, seen: p.seen.slice(-3000) }, 'puzzles')
 }
 
 /** Playtest tool: forget progress and the current game (the archive and deck stay). */

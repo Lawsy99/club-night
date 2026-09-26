@@ -68,7 +68,7 @@ export type PathGame = {
 
 export type NextStep =
   | { kind: 'welcome' }
-  | { kind: 'lesson'; chapterTitle: string; topic: string; location: string }
+  | { kind: 'lesson'; chapterId: string; chapterTitle: string; topic: string; location: string }
   | { kind: 'play'; game: PathGame; optionalFriendly: PathGame | null; note: string | null }
   | { kind: 'act-complete' }
 
@@ -111,7 +111,7 @@ export function nextStep(p: Progress): NextStep {
   if (p.chapter < chapters.length) {
     const ch = chapters[p.chapter]
     if (!p.lessonDone) {
-      return { kind: 'lesson', chapterTitle: ch.title, topic: ch.lesson, location: ch.location }
+      return { kind: 'lesson', chapterId: ch.id, chapterTitle: ch.title, topic: ch.lesson, location: ch.location }
     }
     const rating = opponentRating(p, ch.opponent)
     const friendly = (stage: 'assisted' | 'guided'): PathGame => ({

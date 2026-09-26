@@ -1,0 +1,28 @@
+.puzzle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.puzzle p {
+  margin: 0;
+  padding: 0 16px;
+}
+
+.puzzle-prompt {
+  font-weight: 600;
+  min-height: 24px;
+}
+
+.puzzle-prompt.solved {
+  color: #7fc47a;
+}
+
+.puzzle-prompt.helped {
+  color: #f0c95a;
+}
+
+.puzzle-meta {
+  font-size: 13px;
+  color: var(--muted);
+}
