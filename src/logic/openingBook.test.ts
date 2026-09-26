@@ -29,6 +29,13 @@ describe('opening books', () => {
     expect(bookMove('nobody', 'w', [])).toBeNull()
   })
 
+  it('steers towards a preferred opening when one is targeted', () => {
+    // Clive as White against 1...e5 has only the Ruy Exchange: a preference can't invent lines.
+    expect(bookMove('clive', 'w', ['e2e4', 'e7e5'], () => 0, 'french')).toBe('g1f3')
+    // Toby as Black against 1.e4 always heads for the Sicilian.
+    expect(bookMove('toby', 'b', ['e2e4'], () => 0.99, 'sicilian')).toBe('c7c5')
+  })
+
   it('chooses between branches', () => {
     // Dex as White: King's Gambit or Danish after 1.e4 e5.
     const picks = new Set([0, 0.99].map((r) => bookMove('dex', 'w', ['e2e4', 'e7e5'], () => r)))

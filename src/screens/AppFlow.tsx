@@ -20,13 +20,17 @@ import {
   type PathGame,
   type Progress,
 } from '../logic/path'
+import { replay } from '../logic/game'
 import { averageCentipawnLoss } from '../logic/review'
+import { rivalTarget } from '../logic/rival'
+import { scoutingReport } from '../logic/scouting'
 import { strengthFromAccuracy } from '../logic/trialNight'
 import {
   type ArchivedGame,
   archiveGame,
   getArchivedGame,
   headToHead,
+  listArchivedGames,
   loadCurrentGame,
   loadProgress,
   loadScreen,
@@ -101,11 +105,27 @@ export function AppFlow() {
     setLastChange(null)
     const opponentId = characterOpponentId(pathGame.opponent)
     // Head-to-head so far, for dialogue ("Third time lucky…").
-    const h2h = await headToHead(opponentId).catch(() => ({ played: 0, theirStreak: 0 }))
+    const h2h = await headToHead(opponentId).catch(() => ({ played: 0, wins: 0, losses: 0, theirStreak: 0 }))
     const record = newGameRecord(nextPlayerColour(game), opponentId, pathGame.stage, pathGame.rating)
+
+    // Toby studies the player's games (rival level 1): the weakest opening, once there's evidence.
+    const target = pathGame.opponent === 'toby' ? await playerWeakness().catch(() => null) : null
+    // Scouting report before matches and the first (assisted) friendly against someone.
+    const scouted = pathGame.kind !== 'trial' && (pathGame.kind !== 'friendly' || pathGame.stage === 'assisted')
+    const scouting = scouted
+      ? scoutingReport({
+          character: pathGame.opponent,
+          playerColour: record.playerColour,
+          record: { wins: h2h.wins, losses: h2h.losses },
+          target,
+        })
+      : undefined
+
     setGame({
       ...record,
       path: pathGame,
+      scouting,
+      rivalPrefer: target && target.colour === record.playerColour ? target.opening : undefined,
       talk: { rematch: h2h.played + 1, losingStreak: h2h.theirStreak, lines: 0, lastLineMove: null, startSaid: false, endSaid: false },
     })
     setView('game')
@@ -247,6 +267,28 @@ export function AppFlow() {
       }}
     />
   )
+}
+
+/** The player's weakest opening from their archive, for Toby's targeting (null until 10 real games). */
+async function playerWeakness() {
+  const games = await listArchivedGames()
+  const played = games.flatMap((g) => {
+    try {
+      const outcome = outcomeOf(g)
+      if (!outcome || outcome.winner === null) return []
+      return [
+        {
+          sans: replay(g.moves.slice(0, 16)).history(),
+          playerColour: g.playerColour,
+          won: outcome.winner === g.playerColour,
+          rated: !!g.path && g.path.kind !== 'friendly' && g.path.kind !== 'trial',
+        },
+      ]
+    } catch {
+      return []
+    }
+  })
+  return rivalTarget(played)
 }
 
 /** A saved game we can't replay (e.g. from an older version) is discarded. */

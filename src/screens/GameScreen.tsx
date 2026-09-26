@@ -81,7 +81,10 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
   const outcome = outcomeOf(game)
   const last = chess.history({ verbose: true }).at(-1)
   const playersTurn = !outcome && chess.turn() === game.playerColour
-  const opponentToMove = !outcome && !playersTurn
+  // The scouting report, before the first move of matches and first friendlies;
+  // nobody moves until it's been read.
+  const showScouting = !!game.scouting?.length && !game.scoutingSeen && !outcome
+  const opponentToMove = !outcome && !playersTurn && !showScouting
   const opponentColour = game.playerColour === 'w' ? 'b' : 'w'
 
   // Engine analysis of the current position. On the player's turn it always
@@ -152,7 +155,7 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
         setGame((g) => (g ? withResignation(g, opponentColour) : g))
         return
       }
-      const { move, maiaMs: ms } = await chooseOpponentMove(fen, game.moves, opponent)
+      const { move, maiaMs: ms } = await chooseOpponentMove(fen, game.moves, opponent, game.rivalPrefer)
       if (cancelled || !move) return
       if (ms !== undefined) setMaiaMs(ms)
       const offer = shouldOfferDraw(opponent.character, {
@@ -281,7 +284,9 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
     ? engineError
     : outcome
       ? `${describeOutcome(outcome)} ${resultForPlayer(outcome, game)}`
-      : peeking
+      : showScouting
+        ? 'Scouting report first.'
+        : peeking
         ? `Before ${ratedMove.san}: ${ratedMove.betterSan} (blue) was better.`
         : pending && !pending.warning
           ? 'Checking your move…'
@@ -370,13 +375,32 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
           <Board
             fen={boardFen}
             orientation={game.playerColour === 'w' ? 'white' : 'black'}
-            movableColour={outcome || pending || peeking || planSet ? null : game.playerColour}
+            movableColour={outcome || pending || peeking || planSet || showScouting ? null : game.playerColour}
             lastMove={peeking ? null : (pendingLast ?? (last ? { from: last.from, to: last.to } : null))}
             onMove={handlePlayerMove}
             hintSquare={hintStep === 1 && hintMove ? hintMove.slice(0, 2) : null}
             arrows={arrows}
             badges={bestLine?.badges}
           />
+          {showScouting && (
+            <div className="scouting-backdrop" role="dialog" aria-label="Scouting report">
+              <div className="scouting-card">
+                <p className="scouting-kicker">Scouting report · {opponent.name}</p>
+                {game.scouting!.map((line) => (
+                  <p key={line} className="scouting-line">
+                    {line}
+                  </p>
+                ))}
+                <p className="scouting-by">Coach Pemberton</p>
+                <button
+                  type="button"
+                  onClick={() => setGame((g) => (g ? { ...g, scoutingSeen: true } : g))}
+                >
+                  Let's play
+                </button>
+              </div>
+            </div>
+          )}
           {planSet && (
             <PlanPause plans={planSet} onDone={() => setGame((g) => (g ? { ...g, planPauseDone: true } : g))} />
           )}

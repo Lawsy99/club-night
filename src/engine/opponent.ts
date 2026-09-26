@@ -25,10 +25,12 @@ export async function chooseOpponentMove(
   fen: string,
   movesSoFar: readonly string[],
   opponent: Opponent,
+  /** Toby's targeting: prefer book lines heading into this opening. */
+  preferOpening?: string,
 ): Promise<OpponentChoice> {
   const started = Date.now()
   const colour = new Chess(fen).turn()
-  const book = opponent.character ? bookMove(opponent.character.id, colour, movesSoFar) : null
+  const book = opponent.character ? bookMove(opponent.character.id, colour, movesSoFar, Math.random, preferOpening) : null
 
   let choice: OpponentChoice
   let kind: MoveKind

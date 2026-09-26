@@ -30,6 +30,11 @@ export type GameRecord = {
   resultRecorded?: boolean
   /** The assisted game's plan pause has happened (it comes once per game). */
   planPauseDone?: boolean
+  /** Coach Pemberton's scouting report for this game (shown before the first move). */
+  scouting?: string[]
+  scoutingSeen?: boolean
+  /** Toby's targeting: the opening family he steers towards (rival level 1). */
+  rivalPrefer?: string
   /** Dialogue state: head-to-head when the game began, and in-game chatter so far. */
   talk?: {
     rematch: number

@@ -97,16 +97,28 @@ export async function saveDialogueHistory(history: DialogueHistory): Promise<voi
   await (await db()).put('state', history, 'dialogue')
 }
 
-/** Head-to-head against one opponent: games played, and their current winning run. */
-export async function headToHead(opponentId: string): Promise<{ played: number; theirStreak: number }> {
+/** Head-to-head against one opponent: games played, wins, losses, and their current winning run. */
+export async function headToHead(
+  opponentId: string,
+): Promise<{ played: number; wins: number; losses: number; theirStreak: number }> {
   const games = (await listArchivedGames()).filter((g) => g.levelId === opponentId) // newest first
+  const lost = (g: ArchivedGame) => g.resignedBy === g.playerColour || lostOnBoard(g)
+  const won = (g: ArchivedGame) => !lost(g) && wonOnBoardOrByResignation(g)
   let theirStreak = 0
   for (const g of games) {
-    const lost = g.resignedBy === g.playerColour || lostOnBoard(g)
-    if (!lost) break
+    if (!lost(g)) break
     theirStreak++
   }
-  return { played: games.length, theirStreak }
+  return { played: games.length, wins: games.filter(won).length, losses: games.filter(lost).length, theirStreak }
+}
+
+function wonOnBoardOrByResignation(g: ArchivedGame): boolean {
+  try {
+    const o = outcomeOfRecord(g)
+    return o !== null && o.winner === g.playerColour
+  } catch {
+    return false
+  }
 }
 
 function lostOnBoard(g: ArchivedGame): boolean {
