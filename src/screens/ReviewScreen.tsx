@@ -5,6 +5,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { FullGameView } from '../components/FullGameView'
 import { MomentTrainer } from '../components/MomentTrainer'
 import { MoveReplay } from '../components/MoveReplay'
+import { Portrait } from '../components/Portrait'
+import { coachNotes, gameErrorKinds } from '../logic/coachNotes'
+import type { ErrorKind } from '../logic/explain'
+import { drawRule } from '../logic/path'
 import { analyseGame } from '../engine/reviewAnalysis'
 import { explainGoodMove } from '../logic/explain'
 import { describeOutcome, replay, type Colour } from '../logic/game'
@@ -12,7 +16,7 @@ import { outcomeOf, type GameRecord } from '../logic/gameRecord'
 import { RATING_LABELS, type MoveRating } from '../logic/moveRating'
 import { bestMoveOfGame, gameAccuracy, ratingCounts, reviewMoves, SHORTEST_REVIEW, type PositionEval } from '../logic/review'
 import { cardId, cardsFromMoments, gameMoments, moveLabel } from '../logic/mistakeCards'
-import { addCardsIfNew, getArchivedGame, retireCardById, saveGameAnalysis } from '../storage/db'
+import { addCardsIfNew, getArchivedGame, listArchivedGames, retireCardById, saveGameAnalysis } from '../storage/db'
 import '../components/ratings.css'
 import './ReviewScreen.css'
 
@@ -77,6 +81,39 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
   )
   const best = useMemo(() => (reviewed ? bestMoveOfGame(reviewed, player) : null), [reviewed, player])
 
+  // Pemberton's notes: what this game meant, and any habit it shares with
+  // your last few reviewed games (Joseph, Sep 2026).
+  const [recentKinds, setRecentKinds] = useState<ErrorKind[][] | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    listArchivedGames()
+      .then((games) => {
+        const earlier = games
+          .filter((g) => g.id !== game.id && g.evals?.length === g.moves.length + 1)
+          .slice(0, 4)
+          .map((g) => gameErrorKinds(g.moves, g.evals!, g.playerColour))
+        if (!cancelled) setRecentKinds(earlier)
+      })
+      .catch(() => !cancelled && setRecentKinds([]))
+    return () => {
+      cancelled = true
+    }
+  }, [game.id])
+  const notes = useMemo(
+    () =>
+      evals && recentKinds
+        ? coachNotes({
+            moves: game.moves,
+            evals,
+            player,
+            won: outcome ? (outcome.winner === null ? null : outcome.winner === player) : null,
+            recent: recentKinds,
+          })
+        : [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- outcome follows the moves
+    [evals, recentKinds, game.moves, player],
+  )
+
   // Real errors (mistakes and blunders) become Tuesday warm-ups. Done as soon
   // as the analysis is in, so they're kept even if the review is skipped.
   useEffect(() => {
@@ -87,7 +124,7 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
 
   const resultLine = outcome
     ? outcome.winner === null
-      ? fromHistory
+      ? fromHistory || !game.path || drawRule(game.path.kind) !== 'replay'
         ? 'Drawn.'
         : 'Drawn: replayed next.'
       : outcome.winner === player
@@ -276,6 +313,20 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
           </ul>
 
           {moments.length === 0 && <p className="review-note">No big mistakes this game.</p>}
+
+          {notes.length > 0 && (
+            <div className="moment-coach review-coach-notes">
+              <Portrait who="pemberton" size={40} />
+              <div>
+                <p className="moment-coach-name">Coach Pemberton</p>
+                {notes.map((n) => (
+                  <p key={n} className="moment-explanation">
+                    {n}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
       )}
 

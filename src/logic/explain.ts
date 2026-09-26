@@ -30,6 +30,35 @@ export type MistakeFacts = {
   cpAfter: number
 }
 
+/**
+ * What kind of error a move was, for counting across a game and across games
+ * (Pemberton's notes). Uses the same board checks as explainMistake.
+ */
+export type ErrorKind = 'allowed-mate' | 'missed-mate' | 'fork' | 'undefended' | 'lost-material' | 'missed-win' | 'positional'
+
+export function errorKind(f: MistakeFacts): ErrorKind {
+  if (f.cpAfter <= -MATE_THRESHOLD && f.cpBefore > -MATE_THRESHOLD) return 'allowed-mate'
+  if (f.cpBefore >= MATE_THRESHOLD && f.cpAfter < MATE_THRESHOLD) return 'missed-mate'
+  const before = new Chess(f.fenBefore)
+  const mover = before.turn()
+  const opponent: Colour = mover === 'w' ? 'b' : 'w'
+  const afterMove = new Chess(f.fenBefore)
+  applyUci(afterMove, f.played)
+  if (f.reply) {
+    const afterReply = new Chess(afterMove.fen())
+    const reply = applyUci(afterReply, f.reply)
+    if (reply) {
+      if (forkedPieces(afterReply, reply.to, mover, opponent).length >= 2) return 'fork'
+      if (reply.captured) return afterMove.attackers(reply.to, mover).length > 0 ? 'lost-material' : 'undefended'
+    }
+  }
+  if (f.bestMove) {
+    const target = before.get(f.bestMove.slice(2, 4) as Square)
+    if (target && target.color === opponent) return 'missed-win'
+  }
+  return 'positional'
+}
+
 export function explainMistake(f: MistakeFacts): string {
   const before = new Chess(f.fenBefore)
   const mover = before.turn()

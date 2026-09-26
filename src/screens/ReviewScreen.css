@@ -44,6 +44,15 @@
   color: var(--muted);
 }
 
+/* Pemberton's notes on the game, in the summary (the card style comes from MomentTrainer.css) */
+.moment-coach.review-coach-notes {
+  margin: 4px 0 0;
+}
+
+.review-coach-notes p {
+  margin: 0;
+}
+
 .review-progress {
   display: flex;
   flex-direction: column;
