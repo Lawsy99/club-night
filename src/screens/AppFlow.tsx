@@ -26,6 +26,7 @@ import {
   type ArchivedGame,
   archiveGame,
   getArchivedGame,
+  headToHead,
   loadCurrentGame,
   loadProgress,
   loadScreen,
@@ -96,10 +97,17 @@ export function AppFlow() {
     saveProgress(next).catch((err) => console.error('Save failed', err))
   }
 
-  const startPathGame = (pathGame: PathGame) => {
+  const startPathGame = async (pathGame: PathGame) => {
     setLastChange(null)
-    const record = newGameRecord(nextPlayerColour(game), characterOpponentId(pathGame.opponent), pathGame.stage, pathGame.rating)
-    setGame({ ...record, path: pathGame })
+    const opponentId = characterOpponentId(pathGame.opponent)
+    // Head-to-head so far, for dialogue ("Third time lucky…").
+    const h2h = await headToHead(opponentId).catch(() => ({ played: 0, theirStreak: 0 }))
+    const record = newGameRecord(nextPlayerColour(game), opponentId, pathGame.stage, pathGame.rating)
+    setGame({
+      ...record,
+      path: pathGame,
+      talk: { rematch: h2h.played + 1, losingStreak: h2h.theirStreak, lines: 0, lastLineMove: null, startSaid: false, endSaid: false },
+    })
     setView('game')
   }
 

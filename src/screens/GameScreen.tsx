@@ -34,6 +34,10 @@ import {
 } from '../logic/gameRecord'
 import { acceptsDraw, piecesLeft, shouldOfferDraw, shouldResign } from '../logic/opponentDecisions'
 import { planFor, shouldPausePlan } from '../logic/planPause'
+import { chatterAllowed, mostImportant } from '../logic/dialogue'
+import { triggersFor } from '../logic/gameTriggers'
+import { useDialogue } from './useDialogue'
+import { Chess } from 'chess.js'
 import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
 import '../components/ratings.css'
 import './GameScreen.css'
@@ -97,9 +101,41 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
     return maia.onStatus(setMaiaStatus)
   }, [opponent.engine])
 
+  // Dialogue: before the game, a little during friendlies, and after.
+  const gameType = game.path?.kind === 'friendly' ? 'friendly' : 'match'
+  const talk = game.talk ?? { rematch: 1, losingStreak: 0, lines: 0, lastLineMove: null, startSaid: false, endSaid: false }
+  const dialogue = useDialogue({
+    character: opponent.character?.id,
+    gameType,
+    act: 1,
+    rematch: talk.rematch,
+    losingStreak: talk.losingStreak,
+  })
+  const ratedRef = useRef(ratedMove?.rating ?? null)
+  ratedRef.current = ratedMove?.rating ?? null
+
+  useEffect(() => {
+    if (talk.startSaid || game.moves.length > 0 || !opponent.character) return
+    // A moment's pause, so the dialogue history has loaded (no repeats).
+    const t = window.setTimeout(() => {
+      dialogue.speak('game_start', true)
+      setGame((g) => (g ? { ...g, talk: { ...talk, startSaid: true } } : g))
+    }, 400)
+    return () => window.clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, at the start
+  }, [])
+
+  useEffect(() => {
+    if (!outcome || talk.endSaid || !opponent.character) return
+    if (outcome.winner !== null) dialogue.speak(outcome.winner === opponentColour ? 'game_win' : 'game_loss', true)
+    setGame((g) => (g ? { ...g, talk: { ...talk, endSaid: true } } : g))
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, when the game ends
+  }, [!!outcome])
+
   const commitMove = (uci: string) => {
     // Playing on declines any offer on the table, as over the board.
     setBubble(null)
+    dialogue.dismiss()
     setGame((g) => (g ? withMove(g, uci) : g))
   }
 
@@ -125,10 +161,20 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
         piecesLeft: piecesLeft(fen),
         lastOfferMove: game.opponentLastOfferMove,
       })
+      // Friendly chatter: straight after the opponent's move, rationed.
+      const moveNumber = chess.moveNumber()
+      let spoke = false
+      if (!offer && chatterAllowed({ gameType, linesSoFar: talk.lines, moveNumber, lastLineMove: talk.lastLineMove })) {
+        const botMove = new Chess(fen).move({ from: move.slice(0, 2), to: move.slice(2, 4), promotion: move[4] })
+        const trigger = mostImportant(triggersFor({ botMove, playerRating: ratedRef.current, botEvalCp: cp }))
+        spoke = trigger ? dialogue.speak(trigger) : false
+      }
       setGame((g) => {
         if (!g) return g
-        const next = withMove(withOpponentEval(g, cp), move)
-        return offer ? { ...next, opponentLastOfferMove: chess.moveNumber() } : next
+        let next = withMove(withOpponentEval(g, cp), move)
+        if (offer) next = { ...next, opponentLastOfferMove: moveNumber }
+        if (spoke) next = { ...next, talk: { ...talk, lines: talk.lines + 1, lastLineMove: moveNumber } }
+        return next
       })
       if (offer) setBubble({ kind: 'offer' })
     })().catch((err: Error) => setEngineError(err.message))
@@ -284,6 +330,13 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
         side={opponentColour}
         thinking={opponentToMove && !downloading}
       />
+
+      {dialogue.line && !bubble && (
+        <button type="button" className="talk-bubble" onClick={dialogue.dismiss} key={dialogue.line.key}>
+          {dialogue.line.speaker && <span className="talk-speaker">{dialogue.line.speaker}</span>}
+          <span>{dialogue.line.text.startsWith('(') ? dialogue.line.text : `“${dialogue.line.text}”`}</span>
+        </button>
+      )}
 
       {bubble && !outcome && (
         <div className="speech-bubble" role="status">

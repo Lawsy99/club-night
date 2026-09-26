@@ -30,6 +30,15 @@ export type GameRecord = {
   resultRecorded?: boolean
   /** The assisted game's plan pause has happened (it comes once per game). */
   planPauseDone?: boolean
+  /** Dialogue state: head-to-head when the game began, and in-game chatter so far. */
+  talk?: {
+    rematch: number
+    losingStreak: number
+    lines: number
+    lastLineMove: number | null
+    startSaid: boolean
+    endSaid: boolean
+  }
 }
 
 export function newGameRecord(

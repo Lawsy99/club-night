@@ -1,0 +1,62 @@
+// What the opponent says on the game screen: a line before the game, a few
+// during friendlies, and one after. Lines fade after about 4 seconds or on
+// tap (start and end lines stay until tapped).
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { DIALOGUE, SPEAKER_NAMES } from '../data/dialogue'
+import { rememberLine, selectLine, type DialogueHistory, type Trigger } from '../logic/dialogue'
+import { loadDialogueHistory, saveDialogueHistory } from '../storage/db'
+
+export type SpokenLine = { text: string; speaker: string | null; key: number }
+
+type Options = {
+  character: string | undefined
+  gameType: 'friendly' | 'match'
+  act: number
+  rematch: number
+  losingStreak: number
+}
+
+const FADE_MS = 4000
+
+export function useDialogue({ character, gameType, act, rematch, losingStreak }: Options) {
+  const [line, setLine] = useState<SpokenLine | null>(null)
+  const history = useRef<DialogueHistory | null>(null)
+  const counter = useRef(0)
+
+  useEffect(() => {
+    loadDialogueHistory()
+      .then((h) => (history.current = h))
+      .catch(() => (history.current = { recent: [], onceShown: [] }))
+  }, [])
+
+  // In-game chatter fades; start and end lines stay until tapped.
+  const [persist, setPersist] = useState(false)
+  useEffect(() => {
+    if (!line || persist) return
+    const t = window.setTimeout(() => setLine(null), FADE_MS)
+    return () => window.clearTimeout(t)
+  }, [line, persist])
+
+  /** Says something for this trigger, if there's a fitting line. Returns whether it did. */
+  const speak = useCallback(
+    (trigger: Trigger, stay = false): boolean => {
+      if (!character) return false
+      const h = history.current ?? { recent: [], onceShown: [] }
+      const chosen = selectLine(DIALOGUE, { character, trigger, act, gameType, rematch, losingStreak, flags: [] }, h)
+      if (!chosen) return false
+      history.current = rememberLine(h, chosen)
+      saveDialogueHistory(history.current).catch(() => undefined)
+      setPersist(stay)
+      setLine({
+        text: chosen.text,
+        speaker: chosen.speaker ? (SPEAKER_NAMES[chosen.speaker] ?? chosen.speaker) : null,
+        key: ++counter.current,
+      })
+      return true
+    },
+    [character, act, gameType, rematch, losingStreak],
+  )
+
+  const dismiss = useCallback(() => setLine(null), [])
+  return { line, speak, dismiss }
+}

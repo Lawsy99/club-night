@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "node scripts/buildDialogue.mjs && vite",
+    "build": "node scripts/buildDialogue.mjs && tsc -b && vite build",
+    "dialogue": "node scripts/buildDialogue.mjs",
     "lint": "oxlint",
     "test": "vitest run",
     "preview": "vite preview"

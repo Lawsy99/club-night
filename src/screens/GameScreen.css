@@ -18,6 +18,48 @@
   font-weight: 600;
 }
 
+/* What the opponent says: tap to dismiss */
+.talk-bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  margin: 0 16px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 14px;
+  background: #ece4cf;
+  color: #1f2a24;
+  font: inherit;
+  text-align: left;
+  position: relative;
+  cursor: pointer;
+  animation: talk-in 0.2s ease-out;
+}
+
+.talk-bubble::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 22px;
+  border: 6px solid transparent;
+  border-top: 0;
+  border-bottom-color: #ece4cf;
+}
+
+.talk-speaker {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a5a50;
+}
+
+@keyframes talk-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
 /* The opponent's speech bubble, under their name bar */
 .speech-bubble {
   display: flex;

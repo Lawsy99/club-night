@@ -1,0 +1,151 @@
+// The dialogue engine (design document, "Dialogue system"): picks a short
+// pre-written line by what just happened, who's speaking, and the history
+// between the player and that character.
+
+export type Trigger =
+  | 'game_start'
+  | 'game_win' // the character won
+  | 'game_loss' // the character lost
+  | 'draw_replay'
+  | 'player_blunder'
+  | 'bot_blunder'
+  | 'strong_move'
+  | 'capture_queen'
+  | 'capture_rook'
+  | 'capture_minor'
+  | 'check_given'
+  | 'check_received'
+  | 'castling'
+  | 'en_passant'
+  | 'promotion'
+  | 'clearly_winning'
+  | 'clearly_losing'
+
+export type Expression = 'neutral' | 'pleased' | 'annoyed' | 'surprised' | 'smug'
+
+export type DialogueLine = {
+  id: string
+  /** Whose game this line belongs to. */
+  character: string
+  /** Someone else saying it (e.g. Neil at Oscar's games); blank = the character. */
+  speaker?: string
+  trigger: Trigger
+  text: string
+  expression: Expression
+  conditions: {
+    acts?: number[]
+    gameType?: 'friendly' | 'match'
+    /** Exact rematch number (2 = second game against them), or "4+" style minimum. */
+    rematch?: number
+    minRematch?: number
+    /** Only if the character has beaten the player this many times in a row. */
+    losingStreak?: number
+    flags?: string[]
+  }
+  weight: number
+  once: boolean
+}
+
+export type DialogueContext = {
+  character: string
+  trigger: Trigger
+  act: number
+  gameType: 'friendly' | 'match'
+  /** Games played against this character, counting this one. */
+  rematch: number
+  /** The character's current winning run against the player. */
+  losingStreak: number
+  flags: readonly string[]
+}
+
+export type DialogueHistory = {
+  /** Recently used line ids, newest last. */
+  recent: string[]
+  /** "Once only" lines already shown. */
+  onceShown: string[]
+}
+
+/**
+ * The design's five steps: lines for this character and trigger; keep those
+ * whose conditions match; drop recently used ones (until the set is used
+ * up); drop once-only lines already shown; pick one at random, weighted.
+ */
+export function selectLine(
+  lines: readonly DialogueLine[],
+  ctx: DialogueContext,
+  history: DialogueHistory,
+  random: () => number = Math.random,
+): DialogueLine | null {
+  const matching = lines.filter((l) => l.character === ctx.character && l.trigger === ctx.trigger && conditionsMet(l, ctx))
+  const available = matching.filter((l) => !(l.once && history.onceShown.includes(l.id)))
+  if (available.length === 0) return null
+  const fresh = available.filter((l) => !history.recent.includes(l.id))
+  // Nothing repeats until the whole set has been used; then it starts again.
+  const pool = fresh.length > 0 ? fresh : available
+  const total = pool.reduce((sum, l) => sum + l.weight, 0)
+  let roll = random() * total
+  for (const line of pool) {
+    roll -= line.weight
+    if (roll <= 0) return line
+  }
+  return pool[pool.length - 1]
+}
+
+function conditionsMet(line: DialogueLine, ctx: DialogueContext): boolean {
+  const c = line.conditions
+  if (c.acts && !c.acts.includes(ctx.act)) return false
+  if (c.gameType && c.gameType !== ctx.gameType) return false
+  if (c.rematch !== undefined && c.rematch !== ctx.rematch) return false
+  if (c.minRematch !== undefined && ctx.rematch < c.minRematch) return false
+  if (c.losingStreak !== undefined && ctx.losingStreak < c.losingStreak) return false
+  if (c.flags && !c.flags.every((f) => ctx.flags.includes(f))) return false
+  return true
+}
+
+/** Records that a line was shown. */
+export function rememberLine(history: DialogueHistory, line: DialogueLine): DialogueHistory {
+  return {
+    recent: [...history.recent.filter((id) => id !== line.id), line.id].slice(-60),
+    onceShown: line.once ? [...history.onceShown, line.id] : history.onceShown,
+  }
+}
+
+/**
+ * When several things happen at once, the most important wins (design:
+ * a blunder, turnaround or queen capture beats a check, which beats the rest).
+ */
+const PRIORITY: Trigger[] = [
+  'player_blunder',
+  'bot_blunder',
+  'capture_queen',
+  'clearly_losing',
+  'clearly_winning',
+  'strong_move',
+  'check_given',
+  'check_received',
+  'capture_rook',
+  'promotion',
+  'en_passant',
+  'capture_minor',
+  'castling',
+]
+
+export function mostImportant(triggers: readonly Trigger[]): Trigger | null {
+  for (const t of PRIORITY) if (triggers.includes(t)) return t
+  return triggers[0] ?? null
+}
+
+/** In-game chatter (friendlies only): up to 3 lines a game, at least 6 moves apart. */
+export const CHATTER_LIMIT = 3
+export const CHATTER_GAP_MOVES = 6
+
+export function chatterAllowed(options: {
+  gameType: 'friendly' | 'match'
+  linesSoFar: number
+  moveNumber: number
+  lastLineMove: number | null
+}): boolean {
+  if (options.gameType !== 'friendly') return false
+  if (options.linesSoFar >= CHATTER_LIMIT) return false
+  return options.lastLineMove === null || options.moveNumber - options.lastLineMove >= CHATTER_GAP_MOVES
+}

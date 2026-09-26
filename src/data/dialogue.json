@@ -1,0 +1,872 @@
+[
+ {
+  "id": "toby-start-first",
+  "character": "toby",
+  "trigger": "game_start",
+  "text": "Toby. I'm new too, actually. We'll be learning together.",
+  "expression": "pleased",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "rematch": 1
+  },
+  "weight": 3,
+  "once": true
+ },
+ {
+  "id": "toby-start-01",
+  "character": "toby",
+  "trigger": "game_start",
+  "text": "No pressure, mate. Honestly, just enjoy it.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-start-02",
+  "character": "toby",
+  "trigger": "game_start",
+  "text": "Good to see you. We should do this more often.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-start-03",
+  "character": "toby",
+  "trigger": "game_start",
+  "text": "Round two! No pressure, honestly.",
+  "expression": "smug",
+  "conditions": {
+   "rematch": 2
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "toby-start-04",
+  "character": "toby",
+  "trigger": "game_start",
+  "text": "Third time lucky, mate. For one of us.",
+  "expression": "smug",
+  "conditions": {
+   "minRematch": 3
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "toby-start-05",
+  "character": "toby",
+  "trigger": "game_start",
+  "text": "Big one tonight. Whatever happens, it's all learning.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "toby-win-01",
+  "character": "toby",
+  "trigger": "game_win",
+  "text": "Good game! Want to go over it?",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-win-02",
+  "character": "toby",
+  "trigger": "game_win",
+  "text": "You were fine until the middle bit, honestly.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-win-03",
+  "character": "toby",
+  "trigger": "game_win",
+  "text": "Really enjoyed that. You're getting there.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-win-04",
+  "character": "toby",
+  "trigger": "game_win",
+  "text": "Tough run. I'll send you my Lichess study. No worries if not.",
+  "expression": "smug",
+  "conditions": {
+   "losingStreak": 3
+  },
+  "weight": 3,
+  "once": false
+ },
+ {
+  "id": "toby-loss-01",
+  "character": "toby",
+  "trigger": "game_loss",
+  "text": "So deserved. Genuinely made up for you.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-loss-02",
+  "character": "toby",
+  "trigger": "game_loss",
+  "text": "Honestly, great game. I learned loads.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-loss-03",
+  "character": "toby",
+  "trigger": "game_loss",
+  "text": "We'll call that a learning moment for me.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-pblunder-01",
+  "character": "toby",
+  "trigger": "player_blunder",
+  "text": "Ooh. No, that's fine. That's a learning moment.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-pblunder-02",
+  "character": "toby",
+  "trigger": "player_blunder",
+  "text": "Happens to all of us, mate.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-bblunder-01",
+  "character": "toby",
+  "trigger": "bot_blunder",
+  "text": "Go on then. You've earned that one.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-queen-01",
+  "character": "toby",
+  "trigger": "capture_queen",
+  "text": "Sorry, mate. Had to.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-check-01",
+  "character": "toby",
+  "trigger": "check_given",
+  "text": "Just a little check. Nothing personal.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-winning-01",
+  "character": "toby",
+  "trigger": "clearly_winning",
+  "text": "Honestly, I think you've still got chances.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-losing-01",
+  "character": "toby",
+  "trigger": "clearly_losing",
+  "text": "You're playing really well tonight, mate.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-castle-01",
+  "character": "toby",
+  "trigger": "castling",
+  "text": "Safety first. Coach always says.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-strong-01",
+  "character": "toby",
+  "trigger": "strong_move",
+  "text": "Oh, nice. Really nice.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-start-first",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "Marjorie. Forty years as secretary, so you'll see a lot of me.",
+  "expression": "pleased",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "rematch": 1
+  },
+  "weight": 3,
+  "once": true
+ },
+ {
+  "id": "marjorie-start-01",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "Phones off, love. Milk's on the side.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-start-02",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "Shall we? I've put the kettle on.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-start-03",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "Scoresheets are on the side, dear. Graham's very particular.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "marjorie-start-04",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "Back again, dear? Good. It's nice to be wanted.",
+  "expression": "pleased",
+  "conditions": {
+   "minRematch": 4
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "marjorie-cap-01",
+  "character": "marjorie",
+  "trigger": "capture_minor",
+  "text": "Oh dear. I'll have that, sorry love.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-cap-02",
+  "character": "marjorie",
+  "trigger": "capture_rook",
+  "text": "Oh, I'll take that. You don't mind, do you?",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-cap-03",
+  "character": "marjorie",
+  "trigger": "capture_queen",
+  "text": "Oh dear. Well. I'll put her with the others.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-winning-01",
+  "character": "marjorie",
+  "trigger": "clearly_winning",
+  "text": "I'll just tidy these up.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-pblunder-01",
+  "character": "marjorie",
+  "trigger": "player_blunder",
+  "text": "Oh dear. Never mind, love.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-check-01",
+  "character": "marjorie",
+  "trigger": "check_received",
+  "text": "Oh. Check. How rude.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-win-01",
+  "character": "marjorie",
+  "trigger": "game_win",
+  "text": "Well played, dear. Nearly.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-win-02",
+  "character": "marjorie",
+  "trigger": "game_win",
+  "text": "You'll get there. I was terrible once. Briefly.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-loss-01",
+  "character": "marjorie",
+  "trigger": "game_loss",
+  "text": "Well done. I'd have played on, but it's nearly ten.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-loss-02",
+  "character": "marjorie",
+  "trigger": "game_loss",
+  "text": "Lovely. Don't tell Graham, he'll want it on the website.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-start-first",
+  "character": "dex",
+  "trigger": "game_start",
+  "text": "Dex. You're new. Cool. Don't be weird about the camera.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "rematch": 1
+  },
+  "weight": 3,
+  "once": true
+ },
+ {
+  "id": "dex-start-01",
+  "character": "dex",
+  "trigger": "game_start",
+  "text": "It's not recording. Probably.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-start-02",
+  "character": "dex",
+  "trigger": "game_start",
+  "text": "Quick one? I've got a stream at nine.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-start-03",
+  "character": "dex",
+  "trigger": "game_start",
+  "text": "This is so slow. I play bullet.",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-start-04",
+  "character": "dex",
+  "trigger": "game_start",
+  "text": "Yeah, I've been studying. Don't make it weird.",
+  "expression": "neutral",
+  "conditions": {
+   "minRematch": 3
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "dex-bblunder-01",
+  "character": "dex",
+  "trigger": "bot_blunder",
+  "text": "It's a sac. Trust me.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-enpassant-01",
+  "character": "dex",
+  "trigger": "en_passant",
+  "text": "Google en passant.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-pblunder-01",
+  "character": "dex",
+  "trigger": "player_blunder",
+  "text": "Oh, that's going in the video.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-check-01",
+  "character": "dex",
+  "trigger": "check_given",
+  "text": "Check. Obviously.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-castle-01",
+  "character": "dex",
+  "trigger": "castling",
+  "text": "Castling. Boring. Respect.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-win-01",
+  "character": "dex",
+  "trigger": "game_win",
+  "text": "GG. Chat's going to love that.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-win-02",
+  "character": "dex",
+  "trigger": "game_win",
+  "text": "GG. Easy.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-loss-01",
+  "character": "dex",
+  "trigger": "game_loss",
+  "text": "Don't clip that.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-loss-02",
+  "character": "dex",
+  "trigger": "game_loss",
+  "text": "That doesn't count, I was reading chat.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-start-01",
+  "character": "clive",
+  "trigger": "game_start",
+  "text": "Just a quiet one tonight, I think.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-start-02",
+  "character": "clive",
+  "trigger": "game_start",
+  "text": "Board four suits me fine.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-cap-01",
+  "character": "clive",
+  "trigger": "capture_minor",
+  "text": "Might as well swap those off.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-cap-02",
+  "character": "clive",
+  "trigger": "capture_rook",
+  "text": "Tidier without them.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-winning-01",
+  "character": "clive",
+  "trigger": "clearly_winning",
+  "text": "Funny how these things go.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-losing-01",
+  "character": "clive",
+  "trigger": "clearly_losing",
+  "text": "Nothing much in it, really.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-check-01",
+  "character": "clive",
+  "trigger": "check_received",
+  "text": "Fair enough.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-win-01",
+  "character": "clive",
+  "trigger": "game_win",
+  "text": "I'd have taken the draw, if I were you.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-loss-01",
+  "character": "clive",
+  "trigger": "game_loss",
+  "text": "Well, you wanted it more.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-start-01",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "Scoresheet, please. Both copies.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-start-02",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "Subs are due, by the way. Not now. After.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-check-01",
+  "character": "graham",
+  "trigger": "check_given",
+  "text": "Check. For the record.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-castle-01",
+  "character": "graham",
+  "trigger": "castling",
+  "text": "Castled. Correctly, I note.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-enpassant-01",
+  "character": "graham",
+  "trigger": "en_passant",
+  "text": "En passant. Perfectly legal, before you ask.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-promo-01",
+  "character": "graham",
+  "trigger": "promotion",
+  "text": "A queen. Technically, you could have had a knight.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-win-01",
+  "character": "graham",
+  "trigger": "game_win",
+  "text": "Fair result. It'll be on the website by Thursday.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-loss-01",
+  "character": "graham",
+  "trigger": "game_loss",
+  "text": "Well played. Correctly played, even.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-loss-02",
+  "character": "graham",
+  "trigger": "game_loss",
+  "text": "I'll record that accurately. As always.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-start-01",
+  "character": "priya",
+  "trigger": "game_start",
+  "text": "I've been doing a course on this.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-start-02",
+  "character": "priya",
+  "trigger": "game_start",
+  "text": "I've prepared something. Probably.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-strong-01",
+  "character": "priya",
+  "trigger": "strong_move",
+  "text": "That's not theory.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-strong-02",
+  "character": "priya",
+  "trigger": "strong_move",
+  "text": "Is that even good?",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-losing-01",
+  "character": "priya",
+  "trigger": "clearly_losing",
+  "text": "I know this. I definitely know this.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-check-01",
+  "character": "priya",
+  "trigger": "check_received",
+  "text": "Wait. That's not in the book.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-win-01",
+  "character": "priya",
+  "trigger": "game_win",
+  "text": "That's all main line, to be fair.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-loss-01",
+  "character": "priya",
+  "trigger": "game_loss",
+  "text": "You weren't supposed to play that.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-start-01",
+  "character": "oscar",
+  "trigger": "game_start",
+  "text": "(Shakes hands without looking up.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-start-02",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "game_start",
+  "text": "He's only been playing since March.",
+  "expression": "pleased",
+  "conditions": {
+   "rematch": 1
+  },
+  "weight": 2,
+  "once": true
+ },
+ {
+  "id": "oscar-start-03",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "game_start",
+  "text": "His coach says he's ahead of schedule.",
+  "expression": "pleased",
+  "conditions": {
+   "minRematch": 2
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-win-01",
+  "character": "oscar",
+  "trigger": "game_win",
+  "text": "Good game. (Goes off to play blitz.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-loss-01",
+  "character": "oscar",
+  "trigger": "game_loss",
+  "text": "Good game. (Exactly the same.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-loss-02",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "game_loss",
+  "text": "He's had a long week at school.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ }
+]

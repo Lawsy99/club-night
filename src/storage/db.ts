@@ -1,7 +1,8 @@
 // Everything is saved on the device in IndexedDB (the browser's built-in
 // database). No accounts, no servers.
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb'
-import type { GameRecord } from '../logic/gameRecord'
+import type { DialogueHistory } from '../logic/dialogue'
+import { outcomeOf as outcomeOfRecord, type GameRecord } from '../logic/gameRecord'
 import { planAdditions, type MistakeCard } from '../logic/mistakesDeck'
 import type { PlayerRating } from '../logic/glicko2'
 import type { Progress } from '../logic/path'
@@ -17,8 +18,8 @@ export type ArchivedGame = GameRecord & {
 interface ClubNightDB extends DBSchema {
   /** Small named values: the game in progress, which screen was open, progress on the path. */
   state: {
-    key: 'currentGame' | 'screen' | 'baseline' | 'progress' | 'puzzles'
-    value: GameRecord | string | number | Progress | PuzzleProgress
+    key: 'currentGame' | 'screen' | 'baseline' | 'progress' | 'puzzles' | 'dialogue'
+    value: GameRecord | string | number | Progress | PuzzleProgress | DialogueHistory
   }
   /** Every finished game. */
   games: {
@@ -84,6 +85,37 @@ export async function loadPuzzleProgress(): Promise<PuzzleProgress | null> {
 export async function savePuzzleProgress(p: PuzzleProgress): Promise<void> {
   // Remember the most recent 3,000 seen, plenty to avoid repeats.
   await (await db()).put('state', { ...p, seen: p.seen.slice(-3000) }, 'puzzles')
+}
+
+/** Recently used dialogue lines and once-only lines already shown. */
+export async function loadDialogueHistory(): Promise<DialogueHistory> {
+  const value = await (await db()).get('state', 'dialogue')
+  return value && typeof value === 'object' && 'recent' in value ? (value as DialogueHistory) : { recent: [], onceShown: [] }
+}
+
+export async function saveDialogueHistory(history: DialogueHistory): Promise<void> {
+  await (await db()).put('state', history, 'dialogue')
+}
+
+/** Head-to-head against one opponent: games played, and their current winning run. */
+export async function headToHead(opponentId: string): Promise<{ played: number; theirStreak: number }> {
+  const games = (await listArchivedGames()).filter((g) => g.levelId === opponentId) // newest first
+  let theirStreak = 0
+  for (const g of games) {
+    const lost = g.resignedBy === g.playerColour || lostOnBoard(g)
+    if (!lost) break
+    theirStreak++
+  }
+  return { played: games.length, theirStreak }
+}
+
+function lostOnBoard(g: ArchivedGame): boolean {
+  try {
+    const o = outcomeOfRecord(g)
+    return o !== null && o.winner !== null && o.winner !== g.playerColour
+  } catch {
+    return false
+  }
 }
 
 /** Playtest tool: forget progress and the current game (the archive and deck stay). */
