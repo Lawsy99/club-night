@@ -70,20 +70,52 @@ function arcControl(side: number, peak: number): number {
   return side - (side - peak) / 0.75
 }
 
-/** The hair's outline over the top of the head, ending at a hairline. */
-function capPath({ cx, cy, rx, ry }: Head, lift = 0, hairlineDrop = 0): string {
-  const side = cy + 2
-  const top = arcControl(side, cy - ry - 2 - lift)
-  const line = cy - ry * 0.42 + hairlineDrop
+type Hairline = 'sweep' | 'centre' | 'fringe' | 'high'
+
+/**
+ * Hair that hugs the head: the outer edge follows the head's own curve (a
+ * couple of points out, a little more on top for volume), down to short
+ * sideburns, then back across the forehead along a hairline of the given kind.
+ */
+function capPath({ cx, cy, rx, ry }: Head, hairline: Hairline, volume = 2): string {
   const L = cx - rx
   const R = cx + rx
-  return [
-    `M${L - 1},${side}`,
-    `C${L - 3},${top} ${R + 3},${top} ${R + 1},${side}`,
-    `C${R - 1},${line} ${cx + rx * 0.5},${line - 3} ${cx},${line - 2}`,
-    `C${cx - rx * 0.5},${line - 3} ${L + 1},${line} ${L - 1},${side}`,
-    'Z',
-  ].join(' ')
+  const hl = cy - ry * (hairline === 'high' ? 0.68 : 0.5) // where the hairline sits
+  // The sides stop just above the ears (lower looked like earmuffs).
+  const side = cy - 4
+  const outer = `M${L - 2},${side} A${rx + 2} ${ry + volume} 0 0 1 ${R + 2},${side} L${R - 1},${side}`
+  const back = `L${L + 1},${side} Z`
+  switch (hairline) {
+    case 'sweep':
+      // A fringe swept across from a parting on the right, lower on the left.
+      return `${outer} C${cx + rx * 0.45},${hl - 4} ${cx - rx * 0.15},${hl - 5} ${L + 4},${hl + 6} ${back}`
+    case 'fringe': {
+      // A straight-ish fringe with a few soft points (a boy's haircut).
+      const y = hl + 6
+      const teeth = [0.75, 0.45, 0.15, -0.15, -0.45, -0.75]
+        .map((f, i) => `L${(cx + rx * f).toFixed(1)},${(y + (i % 2 ? 2.5 : 0)).toFixed(1)}`)
+        .join(' ')
+      return `${outer} L${R - 2},${y - 1} ${teeth} L${L + 2},${y - 1} ${back}`
+    }
+    case 'high':
+    case 'centre':
+    default:
+      return `${outer} Q${cx + rx * 0.55},${hl - 3} ${cx},${hl + 1} Q${cx - rx * 0.55},${hl - 3} ${L + 1},${side} ${back}`
+  }
+}
+
+/** A few thin strands, so a head of hair isn't one flat shape. */
+function Strands({ look, head, hairline }: { look: Appearance; head: Head; hairline: Hairline }) {
+  const { cx, cy, rx, ry } = head
+  const top = cy - ry
+  const stroke = shade(look.hair, lightness(look.hair) > 0.6 ? -0.25 : 0.25)
+  const d =
+    hairline === 'sweep'
+      ? `M${cx + rx * 0.5},${top + 3} Q${cx},${top + 4} ${cx - rx * 0.55},${top + 11} M${cx + rx * 0.2},${top + 1} Q${cx - rx * 0.2},${top + 3} ${cx - rx * 0.7},${top + 8}`
+      : hairline === 'high'
+        ? `M${cx - rx * 0.6},${top + 6} Q${cx},${top} ${cx + rx * 0.6},${top + 6} M${cx - rx * 0.4},${top + 2} Q${cx + rx * 0.1},${top - 1} ${cx + rx * 0.7},${top + 3}`
+        : `M${cx},${top + 1} L${cx},${top + 6} M${cx - rx * 0.45},${top + 4} Q${cx - rx * 0.3},${top + 8} ${cx - rx * 0.2},${top + 10} M${cx + rx * 0.45},${top + 4} Q${cx + rx * 0.3},${top + 8} ${cx + rx * 0.2},${top + 10}`
+  return <path d={d} fill="none" stroke={stroke} strokeWidth="1" opacity="0.8" />
 }
 
 function HairBehind({ look, head }: { look: Appearance; head: Head }) {
@@ -124,29 +156,31 @@ function HairFront({ look, head }: { look: Appearance; head: Head }) {
   }
   switch (look.hairStyle) {
     case 'messy': {
-      const pts = [0, 1, 2, 3, 4, 5, 6].map((i) => {
-        const x = L - 1 + (i / 6) * (2 * rx + 2)
-        const y = i % 2 === 0 ? top + 3 : top - 6
-        return `L${x.toFixed(1)},${y}`
+      // Tufts around the top of the head, alternating long and short.
+      const n = 9
+      const pts = Array.from({ length: n }, (_, i) => {
+        const t = Math.PI - (i / (n - 1)) * Math.PI
+        const k = i % 2 === 1 ? 1.2 : 1.02
+        return `L${(cx + (rx + 2) * k * Math.cos(t)).toFixed(1)},${(cy - (ry + 2) * k * Math.sin(t)).toFixed(1)}`
       })
-      const line = cy - ry * 0.35
+      const hl = cy - ry * 0.45
       return (
-        <path
-          d={`M${L - 1},${cy + 1} L${L - 2},${top + 8} ${pts.join(' ')} L${R + 2},${top + 8} L${R + 1},${cy + 1} C${R - 2},${line} ${cx + 6},${line - 4} ${cx},${line - 1} C${cx - 6},${line - 4} ${L + 2},${line} ${L - 1},${cy + 1} Z`}
-          {...fill}
-        />
+        <>
+          <path
+            d={`M${L - 2},${cy - 4} ${pts.join(' ')} L${R + 2},${cy - 4} L${R - 1},${cy - 4} L${cx + rx * 0.5},${hl + 3} L${cx + rx * 0.2},${hl - 1} L${cx - rx * 0.1},${hl + 4} L${cx - rx * 0.45},${hl} L${L + 1},${cy - 4} Z`}
+            {...fill}
+          />
+          <Strands look={look} head={head} hairline="centre" />
+        </>
       )
     }
-    case 'neat': {
-      const fringe = cy - ry * 0.35
-      const ctrl = arcControl(cy + 2, top - 2)
+    case 'neat':
       return (
-        <path
-          d={`M${L - 1},${cy + 2} C${L - 3},${ctrl} ${R + 3},${ctrl} ${R + 1},${cy + 2} L${R},${fringe} C${cx + 6},${fringe + 2} ${cx - 6},${fringe + 2} ${L},${fringe} Z`}
-          {...fill}
-        />
+        <>
+          <path d={capPath(head, 'fringe')} {...fill} />
+          <Strands look={look} head={head} hairline="centre" />
+        </>
       )
-    }
     case 'sides':
       return (
         <>
@@ -163,29 +197,40 @@ function HairFront({ look, head }: { look: Appearance; head: Head }) {
         </>
       )
     case 'quiff':
+      // Swept fringe, with the front pushed up and over to one side.
       return (
         <>
-          <path d={capPath(head, 5)} {...fill} />
-          <path d={`M${cx - 6},${top} C${cx - 2},${top - 10} ${cx + 12},${top - 8} ${cx + 11},${top + 3}`} {...fill} />
+          <path d={capPath(head, 'sweep', 3)} {...fill} />
+          <path
+            d={`M${cx - rx * 0.55},${top + 2} C${cx - rx * 0.4},${top - 6} ${cx + rx * 0.35},${top - 8} ${cx + rx * 0.8},${top + 1} C${cx + rx * 0.4},${top - 2} ${cx - rx * 0.1},${top - 1} ${cx - rx * 0.55},${top + 2} Z`}
+            {...fill}
+          />
+          <Strands look={look} head={head} hairline="sweep" />
         </>
       )
     case 'swept':
       return (
         <>
-          <path d={capPath(head, 3, -2)} {...fill} />
-          <path d={`M${cx - 9},${top + 7} C${cx - 4},${top + 1} ${cx + 6},${top} ${cx + 13},${top + 5}`} fill="none" stroke={INK} strokeWidth="1" opacity="0.5" />
+          <path d={capPath(head, 'high', 3)} {...fill} />
+          <Strands look={look} head={head} hairline="high" />
         </>
       )
     case 'side-part':
       return (
         <>
-          <path d={capPath(head, 1)} {...fill} />
-          <path d={`M${cx - 7},${top} L${cx - 5},${top + 8}`} fill="none" stroke={INK} strokeWidth="1.2" />
+          <path d={capPath(head, 'sweep')} {...fill} />
+          <path d={`M${cx + rx * 0.45},${top + 1} L${cx + rx * 0.5},${top + 7}`} fill="none" stroke={INK} strokeWidth="1" />
+          <Strands look={look} head={head} hairline="sweep" />
         </>
       )
     default:
-      // bun, ponytail, bob: a plain cap over the top (the rest is behind the head)
-      return <path d={capPath(head)} {...fill} />
+      // bun, ponytail, bob: parted in the middle (the rest is behind the head)
+      return (
+        <>
+          <path d={capPath(head, 'centre')} {...fill} />
+          <Strands look={look} head={head} hairline="centre" />
+        </>
+      )
   }
 }
 
