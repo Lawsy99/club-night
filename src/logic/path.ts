@@ -315,7 +315,7 @@ export function nextStep(p: Progress): NextStep {
   const boss: PathGame = { kind: 'boss', opponent: g.boss.opponent, rating: bossRating, stage: 'real', label: g.boss.label, location: g.location }
   // Support grows after boss losses; the boss never gets easier (design: "Support after boss losses").
   const studyFriendly: PathGame | null =
-    cup.bossAttempts >= 2 ? { ...boss, kind: 'friendly', stage: 'assisted', label: `Assisted friendly vs ${nameOf(g.boss.opponent)}` } : null
+    cup.bossAttempts >= 2 ? { ...boss, kind: 'friendly', stage: 'assisted', label: `Practice game vs ${nameOf(g.boss.opponent)}, with full help` } : null
   const targetedPuzzles =
     cup.bossAttempts >= 3 ? { title: `Puzzles from ${nameOf(g.boss.opponent)}'s openings`, openings: BOSS_OPENINGS[g.boss.opponent] ?? [] } : null
   return { kind: 'play', game: boss, optionalFriendly: studyFriendly, note: bossNote(cup.bossAttempts), targetedPuzzles }
@@ -366,9 +366,9 @@ const BOSS_OPENINGS: Record<string, string[]> = { toby: ['najdorf', 'catalan', '
 
 function bossNote(attempts: number): string | null {
   if (attempts === 0) return null
-  if (attempts === 1) return 'Scouting report (placeholder): he plays the Najdorf against 1.e4. Watch the phase where you lost last time.'
-  if (attempts === 2) return 'You can study him first in an assisted friendly.'
-  return 'A targeted puzzle set on his openings is ready, and the study friendly is still available.'
+  if (attempts === 1) return 'He’ll go for the Najdorf again against e4. Look back at where it went wrong last time.'
+  if (attempts === 2) return 'You can study him first: a practice game against him, with full help.'
+  return 'Pemberton has put together puzzles from his openings. The practice game is still there too.'
 }
 
 /** The boss plays at their club rating when the cup starts, then stays fixed (never drops after a loss). */

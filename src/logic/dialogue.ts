@@ -150,7 +150,9 @@ function conditionsMet(line: DialogueLine, ctx: DialogueContext): boolean {
 /** Records that a line was shown. */
 export function rememberLine(history: DialogueHistory, line: DialogueLine): DialogueHistory {
   return {
-    recent: [...history.recent.filter((id) => id !== line.id), line.id].slice(-60),
+    // Long enough that each character works through their whole set before
+    // anything repeats (it's shared by everyone, so it needs to be generous).
+    recent: [...history.recent.filter((id) => id !== line.id), line.id].slice(-400),
     onceShown: line.once ? [...history.onceShown, line.id] : history.onceShown,
   }
 }
