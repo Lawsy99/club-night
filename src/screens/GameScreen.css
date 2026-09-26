@@ -7,7 +7,6 @@
 
 .game-header,
 .game-status,
-.best-line,
 .game-actions {
   padding: 0 16px;
 }
@@ -307,39 +306,6 @@
 .book-note strong {
   color: var(--brass);
   font-weight: 600;
-}
-
-.best-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin: 0;
-  font-size: 14px;
-}
-
-.best-line-key {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.best-line-key i {
-  display: inline-block;
-  width: 14px;
-  height: 4px;
-  border-radius: 2px;
-  margin-left: 4px;
-}
-
-.key-yours {
-  background: rgb(40, 120, 200);
-}
-
-.key-theirs {
-  background: rgb(225, 130, 40);
 }
 
 .build-stamp {

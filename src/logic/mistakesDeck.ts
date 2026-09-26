@@ -150,10 +150,6 @@ export function planAdditions(
   return { add, retire }
 }
 
-export function retireCard(card: MistakeCard): MistakeCard {
-  return { ...card, retired: true }
-}
-
 /** When the next card becomes due, if any are waiting. */
 export function nextDue(cards: readonly MistakeCard[]): Date | null {
   const upcoming = cards.filter((c) => !c.retired).map((c) => new Date(c.schedule.due).getTime())

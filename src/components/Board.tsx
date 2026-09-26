@@ -24,15 +24,11 @@ type Props = {
   onMove: (uci: string) => void
   /** Hint step 1: the square of the piece to move. */
   hintSquare?: string | null
-  /** Arrows to draw (hints, the best line). */
+  /** Arrows to draw (hints, a better move). */
   arrows?: BoardArrow[]
-  /** Small numbered circles in a corner of a square (best-line order). */
-  badges?: SquareBadge[]
 }
 
 export type BoardArrow = { from: string; to: string; colour: string }
-/** corner: 0 top-left, 1 top-right, 2 bottom-left, 3 bottom-right. */
-export type SquareBadge = { square: string; label: string; colour: string; corner: number }
 
 const HINT_OUTLINE = 'rgba(40, 120, 200, 0.85)'
 
@@ -44,7 +40,6 @@ export function Board({
   onMove,
   hintSquare = null,
   arrows = [],
-  badges = [],
 }: Props) {
   // Legal moves depend only on the current position, so a FEN is enough here.
   const chess = useMemo(() => new Chess(fen), [fen])
@@ -99,7 +94,7 @@ export function Board({
     setPendingPromotion(null)
   }
 
-  const squareStyles = buildSquareStyles(chess, selected, targets, lastMove, hintSquare, badges)
+  const squareStyles = buildSquareStyles(chess, selected, targets, lastMove, hintSquare)
   const boardArrows = arrows.map((a) => ({ startSquare: a.from, endSquare: a.to, color: a.colour }))
 
   return (
@@ -139,14 +134,13 @@ function buildSquareStyles(
   targets: Square[],
   lastMove: { from: string; to: string } | null,
   hintSquare: string | null,
-  badges: SquareBadge[],
 ): Record<string, CSSProperties> {
   const styles: Record<string, CSSProperties> = {}
   const add = (sq: string, style: CSSProperties) => {
     styles[sq] = { ...styles[sq], ...style }
   }
   // Markers are background-image layers, collected per square so several can
-  // stack (e.g. a badge on a legal-move dot). Tints use backgroundColor; never
+  // stack (e.g. a check glow and a capture ring). Tints use backgroundColor; never
   // the `background` shorthand, which React warns about mixing.
   const layers: Record<string, { image: string; position: string; size: string }[]> = {}
   const addLayer = (sq: string, image: string, position = 'center', size = '100% 100%') => {
@@ -156,9 +150,6 @@ function buildSquareStyles(
   if (lastMove) {
     add(lastMove.from, { backgroundColor: 'rgba(222, 190, 70, 0.45)' })
     add(lastMove.to, { backgroundColor: 'rgba(222, 190, 70, 0.55)' })
-  }
-  for (const badge of badges) {
-    addLayer(badge.square, badgeImage(badge), BADGE_CORNERS[badge.corner % 4], '34% 34%')
   }
   const checked = checkedKingSquare(chess)
   if (checked) {
@@ -185,16 +176,4 @@ function buildSquareStyles(
     })
   }
   return styles
-}
-
-const BADGE_CORNERS = ['3% 3%', '97% 3%', '3% 97%', '97% 97%']
-
-/** A small filled circle with a number, as an inline SVG image. */
-function badgeImage({ label, colour }: SquareBadge): string {
-  const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">` +
-    `<circle cx="10" cy="10" r="9" fill="${colour}" stroke="white" stroke-width="1.5"/>` +
-    `<text x="10" y="14.2" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="white">${label}</text>` +
-    `</svg>`
-  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
 }

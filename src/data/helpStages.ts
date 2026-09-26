@@ -15,7 +15,6 @@ export type HelpStage = {
   /** Short description shown under the game title. */
   summary: string
   evalBar: boolean
-  bestLine: boolean
   /** Hints per game (the coach's nudges in words). */
   hints: number
   /** Takebacks allowed per game (Infinity = unlimited). */
@@ -32,7 +31,6 @@ export const HELP_STAGES: Record<HelpStageId, HelpStage> = {
     label: 'Coached',
     summary: 'with Pemberton',
     evalBar: true,
-    bestLine: false,
     hints: 3,
     takebacks: 3,
     // "When a move gives away 2 pawns' worth of advantage or more, or allows
@@ -48,7 +46,6 @@ export const HELP_STAGES: Record<HelpStageId, HelpStage> = {
     label: 'Practice',
     summary: 'move feedback',
     evalBar: true,
-    bestLine: false,
     hints: 0,
     takebacks: 3,
     blunderWarning: null,
@@ -58,7 +55,6 @@ export const HELP_STAGES: Record<HelpStageId, HelpStage> = {
     label: 'Real',
     summary: 'no help',
     evalBar: false,
-    bestLine: false,
     hints: 0,
     takebacks: 0,
     blunderWarning: null,

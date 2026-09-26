@@ -973,255 +973,6 @@
   "once": false
  },
  {
-  "id": "marjorie-plan-01",
-  "character": "marjorie",
-  "trigger": "plan_hint",
-  "text": "I'll just pop my knight on e5, I think. It likes it there.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly",
-   "flags": [
-    "opening:london"
-   ]
-  },
-  "weight": 2,
-  "once": false
- },
- {
-  "id": "marjorie-plan-02",
-  "character": "marjorie",
-  "trigger": "plan_hint",
-  "text": "My bishop's staying on that diagonal, dear. It's been there forty years.",
-  "expression": "smug",
-  "conditions": {
-   "gameType": "friendly",
-   "flags": [
-    "opening:london"
-   ]
-  },
-  "weight": 2,
-  "once": false
- },
- {
-  "id": "marjorie-plan-03",
-  "character": "marjorie",
-  "trigger": "plan_hint",
-  "text": "I'll wait for you to push, and then I'll push back. That's the French.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly",
-   "flags": [
-    "opening:french",
-    "me:b"
-   ]
-  },
-  "weight": 2,
-  "once": false
- },
- {
-  "id": "marjorie-plan-04",
-  "character": "marjorie",
-  "trigger": "plan_hint",
-  "text": "I'm going to swap a few pieces, if it's all the same. I like an endgame.",
-  "expression": "pleased",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "dex-plan-01",
-  "character": "dex",
-  "trigger": "plan_hint",
-  "text": "Everything's going at your king. That's the plan. That's always the plan.",
-  "expression": "smug",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "dex-plan-02",
-  "character": "dex",
-  "trigger": "plan_hint",
-  "text": "My queen's coming over. Keep an eye on the corner.",
-  "expression": "smug",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "dex-plan-03",
-  "character": "dex",
-  "trigger": "plan_hint",
-  "text": "You took the pawn. Now I get all the open lines. Worth it.",
-  "expression": "smug",
-  "conditions": {
-   "gameType": "friendly",
-   "flags": [
-    "opening:gambit"
-   ]
-  },
-  "weight": 2,
-  "once": false
- },
- {
-  "id": "oscar-plan-01",
-  "character": "oscar",
-  "speaker": "neil",
-  "trigger": "plan_hint",
-  "text": "He'll go for the square next to your king. He always does.",
-  "expression": "pleased",
-  "conditions": {
-   "gameType": "friendly",
-   "flags": [
-    "opening:italian"
-   ]
-  },
-  "weight": 2,
-  "once": false
- },
- {
-  "id": "oscar-plan-02",
-  "character": "oscar",
-  "speaker": "neil",
-  "trigger": "plan_hint",
-  "text": "His coach says: get castled, then attack. He's very good at the attacking bit.",
-  "expression": "pleased",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "clive-plan-01",
-  "character": "clive",
-  "trigger": "plan_hint",
-  "text": "I'll probably swap these off. Easier to hold.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "clive-plan-02",
-  "character": "clive",
-  "trigger": "plan_hint",
-  "text": "Keep it symmetrical and nobody gets hurt.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly",
-   "flags": [
-    "opening:exchange"
-   ]
-  },
-  "weight": 2,
-  "once": false
- },
- {
-  "id": "priya-plan-01",
-  "character": "priya",
-  "trigger": "plan_hint",
-  "text": "The book says my knight goes round to g3 here. Via f1. It takes a while.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly",
-   "flags": [
-    "opening:ruy-lopez",
-    "me:w"
-   ]
-  },
-  "weight": 2,
-  "once": false
- },
- {
-  "id": "priya-plan-02",
-  "character": "priya",
-  "trigger": "plan_hint",
-  "text": "Next is the pawn break in the centre. It's in chapter four.",
-  "expression": "pleased",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "graham-plan-01",
-  "character": "graham",
-  "trigger": "plan_hint",
-  "text": "Minority attack. b4, then b5. Textbook.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly",
-   "flags": [
-    "opening:qgd",
-    "me:w"
-   ]
-  },
-  "weight": 2,
-  "once": false
- },
- {
-  "id": "graham-plan-02",
-  "character": "graham",
-  "trigger": "plan_hint",
-  "text": "I'm fixing that pawn of yours. Then I'll win it. Eventually.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "toby-plan-01",
-  "character": "toby",
-  "trigger": "plan_hint",
-  "text": "I'm just going to put a bit of pressure on your queenside. Nothing personal.",
-  "expression": "smug",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "toby-plan-02",
-  "character": "toby",
-  "trigger": "plan_hint",
-  "text": "Honestly, the plan is just improving my worst piece. Coach's idea.",
-  "expression": "smug",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "toby-plan-03",
-  "character": "toby",
-  "trigger": "plan_hint",
-  "text": "That bishop on the long diagonal does most of the work. I just let it.",
-  "expression": "smug",
-  "conditions": {
-   "gameType": "friendly",
-   "flags": [
-    "opening:catalan",
-    "me:w"
-   ]
-  },
-  "weight": 2,
-  "once": false
- },
- {
   "id": "marjorie-tension-01",
   "character": "marjorie",
   "trigger": "tension",
@@ -1504,276 +1255,6 @@
   "conditions": {
    "gameType": "match"
   },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "marjorie-think-01",
-  "character": "marjorie",
-  "trigger": "long_think",
-  "text": "(Marjorie stirs her tea.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "marjorie-think-02",
-  "character": "marjorie",
-  "trigger": "long_think",
-  "text": "(Marjorie puts her glasses on.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "marjorie-think-03",
-  "character": "marjorie",
-  "trigger": "long_think",
-  "text": "(Marjorie looks at the board for a long time.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "dex-think-01",
-  "character": "dex",
-  "trigger": "long_think",
-  "text": "(Dex checks his phone.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "dex-think-02",
-  "character": "dex",
-  "trigger": "long_think",
-  "text": "(Dex leans in close to the board.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "dex-think-03",
-  "character": "dex",
-  "trigger": "long_think",
-  "text": "(Dex drums his fingers on the table.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "oscar-think-01",
-  "character": "oscar",
-  "trigger": "long_think",
-  "text": "(Oscar sits very still.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "oscar-think-02",
-  "character": "oscar",
-  "trigger": "long_think",
-  "text": "(Neil leans over to look at the board.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "clive-think-01",
-  "character": "clive",
-  "trigger": "long_think",
-  "text": "(Clive pours from his flask.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "clive-think-02",
-  "character": "clive",
-  "trigger": "long_think",
-  "text": "(Clive glances at the clock on the wall.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "clive-think-03",
-  "character": "clive",
-  "trigger": "long_think",
-  "text": "(Clive lines up his captured pieces.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "priya-think-01",
-  "character": "priya",
-  "trigger": "long_think",
-  "text": "(Priya closes her eyes.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "priya-think-02",
-  "character": "priya",
-  "trigger": "long_think",
-  "text": "(Priya covers her ears.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "priya-think-03",
-  "character": "priya",
-  "trigger": "long_think",
-  "text": "(Priya writes something on her scoresheet, then crosses it out.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "priya-think-04",
-  "character": "priya",
-  "trigger": "long_think",
-  "text": "(Priya counts something off on her fingers.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "graham-think-01",
-  "character": "graham",
-  "trigger": "long_think",
-  "text": "(Graham checks his scoresheet against the board.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "graham-think-02",
-  "character": "graham",
-  "trigger": "long_think",
-  "text": "(Graham straightens a knight on its square.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "graham-think-03",
-  "character": "graham",
-  "trigger": "long_think",
-  "text": "(Graham writes the time in the margin.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "toby-think-01",
-  "character": "toby",
-  "trigger": "long_think",
-  "text": "(Toby leans back in his chair.)",
-  "expression": "smug",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "toby-think-02",
-  "character": "toby",
-  "trigger": "long_think",
-  "text": "(Toby glances up at you, then back at the board.)",
-  "expression": "smug",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "toby-think-03",
-  "character": "toby",
-  "trigger": "long_think",
-  "text": "(Toby waves to Malcolm across the room. Malcolm nods back.)",
-  "expression": "smug",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "bg-marjorie-think",
-  "character": "marjorie",
-  "trigger": "long_think",
-  "text": "(Sheila comes round with the raffle tickets. Marjorie buys two.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "bg-clive-think",
-  "character": "clive",
-  "trigger": "long_think",
-  "text": "(Bill has pulled up a chair to watch.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "bg-dex-think",
-  "character": "dex",
-  "trigger": "long_think",
-  "text": "(Bill is watching over Dex's shoulder. Dex has noticed.)",
-  "expression": "annoyed",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "bg-oscar-think",
-  "character": "oscar",
-  "trigger": "long_think",
-  "text": "(Ray looks in from the junior room and gives Oscar a nod.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "bg-priya-think",
-  "character": "priya",
-  "trigger": "long_think",
-  "text": "(Priya has a book on the chair beside her. It's Ray's, and she's flagged most of it.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "bg-graham-think",
-  "character": "graham",
-  "trigger": "long_think",
-  "text": "(Graham breaks off to remind Sheila about the raffle licence.)",
-  "expression": "neutral",
-  "conditions": {},
   "weight": 1,
   "once": false
  },
@@ -2331,36 +1812,6 @@
   "once": false
  },
  {
-  "id": "x-marjorie-long_think-01",
-  "character": "marjorie",
-  "trigger": "long_think",
-  "text": "(Marjorie counts the pawns under her breath.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-marjorie-long_think-02",
-  "character": "marjorie",
-  "trigger": "long_think",
-  "text": "(Marjorie straightens her cardigan.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-marjorie-long_think-03",
-  "character": "marjorie",
-  "trigger": "long_think",
-  "text": "(Marjorie looks at the clock, then at you, then at the board.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
   "id": "x-marjorie-match_great-01",
   "character": "marjorie",
   "trigger": "match_great",
@@ -2711,26 +2162,6 @@
   "once": false
  },
  {
-  "id": "x-dex-long_think-01",
-  "character": "dex",
-  "trigger": "long_think",
-  "text": "(Dex has his hood up.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-dex-long_think-02",
-  "character": "dex",
-  "trigger": "long_think",
-  "text": "(Dex whispers something to his phone.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
   "id": "x-dex-match_great-01",
   "character": "dex",
   "trigger": "match_great",
@@ -3048,26 +2479,6 @@
   "once": false
  },
  {
-  "id": "x-oscar-long_think-01",
-  "character": "oscar",
-  "trigger": "long_think",
-  "text": "(Oscar is swinging his legs under the chair.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-oscar-long_think-02",
-  "character": "oscar",
-  "trigger": "long_think",
-  "text": "(Neil mouths something at Oscar. Oscar ignores him.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
   "id": "x-oscar-match_great-01",
   "character": "oscar",
   "trigger": "match_great",
@@ -3372,26 +2783,6 @@
   "character": "clive",
   "trigger": "game_loss",
   "text": "You made something out of not very much. I’ll give you that.",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-clive-long_think-01",
-  "character": "clive",
-  "trigger": "long_think",
-  "text": "(Clive screws the lid back on his flask.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-clive-long_think-02",
-  "character": "clive",
-  "trigger": "long_think",
-  "text": "(Clive checks his watch.)",
   "expression": "neutral",
   "conditions": {},
   "weight": 1,
@@ -3704,26 +3095,6 @@
   "once": false
  },
  {
-  "id": "x-priya-long_think-01",
-  "character": "priya",
-  "trigger": "long_think",
-  "text": "(Priya mouths a variation to herself.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-priya-long_think-02",
-  "character": "priya",
-  "trigger": "long_think",
-  "text": "(Priya has gone very still.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
   "id": "x-priya-match_great-01",
   "character": "priya",
   "trigger": "match_great",
@@ -4015,26 +3386,6 @@
   "trigger": "game_loss",
   "text": "Congratulations. Please sign both copies.",
   "expression": "annoyed",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-graham-long_think-01",
-  "character": "graham",
-  "trigger": "long_think",
-  "text": "(Graham underlines something on his scoresheet.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-graham-long_think-02",
-  "character": "graham",
-  "trigger": "long_think",
-  "text": "(Graham makes a small note in the margin.)",
-  "expression": "neutral",
   "conditions": {},
   "weight": 1,
   "once": false
@@ -4336,26 +3687,6 @@
   "once": false
  },
  {
-  "id": "x-toby-long_think-01",
-  "character": "toby",
-  "trigger": "long_think",
-  "text": "(Toby taps his pen twice on the table.)",
-  "expression": "smug",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-toby-long_think-02",
-  "character": "toby",
-  "trigger": "long_think",
-  "text": "(Toby smiles at something on the board.)",
-  "expression": "smug",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
   "id": "x-toby-match_great-01",
   "character": "toby",
   "trigger": "match_great",
@@ -4592,36 +3923,6 @@
   "once": false
  },
  {
-  "id": "x-sheila-long_think-01",
-  "character": "sheila",
-  "trigger": "long_think",
-  "text": "(Sheila counts the raffle money while she thinks.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-sheila-long_think-02",
-  "character": "sheila",
-  "trigger": "long_think",
-  "text": "(Sheila waves at someone by the bar.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-sheila-long_think-03",
-  "character": "sheila",
-  "trigger": "long_think",
-  "text": "(Sheila hums, then stops, then starts again.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
   "id": "x-sheila-game_start-09",
   "character": "sheila",
   "trigger": "game_start",
@@ -4800,36 +4101,6 @@
   "character": "bill",
   "trigger": "game_loss",
   "text": "Very good. I enjoyed that, even so.",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-bill-long_think-01",
-  "character": "bill",
-  "trigger": "long_think",
-  "text": "(Bill takes his glasses off, then puts them back on.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-bill-long_think-02",
-  "character": "bill",
-  "trigger": "long_think",
-  "text": "(Bill looks over at the honours board for a moment.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-bill-long_think-03",
-  "character": "bill",
-  "trigger": "long_think",
-  "text": "(Bill is thinking. It may be some time.)",
   "expression": "neutral",
   "conditions": {},
   "weight": 1,
@@ -5100,78 +4371,6 @@
   "once": false
  },
  {
-  "id": "x-pemberton-plan_hint-01",
-  "character": "pemberton",
-  "trigger": "plan_hint",
-  "text": "I’m going to put a rook on the open file. Stop me.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-pemberton-plan_hint-02",
-  "character": "pemberton",
-  "trigger": "plan_hint",
-  "text": "Watch my knight. It wants the square in front of your pawns.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-pemberton-plan_hint-03",
-  "character": "pemberton",
-  "trigger": "plan_hint",
-  "text": "I’m castling queenside. Think about what that means for your attack.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-pemberton-plan_hint-04",
-  "character": "pemberton",
-  "trigger": "plan_hint",
-  "text": "My plan is simple: trade pieces and win the ending. What’s yours?",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-pemberton-plan_hint-05",
-  "character": "pemberton",
-  "trigger": "plan_hint",
-  "text": "I’m about to push a pawn in the centre. Is that good for me? Work it out.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-pemberton-plan_hint-06",
-  "character": "pemberton",
-  "trigger": "plan_hint",
-  "text": "Notice I haven’t moved my king yet. That should interest you.",
-  "expression": "neutral",
-  "conditions": {
-   "gameType": "friendly"
-  },
-  "weight": 1,
-  "once": false
- },
- {
   "id": "x-pemberton-player_blunder-01",
   "character": "pemberton",
   "trigger": "player_blunder",
@@ -5264,36 +4463,6 @@
   "conditions": {
    "gameType": "friendly"
   },
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-pemberton-long_think-01",
-  "character": "pemberton",
-  "trigger": "long_think",
-  "text": "(Pemberton folds his arms and waits.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-pemberton-long_think-02",
-  "character": "pemberton",
-  "trigger": "long_think",
-  "text": "(Pemberton glances across at Toby’s board, then back.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-pemberton-long_think-03",
-  "character": "pemberton",
-  "trigger": "long_think",
-  "text": "(Pemberton taps a square with one finger, then withdraws it.)",
-  "expression": "neutral",
-  "conditions": {},
   "weight": 1,
   "once": false
  },
@@ -5466,26 +4635,6 @@
   "character": "ray",
   "trigger": "game_loss",
   "text": "You’ve got a plan and you stick to it. That’s most of it.",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-ray-long_think-01",
-  "character": "ray",
-  "trigger": "long_think",
-  "text": "(Ray checks the junior room door, then goes back to the board.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "x-ray-long_think-02",
-  "character": "ray",
-  "trigger": "long_think",
-  "text": "(Ray rubs his eyes. Long night.)",
   "expression": "neutral",
   "conditions": {},
   "weight": 1,
@@ -5733,76 +4882,6 @@
   "trigger": "game_loss",
   "text": "Next week I’ve got something with the h-pawn. You’ve been warned.",
   "expression": "pleased",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "terry-think-01",
-  "character": "terry",
-  "trigger": "long_think",
-  "text": "(Terry picks up his king and considers it at eye level.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "terry-think-02",
-  "character": "terry",
-  "trigger": "long_think",
-  "text": "(Terry writes something on a beer mat and turns it face down.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "terry-think-03",
-  "character": "terry",
-  "trigger": "long_think",
-  "text": "(Terry leans back as if the answer might be on the ceiling.)",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "terry-plan-01",
-  "character": "terry",
-  "trigger": "plan_hint",
-  "text": "My king’s coming forward. Don’t ask why.",
-  "expression": "pleased",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "terry-plan-02",
-  "character": "terry",
-  "trigger": "plan_hint",
-  "text": "I’m going to push that pawn until someone stops me.",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "terry-plan-03",
-  "character": "terry",
-  "trigger": "plan_hint",
-  "text": "I haven’t castled, and I’m not going to.",
-  "expression": "neutral",
-  "conditions": {},
-  "weight": 1,
-  "once": false
- },
- {
-  "id": "terry-plan-04",
-  "character": "terry",
-  "trigger": "plan_hint",
-  "text": "That rook’s coming out via the h-file. It’s all planned. Loosely.",
-  "expression": "neutral",
   "conditions": {},
   "weight": 1,
   "once": false

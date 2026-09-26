@@ -5,8 +5,8 @@
 // long-term targets (and natural Act 2 ladder opponents).
 
 // They're never labelled on screen (like everyone else). The player learns
-// who they are from the noticeboard and from being mentioned or seen around
-// the club: see content/dialogue.csv (lines mentioning them) and data/noticeboard.ts.
+// who they are from being mentioned or seen around the club: see
+// content/dialogue.csv (lines mentioning them) and data/weekStory.ts.
 export type Member = {
   id: string
   name: string

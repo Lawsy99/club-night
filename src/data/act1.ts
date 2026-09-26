@@ -7,8 +7,9 @@
 // play people you already know, so they become familiar. Then cup week.
 //
 // Story beats are in content/dialogue.csv (lines flagged "chapter:c1" and so
-// on) and data/noticeboard.ts; see docs/story-outline.md. Each week's
-// coaching-night lesson is in lessons.ts (same id).
+// on), data/weekStory.ts (each week's small moments) and data/cutscenes.ts;
+// see docs/story-outline.md. Each week's coaching-night lesson is in
+// lessons.ts (same id).
 
 export type ChapterPlan = {
   id: string
