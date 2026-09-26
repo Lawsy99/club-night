@@ -127,7 +127,7 @@ Toby joins the club the same night you do and is always slightly stronger. He is
 - *As captain, explaining the team:* "It's not all about ratings. It's about who's in form."
 - *As captain, after your win saves the match:* "Really proud of how we handled it tonight." / "Match report's up. Gave you a mention."
 - *Sitting down for the away match, after leaving your club:* "Hey! Didn't want this to be weird." / "It's not weird, is it?"
-- *Beating you easily on trial night:* "Beginner's luck. Mine, I mean."
+- *Beating you easily on trial night:* "Beginner's luck, honestly. You'll get me next time."
 - *Losing to you in the last round of the final congress:* "Honestly, a draw was fine for me prize-wise. I wasn't really pushing." / "Long drive this morning. Not an excuse."
 
 ## Marjorie

@@ -40,7 +40,8 @@ export const CHARACTERS: Character[] = [
     strength: 'scaling',
     offset: -100,
     style: 'aggressive',
-    thinkSpeed: 0.7,
+    // "I play bullet."
+    thinkSpeed: 0.5,
     resigns: 'normal',
     offersDraw: 'rarely',
     acceptsDraws: true,
@@ -51,7 +52,8 @@ export const CHARACTERS: Character[] = [
     strength: 'scaling',
     offset: -150,
     style: 'aggressive',
-    thinkSpeed: 0.5,
+    // Barely pauses: often moves within a couple of seconds.
+    thinkSpeed: 0.35,
     resigns: 'quickly',
     offersDraw: 'rarely',
     acceptsDraws: true,
@@ -84,7 +86,8 @@ export const CHARACTERS: Character[] = [
     strength: 'fixed',
     offset: 50,
     style: 'solid',
-    thinkSpeed: 1,
+    // Checks everything twice, and writes it down.
+    thinkSpeed: 1.2,
     resigns: 'normal',
     offersDraw: 'rarely',
     acceptsDraws: true,
@@ -95,7 +98,8 @@ export const CHARACTERS: Character[] = [
     strength: 'scaling',
     offset: 50,
     style: 'adaptive',
-    thinkSpeed: 1,
+    // Relaxed and slightly quicker than you'd like: he makes it look easy.
+    thinkSpeed: 0.8,
     resigns: 'normal',
     offersDraw: 'when-worse',
     acceptsDraws: true,

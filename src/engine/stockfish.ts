@@ -39,10 +39,7 @@ class StockfishEngine {
     }
     // If the engine can't load (e.g. a failed download), fail loudly rather
     // than leaving the app "thinking" forever.
-    this.worker.onerror = (e) => {
-      this.failure = new Error(`Chess engine failed: ${e.message || 'could not load'}`)
-      for (const fail of [...this.failListeners]) fail(this.failure)
-    }
+    this.worker.onerror = (e) => this.breakDown(new Error(`Chess engine failed: ${e.message || 'could not load'}`))
     this.queue = this.guard(this.handshake())
   }
 
@@ -78,12 +75,36 @@ class StockfishEngine {
     })
   }
 
+  /** True once the engine has crashed or stalled; getEngine then starts a new one. */
+  get failed(): boolean {
+    return this.failure !== null
+  }
+
+  /** Marks the engine as broken, failing whatever is waiting on it. */
+  private breakDown(error: Error) {
+    if (this.failure) return
+    this.failure = error
+    for (const fail of [...this.failListeners]) fail(error)
+    this.worker.terminate()
+  }
+
   /** Searches a position. Queued behind any search already running. */
   search(fen: string, options: SearchOptions = {}): Promise<SearchResult> {
-    const run = () => this.guard(this.runSearch(fen, options))
+    const run = () => this.guard(this.withWatchdog(this.runSearch(fen, options), options))
     const result = this.queue.then(run, run)
     this.queue = result.catch(() => undefined)
     return result
+  }
+
+  /**
+   * No search here takes more than a few seconds, even on a phone. If one
+   * goes quiet (iPhone can freeze a background worker), treat the engine as
+   * broken so the next request gets a fresh one instead of waiting forever.
+   */
+  private withWatchdog<T>(work: Promise<T>, options: SearchOptions): Promise<T> {
+    const limit = (options.movetime ?? 0) + 25_000
+    const timer = setTimeout(() => this.breakDown(new Error('The chess engine stopped responding')), limit)
+    return work.finally(() => clearTimeout(timer))
   }
 
   private async runSearch(fen: string, options: SearchOptions): Promise<SearchResult> {
@@ -129,8 +150,9 @@ class StockfishEngine {
 
 let engine: StockfishEngine | null = null
 
-/** The shared engine, started the first time it's needed. */
+/** The shared engine, started the first time it's needed (and again if it broke). */
 export function getEngine(): StockfishEngine {
+  if (engine?.failed) engine = null
   engine ??= new StockfishEngine()
   return engine
 }

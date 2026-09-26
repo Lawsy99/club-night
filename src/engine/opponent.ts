@@ -1,6 +1,7 @@
 // Chooses the opponent's move. Characters first play from their opening
 // book; after that (and for practice levels) the custom low-rated bot plays
 // below 800 and Maia-3 from 800 up, nudged towards the character's style.
+// If Maia is unavailable, the bot stands in (at its strongest settings).
 // Then a human-like pause: the design's thinking times for characters, a
 // short one for practice levels.
 import { Chess } from 'chess.js'
@@ -38,7 +39,15 @@ export async function chooseOpponentMove(
     choice = { move: book }
     kind = 'book'
   } else if (opponent.engine === 'maia') {
-    ;({ choice, kind } = await maiaMove(fen, opponent, movesSoFar))
+    try {
+      ;({ choice, kind } = await maiaMove(fen, opponent, movesSoFar))
+    } catch (err) {
+      // Maia couldn't answer (e.g. "Load failed": the connection dropped during
+      // its download). The Stockfish-based bot covers this move so the game
+      // carries on; Maia is tried again a minute later.
+      console.warn('Maia unavailable; the backup bot plays this move.', err)
+      ;({ choice, kind } = await botMove(fen, opponent, movesSoFar))
+    }
   } else if (opponent.engine === 'full') {
     ;({ choice, kind } = await fullStrengthMove(fen))
   } else {

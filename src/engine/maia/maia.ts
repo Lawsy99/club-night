@@ -20,14 +20,27 @@ export type MaiaStatus =
 
 type Pending = { resolve: (r: MaiaResponse & { type: 'result' }) => void; reject: (e: Error) => void }
 
+/** Once the model is loaded, a prediction takes well under a second; this means it's stuck. */
+const PREDICT_TIMEOUT_MS = 20_000
+/** The first move may include the one-off download (about 44 MB). */
+const DOWNLOAD_TIMEOUT_MS = 180_000
+/** After a failure, leave Maia alone for a minute (the backup bot plays meanwhile). */
+const RETRY_AFTER_MS = 60_000
+
 class MaiaClient {
-  private worker = new Worker(new URL('./maiaWorker.ts', import.meta.url), { type: 'module' })
+  private worker!: Worker
   private pending = new Map<number, Pending>()
   private nextId = 0
   private statusListeners = new Set<(s: MaiaStatus) => void>()
+  private lastFailure = 0
   status: MaiaStatus = { state: 'idle' }
 
   constructor() {
+    this.start()
+  }
+
+  private start() {
+    this.worker = new Worker(new URL('./maiaWorker.ts', import.meta.url), { type: 'module' })
     this.worker.onmessage = (e: MessageEvent<MaiaResponse>) => {
       const msg = e.data
       if (msg.type === 'progress') this.setStatus({ state: 'downloading', loaded: msg.loaded, total: msg.total })
@@ -37,20 +50,30 @@ class MaiaClient {
         this.pending.delete(msg.id)
         if (this.status.state !== 'ready') this.setStatus({ state: 'ready' })
       } else if (msg.type === 'error') {
+        this.lastFailure = Date.now()
         if (msg.id !== undefined) {
           this.pending.get(msg.id)?.reject(new Error(msg.message))
           this.pending.delete(msg.id)
-        } else {
-          this.setStatus({ state: 'error', message: msg.message })
         }
+        this.setStatus({ state: 'error', message: msg.message })
       }
     }
-    this.worker.onerror = (e) => {
-      const error = new Error(`Maia failed: ${e.message || 'could not start'}`)
-      this.setStatus({ state: 'error', message: error.message })
-      for (const p of this.pending.values()) p.reject(error)
-      this.pending.clear()
-    }
+    this.worker.onerror = (e) => this.fail(new Error(`Maia failed: ${e.message || 'could not start'}`))
+  }
+
+  /** Something went wrong: reject what's waiting and start a fresh worker for next time. */
+  private fail(error: Error) {
+    this.lastFailure = Date.now()
+    this.setStatus({ state: 'error', message: error.message })
+    for (const p of this.pending.values()) p.reject(error)
+    this.pending.clear()
+    this.worker.terminate()
+    this.start()
+  }
+
+  /** True for a minute after a failure, so a bad connection doesn't stall every move. */
+  get resting(): boolean {
+    return Date.now() - this.lastFailure < RETRY_AFTER_MS
   }
 
   private setStatus(status: MaiaStatus) {
@@ -72,11 +95,19 @@ class MaiaClient {
   }
 
   async predict(fen: string, eloSelf: number, eloOppo: number): Promise<MaiaPrediction> {
+    if (this.resting) throw new Error('Maia is unavailable for a moment')
+    const timeout = this.status.state === 'ready' ? PREDICT_TIMEOUT_MS : DOWNLOAD_TIMEOUT_MS
     this.load()
     const input = encodePosition(fen)
     const id = this.nextId++
     const result = await new Promise<MaiaResponse & { type: 'result' }>((resolve, reject) => {
-      this.pending.set(id, { resolve, reject })
+      // If the worker goes quiet (iPhone can pause it in the background), give up and restart it.
+      const timer = setTimeout(() => this.fail(new Error('Maia took too long')), timeout)
+      const done = <T,>(fn: (v: T) => void) => (v: T) => {
+        clearTimeout(timer)
+        fn(v)
+      }
+      this.pending.set(id, { resolve: done(resolve), reject: done(reject) })
       this.worker.postMessage({ type: 'infer', id, tokens: input.tokens, eloSelf, eloOppo } satisfies MaiaRequest, [
         input.tokens.buffer,
       ])

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   chatterAllowed,
+  fillName,
   matchLineAllowed,
   mostImportant,
   rememberLine,
@@ -33,6 +34,13 @@ const ctx: DialogueContext = {
 const empty = { recent: [], onceShown: [] }
 
 describe('dialogue selection', () => {
+  it('only uses lines with the player\'s name when it knows the name', () => {
+    const lines = [line('named', { text: 'Evening, {name}.' })]
+    expect(selectLine(lines, ctx, empty)).toBeNull()
+    const chosen = selectLine(lines, { ...ctx, playerName: 'Joseph' }, empty)
+    expect(fillName(chosen!.text, 'Joseph')).toBe('Evening, Joseph.')
+  })
+
   it("only picks this character's lines for this trigger", () => {
     const lines = [line('a'), line('b', { character: 'dex' }), line('c', { trigger: 'game_win' })]
     expect(selectLine(lines, ctx, empty)?.id).toBe('a')

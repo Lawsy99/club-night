@@ -28,7 +28,17 @@ export function PlayerStrip({ name, rating, fen, side, thinking = false }: Props
         {captured.map((p) => GLYPHS[p] + '︎').join('')}
         {lead > 0 && <span className="player-lead">+{lead}</span>}
       </span>
-      {thinking && <span className="player-thinking">thinking…</span>}
+      {thinking && (
+        // Moving dots, so a long think never looks like the app has frozen.
+        <span className="player-thinking" role="status">
+          thinking
+          <span className="think-dots" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+        </span>
+      )}
     </div>
   )
 }

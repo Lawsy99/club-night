@@ -37,7 +37,14 @@ import {
 } from '../logic/gameRecord'
 import { acceptsDraw, piecesLeft, shouldOfferDraw, shouldResign } from '../logic/opponentDecisions'
 import { planFor, shouldPausePlan } from '../logic/planPause'
-import { chatterAllowed, matchLineAllowed, mostImportant, TENSION_MOVES } from '../logic/dialogue'
+import {
+  chatterAllowed,
+  LONG_THINK_GAP_MOVES,
+  LONG_THINK_MS,
+  matchLineAllowed,
+  mostImportant,
+  TENSION_MOVES,
+} from '../logic/dialogue'
 import { detectOpening } from '../logic/planPause'
 import { triggersFor } from '../logic/gameTriggers'
 import { useDialogue } from './useDialogue'
@@ -55,6 +62,8 @@ type Props = {
   onContinue: () => void
   /** The player's rating, shown in their name bar (none during trial night). */
   playerRating?: number
+  /** The player's name, for their name bar and for lines that use it. */
+  playerName?: string
 }
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
@@ -63,13 +72,16 @@ type PendingMove = { uci: string; fenAfter: string; warning: string | null }
 /** Arrow colour for "the move you played" when showing a better one. */
 const PLAYED_ARROW_COLOUR = 'rgba(208, 59, 59, 0.75)'
 
-export function GameScreen({ game, setGame, onReview, onContinue, playerRating }: Props) {
+export function GameScreen({ game, setGame, onReview, onContinue, playerRating, playerName }: Props) {
   const stage = HELP_STAGES[game.stage]
   const isExhibition = game.path?.kind === 'exhibition'
   const opponent = resolveOpponent(game.levelId, game.opponentRating, isExhibition)
   // Trial night: characters speak only before and after the game (design: "Trial night").
   const quietGame = game.path?.kind === 'trial' || isExhibition
   const [engineError, setEngineError] = useState<string | null>(null)
+  // Bumped to try the opponent's move again after something failed (never stuck "thinking").
+  const [moveAttempt, setMoveAttempt] = useState(0)
+  const failedAttempts = useRef(0)
   const [pending, setPending] = useState<PendingMove | null>(null)
   const [hint, setHint] = useState<{ fen: string; step: 1 | 2 } | null>(null)
   const [showBestLine, setShowBestLine] = useState(false)
@@ -120,7 +132,11 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
     act: 1,
     rematch: talk.rematch,
     losingStreak: talk.losingStreak,
+    playerName,
   })
+  // The long-think stage direction: whether one is showing, and when the last was.
+  const thinkLineShown = useRef(false)
+  const lastThinkLineAt = useRef(-99)
   const ratedRef = useRef(ratedMove?.rating ?? null)
   ratedRef.current = ratedMove?.rating ?? null
 
@@ -155,6 +171,7 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
   useEffect(() => {
     if (!opponentToMove) return
     let cancelled = false // set if the game changes before the engine replies
+    let retry: number | undefined
     ;(async () => {
       const view = await analysePosition(fen).catch(() => null)
       const cp = view ? toCentipawns(view.score) : 0 // the opponent's own point of view
@@ -165,6 +182,10 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
       }
       const { move, maiaMs: ms } = await chooseOpponentMove(fen, game.moves, opponent, game.rivalPrefer)
       if (cancelled || !move) return
+      if (failedAttempts.current > 0) {
+        failedAttempts.current = 0
+        setEngineError(null)
+      }
       if (ms !== undefined) setMaiaMs(ms)
       const offer = shouldOfferDraw(opponent.character, {
         evalCp: cp,
@@ -199,6 +220,9 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
         return next
       })
       if (offer) setBubble({ kind: 'offer' })
+      // They've moved: the thinking stage direction goes (unless a new line replaced it).
+      if (thinkLineShown.current && !spoke) dialogue.dismiss()
+      thinkLineShown.current = false
 
       // Did that move hand the player a big chance? Sometimes the opponent gives it away.
       if (!spoke && !offer && !quietGame) {
@@ -215,12 +239,25 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
           })
           .catch(() => undefined)
       }
-    })().catch((err: Error) => setEngineError(err.message))
+    })().catch((err: Error) => {
+      // Usually a dropped connection or an engine the phone paused. Say so
+      // plainly and try again shortly (the engines restart themselves).
+      if (cancelled) return
+      console.warn('Opponent move failed; retrying.', err)
+      failedAttempts.current += 1
+      setEngineError(
+        failedAttempts.current < 3
+          ? `${opponent.name} lost their train of thought. One moment…`
+          : "Still can't get a move. Check your connection; the app keeps trying.",
+      )
+      retry = window.setTimeout(() => setMoveAttempt((n) => n + 1), failedAttempts.current < 3 ? 2000 : 6000)
+    })
     return () => {
       cancelled = true
+      window.clearTimeout(retry)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the position and opponent
-  }, [opponentToMove, fen, opponent.id, opponent.rating])
+  }, [opponentToMove, fen, opponent.id, opponent.rating, moveAttempt])
 
   // A refusal fades after a few seconds.
   useEffect(() => {
@@ -315,7 +352,23 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
       ]
 
   const downloading = maiaStatus.state === 'downloading' && opponentToMove
-  const status = engineError
+
+  // A long think gets a small stage direction ("Priya closes her eyes."), so
+  // slow thinkers read as thinking, not as the app running slowly. Not on
+  // their first move (the opening line is still showing), and not too often.
+  useEffect(() => {
+    if (!opponentToMove || downloading || engineError || !opponent.character || game.moves.length < 2) return
+    if (game.moves.length - lastThinkLineAt.current < LONG_THINK_GAP_MOVES * 2) return
+    const t = window.setTimeout(() => {
+      if (dialogue.speak('long_think', true)) {
+        thinkLineShown.current = true
+        lastThinkLineAt.current = game.moves.length
+      }
+    }, LONG_THINK_MS)
+    return () => window.clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per opponent turn
+  }, [opponentToMove, fen, downloading, engineError])
+  const status = engineError && opponentToMove
     ? engineError
     : outcome
       ? `${describeOutcome(outcome)} ${resultForPlayer(outcome, game)}`
@@ -458,7 +511,7 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
         </div>
       </div>
 
-      <PlayerStrip name="You" rating={playerRating} fen={fen} side={game.playerColour} />
+      <PlayerStrip name={playerName ?? 'You'} rating={playerRating} fen={fen} side={game.playerColour} />
 
       <MoveStrip sans={sans} />
 

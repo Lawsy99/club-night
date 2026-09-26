@@ -1,10 +1,12 @@
-// First launch only: one question, then trial night (design document,
-// "Trial night: Before the games"). PLACEHOLDER TEXT until phase 6.
+// First launch only: your name, one question, then trial night (design
+// document, "Trial night: Before the games").
 import { useState } from 'react'
+import { NameField } from '../components/NameField'
+import { cleanName } from '../logic/playerName'
 import type { Experience } from '../logic/trialNight'
 import './WelcomeScreen.css'
 
-type Props = { onStart: (experience: Experience, statedRating?: number) => void }
+type Props = { onStart: (experience: Experience, statedRating: number | undefined, name: string) => void }
 
 const OPTIONS: { value: Experience; label: string; detail: string }[] = [
   { value: 'never', label: "I've never played", detail: "We'll go over the rules first." },
@@ -16,6 +18,7 @@ const OPTIONS: { value: Experience; label: string; detail: string }[] = [
 export function WelcomeScreen({ onStart }: Props) {
   const [choice, setChoice] = useState<Experience | null>(null)
   const [rating, setRating] = useState('')
+  const [name, setName] = useState('')
   const ratingNumber = Number(rating)
   const ratingValid = rating !== '' && ratingNumber >= 100 && ratingNumber <= 3000
 
@@ -29,6 +32,8 @@ export function WelcomeScreen({ onStart }: Props) {
           to see where you fit.
         </p>
       </header>
+
+      <NameField value={name} onChange={setName} prompt="Name, please. For the membership list. Spelt properly." />
 
       <section>
         <h2>Roughly how much chess have you played?</h2>
@@ -67,12 +72,12 @@ export function WelcomeScreen({ onStart }: Props) {
       <button
         type="button"
         className="welcome-start"
-        disabled={!choice || (choice === 'rated' && !ratingValid)}
-        onClick={() => choice && onStart(choice, choice === 'rated' ? ratingNumber : undefined)}
+        disabled={!choice || (choice === 'rated' && !ratingValid) || !cleanName(name)}
+        onClick={() => choice && onStart(choice, choice === 'rated' ? ratingNumber : undefined, cleanName(name))}
       >
         Start trial night
       </button>
-      <p className="welcome-note">Five games, no help, no clock. Your results set your starting rating.</p>
+      <p className="welcome-note">Five games, no help, no clock. The first four set your starting rating.</p>
     </main>
   )
 }

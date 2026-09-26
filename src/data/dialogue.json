@@ -3,10 +3,10 @@
   "id": "toby-exh-start-01",
   "character": "toby",
   "trigger": "exhibition_start",
-  "text": "Toby. I'm new too, actually. Quick one before they stack the chairs? Just for fun.",
+  "text": "Toby. I'm new too, actually. Quick one before they stack the chairs, {name}? Just for fun.",
   "expression": "pleased",
   "conditions": {},
-  "weight": 1,
+  "weight": 2,
   "once": false
  },
  {
@@ -33,7 +33,7 @@
   "id": "toby-exh-win-02",
   "character": "toby",
   "trigger": "exhibition_win",
-  "text": "Beginner's luck. Mine, I mean. You'll get me next time, mate.",
+  "text": "Beginner's luck, honestly. You'll get me next time.",
   "expression": "smug",
   "conditions": {},
   "weight": 1,
@@ -314,6 +314,18 @@
    "minRematch": 4
   },
   "weight": 2,
+  "once": false
+ },
+ {
+  "id": "marjorie-start-name",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "Evening, {name}. Phones off, love. Milk's on the side.",
+  "expression": "pleased",
+  "conditions": {
+   "rematch": 2
+  },
+  "weight": 1,
   "once": false
  },
  {
@@ -678,6 +690,28 @@
   "once": false
  },
  {
+  "id": "graham-start-name",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "{name}. I've got you down correctly now. Scoresheet, please.",
+  "expression": "neutral",
+  "conditions": {
+   "minRematch": 2
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-loss-name",
+  "character": "graham",
+  "trigger": "game_loss",
+  "text": "Fair result, {name}. It'll be on the website by Thursday.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
   "id": "graham-check-01",
   "character": "graham",
   "trigger": "check_given",
@@ -831,7 +865,7 @@
   "id": "oscar-start-01",
   "character": "oscar",
   "trigger": "game_start",
-  "text": "(Shakes hands without looking up.)",
+  "text": "(Oscar shakes your hand, then straightens his pieces.)",
   "expression": "neutral",
   "conditions": {},
   "weight": 1,
@@ -1183,7 +1217,7 @@
   "id": "dex-tension-02",
   "character": "dex",
   "trigger": "tension",
-  "text": "(He's gone quiet. That's new.)",
+  "text": "(Dex puts his phone face down.)",
   "expression": "neutral",
   "conditions": {
    "gameType": "match"
@@ -1255,7 +1289,7 @@
   "id": "toby-tension-01",
   "character": "toby",
   "trigger": "tension",
-  "text": "(Toby smiles. It doesn't reach his eyes.)",
+  "text": "(Toby rests his chin on his hand and stays like that.)",
   "expression": "smug",
   "conditions": {
    "gameType": "match"
@@ -1373,7 +1407,7 @@
   "id": "priya-chance-02",
   "character": "priya",
   "trigger": "opportunity",
-  "text": "(Priya flicks through a notebook that isn't there.)",
+  "text": "(Priya reaches for her notebook, then stops.)",
   "expression": "surprised",
   "conditions": {
    "gameType": "match"
@@ -1426,6 +1460,216 @@
   "conditions": {
    "gameType": "match"
   },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-think-01",
+  "character": "marjorie",
+  "trigger": "long_think",
+  "text": "(Marjorie stirs her tea.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-think-02",
+  "character": "marjorie",
+  "trigger": "long_think",
+  "text": "(Marjorie puts her glasses on.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-think-03",
+  "character": "marjorie",
+  "trigger": "long_think",
+  "text": "(Marjorie looks at the board for a long time.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-think-01",
+  "character": "dex",
+  "trigger": "long_think",
+  "text": "(Dex checks his phone.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-think-02",
+  "character": "dex",
+  "trigger": "long_think",
+  "text": "(Dex leans in close to the board.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-think-03",
+  "character": "dex",
+  "trigger": "long_think",
+  "text": "(Dex drums his fingers on the table.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-think-01",
+  "character": "oscar",
+  "trigger": "long_think",
+  "text": "(Oscar sits very still.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-think-02",
+  "character": "oscar",
+  "trigger": "long_think",
+  "text": "(Neil leans over to look at the board.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-think-01",
+  "character": "clive",
+  "trigger": "long_think",
+  "text": "(Clive pours from his flask.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-think-02",
+  "character": "clive",
+  "trigger": "long_think",
+  "text": "(Clive glances at the clock on the wall.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-think-03",
+  "character": "clive",
+  "trigger": "long_think",
+  "text": "(Clive lines up his captured pieces.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-think-01",
+  "character": "priya",
+  "trigger": "long_think",
+  "text": "(Priya closes her eyes.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-think-02",
+  "character": "priya",
+  "trigger": "long_think",
+  "text": "(Priya covers her ears.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-think-03",
+  "character": "priya",
+  "trigger": "long_think",
+  "text": "(Priya writes something on her scoresheet, then crosses it out.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-think-04",
+  "character": "priya",
+  "trigger": "long_think",
+  "text": "(Priya counts something off on her fingers.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-think-01",
+  "character": "graham",
+  "trigger": "long_think",
+  "text": "(Graham checks his scoresheet against the board.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-think-02",
+  "character": "graham",
+  "trigger": "long_think",
+  "text": "(Graham straightens a knight on its square.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-think-03",
+  "character": "graham",
+  "trigger": "long_think",
+  "text": "(Graham writes the time in the margin.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-think-01",
+  "character": "toby",
+  "trigger": "long_think",
+  "text": "(Toby leans back in his chair.)",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-think-02",
+  "character": "toby",
+  "trigger": "long_think",
+  "text": "(Toby glances up at you, then back at the board.)",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-think-03",
+  "character": "toby",
+  "trigger": "long_think",
+  "text": "(Toby waves to someone across the room.)",
+  "expression": "smug",
+  "conditions": {},
   "weight": 1,
   "once": false
  }

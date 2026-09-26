@@ -240,6 +240,9 @@ The engine finds its move almost instantly; the app then waits a human-like amou
 - In timed games, each move's budget is worked out from the time left, the expected number of moves remaining and how complicated the position is.
 - Characters differ: **Priya** takes long thinks once her preparation runs out and can get into time trouble; **Oscar** plays fast; **Clive** plays quickly once pieces are swapped off; **Vera** spreads her time evenly and is never short.
 - When a bot is very short of time, it plays slightly weaker, as humans do. The same happens in reverse: time pressure is real for the player too.
+- Pace varies clearly by character (revised Sep 2026): Oscar and Dex barely pause; Marjorie is steady; Graham and Priya take their time.
+- **Showing that they're thinking (revised Sep 2026):** moving dots beside the opponent's name while they think, so a long think never looks like the app has frozen. After about 4.5 seconds, a small stage direction may appear, e.g. "(Clive pours from his flask.)". It is plain observation, never speech, and appears at most once every three of their moves. It goes when they move.
+- **If an engine fails** (for example a dropped connection while Maia downloads): the opponent's move is retried automatically, a stuck engine is restarted, and the Stockfish-based bot stands in for Maia for a minute. The game never sits "thinking" forever.
 
 Dialogue about clocks (pressing the clock with the wrong hand, starting your clock) is tagged for timed games only, so it appears only when the player has switched a clock on.
 

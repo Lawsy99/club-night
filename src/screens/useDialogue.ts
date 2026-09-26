@@ -3,7 +3,7 @@
 // tap (start and end lines stay until tapped).
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DIALOGUE, SPEAKER_NAMES } from '../data/dialogue'
-import { rememberLine, selectLine, type DialogueHistory, type Trigger } from '../logic/dialogue'
+import { fillName, rememberLine, selectLine, type DialogueHistory, type Trigger } from '../logic/dialogue'
 import { loadDialogueHistory, saveDialogueHistory } from '../storage/db'
 
 export type SpokenLine = { text: string; speaker: string | null; key: number }
@@ -14,11 +14,12 @@ type Options = {
   act: number
   rematch: number
   losingStreak: number
+  playerName?: string
 }
 
 const FADE_MS = 4000
 
-export function useDialogue({ character, gameType, act, rematch, losingStreak }: Options) {
+export function useDialogue({ character, gameType, act, rematch, losingStreak, playerName }: Options) {
   const [line, setLine] = useState<SpokenLine | null>(null)
   const history = useRef<DialogueHistory | null>(null)
   const counter = useRef(0)
@@ -42,19 +43,19 @@ export function useDialogue({ character, gameType, act, rematch, losingStreak }:
     (trigger: Trigger, stay = false, flags: readonly string[] = []): boolean => {
       if (!character) return false
       const h = history.current ?? { recent: [], onceShown: [] }
-      const chosen = selectLine(DIALOGUE, { character, trigger, act, gameType, rematch, losingStreak, flags }, h)
+      const chosen = selectLine(DIALOGUE, { character, trigger, act, gameType, rematch, losingStreak, flags, playerName }, h)
       if (!chosen) return false
       history.current = rememberLine(h, chosen)
       saveDialogueHistory(history.current).catch(() => undefined)
       setPersist(stay)
       setLine({
-        text: chosen.text,
+        text: fillName(chosen.text, playerName),
         speaker: chosen.speaker ? (SPEAKER_NAMES[chosen.speaker] ?? chosen.speaker) : null,
         key: ++counter.current,
       })
       return true
     },
-    [character, act, gameType, rematch, losingStreak],
+    [character, act, gameType, rematch, losingStreak, playerName],
   )
 
   const dismiss = useCallback(() => setLine(null), [])

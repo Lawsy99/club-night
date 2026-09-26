@@ -169,8 +169,8 @@ export function AppFlow() {
   if (next.kind === 'welcome' && view !== 'deck' && view !== 'history') {
     return (
       <WelcomeScreen
-        onStart={(experience, rating) => {
-          updateProgress(beginTrial(progress, experience, rating))
+        onStart={(experience, rating, name) => {
+          updateProgress(beginTrial(progress, experience, rating, name))
           setView('home')
         }}
       />
@@ -241,6 +241,7 @@ export function AppFlow() {
         game={game}
         setGame={setGame}
         playerRating={progress.rating ? Math.round(progress.rating.rating) : undefined}
+        playerName={progress.playerName}
         onReview={() => setView('review')}
         onContinue={() => void finishGame(game)}
       />
@@ -257,6 +258,7 @@ export function AppFlow() {
       onTargetedPuzzles={() => setView('puzzles')}
       onOpenDeck={() => setView('deck')}
       onOpenHistory={() => setView('history')}
+      onSetName={(playerName) => updateProgress({ ...progress, playerName })}
       onSkipStep={() => {
         setLastChange(null)
         if (next.kind === 'lesson') updateProgress(completeLesson(progress))

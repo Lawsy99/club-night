@@ -52,7 +52,8 @@ export const SCOUTING: Record<string, ScoutingNotes> = {
   toby: {
     asWhite: 'The Catalan. That bishop on g2 is the whole idea. Break out with ...c5 or ...e5.',
     asBlack: 'The Najdorf against 1.e4, the Nimzo-Indian against 1.d4. He knows them well.',
-    style: 'Always a little stronger than you. You know that.',
+    // Deliberately thin next to everyone else's (story: Pemberton's favouritism).
+    style: "You've seen him play.",
     pronoun: 'him',
   },
 }

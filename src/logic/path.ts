@@ -38,6 +38,8 @@ export type Progress = {
   cup: { round: number; bossRating: number; bossAttempts: number } | null
   /** Real games since the safety valve last moved (or the act began). */
   recentReal: RealGameResult[]
+  /** The player's name, as given to Graham on trial night (older saves may lack it). */
+  playerName?: string
 }
 
 export const NEW_PROGRESS: Progress = {
@@ -212,8 +214,13 @@ function startCup(p: Progress): Progress {
 
 // --- Events -----------------------------------------------------------------
 
-export function beginTrial(p: Progress, experience: Experience, statedRating?: number): Progress {
-  return { ...p, stage: 'trial', trial: { first: firstOpponentRating(experience, statedRating), games: [] } }
+export function beginTrial(p: Progress, experience: Experience, statedRating?: number, playerName?: string): Progress {
+  return {
+    ...p,
+    stage: 'trial',
+    trial: { first: firstOpponentRating(experience, statedRating), games: [] },
+    playerName: playerName ?? p.playerName,
+  }
 }
 
 export function completeLesson(p: Progress): Progress {

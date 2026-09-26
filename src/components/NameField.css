@@ -1,0 +1,33 @@
+.name-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.name-field-prompt {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.name-field-prompt strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.name-field input {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid #4a5a50;
+  border-radius: 12px;
+  background: #2b3931;
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.name-field input:focus {
+  outline: none;
+  border-color: #f0c95a;
+}

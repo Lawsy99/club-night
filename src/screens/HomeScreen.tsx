@@ -3,6 +3,8 @@
 // There is deliberately no free-play mode: the path decides what's next.
 import { useEffect, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
+import { NameField } from '../components/NameField'
+import { cleanName } from '../logic/playerName'
 import { ACT_1 } from '../data/act1'
 import { findCharacter } from '../data/characters'
 import { NOTICEBOARD } from '../data/noticeboard'
@@ -24,6 +26,8 @@ type Props = {
   onTargetedPuzzles: () => void
   onOpenDeck: () => void
   onOpenHistory: () => void
+  /** For players who started before names were asked for. */
+  onSetName: (name: string) => void
   onSkipStep: () => void
   onReset: () => void
 }
@@ -38,8 +42,19 @@ const KIND_LABELS: Record<PathGame['kind'], string> = {
 }
 
 export function HomeScreen(props: Props) {
-  const { progress, next, lastChange, onPlay, onStartLesson, onTargetedPuzzles, onOpenDeck, onOpenHistory, onSkipStep, onReset } =
-    props
+  const {
+    progress,
+    next,
+    lastChange,
+    onPlay,
+    onStartLesson,
+    onTargetedPuzzles,
+    onOpenDeck,
+    onOpenHistory,
+    onSetName,
+    onSkipStep,
+    onReset,
+  } = props
   const [due, setDue] = useState<number | null>(null)
 
   useEffect(() => {
@@ -68,6 +83,8 @@ export function HomeScreen(props: Props) {
       </header>
 
       {lastChange && <RatingChange {...lastChange} />}
+
+      {!progress.playerName && <MissingName onSave={onSetName} />}
 
       <ActProgress progress={progress} />
 
@@ -171,6 +188,19 @@ function Noticeboard({ progress, next }: { progress: Progress; next: NextStep })
         “{notice.text}”<span className="noticeboard-by">{notice.speaker}</span>
       </p>
     </aside>
+  )
+}
+
+/** Graham, catching up with someone who joined before names were asked for. */
+function MissingName({ onSave }: { onSave: (name: string) => void }) {
+  const [name, setName] = useState('')
+  return (
+    <section className="missing-name">
+      <NameField value={name} onChange={setName} prompt="We never got your name for the membership list. Strictly speaking, that's irregular." />
+      <button type="button" disabled={!cleanName(name)} onClick={() => onSave(cleanName(name))}>
+        Sign the list
+      </button>
+    </section>
   )
 }
 

@@ -224,6 +224,33 @@
   cursor: pointer;
 }
 
+/* Graham asking an older save for a name */
+.missing-name {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #4a5a50;
+  border-radius: 14px;
+  background: #26332b;
+}
+
+.missing-name button {
+  min-height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: #f0c95a;
+  color: #1f2a24;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.missing-name button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .next-secondary {
   min-height: 44px;
   border: 1px solid #4a5a50;

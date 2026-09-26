@@ -26,6 +26,11 @@ export type Trigger =
   | 'tension'
   /** The character has just blundered and the player has a big move available. */
   | 'opportunity'
+  /**
+   * A long think: a small stage direction (never speech), so the player can
+   * see the character is thinking and the app isn't just slow.
+   */
+  | 'long_think'
   /** Toby's full-strength game at the end of trial night: before it, and after he wins. */
   | 'exhibition_start'
   | 'exhibition_win'
@@ -65,6 +70,13 @@ export type DialogueContext = {
   /** The character's current winning run against the player. */
   losingStreak: number
   flags: readonly string[]
+  /** Lines containing {name} are only used when we know it. */
+  playerName?: string
+}
+
+/** A line's text with the player's name filled in. */
+export function fillName(text: string, playerName: string | undefined): string {
+  return playerName ? text.replaceAll('{name}', playerName) : text
 }
 
 export type DialogueHistory = {
@@ -102,6 +114,7 @@ export function selectLine(
 
 function conditionsMet(line: DialogueLine, ctx: DialogueContext): boolean {
   const c = line.conditions
+  if (!ctx.playerName && line.text.includes('{name}')) return false
   if (c.acts && !c.acts.includes(ctx.act)) return false
   if (c.gameType && c.gameType !== ctx.gameType) return false
   if (c.rematch !== undefined && c.rematch !== ctx.rematch) return false
@@ -161,6 +174,11 @@ export function matchLineAllowed(options: { linesSoFar: number; moveNumber: numb
   if (options.linesSoFar >= MATCH_LINE_LIMIT) return false
   return options.lastLineMove === null || options.moveNumber - options.lastLineMove >= MATCH_LINE_GAP_MOVES
 }
+
+/** A stage direction appears once a think has lasted this long… */
+export const LONG_THINK_MS = 4500
+/** …and not again until the opponent has made this many more moves. */
+export const LONG_THINK_GAP_MOVES = 3
 
 export function chatterAllowed(options: {
   gameType: 'friendly' | 'match'
