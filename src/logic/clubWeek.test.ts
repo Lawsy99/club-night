@@ -26,8 +26,9 @@ describe('the club week', () => {
     expect(states(p)).toEqual(['today', 'later', 'later'])
     p = completeLesson(p)
     expect(states(p)).toEqual(['done', 'today', 'later'])
-    // Winning a guided practice game opens Saturday.
-    p = { ...p, friendlies: { played: 2, wonGuided: true } }
+    expect(clubWeek(p)!.slots[1].name).toBe('Practice 1/3')
+    // Three practice games open Saturday.
+    p = { ...p, friendlies: { played: 3, wonGuided: false } }
     expect(states(p)).toEqual(['done', 'done', 'today'])
   })
 

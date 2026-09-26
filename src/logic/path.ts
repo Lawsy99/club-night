@@ -3,7 +3,7 @@
 // "Stakes"). Pure state + functions; the Home screen asks `nextStep` and the
 // game flow reports results back.
 import { ACT_1, storyWeeksBefore, TRIAL_FINALE, TRIAL_OPPONENTS } from '../data/act1'
-import { characterRating, findCharacter, storyOffset } from '../data/characters'
+import { characterRating, findCharacter, PRACTICE_REGULARS, storyOffset } from '../data/characters'
 import { MEMBERS } from '../data/members'
 import { sessionLabel } from '../data/clubWeek'
 import { findLesson } from '../data/lessons'
@@ -187,15 +187,22 @@ export function nextStep(p: Progress): NextStep {
       }
     }
     const rating = opponentRating(p, ch.opponent)
-    const friendly = (stage: 'assisted' | 'guided'): PathGame => ({
-      kind: 'friendly',
-      opponent: ch.opponent,
-      rating,
-      stage,
-      label: `Practice game vs ${nameOf(ch.opponent)}`,
-      location: sessionLabel('practice'),
-      chapter: ch.id,
-    })
+    const met = p.met.includes(ch.opponent)
+    // Practice night: the week's person first, then whoever else is in.
+    const friendly = (k: number): PathGame => {
+      const opponent = practiceOpponent(p, k)
+      const first = k === 0
+      return {
+        kind: 'friendly',
+        opponent,
+        rating: opponentRating(p, opponent),
+        // Someone new gets an assisted game first; everything else is guided.
+        stage: first && !met ? 'assisted' : 'guided',
+        label: k < PRACTICE_GAMES ? `Practice game ${k + 1} of ${PRACTICE_GAMES} vs ${nameOf(opponent)}` : `Practice game vs ${nameOf(opponent)}`,
+        location: sessionLabel('practice'),
+        chapter: ch.id,
+      }
+    }
     const match: PathGame = {
       kind: 'match',
       opponent: ch.opponent,
@@ -207,14 +214,14 @@ export function nextStep(p: Progress): NextStep {
     }
     const unlocked = matchUnlocked(p)
     if (!unlocked) {
-      // First friendly against someone new is assisted; after that, guided.
-      return { kind: 'play', game: friendly(p.friendlies.played === 0 ? 'assisted' : 'guided'), optionalFriendly: null, note: null }
+      return { kind: 'play', game: friendly(p.friendlies.played), optionalFriendly: null, note: null }
     }
     return {
       kind: 'play',
       game: match,
-      optionalFriendly: friendly('guided'),
-      note: p.matchLost ? 'Replay the match, or warm up with a friendly first.' : null,
+      // One more practice game first, if wanted (against someone else who's in).
+      optionalFriendly: friendly(Math.max(PRACTICE_GAMES, p.friendlies.played)),
+      note: p.matchLost ? 'Replay the match, or warm up with a practice game first.' : null,
     }
   }
 
@@ -257,7 +264,25 @@ export function nextStep(p: Progress): NextStep {
 export function matchUnlocked(p: Progress): boolean {
   const ch = ACT_1.chapters[p.chapter]
   if (!ch) return false
-  return p.met.includes(ch.opponent) || p.friendlies.wonGuided || p.friendlies.played >= 3
+  return p.friendlies.played >= PRACTICE_GAMES
+}
+
+/** Practice night is three games (Joseph, Sep 2026). */
+export const PRACTICE_GAMES = 3
+
+/**
+ * Who you play in practice game k this week: the week's person first; after
+ * that, whoever else is in: regulars you've already met, and the background
+ * members who come on Thursdays (Sheila, Bill). Picked in a fixed order, so
+ * reopening the app never changes who's next.
+ */
+export function practiceOpponent(p: Progress, k: number): string {
+  const ch = ACT_1.chapters[p.chapter]
+  if (!ch) return 'marjorie'
+  if (k === 0) return ch.opponent
+  const pool = [...new Set([...p.met.filter((id) => id !== ch.opponent), ...PRACTICE_REGULARS.map((c) => c.id)])]
+  // A different starting point each week, then the next people along.
+  return pool[(p.chapter * 5 + (k - 1)) % pool.length]
 }
 
 /** The opening families each boss plays (for the targeted puzzle set). */
@@ -306,8 +331,9 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
   }
 
   if (game.kind === 'friendly') {
-    // Friendlies never change the rating; they always count towards progress.
-    const inChapter = p.chapter < ACT_1.chapters.length && game.opponent === ACT_1.chapters[p.chapter].opponent
+    // Friendlies never change the rating; every practice game this week counts.
+    const ch = ACT_1.chapters[p.chapter]
+    const inChapter = !!ch && (game.chapter ? game.chapter === ch.id : game.opponent === ch.opponent)
     return {
       ...p,
       friendlies: inChapter

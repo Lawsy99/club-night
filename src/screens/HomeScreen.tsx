@@ -212,7 +212,6 @@ function ActProgress({ progress }: { progress: Progress }) {
             <span className="club-week-name">{s.name}</span>
             {s.state === 'done' && <span className="club-week-tick" aria-label="done">✓︎</span>}
             {s.state === 'today' && <span className="club-week-tonight">tonight</span>}
-            {s.state === 'optional' && <span className="club-week-tonight">optional</span>}
           </li>
         ))}
       </ol>

@@ -138,6 +138,37 @@ export function storyOffset(character: Character, chaptersDone: number): number 
   return offsets[Math.max(0, Math.min(chaptersDone, offsets.length - 1))]
 }
 
+/**
+ * Background members who turn up on practice night (Joseph, Sep 2026: side
+ * characters bulk out the practice games). Not part of the story; their
+ * ratings are fixed after trial night (data/members.ts). Malcolm (league
+ * nights only) and Ray (running junior night on Thursdays) never come.
+ */
+export const PRACTICE_REGULARS: Character[] = [
+  {
+    id: 'sheila',
+    name: 'Sheila',
+    strength: 'fixed',
+    offset: -240,
+    style: 'solid',
+    thinkSpeed: 0.9,
+    resigns: 'normal',
+    offersDraw: 'rarely',
+    acceptsDraws: true,
+  },
+  {
+    id: 'bill',
+    name: 'Bill',
+    strength: 'fixed',
+    offset: -330,
+    style: 'simplifying',
+    thinkSpeed: 1.3,
+    resigns: 'plays-to-mate',
+    offersDraw: 'rarely',
+    acceptsDraws: true,
+  },
+]
+
 export function findCharacter(id: string): Character | undefined {
-  return CHARACTERS.find((c) => c.id === id)
+  return CHARACTERS.find((c) => c.id === id) ?? PRACTICE_REGULARS.find((c) => c.id === id)
 }

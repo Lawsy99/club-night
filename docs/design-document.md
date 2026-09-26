@@ -270,16 +270,17 @@ Dialogue about clocks (pressing the clock with the wrong hand, starting your clo
 | Hints | Unlimited, in two steps: which piece, then the move | Off | Off |
 | Takebacks | Unlimited | 3 per game | None |
 | Blunder warning | When a move gives away 2 pawns' worth of advantage or more, or allows mate | Only when a move loses a piece or allows mate | None |
-| Plan pause | Around move 10, once the opening is over | Off | Off |
-| Move rating (after each of your moves: Best move, Good, Inaccuracy, Mistake, Blunder) | On | On | On |
+| Move rating (after each of your moves: Best move, Good, Inaccuracy, Mistake, Blunder) | On | On | Off: only great moves and blunders, shown in the opponent |
 
-**The move rating** appears in every game type, including real matches (Joseph's decision, Sep 2026: a one-word verdict after a move is committed helps learning without giving much away). It uses the same Lichess-style grading as the review. When characters arrive (phase 6), decide whether they voice it in friendlies, and whether it stays a neutral label in matches, where characters don't speak during play.
+**The move rating** appears in practice games. In competitive games (revised Sep 2026) it's hidden; only a great move or a blunder shows, through the opponent's face and an occasional stage direction. It uses the same Lichess-style grading as the review.
+
+**Your opening, or Pemberton's line.** In assisted and guided games, while the game still follows the player's own usual opening (worked out from their games), or otherwise the line Pemberton showed in the scouting report against this opponent, a small note gives the next move in plain words. As White, the scouting report opens with a suggested opening to play against that opponent.
 
 **The best-line panel** is shown on the board as arrows for the next few moves (your moves blue, the opponent's orange, each fainter than the last), with the score as text below.
 
 **The blunder warning** appears after the player drops a piece but before the move is confirmed: "This leaves your knight undefended. Play it anyway?" The player can confirm or take the move back. A warning shown in the guided stage does not use up a takeback.
 
-**The plan pause** appears once per assisted game, when the opening has finished (usually around move 10). The game pauses and asks the player to choose the plan for the next few moves from three options, for example "Attack on the kingside", "Push in the centre" or "Swap pieces and aim for an endgame". Coach Pemberton gives a one-line verdict on the choice, then play continues. Plans are written for each signature opening and each opening in the player's repertoire, so this is where the opening-to-middlegame lessons land.
+**The plan pause** (removed Sep 2026: its three plans didn't respond to the actual position; plans now come from the characters' plan hints, which follow the opening on the board) appeared once per assisted game, when the opening had finished (usually around move 10). The game pauses and asks the player to choose the plan for the next few moves from three options, for example "Attack on the kingside", "Push in the centre" or "Swap pieces and aim for an endgame". Coach Pemberton gives a one-line verdict on the choice, then play continues. Plans are written for each signature opening and each opening in the player's repertoire, so this is where the opening-to-middlegame lessons land.
 
 ## The path
 
@@ -301,10 +302,16 @@ The app is one fixed path through four acts. The home screen shows only what com
 | Night | Session | What happens |
 | --- | --- | --- |
 | Tuesday | Coaching night | Pemberton's lesson and puzzles, with a mistakes-deck warm-up ("drills") first when cards are due |
-| Thursday | Practice night | Practice games against the week's opponent, with help. Saturday opens after winning a guided one, or after three |
-| Saturday | Match day | The match, rated, no help |
+| Thursday | Practice night | Three practice games, with help: the week's person first (assisted if new), then two against whoever else is in: regulars already met, and Sheila and Bill. Saturday opens after the three |
+| Saturday | Match day | The match against the week's person, rated, no help. One game, as at a real club; a loss is simply replayed (Joseph suggested best of three; kept to one so the match stays weighty and the week doesn't repeat one opponent) |
 
-The cup is "Cup week" (round 1, round 2, semi-final, final). Trial night keeps its own strip. The week header ("Week 3 · Junior night ›") opens the story so far.
+The cup is "Cup week" (round 1, round 2, semi-final, final). Trial night keeps its own strip. The week header ("Week 3 · Junior night ›") opens the club calendar.
+
+**Runway (Sep 2026).** Act 1 is 16 weeks over 4 months: seven story weeks, each introducing someone, with ordinary club weeks between them (the same shape, against someone already known, with a general coaching topic), then cup week. The story moves slowly on purpose; the essence is playing chess.
+
+**The club calendar** replaces "the story so far": month by month (four weeks to a month, no dates), a week to a line with who it's with, past weeks ticked, this week marked, and what's coming shown.
+
+**Competitive games** (match, cup, boss): no move ratings on screen. Only a great move (the winning shot, found straight after the opponent slips) or a blunder shows, in the opponent: their face for a few seconds, and now and then a stage direction. Any game can be looked back through move by move (view only; one tap returns to the game).
 
 **The look (Sep 2026): "club mat".** Bottle green and buff from the roll-up vinyl boards English clubs use, with brass as the one accent; headings in a serif (Fraunces, bundled with the app); the board framed like the mat. Tonight's session sits on a buff card in dark ink. Wood and slate boards remain in Settings.
 

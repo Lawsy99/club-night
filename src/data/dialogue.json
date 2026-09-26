@@ -4430,5 +4430,433 @@
   },
   "weight": 1,
   "once": false
+ },
+ {
+  "id": "x-sheila-game_start-01",
+  "character": "sheila",
+  "trigger": "game_start",
+  "text": "Oh, lovely. I was hoping someone would ask.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_start-02",
+  "character": "sheila",
+  "trigger": "game_start",
+  "text": "I’ve left the raffle with Marjorie. She’ll only buy them all herself.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_start-03",
+  "character": "sheila",
+  "trigger": "game_start",
+  "text": "Go easy on me. Well, don’t. I’ll know.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_start-04",
+  "character": "sheila",
+  "trigger": "game_start",
+  "text": "I only really come for the company. Don’t tell Graham.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_start-05",
+  "character": "sheila",
+  "trigger": "game_start",
+  "text": "Do you want a ticket? After, then.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_start-06",
+  "character": "sheila",
+  "trigger": "game_start",
+  "text": "I’m better than I look. Not much, but a bit.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_start-07",
+  "character": "sheila",
+  "trigger": "game_start",
+  "text": "Bill says I play too fast. Bill says a lot of things.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_start-08",
+  "character": "sheila",
+  "trigger": "game_start",
+  "text": "Right. Where do the horses go again? Joking.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_win-01",
+  "character": "sheila",
+  "trigger": "game_win",
+  "text": "Well! I’ll be telling everyone about that.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_win-02",
+  "character": "sheila",
+  "trigger": "game_win",
+  "text": "Beginner’s luck. I’ve been a beginner for twelve years.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_win-03",
+  "character": "sheila",
+  "trigger": "game_win",
+  "text": "Oh, I didn’t expect that. Did you?",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_win-04",
+  "character": "sheila",
+  "trigger": "game_win",
+  "text": "That’s made my week, that has.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_loss-01",
+  "character": "sheila",
+  "trigger": "game_loss",
+  "text": "Well played, love. I never saw it coming. I never do.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_loss-02",
+  "character": "sheila",
+  "trigger": "game_loss",
+  "text": "Oh, go on then. Same again next week?",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_loss-03",
+  "character": "sheila",
+  "trigger": "game_loss",
+  "text": "I’ll stick to the raffle.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_loss-04",
+  "character": "sheila",
+  "trigger": "game_loss",
+  "text": "That was lovely. Losing aside.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-long_think-01",
+  "character": "sheila",
+  "trigger": "long_think",
+  "text": "(Sheila counts the raffle money while she thinks.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-long_think-02",
+  "character": "sheila",
+  "trigger": "long_think",
+  "text": "(Sheila waves at someone by the bar.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-long_think-03",
+  "character": "sheila",
+  "trigger": "long_think",
+  "text": "(Sheila hums, then stops, then starts again.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_start-09",
+  "character": "sheila",
+  "trigger": "game_start",
+  "text": "You again! I’ll have to start practising.",
+  "expression": "pleased",
+  "conditions": {
+   "minRematch": 6
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-sheila-game_start-10",
+  "character": "sheila",
+  "trigger": "game_start",
+  "text": "I’ve saved you a ticket. Number forty-two.",
+  "expression": "pleased",
+  "conditions": {
+   "minRematch": 6
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_start-01",
+  "character": "bill",
+  "trigger": "game_start",
+  "text": "Take your time. I always do.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_start-02",
+  "character": "bill",
+  "trigger": "game_start",
+  "text": "I joined in 1974. It was a different room then. Same chairs.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_start-03",
+  "character": "bill",
+  "trigger": "game_start",
+  "text": "Evening. I’ll just get my glasses.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_start-04",
+  "character": "bill",
+  "trigger": "game_start",
+  "text": "I’ve seen them all come through, you know. Every one.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_start-05",
+  "character": "bill",
+  "trigger": "game_start",
+  "text": "Don’t mind me. I don’t resign. Never have.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_start-06",
+  "character": "bill",
+  "trigger": "game_start",
+  "text": "We had a champion here once. Year after year. You’ll have seen the board.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_start-07",
+  "character": "bill",
+  "trigger": "game_start",
+  "text": "I like a long game. There’s nothing on the telly.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_start-08",
+  "character": "bill",
+  "trigger": "game_start",
+  "text": "You’ve come on, I hear. Let’s see.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_win-01",
+  "character": "bill",
+  "trigger": "game_win",
+  "text": "There. Slow and steady. It still works, now and then.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_win-02",
+  "character": "bill",
+  "trigger": "game_win",
+  "text": "Well, I never. Don’t tell Clive.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_win-03",
+  "character": "bill",
+  "trigger": "game_win",
+  "text": "I learned that one in 1981. Took me till tonight to use it.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_win-04",
+  "character": "bill",
+  "trigger": "game_win",
+  "text": "Good game. You nearly had me. Nearly.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_loss-01",
+  "character": "bill",
+  "trigger": "game_loss",
+  "text": "Well played. I’d have resigned, if I did that.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_loss-02",
+  "character": "bill",
+  "trigger": "game_loss",
+  "text": "You’ll go far. They all do. Some come back.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_loss-03",
+  "character": "bill",
+  "trigger": "game_loss",
+  "text": "That’s the way. Good lad. Or lass. Good player, anyway.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_loss-04",
+  "character": "bill",
+  "trigger": "game_loss",
+  "text": "Very good. I enjoyed that, even so.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-long_think-01",
+  "character": "bill",
+  "trigger": "long_think",
+  "text": "(Bill takes his glasses off, then puts them back on.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-long_think-02",
+  "character": "bill",
+  "trigger": "long_think",
+  "text": "(Bill looks over at the honours board for a moment.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-long_think-03",
+  "character": "bill",
+  "trigger": "long_think",
+  "text": "(Bill is thinking. It may be some time.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_start-09",
+  "character": "bill",
+  "trigger": "game_start",
+  "text": "You and me again. Good. I look forward to it.",
+  "expression": "pleased",
+  "conditions": {
+   "minRematch": 6
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-bill-game_start-10",
+  "character": "bill",
+  "trigger": "game_start",
+  "text": "I tell people about our games. Not that they ask.",
+  "expression": "pleased",
+  "conditions": {
+   "minRematch": 6
+  },
+  "weight": 1,
+  "once": false
  }
 ]

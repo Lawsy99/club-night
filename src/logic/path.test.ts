@@ -81,19 +81,25 @@ describe('the path', () => {
     expect(nextStep(p)).toMatchObject({ kind: 'lesson', chapterId: ACT_1.chapters[0].id, topic: 'Forks in the London' })
   })
 
-  it('runs friendlies: assisted first, then guided, until the match unlocks', () => {
+  it('runs practice night: the week’s person first (assisted if new), then two others who are in', () => {
     let p = completeLesson(throughTrial())
     const first = nextGame(p).game
     expect(first).toMatchObject({ kind: 'friendly', stage: 'assisted', opponent: 'marjorie' })
-    p = recordGame(p, first, false, null)
+    p = recordGame(p, first, true, null)
     const second = nextGame(p).game
     expect(second).toMatchObject({ kind: 'friendly', stage: 'guided' })
-    // Winning a guided friendly unlocks the match.
+    expect(second.opponent).not.toBe('marjorie')
     p = recordGame(p, second, true, null)
+    const third = nextGame(p).game
+    expect(third.kind).toBe('friendly')
+    expect(third.opponent).not.toBe(second.opponent)
+    // Malcolm (league nights) and Ray (junior night) are never in on a Thursday.
+    for (const g of [second, third]) expect(['malcolm', 'ray']).not.toContain(g.opponent)
+    p = recordGame(p, third, false, null)
     expect(nextGame(p).game.kind).toBe('match')
   })
 
-  it('unlocks the match after three friendlies, win or lose', () => {
+  it('unlocks the match after three practice games, win or lose', () => {
     let p = completeLesson(throughTrial())
     for (let i = 0; i < 3; i++) p = recordGame(p, nextGame(p).game, false, null)
     const step = nextGame(p)
@@ -144,11 +150,11 @@ describe('the path', () => {
     expect(opponentRating({ ...p, chapter: 8 }, 'priya')).toBe(1180)
   })
 
-  it('offers the match straight away against someone already met', () => {
-    // Oscar is met in chapter 3; he's also a cup opponent, but check the rule directly.
+  it('in a week with someone already met, practice starts guided and includes people you know', () => {
     let p = completeLesson(throughTrial())
-    p = { ...p, met: ['marjorie'] }
-    expect(nextGame(p).game.kind).toBe('match')
+    p = { ...p, met: ['marjorie', 'dex'] }
+    const first = nextGame(p).game
+    expect(first).toMatchObject({ kind: 'friendly', stage: 'guided', opponent: 'marjorie' })
   })
 
   it('runs the cup: three rounds, then the boss; a boss loss means qualifying again', () => {
