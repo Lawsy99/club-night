@@ -3,6 +3,7 @@ import { ACT_1 } from '../data/act1'
 import {
   beginTrial,
   completeLesson,
+  drawRule,
   NEW_PROGRESS,
   nextStep,
   opponentRating,
@@ -31,6 +32,26 @@ function throughTrial(wins = [true, false, true, false]): Progress {
   for (const won of wins) p = recordGame(p, nextGame(p).game, won, 1100)
   return recordGame(p, nextGame(p).game, false, 400)
 }
+
+describe('draws', () => {
+  it('count in practice, are void in the best of three, and are replayed in knockouts', () => {
+    expect(drawRule('friendly')).toBe('counts')
+    expect(drawRule('coaching')).toBe('counts')
+    expect(drawRule('match')).toBe('void')
+    expect(drawRule('cup-round')).toBe('replay')
+    expect(drawRule('boss')).toBe('replay')
+    expect(drawRule('trial')).toBe('replay')
+    expect(drawRule('exhibition')).toBe('ends')
+  })
+
+  it('a drawn practice game still moves practice night on', () => {
+    const p = readyForPractice()
+    const first = nextGame(p).game
+    const after = recordGame(p, first, false, null)
+    expect(after.friendlies.played).toBe(1)
+    expect(nextGame(after).game.label).toContain('Practice game 2')
+  })
+})
 
 describe('the path', () => {
   it('starts with the welcome question, then trial night', () => {

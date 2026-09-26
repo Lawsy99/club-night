@@ -389,6 +389,22 @@ export function completeLesson(p: Progress): Progress {
  * Records a finished game (draws are replayed, so only wins and losses come
  * here). `accuracyStrength` is the strength the moves suggested, if analysed.
  */
+/**
+ * What a draw means (Joseph, Sep 2026):
+ * - practice and the coached game: it counts as played, and the week moves on;
+ * - the best of three: it doesn't count either way (the series score stands);
+ * - knockout games (trial night, the cup, the final): replayed, someone has to win.
+ * Toby's trial-night game just ends the night.
+ */
+export type DrawRule = 'counts' | 'void' | 'replay' | 'ends'
+
+export function drawRule(kind: PathGame['kind']): DrawRule {
+  if (kind === 'friendly' || kind === 'coaching') return 'counts'
+  if (kind === 'match') return 'void'
+  if (kind === 'exhibition') return 'ends'
+  return 'replay'
+}
+
 export function recordGame(p: Progress, game: PathGame, won: boolean, accuracyStrength: number | null): Progress {
   if (game.kind === 'trial') return recordTrialGame(p, game, won, accuracyStrength)
   // Toby's trial-night game: whatever happened, the night is over. No rating change.

@@ -29,6 +29,7 @@ import { useWakeLock } from './useWakeLock'
 import { assessMove, describeBlunder } from '../logic/blunder'
 import { flipScore, formatScore, scoreFor, toCentipawns } from '../logic/evaluation'
 import { describeOutcome, getOutcome, replay, type GameOutcome } from '../logic/game'
+import { drawRule } from '../logic/path'
 import {
   canTakeBack,
   outcomeOf,
@@ -236,8 +237,10 @@ export function GameScreen({
   // to review each one; the review has its own Skip). A moment first, to see
   // the final position and what they say; looking back through the moves
   // holds it. Draws are replayed instead, and Toby's trial-night game is its
-  // own ending.
-  const reviewNext = !!outcome && outcome.winner !== null && !isExhibition
+  // own ending. (Draws that count or don't count go to the review too; only
+  // knockout draws are replayed straight away.)
+  const drawReplays = !!outcome && outcome.winner === null && (!game.path || drawRule(game.path.kind) === 'replay')
+  const reviewNext = !!outcome && !isExhibition && !drawReplays
   useEffect(() => {
     if (!reviewNext || viewPly !== null) return
     const t = window.setTimeout(onReview, REVIEW_DELAY_MS)
@@ -748,7 +751,7 @@ export function GameScreen({
                 Review game
               </button>
               <button type="button" onClick={onContinue}>
-                {outcome.winner === null && !isExhibition ? 'Replay' : 'Continue'}
+                {drawReplays ? 'Replay' : 'Continue'}
               </button>
             </>
           )
@@ -797,7 +800,10 @@ function downloadLabel(status: MaiaStatus): string {
 }
 
 function resultForPlayer(outcome: GameOutcome, game: GameRecord): string {
-  if (outcome.winner === null) return game.path?.kind === 'exhibition' ? '' : 'Draws are replayed.'
+  if (outcome.winner === null) {
+    const rule = game.path ? drawRule(game.path.kind) : 'replay'
+    return rule === 'counts' ? '' : rule === 'void' ? "A draw doesn't count in the best of three." : rule === 'replay' ? 'Draws are replayed.' : ''
+  }
   return outcome.winner === game.playerColour ? 'You won.' : 'You lost.'
 }
 

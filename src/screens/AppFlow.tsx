@@ -15,6 +15,7 @@ import {
 import {
   beginTrial,
   completeLesson,
+  drawRule,
   NEW_PROGRESS,
   nextStep,
   recordGame,
@@ -220,20 +221,26 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
     setView('game')
   }
 
-  /** The finished game's result goes on the path once; draws are simply replayed. */
+  /** The finished game's result goes on the path once (draws: see drawRule). */
   const finishGame = async (finished: GameRecord) => {
     const outcome = outcomeOf(finished)
     if (!outcome || !finished.path) {
       setView('home')
       return
     }
-    // (Toby's trial-night game isn't replayed: a draw just ends the night.)
-    if (outcome.winner === null && finished.path.kind !== 'exhibition') {
+    const rule = outcome.winner === null ? drawRule(finished.path.kind) : null
+    if (rule === 'replay') {
       startPathGame(finished.path)
       return
     }
     // Not reviewed? Its errors are still found, quietly, for Tuesday's warm-ups.
     if (finished.path.kind !== 'exhibition') collectMistakes(finished).catch(() => undefined)
+    // A drawn game in the best of three doesn't count: the score stands.
+    if (rule === 'void') {
+      if (!finished.resultRecorded) setGame({ ...finished, resultRecorded: true })
+      setView('home')
+      return
+    }
     if (!finished.resultRecorded) {
       const won = outcome.winner === finished.playerColour // (a draw here only for Toby's game)
       const archived = await getArchivedGame(finished.id).catch(() => null)

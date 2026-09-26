@@ -224,7 +224,7 @@ There are two kinds of game, mirroring real club life: friendlies are practice w
 Rules for every game:
 
 - **Colours alternate** from game to game across the whole app. The player never chooses.
-- **Draws are replayed**, including agreed draws, repetitions and stalemates. You have to win.
+- **Draws** (revised Sep 2026, Joseph), including agreed draws, repetitions and stalemates: in practice games and the coached game a draw counts as played and you move on. In the best of three a draw doesn't count either way; the score stands and you play the next game. Only knockout games (trial night, cup rounds, the final) are replayed, because someone has to win.
 - The player can resign at any time.
 
 ### Clocks and thinking time
