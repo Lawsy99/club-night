@@ -18,6 +18,17 @@
   color: var(--muted);
 }
 
+.moment-replay {
+  min-height: 44px;
+  padding: 0 4px;
+  border: none;
+  background: none;
+  color: var(--brass);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .moment-verdict {
   font-weight: 600;
 }

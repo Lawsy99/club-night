@@ -13,7 +13,8 @@ import {
   type Answer,
   type MistakeCard,
 } from '../logic/mistakesDeck'
-import { loadCards, saveCard } from '../storage/db'
+import { withLeadUp } from '../logic/mistakeCards'
+import { getArchivedGame, loadCards, saveCard } from '../storage/db'
 import '../components/ratings.css'
 import './ReviewScreen.css'
 import './MistakesDeckScreen.css'
@@ -41,7 +42,14 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
         setAllCards(cards)
         // Short sittings: at most MAX_CARDS_PER_SESSION, oldest-due first.
         const picked = warmup ? warmupCards(cards) : dueCards(cards).slice(0, MAX_CARDS_PER_SESSION)
-        setQueue(picked.map((card) => ({ card, repeat: false })))
+        // Older cards don't know the opponent's move before: look it up in the game.
+        return Promise.all(
+          picked.map(async (card) => {
+            if (card.prevMove) return card
+            const g = await getArchivedGame(card.gameId).catch(() => null)
+            return g ? withLeadUp(card, g.moves, card.ply) : card
+          }),
+        ).then((ready) => setQueue(ready.map((card) => ({ card, repeat: false }))))
       })
       .catch(() => setQueue([]))
   }, [warmup])

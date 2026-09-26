@@ -2,7 +2,7 @@
 // player two tries, then reveals the engine's move. Used by the review, and
 // later by the mistakes deck.
 import { Chess } from 'chess.js'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { analysePosition } from '../engine/analysis'
 import { flipScore, winChance } from '../logic/evaluation'
 import { explainBestMove } from '../logic/explain'
@@ -10,7 +10,6 @@ import { applyUci } from '../logic/game'
 import type { Answer } from '../logic/mistakesDeck'
 import type { Moment } from '../logic/moment'
 import { Board } from './Board'
-import { HINT_ARROW_COLOUR } from './lineArrows'
 import { Portrait } from './Portrait'
 import './MomentTrainer.css'
 
@@ -31,15 +30,46 @@ type Props = {
   onFinished?: (answer: Answer) => void
 }
 
+/** How long the position before the opponent's move shows, before they play it. */
+const LEAD_UP_MS = 700
+/** A pause on the question position before the answer is played out. */
+const ANSWER_MS = 450
+
 export function MomentTrainer({ moment, onFinished }: Props) {
   const [triesLeft, setTriesLeft] = useState(TRIES)
   const [checking, setChecking] = useState(false)
   const [feedback, setFeedback] = useState<string | null>(null)
   const [result, setResult] = useState<{ kind: Result; fen: string; move: string } | null>(null)
+  // Context (Joseph, Sep 2026): first the opponent's move that led here, then
+  // the question; at the end, the answer is played out on the same board.
+  const leadUp = moment.prevFen && moment.prevMove ? { fen: moment.prevFen, move: moment.prevMove } : null
+  const question = {
+    fen: moment.fenBefore,
+    lastMove: leadUp ? { from: leadUp.move.slice(0, 2), to: leadUp.move.slice(2, 4) } : null,
+  }
+  const [shown, setShown] = useState(leadUp ? { fen: leadUp.fen, lastMove: null } : question)
+  const [replaying, setReplaying] = useState(!!leadUp)
+  useEffect(() => {
+    if (!replaying) return
+    const t = window.setTimeout(() => {
+      setShown(question)
+      setReplaying(false)
+    }, LEAD_UP_MS)
+    return () => window.clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs per replay
+  }, [replaying])
+  const showLeadUpAgain = () => {
+    if (!leadUp) return
+    setShown({ fen: leadUp.fen, lastMove: null })
+    setReplaying(true)
+  }
 
   const bestSan = sanOf(moment.fenBefore, moment.bestMove)
 
   function finish(kind: Result, fen: string, move: string) {
+    // Play the answer out: the question position, then the piece moving.
+    setShown(question)
+    window.setTimeout(() => setShown({ fen, lastMove: { from: move.slice(0, 2), to: move.slice(2, 4) } }), ANSWER_MS)
     setResult({ kind, fen, move })
     // For the mistakes deck: first try is a clean pass; later tries a harder one.
     onFinished?.(kind === 'revealed' ? 'revealed' : triesLeft === TRIES ? 'first-try' : 'second-try')
@@ -73,7 +103,9 @@ export function MomentTrainer({ moment, onFinished }: Props) {
     const left = triesLeft - 1
     setTriesLeft(left)
     if (left <= 0) {
-      finish('revealed', moment.fenBefore, moment.bestMove)
+      const best = new Chess(moment.fenBefore)
+      applyUci(best, moment.bestMove)
+      finish('revealed', best.fen(), moment.bestMove)
     } else if (left === 1) {
       setFeedback('Not quite. Last try: the piece to move is highlighted.')
     } else {
@@ -86,22 +118,24 @@ export function MomentTrainer({ moment, onFinished }: Props) {
 
   const orientation = moment.playerColour === 'w' ? 'white' : 'black'
 
+  const theirSan = leadUp ? sanOf(leadUp.fen, leadUp.move) : null
+  // One board throughout, so each change of position is animated.
+  const board = (
+    <Board
+      fen={shown.fen}
+      orientation={orientation}
+      movableColour={checking || replaying || result ? null : moment.playerColour}
+      lastMove={shown.lastMove}
+      onMove={handleAttempt}
+      hintSquare={result ? null : hintSquare}
+    />
+  )
+
   if (result) {
     const solvedSan = result.kind === 'solved' ? sanOf(moment.fenBefore, result.move) : null
     return (
       <div className="moment">
-        <Board
-          fen={result.fen}
-          orientation={orientation}
-          movableColour={null}
-          lastMove={result.kind === 'solved' ? { from: result.move.slice(0, 2), to: result.move.slice(2, 4) } : null}
-          onMove={() => {}}
-          arrows={
-            result.kind === 'revealed'
-              ? [{ from: moment.bestMove.slice(0, 2), to: moment.bestMove.slice(2, 4), colour: HINT_ARROW_COLOUR }]
-              : []
-          }
-        />
+        {board}
         <p className={`moment-verdict ${result.kind}`}>
           {result.kind === 'solved'
             ? solvedSan === bestSan
@@ -129,21 +163,23 @@ export function MomentTrainer({ moment, onFinished }: Props) {
 
   return (
     <div className="moment">
-      <Board
-        fen={moment.fenBefore}
-        orientation={orientation}
-        movableColour={checking ? null : moment.playerColour}
-        lastMove={null}
-        onMove={handleAttempt}
-        hintSquare={hintSquare}
-      />
+      {board}
       <p className="moment-prompt">
         {checking
           ? 'Checking…'
-          : (feedback ?? `You played ${moment.playedSan}. Find a better move.`)}
+          : (feedback ??
+            `${theirSan ? `They played ${theirSan}. ` : ''}In the game you played ${moment.playedSan}. Find a better move.`)}
       </p>
       <p className="moment-tries">
         {triesLeft} {triesLeft === 1 ? 'try' : 'tries'} left
+        {leadUp && !replaying && (
+          <>
+            {' · '}
+            <button type="button" className="moment-replay" onClick={showLeadUpAgain}>
+              See their move again
+            </button>
+          </>
+        )}
       </p>
     </div>
   )

@@ -2,7 +2,7 @@
 // from them. Pure: the review screen and the background check after a game
 // both use it, so they always agree.
 import { explainMistake } from './explain'
-import type { Colour } from './game'
+import { replay, type Colour } from './game'
 import type { GameRecord } from './gameRecord'
 import { MAX_CARDS_PER_GAME, newCard, qualifiesForDeck, type MistakeCard } from './mistakesDeck'
 import type { Moment } from './moment'
@@ -14,7 +14,13 @@ export type ReviewMoment = Moment & { ply: number; rating: MoveRating; moveLabel
 /** The player's biggest moments in a game, ready to retry. */
 export function gameMoments(moves: readonly string[], evals: readonly PositionEval[], player: Colour): ReviewMoment[] {
   const reviewed = reviewMoves(moves, evals)
-  return biggestMoments(reviewed, player).map((m) => toMoment(m, evals, player))
+  return biggestMoments(reviewed, player).map((m) => withLeadUp(toMoment(m, evals, player), moves, m.ply))
+}
+
+/** Adds the opponent's move just before (and the position before that), for context. */
+export function withLeadUp<M extends Moment>(moment: M, moves: readonly string[], ply: number): M {
+  if (ply < 1 || moment.prevMove) return moment
+  return { ...moment, prevMove: moves[ply - 1], prevFen: replay(moves.slice(0, ply - 1)).fen() }
 }
 
 /** Warm-up cards from a game: its real errors, blunders first, a few at most. */
