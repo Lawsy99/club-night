@@ -158,3 +158,36 @@ The alternative is a new character, for example the pub landlord or the league s
 
 1. ~~Vera's surname~~ Decided: Hart.
 2. **The favouritism table.** Is that the right level: obvious by the end of the act, never said out loud?
+
+### C. A payoff every week (proposal, Sep 2026: for Joseph's go-ahead)
+
+Joseph's note: each week should end with something that moves the story on and makes you want to finish next week, with small things progressing through the week.
+
+**How it would work:**
+
+- **Tuesday and Thursday: one small beat each.** After that night's session, a single line on Home under the week, headed "Around the club". It's something seen or overheard, never explained. It's shown once, then it's part of the week's history in the calendar.
+- **Saturday: the payoff.** Once you've won the best of three, a short "On the way out" moment appears: two or three lines with a portrait. It closes the week's question and opens the next one. This is the only time the story gets more than one line, and it's earned by winning.
+- **The next week's note** on Home then picks up the thread, so opening the app shows where things stand.
+- Same rules as ever: understated, plain observation, no narrator, no cliffhanger music. The hook is a small open question.
+
+**The spine, week by week** (Tue / Thu / Saturday payoff, then the hook):
+
+| Week | Tuesday | Thursday | Saturday payoff | Hook for next week |
+| --- | --- | --- | --- | --- |
+| 1 Marjorie | Pemberton's example position is "from a game a member sent me" | Marjorie: "We used to need both rooms" | She gives you the key to the cupboard with the good sets | In the cupboard, a box of old scoresheets. The top one is signed V. Hart |
+| 2 Dex | Dex is at coaching, at the back, on his phone | The phone is propped against a water bottle | "Don't clip that." | Leaving, you hear your own voice coming from his phone |
+| 3 Marjorie | "I'll look at yours after." He doesn't | Terry opens with his king. He means it | Graham types your name onto the membership list | Toby's name is typed above yours, dated the week before trial night |
+| 4 Oscar | Neil asks Pemberton to coach Oscar. His Tuesdays are taken | Oscar beats Ray in twenty moves | Neil: "He'll want a rematch. He'll want it now" | Oscar asks you, not Pemberton, to go over the game |
+| 5 Dex | Dex asks you a real chess question, quietly | He shows you a comment under his video from someone very strong | "Eleven viewers. Twelve when you play" | One of the twelve is Toby |
+| 6 Clive | Clive comes to coaching for the first time in years | He offers everyone a draw at move twelve | "Board one. When there was a proper board one" | On the wall, a clean rectangle where a team photo used to hang |
+| 7 Oscar | Ray asks for the big room | The juniors fill the second room for the first time | Neil asks if you'd help at junior night | Pemberton is running junior night now. It was Toby's idea |
+| 8 Priya | She asks Pemberton about plans; he gives her a book title | She's reading Ray's copy, flagged throughout | "What do you do when the book runs out?" | She asks to go over games with you on Thursdays. Toby hears about it |
+| 9 Clive | The cup is announced | Clive enters. "Haven't in years" | He tells you what the photo was: the 1998 team | Bill says he was there. So was V. Hart |
+| 10 Graham | The pub wants eight pounds more a night | Graham's spreadsheet goes round, laminated | He records your win, formally | A draft team sheet in pencil. Toby is on board two |
+| 11 Priya | Priya has changed openings | You can see it's because of you | She beats you once in the series, then shakes your hand properly | Toby asks for your games "for the study" |
+| 12 Marjorie | Marjorie gets out the good set, for no reason | Bill talks about 1998 | Marjorie, about Vera: "She just stopped coming" | "Ask Bill. He was there." Bill isn't in on Saturday |
+| 13 Toby | Pemberton cancels your coached game. Toby needed him | Toby sends you his Lichess study | "Good game! Want to go over it?", whatever the result | Pemberton's scouting report on Toby: two lines |
+| 14 Graham | Graham explains the cup rules at length | Terry has entered the cup. So has everyone | Graham makes the draw "in the proper manner" | You and Toby are in opposite halves |
+| 15 Dex | Dex says he'll stream the final | Forty people say they'll watch | Dex, quietly: "Don't be rubbish" | Cup week |
+
+You have to win the series to move on anyway, so every week gets its payoff exactly once, as the reward for winning. A lost series gets a single line instead ("Same time next week?") and the payoff waits.
