@@ -23,14 +23,21 @@ export function clubWeek(p: Progress): Week | null {
       title: `Week ${p.chapter + 1}`,
       subtitle: ch.title,
       slots: [
-        { key: 'coaching', day: 'Tue', name: SESSIONS.coaching.short, state: state(p.lessonDone, !p.lessonDone) },
+        // Tuesday is the lesson, then the coached game.
+        { key: 'coaching', day: 'Tue', name: SESSIONS.coaching.short, state: state(!!p.coachingDone, !p.coachingDone) },
         {
           key: 'practice',
           day: 'Thu',
-          name: p.lessonDone && !open ? `Practice ${played + 1}/${PRACTICE_GAMES}` : SESSIONS.practice.short,
-          state: state(p.lessonDone && open, p.lessonDone && !open),
+          name: p.coachingDone && !open ? `Practice ${played + 1}/${PRACTICE_GAMES}` : SESSIONS.practice.short,
+          state: state(!!p.coachingDone && open, !!p.coachingDone && !open),
         },
-        { key: 'match', day: 'Sat', name: SESSIONS.match.short, state: state(false, p.lessonDone && open) },
+        {
+          key: 'match',
+          day: 'Sat',
+          // Best of three: the score so far once it's started.
+          name: p.series && p.series.wins + p.series.losses > 0 ? `Match ${p.series.wins}–${p.series.losses}` : SESSIONS.match.short,
+          state: state(false, !!p.coachingDone && open),
+        },
       ],
     }
   }

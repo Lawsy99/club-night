@@ -45,18 +45,17 @@ describe('mistakes deck', () => {
     expect(isDue(solved, start)).toBe(false)
   })
 
-  it('stretches the gap with each success, then retires the card', () => {
-    let c = card()
-    let now = start
-    const gaps: number[] = []
-    for (let i = 0; i < 8 && !c.retired; i++) {
-      c = answerCard(c, 'first-try', now)
-      gaps.push(c.schedule.scheduled_days)
-      now = new Date(c.schedule.due)
-    }
-    expect(gaps[1]).toBeGreaterThan(gaps[0])
-    expect(c.retired).toBe(true)
+  it('retires a card as soon as it is answered correctly, on any try', () => {
+    expect(answerCard(card(), 'first-try', start).retired).toBe(true)
+    expect(answerCard(card(), 'second-try', start).retired).toBe(true)
+    const c = answerCard(card(), 'first-try', start)
     expect(dueCards([c], new Date(start.getTime() + 1000 * DAY))).toEqual([])
+  })
+
+  it('brings a card back soon when the answer had to be shown', () => {
+    const c = answerCard(card(), 'revealed', start)
+    expect(c.retired).toBe(false)
+    expect(dueCards([c], new Date(start.getTime() + 2 * DAY))).toHaveLength(1)
   })
 
   it('never adds the same game move or the same position twice', () => {
@@ -78,7 +77,7 @@ describe('mistakes deck', () => {
 
   it('lists due cards oldest first and knows when the next is due', () => {
     const early = card()
-    const later = answerCard(card(), 'first-try', start)
+    const later = answerCard(card(), 'revealed', start) // missed: comes back later
     expect(dueCards([later, early], start).map((c) => c.id)).toEqual(['g1:4'])
     expect(nextDue([later])?.getTime()).toBe(new Date(later.schedule.due).getTime())
   })

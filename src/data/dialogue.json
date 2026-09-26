@@ -4858,5 +4858,637 @@
   },
   "weight": 1,
   "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-01",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "Right. I’ll play at your level. Ask for the engine if you must, but think first.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-02",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "Sit down. We’ll play, and I’ll tell you what you’re doing wrong.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-03",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "Take your time. There’s no clock on a Tuesday.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-04",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "Show me what you did with last week’s lesson.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-05",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "Development first. I say it every week. I’ll say it again.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-06",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "Let’s see if you’ve been practising. Toby has.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-07",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "In my day we played a coaching game every week. Nobody enjoyed it. Everybody improved.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-08",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "Play the position, not the person. Even if the person is me.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-09",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "Before every move: checks, captures, threats. Theirs, then yours.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-10",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "We’ll go slowly. Slowly is how you get fast.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-11",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "Hints are there if you need them. I’d rather you didn’t.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-12",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "Right. Let’s begin. Sit up straight, it helps.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_win-01",
+  "character": "pemberton",
+  "trigger": "game_win",
+  "text": "There. Now look back at move fifteen. That’s where it went.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_win-02",
+  "character": "pemberton",
+  "trigger": "game_win",
+  "text": "Good effort. Not good enough, but good effort.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_win-03",
+  "character": "pemberton",
+  "trigger": "game_win",
+  "text": "You gave me one chance. That’s one too many.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_win-04",
+  "character": "pemberton",
+  "trigger": "game_win",
+  "text": "Review it. Properly. Not just the blunders.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_win-05",
+  "character": "pemberton",
+  "trigger": "game_win",
+  "text": "Better than last week. Don’t let it go to your head.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_win-06",
+  "character": "pemberton",
+  "trigger": "game_win",
+  "text": "Toby would have held that. Just so you know.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_loss-01",
+  "character": "pemberton",
+  "trigger": "game_loss",
+  "text": "Hm. Yes. Well played. I was testing you.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_loss-02",
+  "character": "pemberton",
+  "trigger": "game_loss",
+  "text": "Correct. That was correct. Do it on Saturday.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_loss-03",
+  "character": "pemberton",
+  "trigger": "game_loss",
+  "text": "Good. You found the plan and stuck to it.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_loss-04",
+  "character": "pemberton",
+  "trigger": "game_loss",
+  "text": "Don’t get used to it.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_loss-05",
+  "character": "pemberton",
+  "trigger": "game_loss",
+  "text": "That’s the lesson learned. Now do it against someone who isn’t going easy.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_loss-06",
+  "character": "pemberton",
+  "trigger": "game_loss",
+  "text": "I let you have the centre. You took it. Good.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-plan_hint-01",
+  "character": "pemberton",
+  "trigger": "plan_hint",
+  "text": "I’m going to put a rook on the open file. Stop me.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-plan_hint-02",
+  "character": "pemberton",
+  "trigger": "plan_hint",
+  "text": "Watch my knight. It wants the square in front of your pawns.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-plan_hint-03",
+  "character": "pemberton",
+  "trigger": "plan_hint",
+  "text": "I’m castling queenside. Think about what that means for your attack.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-plan_hint-04",
+  "character": "pemberton",
+  "trigger": "plan_hint",
+  "text": "My plan is simple: trade pieces and win the ending. What’s yours?",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-plan_hint-05",
+  "character": "pemberton",
+  "trigger": "plan_hint",
+  "text": "I’m about to push a pawn in the centre. Is that good for me? Work it out.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-plan_hint-06",
+  "character": "pemberton",
+  "trigger": "plan_hint",
+  "text": "Notice I haven’t moved my king yet. That should interest you.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-player_blunder-01",
+  "character": "pemberton",
+  "trigger": "player_blunder",
+  "text": "No. Take it back and look again. Checks, captures, threats.",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-player_blunder-02",
+  "character": "pemberton",
+  "trigger": "player_blunder",
+  "text": "You didn’t look at my reply. You never look at my reply.",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-player_blunder-03",
+  "character": "pemberton",
+  "trigger": "player_blunder",
+  "text": "That’s a piece. Use the takeback. That’s what Tuesdays are for.",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-strong_move-01",
+  "character": "pemberton",
+  "trigger": "strong_move",
+  "text": "Good. That’s the move.",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-strong_move-02",
+  "character": "pemberton",
+  "trigger": "strong_move",
+  "text": "Yes. I’d have played that.",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-strong_move-03",
+  "character": "pemberton",
+  "trigger": "strong_move",
+  "text": "Hm. Better than I expected.",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-bot_blunder-01",
+  "character": "pemberton",
+  "trigger": "bot_blunder",
+  "text": "I’ve left something there. On purpose, obviously. Find it.",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-bot_blunder-02",
+  "character": "pemberton",
+  "trigger": "bot_blunder",
+  "text": "There’s a tactic on the board. I’m not saying where.",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-long_think-01",
+  "character": "pemberton",
+  "trigger": "long_think",
+  "text": "(Pemberton folds his arms and waits.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-long_think-02",
+  "character": "pemberton",
+  "trigger": "long_think",
+  "text": "(Pemberton glances across at Toby’s board, then back.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-long_think-03",
+  "character": "pemberton",
+  "trigger": "long_think",
+  "text": "(Pemberton taps a square with one finger, then withdraws it.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-13",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "Tuesday again. Good. You’re one of the ones who comes back.",
+  "expression": "neutral",
+  "conditions": {
+   "minRematch": 6
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-pemberton-game_start-14",
+  "character": "pemberton",
+  "trigger": "game_start",
+  "text": "You’re improving. Don’t tell anyone I said so.",
+  "expression": "neutral",
+  "conditions": {
+   "minRematch": 6
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_start-01",
+  "character": "ray",
+  "trigger": "game_start",
+  "text": "Juniors are all picked up. I’ve got time for one.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_start-02",
+  "character": "ray",
+  "trigger": "game_start",
+  "text": "Right, a grown-up game. Makes a change.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_start-03",
+  "character": "ray",
+  "trigger": "game_start",
+  "text": "Oscar says you’re decent. Let’s see.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_start-04",
+  "character": "ray",
+  "trigger": "game_start",
+  "text": "I’ll try not to explain everything. Force of habit.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_start-05",
+  "character": "ray",
+  "trigger": "game_start",
+  "text": "Go on then. I’ve been teaching the Italian all night.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_start-06",
+  "character": "ray",
+  "trigger": "game_start",
+  "text": "Evening. Priya still got my book? Never mind.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_start-07",
+  "character": "ray",
+  "trigger": "game_start",
+  "text": "I don’t get many games these days. Be gentle. Or don’t.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_win-01",
+  "character": "ray",
+  "trigger": "game_win",
+  "text": "Good game. You’d do well on junior night. As a teacher, I mean.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_win-02",
+  "character": "ray",
+  "trigger": "game_win",
+  "text": "There we are. Same mistake as the under-twelves, mind.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_win-03",
+  "character": "ray",
+  "trigger": "game_win",
+  "text": "Nice try. Have a look at that ending later.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_win-04",
+  "character": "ray",
+  "trigger": "game_win",
+  "text": "I enjoyed that. Come back when the juniors are off.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_loss-01",
+  "character": "ray",
+  "trigger": "game_loss",
+  "text": "Well played. I’ll be telling the juniors about that one.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_loss-02",
+  "character": "ray",
+  "trigger": "game_loss",
+  "text": "Fair enough. I was thinking about the fixture list.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_loss-03",
+  "character": "ray",
+  "trigger": "game_loss",
+  "text": "That was very good. I mean it.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-game_loss-04",
+  "character": "ray",
+  "trigger": "game_loss",
+  "text": "You’ve got a plan and you stick to it. That’s most of it.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-long_think-01",
+  "character": "ray",
+  "trigger": "long_think",
+  "text": "(Ray checks the junior room door, then goes back to the board.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "x-ray-long_think-02",
+  "character": "ray",
+  "trigger": "long_think",
+  "text": "(Ray rubs his eyes. Long night.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
  }
 ]

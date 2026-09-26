@@ -141,10 +141,21 @@ export function storyOffset(character: Character, chaptersDone: number): number 
 /**
  * Background members who turn up on practice night (Joseph, Sep 2026: side
  * characters bulk out the practice games). Not part of the story; their
- * ratings are fixed after trial night (data/members.ts). Malcolm (league
- * nights only) and Ray (running junior night on Thursdays) never come.
+ * ratings are fixed after trial night (data/members.ts). Ray plays once
+ * junior night's finished; Malcolm (league nights only) never comes.
  */
 export const PRACTICE_REGULARS: Character[] = [
+  {
+    id: 'ray',
+    name: 'Ray',
+    strength: 'fixed',
+    offset: 190,
+    style: 'solid',
+    thinkSpeed: 1,
+    resigns: 'normal',
+    offersDraw: 'rarely',
+    acceptsDraws: true,
+  },
   {
     id: 'sheila',
     name: 'Sheila',
@@ -169,6 +180,24 @@ export const PRACTICE_REGULARS: Character[] = [
   },
 ]
 
+/**
+ * Coach Pemberton as an opponent: Tuesday's coached game. He plays at
+ * exactly the player's level (a good coach pitches it), and never offers or
+ * takes draws: it's a lesson.
+ */
+export const COACH: Character = {
+  id: 'pemberton',
+  name: 'Coach Pemberton',
+  strength: 'scaling',
+  offset: 0,
+  style: 'adaptive',
+  thinkSpeed: 1,
+  resigns: 'normal',
+  offersDraw: 'rarely',
+  acceptsDraws: false,
+  storyOffsets: [0],
+}
+
 export function findCharacter(id: string): Character | undefined {
-  return CHARACTERS.find((c) => c.id === id) ?? PRACTICE_REGULARS.find((c) => c.id === id)
+  return CHARACTERS.find((c) => c.id === id) ?? PRACTICE_REGULARS.find((c) => c.id === id) ?? (id === COACH.id ? COACH : undefined)
 }

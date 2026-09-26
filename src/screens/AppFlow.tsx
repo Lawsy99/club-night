@@ -27,6 +27,7 @@ import { inferRepertoire } from '../logic/repertoire'
 import { clubLadder, ladderChanges, type LadderNews } from '../logic/ladder'
 import { LadderScreen } from './LadderScreen'
 import { CalendarScreen } from './CalendarScreen'
+import { SCOUTING_DEMOS } from '../data/scoutingDemos'
 import { ACT_1 } from '../data/act1'
 import { CHARACTERS } from '../data/characters'
 import { rivalTarget } from '../logic/rival'
@@ -85,7 +86,7 @@ type View = (typeof VIEWS)[number]
  * and not Toby's trial-night game (it doesn't count).
  */
 const isRated = (g: PathGame | undefined) =>
-  !!g && g.kind !== 'friendly' && g.kind !== 'trial' && g.kind !== 'exhibition'
+  !!g && g.kind !== 'friendly' && g.kind !== 'coaching' && g.kind !== 'trial' && g.kind !== 'exhibition'
 
 /**
  * The settings live above everything else, so every board follows the
@@ -180,8 +181,13 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
     // What the player usually plays, from their recent games (for the "your opening" notes).
     const repertoire = await usualOpenings().catch(() => ({}))
     // Scouting report before matches and the first (assisted) friendly against someone.
-    const onTrialNight = pathGame.kind === 'trial' || pathGame.kind === 'exhibition'
-    const scouted = !onTrialNight && (pathGame.kind !== 'friendly' || pathGame.stage === 'assisted')
+    // Scouting report: before matches and cup games, and before the first
+    // practice game against someone new (their first meeting).
+    const scouted =
+      pathGame.kind === 'match' ||
+      pathGame.kind === 'cup-round' ||
+      pathGame.kind === 'boss' ||
+      (pathGame.kind === 'friendly' && h2h.played === 0 && !!SCOUTING_DEMOS[pathGame.opponent])
     const scouting = scouted
       ? scoutingReport({
           character: pathGame.opponent,
@@ -277,7 +283,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
     if (next.kind === 'lesson') updateProgress({ ...progress, warmupDone: next.chapterId })
     setView('home')
   }
-  if (view === 'warmup') return <MistakesDeckScreen warmup onBack={finishWarmup} />
+  if (view === 'warmup') return <MistakesDeckScreen warmup onBack={() => setView('home')} onDone={finishWarmup} />
 
   if (view === 'puzzles' && next.kind === 'play' && next.targetedPuzzles) {
     return (
@@ -362,13 +368,11 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       onPlay={startPathGame}
       onStartLesson={() => setView('lesson')}
       onTargetedPuzzles={() => setView('puzzles')}
-      onOpenDeck={() => setView('deck')}
       onOpenHistory={() => setView('history')}
       onOpenStats={() => setView('stats')}
       onOpenSettings={() => setView('settings')}
       onSetName={(playerName) => updateProgress({ ...progress, playerName })}
       onStartWarmup={() => setView('warmup')}
-      onSkipWarmup={finishWarmup}
       onSkipStep={() => {
         setLastChange(null)
         if (next.kind === 'lesson') updateProgress(completeLesson(progress))
@@ -412,7 +416,7 @@ async function gameMilestones(
 ): Promise<Milestone[]> {
   const path = finished.path
   if (!path) return []
-  const real = path.kind !== 'friendly' && path.kind !== 'exhibition'
+  const real = path.kind !== 'friendly' && path.kind !== 'exhibition' && path.kind !== 'coaching'
   const opponent = path.opponent
   const regulars = ACT_1.chapters.map((c) => c.opponent).filter((id) => id !== 'toby')
   // Regulars beaten in a real game, from the archive, plus this game.

@@ -50,7 +50,14 @@ export type Progress = {
   milestones?: string[]
   /** Something for the next opponent to notice ("rating"), said once at the start of the next game. */
   notice?: string | null
+  /** This week's coached game against Pemberton (Tuesday, after the lesson) is done. */
+  coachingDone?: boolean
+  /** This week's Saturday match: best of three (Joseph, Sep 2026). */
+  series?: { wins: number; losses: number }
 }
+
+/** Saturday's match is best of three: first to two. */
+export const SERIES_TO_WIN = 2
 
 export type RatingPoint = { at: number; rating: number }
 
@@ -62,12 +69,12 @@ function withHistory(p: Progress, rating: PlayerRating | null, at = Date.now()):
   return [...(p.ratingHistory ?? []), { at, rating: Math.round(rating.rating) }].slice(-MAX_HISTORY)
 }
 
-/** A chapter opens with a warm-up when at least this many deck cards are due. */
-export const WARMUP_MIN_DUE = 3
-
-/** Should this chapter start with a warm-up from the mistakes deck? */
-export function wantsWarmup(p: Progress, next: NextStep, dueCount: number): boolean {
-  return next.kind === 'lesson' && dueCount >= WARMUP_MIN_DUE && p.warmupDone !== next.chapterId
+/**
+ * Should coaching night start with warm-ups? Whenever any of the player's
+ * past errors are waiting to be put right: part of the week, not optional.
+ */
+export function wantsWarmup(p: Progress, next: NextStep, waiting: number): boolean {
+  return next.kind === 'lesson' && waiting > 0 && p.warmupDone !== next.chapterId
 }
 
 export const NEW_PROGRESS: Progress = {
@@ -86,8 +93,11 @@ export const NEW_PROGRESS: Progress = {
   recentReal: [],
 }
 
-/** 'exhibition': trial night's last game, against Toby at full strength (unrated). */
-export type StepKind = 'trial' | 'exhibition' | 'friendly' | 'match' | 'cup-round' | 'boss'
+/**
+ * 'exhibition': trial night's last game, against Toby at full strength (unrated).
+ * 'coaching': Tuesday's game against Pemberton, at the player's level, full help (unrated).
+ */
+export type StepKind = 'trial' | 'exhibition' | 'coaching' | 'friendly' | 'match' | 'cup-round' | 'boss'
 
 /** What a game counts as on the path. Stored with the game. */
 export type PathGame = {
@@ -186,42 +196,66 @@ export function nextStep(p: Progress): NextStep {
         location: sessionLabel('coaching'),
       }
     }
+    // Tuesday, after the lesson: a game against Pemberton, who plays at your
+    // level, with every kind of help (Joseph, Sep 2026: what a good coach does).
+    if (!p.coachingDone) {
+      return {
+        kind: 'play',
+        game: {
+          kind: 'coaching',
+          opponent: 'pemberton',
+          rating: rounded(p.rating ? p.rating.rating : p.baseline),
+          stage: 'assisted',
+          label: 'A game with Coach Pemberton',
+          location: sessionLabel('coaching'),
+          chapter: ch.id,
+        },
+        optionalFriendly: null,
+        note: 'He plays at your level. Full help: hints, takebacks, the best line.',
+      }
+    }
     const rating = opponentRating(p, ch.opponent)
-    const met = p.met.includes(ch.opponent)
-    // Practice night: the week's person first, then whoever else is in.
+    // Thursday, practice night: the week's person first, then whoever else is
+    // in, one stronger and one weaker, as at a real club. Light help.
     const friendly = (k: number): PathGame => {
       const opponent = practiceOpponent(p, k)
-      const first = k === 0
       return {
         kind: 'friendly',
         opponent,
         rating: opponentRating(p, opponent),
-        // Someone new gets an assisted game first; everything else is guided.
-        stage: first && !met ? 'assisted' : 'guided',
+        stage: 'guided',
         label: k < PRACTICE_GAMES ? `Practice game ${k + 1} of ${PRACTICE_GAMES} vs ${nameOf(opponent)}` : `Practice game vs ${nameOf(opponent)}`,
         location: sessionLabel('practice'),
         chapter: ch.id,
       }
     }
+    const unlocked = matchUnlocked(p)
+    if (!unlocked) {
+      return { kind: 'play', game: friendly(p.friendlies.played), optionalFriendly: null, note: null }
+    }
+    // Saturday: best of three against the week's person.
+    const series = p.series ?? { wins: 0, losses: 0 }
+    const gameNo = series.wins + series.losses + 1
+    const score = gameNo === 1 ? '' : ` · ${series.wins}–${series.losses}`
     const match: PathGame = {
       kind: 'match',
       opponent: ch.opponent,
       rating,
       stage: 'real',
-      label: ch.matchLabel,
+      label: `${ch.matchLabel}, game ${gameNo}${score}`,
       location: sessionLabel('match'),
       chapter: ch.id,
-    }
-    const unlocked = matchUnlocked(p)
-    if (!unlocked) {
-      return { kind: 'play', game: friendly(p.friendlies.played), optionalFriendly: null, note: null }
     }
     return {
       kind: 'play',
       game: match,
       // One more practice game first, if wanted (against someone else who's in).
-      optionalFriendly: friendly(Math.max(PRACTICE_GAMES, p.friendlies.played)),
-      note: p.matchLost ? 'Replay the match, or warm up with a practice game first.' : null,
+      optionalFriendly: gameNo === 1 ? friendly(Math.max(PRACTICE_GAMES, p.friendlies.played)) : null,
+      note: p.matchLost
+        ? 'Best of three again. Warm up with a practice game first, if you like.'
+        : gameNo === 1
+          ? `Best of three against ${nameOf(ch.opponent)}.`
+          : null,
     }
   }
 
@@ -280,9 +314,18 @@ export function practiceOpponent(p: Progress, k: number): string {
   const ch = ACT_1.chapters[p.chapter]
   if (!ch) return 'marjorie'
   if (k === 0) return ch.opponent
-  const pool = [...new Set([...p.met.filter((id) => id !== ch.opponent), ...PRACTICE_REGULARS.map((c) => c.id)])]
-  // A different starting point each week, then the next people along.
-  return pool[(p.chapter * 5 + (k - 1)) % pool.length]
+  // Every now and then, your rival turns up (not in his own week).
+  if (k === 1 && p.chapter % 4 === 2 && ch.opponent !== 'toby') return 'toby'
+  const you = p.rating ? p.rating.rating : p.baseline
+  const pool = [...new Set([...p.met, ...PRACTICE_REGULARS.map((c) => c.id)])].filter(
+    (id) => id !== ch.opponent && id !== 'toby',
+  )
+  // One stronger than you, one weaker, as at a real club (if there are any).
+  const stronger = pool.filter((id) => opponentRating(p, id) > you)
+  const weaker = pool.filter((id) => opponentRating(p, id) <= you)
+  const from = k === 1 ? (stronger.length ? stronger : pool) : weaker.length ? weaker : pool
+  // A different starting point each week, then the next along.
+  return from[(p.chapter * 5 + k) % from.length]
 }
 
 /** The opening families each boss plays (for the targeted puzzle set). */
@@ -330,6 +373,9 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
     return { ...placed, stage: 'act' }
   }
 
+  // The coached game: a lesson, never rated. Win or lose, Tuesday is done.
+  if (game.kind === 'coaching') return { ...p, coachingDone: true }
+
   if (game.kind === 'friendly') {
     // Friendlies never change the rating; every practice game this week counts.
     const ch = ACT_1.chapters[p.chapter]
@@ -345,12 +391,27 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
   // Real games: rating, then the safety valve (never during the cup).
   let next = rateReal(p, game.rating, won, accuracyStrength)
   if (game.kind === 'match') {
-    if (won) {
+    // Best of three: each game is rated; first to two takes the week.
+    const before = next.series ?? { wins: 0, losses: 0 }
+    const series = { wins: before.wins + (won ? 1 : 0), losses: before.losses + (won ? 0 : 1) }
+    if (series.wins >= SERIES_TO_WIN) {
       const met = next.met.includes(game.opponent) ? next.met : [...next.met, game.opponent]
-      next = { ...next, met, chapter: next.chapter + 1, lessonDone: false, friendlies: { played: 0, wonGuided: false }, matchLost: false }
+      next = {
+        ...next,
+        met,
+        chapter: next.chapter + 1,
+        lessonDone: false,
+        coachingDone: false,
+        friendlies: { played: 0, wonGuided: false },
+        matchLost: false,
+        series: { wins: 0, losses: 0 },
+      }
       if (next.chapter >= ACT_1.chapters.length) next = startCup(next)
+    } else if (series.losses >= SERIES_TO_WIN) {
+      // Lost the series: it's played again from 0–0.
+      next = { ...next, matchLost: true, series: { wins: 0, losses: 0 } }
     } else {
-      next = { ...next, matchLost: true }
+      next = { ...next, series }
     }
     return next
   }

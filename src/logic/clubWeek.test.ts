@@ -25,6 +25,9 @@ describe('the club week', () => {
     expect(clubWeek(p)).toMatchObject({ title: 'Week 1', subtitle: ACT_1.chapters[0].title })
     expect(states(p)).toEqual(['today', 'later', 'later'])
     p = completeLesson(p)
+    // Tuesday isn't done until the coached game has been played.
+    expect(states(p)).toEqual(['today', 'later', 'later'])
+    p = { ...p, coachingDone: true }
     expect(states(p)).toEqual(['done', 'today', 'later'])
     expect(clubWeek(p)!.slots[1].name).toBe('Practice 1/3')
     // Three practice games open Saturday.

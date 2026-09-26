@@ -6,6 +6,7 @@ import {
   NEW_PROGRESS,
   nextStep,
   opponentRating,
+  practiceOpponent,
   recordGame,
   wantsWarmup,
   type Progress,
@@ -16,6 +17,11 @@ function nextGame(p: Progress) {
   const step = nextStep(p)
   if (step.kind !== 'play') throw new Error(`expected a game, got ${step.kind}`)
   return step
+}
+
+/** Past this week's lesson and coached game: practice night is next. */
+function readyForPractice(): Progress {
+  return { ...completeLesson(throughTrial()), coachingDone: true }
 }
 
 /** Four placement games, then Toby's game (lost, as intended). */
@@ -69,7 +75,8 @@ describe('the path', () => {
     const p = throughTrial()
     const next = nextStep(p)
     expect(wantsWarmup(p, next, 5)).toBe(true)
-    expect(wantsWarmup(p, next, 2)).toBe(false) // too few due to bother
+    expect(wantsWarmup(p, next, 1)).toBe(true)
+    expect(wantsWarmup(p, next, 0)).toBe(false) // nothing waiting
     expect(wantsWarmup({ ...p, warmupDone: ACT_1.chapters[0].id }, next, 5)).toBe(false)
     // Not mid-chapter (the lesson is done, games are next).
     const midChapter = completeLesson(p)
@@ -81,26 +88,37 @@ describe('the path', () => {
     expect(nextStep(p)).toMatchObject({ kind: 'lesson', chapterId: ACT_1.chapters[0].id, topic: 'Forks in the London' })
   })
 
-  it('runs practice night: the week’s person first (assisted if new), then two others who are in', () => {
+  it('follows the lesson with a coached game against Pemberton, at your level, full help, unrated', () => {
     let p = completeLesson(throughTrial())
+    const coached = nextGame(p).game
+    expect(coached).toMatchObject({ kind: 'coaching', opponent: 'pemberton', stage: 'assisted' })
+    expect(coached.rating).toBe(Math.round(p.rating!.rating / 5) * 5)
+    const before = p.rating!.rating
+    p = recordGame(p, coached, false, null)
+    expect(p.rating!.rating).toBe(before)
+    expect(nextGame(p).game.kind).toBe('friendly')
+  })
+
+  it('runs practice night: the week’s person, then one stronger and one weaker', () => {
+    let p = readyForPractice()
     const first = nextGame(p).game
-    expect(first).toMatchObject({ kind: 'friendly', stage: 'assisted', opponent: 'marjorie' })
+    expect(first).toMatchObject({ kind: 'friendly', stage: 'guided', opponent: 'marjorie' })
     p = recordGame(p, first, true, null)
     const second = nextGame(p).game
-    expect(second).toMatchObject({ kind: 'friendly', stage: 'guided' })
+    expect(second.kind).toBe('friendly')
     expect(second.opponent).not.toBe('marjorie')
+    expect(second.rating).toBeGreaterThan(p.rating!.rating) // someone stronger
     p = recordGame(p, second, true, null)
     const third = nextGame(p).game
-    expect(third.kind).toBe('friendly')
-    expect(third.opponent).not.toBe(second.opponent)
-    // Malcolm (league nights) and Ray (junior night) are never in on a Thursday.
-    for (const g of [second, third]) expect(['malcolm', 'ray']).not.toContain(g.opponent)
+    expect(third.rating).toBeLessThanOrEqual(p.rating!.rating) // someone weaker
+    // Malcolm only comes for league nights.
+    for (const g of [second, third]) expect(g.opponent).not.toBe('malcolm')
     p = recordGame(p, third, false, null)
     expect(nextGame(p).game.kind).toBe('match')
   })
 
   it('unlocks the match after three practice games, win or lose', () => {
-    let p = completeLesson(throughTrial())
+    let p = readyForPractice()
     for (let i = 0; i < 3; i++) p = recordGame(p, nextGame(p).game, false, null)
     const step = nextGame(p)
     expect(step.game.kind).toBe('match')
@@ -115,25 +133,29 @@ describe('the path', () => {
     expect(p.ratingHistory!.at(-1)!.rating).toBe(Math.round(p.rating!.rating))
   })
 
-  it('friendlies never change the rating; matches do', () => {
-    let p = completeLesson(throughTrial())
+  it('friendlies never change the rating; match games do', () => {
+    let p = readyForPractice()
     const before = p.rating!.rating
-    p = recordGame(p, nextGame(p).game, true, null)
+    for (let i = 0; i < 3; i++) p = recordGame(p, nextGame(p).game, true, null)
     expect(p.rating!.rating).toBe(before)
-    for (let i = 0; i < 2; i++) p = recordGame(p, nextGame(p).game, false, null)
-    p = recordGame(p, nextGame(p).game, true, null) // the match
+    p = recordGame(p, nextGame(p).game, true, null) // match game 1
     expect(p.rating!.rating).toBeGreaterThan(before)
   })
 
-  it('replays a lost match, then moves to the next chapter on a win', () => {
-    let p = completeLesson(throughTrial())
+  it('plays Saturday as best of three: first to two; losing two replays it from 0–0', () => {
+    let p = readyForPractice()
     for (let i = 0; i < 3; i++) p = recordGame(p, nextGame(p).game, false, null)
-    const match = nextGame(p).game
-    p = recordGame(p, match, false, null)
-    expect(nextGame(p).game.kind).toBe('match')
-    expect(nextGame(p).note).toMatch(/Replay/)
-    p = recordGame(p, match, true, null)
+    p = recordGame(p, nextGame(p).game, true, null)
+    expect(nextGame(p).game.label).toMatch(/game 2 · 1–0/)
+    p = recordGame(p, nextGame(p).game, false, null)
+    p = recordGame(p, nextGame(p).game, false, null)
+    // Lost 1–2: the series starts again.
+    expect(p.series).toEqual({ wins: 0, losses: 0 })
+    expect(nextGame(p).note).toMatch(/Best of three again/)
+    p = recordGame(p, nextGame(p).game, true, null)
+    p = recordGame(p, nextGame(p).game, true, null)
     expect(p.chapter).toBe(1)
+    expect(p.coachingDone).toBe(false)
     expect(nextStep(p).kind).toBe('lesson')
   })
 
@@ -150,11 +172,10 @@ describe('the path', () => {
     expect(opponentRating({ ...p, chapter: 8 }, 'priya')).toBe(1180)
   })
 
-  it('in a week with someone already met, practice starts guided and includes people you know', () => {
-    let p = completeLesson(throughTrial())
-    p = { ...p, met: ['marjorie', 'dex'] }
-    const first = nextGame(p).game
-    expect(first).toMatchObject({ kind: 'friendly', stage: 'guided', opponent: 'marjorie' })
+  it('brings your rival to practice night now and then', () => {
+    const p = { ...readyForPractice(), chapter: 2, met: ['marjorie', 'dex'] }
+    expect(practiceOpponent(p, 1)).toBe('toby')
+    expect(practiceOpponent({ ...p, chapter: 3 }, 1)).not.toBe('toby')
   })
 
   it('runs the cup: three rounds, then the boss; a boss loss means qualifying again', () => {

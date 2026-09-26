@@ -8,7 +8,7 @@ import {
   dueCards,
   MAX_CARDS_PER_SESSION,
   nextDue,
-  WARMUP_CARDS,
+  warmupCards,
   retireCard,
   type Answer,
   type MistakeCard,
@@ -23,11 +23,13 @@ type QueueItem = { card: MistakeCard; repeat: boolean }
 
 type Props = {
   onBack: () => void
-  /** Warm-up before a chapter's lesson: fewer cards, and it leads on to the lesson. */
+  /** Coaching night's warm-ups: three recent errors, then on to the lesson. */
   warmup?: boolean
+  /** Warm-ups finished (leaving part-way doesn't count). */
+  onDone?: () => void
 }
 
-export function MistakesDeckScreen({ onBack, warmup = false }: Props) {
+export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
   const [queue, setQueue] = useState<QueueItem[] | null>(null)
   const [allCards, setAllCards] = useState<MistakeCard[]>([])
   const [index, setIndex] = useState(0)
@@ -39,8 +41,8 @@ export function MistakesDeckScreen({ onBack, warmup = false }: Props) {
       .then((cards) => {
         setAllCards(cards)
         // Short sittings: at most MAX_CARDS_PER_SESSION, oldest-due first.
-        const size = warmup ? WARMUP_CARDS : MAX_CARDS_PER_SESSION
-        setQueue(dueCards(cards).slice(0, size).map((card) => ({ card, repeat: false })))
+        const picked = warmup ? warmupCards(cards) : dueCards(cards).slice(0, MAX_CARDS_PER_SESSION)
+        setQueue(picked.map((card) => ({ card, repeat: false })))
       })
       .catch(() => setQueue([]))
   }, [warmup])
@@ -92,9 +94,9 @@ export function MistakesDeckScreen({ onBack, warmup = false }: Props) {
             <h1>Warm-up done</h1>
           </header>
           <p className="review-note">
-            {stillDue > 0 ? `${stillDue} more in the deck for another time.` : 'Nothing else due.'}
+            Any you got right are gone for good. Any you didn’t will come round again another week.
           </p>
-          <button type="button" className="review-continue" onClick={onBack}>
+          <button type="button" className="review-continue" onClick={onDone ?? onBack}>
             On to the lesson
           </button>
         </main>

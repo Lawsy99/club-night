@@ -14,9 +14,8 @@ import { findCharacter } from '../data/characters'
 import { NOTICEBOARD } from '../data/noticeboard'
 import { characterOpponentId } from '../data/opponents'
 import { shownRating } from '../logic/glicko2'
-import { dueCards } from '../logic/mistakesDeck'
+import { warmupCards } from '../logic/mistakesDeck'
 import { wantsWarmup, type NextStep, type PathGame, type Progress } from '../logic/path'
-import { WARMUP_CARDS } from '../logic/mistakesDeck'
 import { TRIAL_LENGTH } from '../logic/trialNight'
 import { clubWeek } from '../logic/clubWeek'
 import { sessionLabel } from '../data/clubWeek'
@@ -39,15 +38,13 @@ type Props = {
   onPlay: (game: PathGame) => void
   onStartLesson: () => void
   onTargetedPuzzles: () => void
-  onOpenDeck: () => void
   onOpenHistory: () => void
   onOpenStats: () => void
   onOpenSettings: () => void
   /** For players who started before names were asked for. */
   onSetName: (name: string) => void
-  /** A chapter's mistakes-deck warm-up: play it, or skip straight to the lesson. */
+  /** Coaching night's warm-ups (past errors), before the lesson. */
   onStartWarmup: () => void
-  onSkipWarmup: () => void
   onSkipStep: () => void
   onReset: () => void
 }
@@ -55,6 +52,7 @@ type Props = {
 const KIND_LABELS: Record<PathGame['kind'], string> = {
   trial: 'Trial night',
   exhibition: 'Trial night',
+  coaching: 'Coaching night',
   friendly: 'Practice night',
   match: 'Match',
   'cup-round': 'Knockout cup',
@@ -74,22 +72,21 @@ export function HomeScreen(props: Props) {
     onPlay,
     onStartLesson,
     onTargetedPuzzles,
-    onOpenDeck,
     onOpenHistory,
     onOpenStats,
     onOpenSettings,
     onSetName,
     onStartWarmup,
-    onSkipWarmup,
     onSkipStep,
     onReset,
   } = props
-  const [due, setDue] = useState<number | null>(null)
+  // Past errors waiting to be put right (the coach's warm-ups on Tuesday).
+  const [waiting, setWaiting] = useState(0)
 
   useEffect(() => {
     loadCards()
-      .then((cards) => setDue(dueCards(cards).length))
-      .catch(() => setDue(null))
+      .then((cards) => setWaiting(warmupCards(cards).length))
+      .catch(() => setWaiting(0))
   }, [])
 
   return (
@@ -130,8 +127,8 @@ export function HomeScreen(props: Props) {
         <ActProgress progress={progress} />
       </button>
 
-      {wantsWarmup(progress, next, due ?? 0) ? (
-        <WarmupCard due={due ?? 0} onStart={onStartWarmup} onSkip={onSkipWarmup} />
+      {wantsWarmup(progress, next, waiting) ? (
+        <WarmupCard count={waiting} onStart={onStartWarmup} />
       ) : (
         <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} onTargetedPuzzles={onTargetedPuzzles} />
       )}
@@ -141,21 +138,17 @@ export function HomeScreen(props: Props) {
       <Noticeboard progress={progress} next={next} />
 
       <nav className="home-links">
-        <button type="button" onClick={onOpenDeck}>
-          <strong>Mistakes deck</strong>
-          <span>{due ? `${due} due` : 'Nothing due'}</span>
-        </button>
         <button type="button" onClick={onOpenHistory}>
           <strong>Past games</strong>
-          <span>Review any game</span>
+          <span>Review any</span>
         </button>
         <button type="button" onClick={onOpenStats}>
           <strong>Stats</strong>
-          <span>Rating, record, openings</span>
+          <span>Your record</span>
         </button>
         <button type="button" onClick={onOpenSettings}>
           <strong>Settings</strong>
-          <span>Chatter, backup</span>
+          <span>Board, backup</span>
         </button>
       </nav>
 
@@ -247,25 +240,23 @@ function Noticeboard({ progress, next }: { progress: Progress; next: NextStep })
   )
 }
 
-/** Before a chapter's lesson: a few due cards from the mistakes deck. */
-function WarmupCard({ due, onStart, onSkip }: { due: number; onStart: () => void; onSkip: () => void }) {
-  const count = Math.min(due, WARMUP_CARDS)
+/** Coaching night starts with warm-ups: your own recent errors, freshest first. */
+function WarmupCard({ count, onStart }: { count: number; onStart: () => void }) {
   return (
     <section className="next-card">
-      <p className="next-kind">{sessionLabel('coaching')} · drills first</p>
-      <h2>{count} positions from your own games</h2>
+      <p className="next-kind">{sessionLabel('coaching')} · warm-ups</p>
+      <h2>
+        {count} position{count === 1 ? '' : 's'} from your own games
+      </h2>
       <p className="next-opponent">
         <Portrait who="pemberton" size={44} />
         <span>
           <strong>Coach Pemberton</strong>{' '}
-          <span className="next-rating">“A few from your own games first.”</span>
+          <span className="next-rating">“Your mistakes from last week. Find the better move.”</span>
         </span>
       </p>
       <button type="button" className="next-play" onClick={onStart}>
-        Start warm-up
-      </button>
-      <button type="button" className="next-secondary" onClick={onSkip}>
-        Skip to the lesson
+        Start warm-ups
       </button>
     </section>
   )
@@ -361,7 +352,9 @@ function PlayCard({
     <section className="next-card">
       <p className="next-kind">
         {/* Club-week games already say which night it is ("Thursday · practice night"). */}
-        {game.kind === 'friendly' || game.kind === 'match' ? game.location : `${KIND_LABELS[game.kind]} · ${game.location}`}
+        {game.kind === 'friendly' || game.kind === 'match' || game.kind === 'coaching'
+          ? game.location
+          : `${KIND_LABELS[game.kind]} · ${game.location}`}
       </p>
       <h2>{game.label}</h2>
       <p className="next-opponent">

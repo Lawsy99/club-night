@@ -144,7 +144,8 @@ export function GameScreen({
   }, [opponent.engine])
 
   // Dialogue: before the game, a little during friendlies, and after.
-  const gameType = game.path?.kind === 'friendly' ? 'friendly' : 'match'
+  // The coached game is talkative like a friendly (Pemberton explaining as he goes).
+  const gameType = game.path?.kind === 'friendly' || game.path?.kind === 'coaching' ? 'friendly' : 'match'
   const talk = game.talk ?? { rematch: 1, losingStreak: 0, lines: 0, lastLineMove: null, startSaid: false, endSaid: false }
   const dialogue = useDialogue({
     character: opponent.character?.id,

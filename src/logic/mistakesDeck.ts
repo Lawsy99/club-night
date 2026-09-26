@@ -29,8 +29,20 @@ export const MAX_ACTIVE_CARDS = 30
 /** Cards shown in one sitting; the rest wait for next time. */
 export const MAX_CARDS_PER_SESSION = 10
 
-/** A chapter's warm-up is a shorter sitting (design document: "up to 5 cards"). */
-export const WARMUP_CARDS = 5
+/**
+ * Coaching night opens with three warm-ups from the player's own recent
+ * errors (Joseph, Sep 2026: this replaces a separate deck, so they actually
+ * get done). Freshest first; one answered correctly is gone for good.
+ */
+export const WARMUP_CARDS = 3
+
+/** The warm-ups for tonight: the most recent errors not yet put right. */
+export function warmupCards(cards: readonly MistakeCard[]): MistakeCard[] {
+  return cards
+    .filter((c) => !c.retired)
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .slice(0, WARMUP_CARDS)
+}
 
 /**
  * Chess positions aren't vocabulary: minute-by-minute relearning steps make no
@@ -70,10 +82,14 @@ const GRADES: Record<Answer, Rating.Good | Rating.Hard | Rating.Again> = {
   revealed: Rating.Again,
 }
 
-/** The card after an answer, with its next review date worked out. */
+/**
+ * The card after an answer. Found it (on any try) and it's gone for good
+ * (Joseph, Sep 2026: the deck should only hold fresh errors, never pile up).
+ * Had to be shown the answer, and it comes back soon, on the usual schedule.
+ */
 export function answerCard(card: MistakeCard, answer: Answer, now = new Date()): MistakeCard {
   const { card: schedule } = scheduler.next(card.schedule, now, GRADES[answer])
-  return { ...card, schedule, retired: schedule.scheduled_days >= RETIRE_AFTER_DAYS }
+  return { ...card, schedule, retired: answer !== 'revealed' || schedule.scheduled_days >= RETIRE_AFTER_DAYS }
 }
 
 export function isDue(card: MistakeCard, now = new Date()): boolean {
