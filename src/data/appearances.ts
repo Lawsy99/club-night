@@ -2,6 +2,7 @@
 // "Characters and art": head and shoulders, one or two strong cues each,
 // muted colours). Drawn in code by components/Portrait.tsx until the
 // commissioned art arrives; only this file and that one change then.
+import type { Expression } from '../logic/dialogue'
 
 export type HairStyle = 'bun' | 'messy' | 'neat' | 'sides' | 'ponytail' | 'side-part' | 'quiff' | 'swept' | 'receding' | 'bob'
 export type Clothes = 'cardigan' | 'hoodie' | 'jumper' | 'shirt' | 'tie' | 'quarter-zip' | 'blazer' | 'polo-neck' | 'polo'
@@ -20,6 +21,8 @@ export type Appearance = {
   child?: boolean
   /** Toby's "annoyed" is a tight smile (design document, "Expression sets"). */
   tightSmile?: boolean
+  /** How they look while clearly winning, and clearly losing (neutral in between). */
+  moods?: { winning: Expression; losing: Expression }
 }
 
 export const APPEARANCES: Record<string, Appearance> = {
@@ -31,6 +34,7 @@ export const APPEARANCES: Record<string, Appearance> = {
     clothes: 'cardigan',
     clothesColour: '#a86a6f',
     extras: ['glasses-chain'],
+    moods: { winning: 'pleased', losing: 'annoyed' },
   },
   dex: {
     background: '#7f9c96',
@@ -40,6 +44,7 @@ export const APPEARANCES: Record<string, Appearance> = {
     clothes: 'hoodie',
     clothesColour: '#4f6f78',
     extras: ['headphones'],
+    moods: { winning: 'smug', losing: 'annoyed' },
   },
   oscar: {
     background: '#a9b98f',
@@ -50,6 +55,7 @@ export const APPEARANCES: Record<string, Appearance> = {
     clothesColour: '#34466a',
     extras: [],
     child: true,
+    moods: { winning: 'pleased', losing: 'annoyed' },
   },
   neil: {
     background: '#9fa7b3',
@@ -68,6 +74,8 @@ export const APPEARANCES: Record<string, Appearance> = {
     clothes: 'shirt',
     clothesColour: '#c2ad84',
     extras: ['moustache'],
+    // Never excited, never rattled.
+    moods: { winning: 'pleased', losing: 'neutral' },
   },
   priya: {
     background: '#c2a66b',
@@ -77,6 +85,7 @@ export const APPEARANCES: Record<string, Appearance> = {
     clothes: 'jumper',
     clothesColour: '#c79a3b',
     extras: ['glasses-round'],
+    moods: { winning: 'pleased', losing: 'surprised' },
   },
   graham: {
     background: '#8f9aa8',
@@ -86,6 +95,7 @@ export const APPEARANCES: Record<string, Appearance> = {
     clothes: 'tie',
     clothesColour: '#7a2f38',
     extras: ['glasses-square'],
+    moods: { winning: 'smug', losing: 'annoyed' },
   },
   toby: {
     background: '#8fa7b8',
@@ -96,6 +106,7 @@ export const APPEARANCES: Record<string, Appearance> = {
     clothesColour: '#2f3d5c',
     extras: [],
     tightSmile: true,
+    moods: { winning: 'smug', losing: 'annoyed' },
   },
   pemberton: {
     background: '#9a8f7c',
@@ -114,5 +125,7 @@ export const APPEARANCES: Record<string, Appearance> = {
     clothes: 'polo-neck',
     clothesColour: '#2a2a2e',
     extras: [],
+    // Her range is deliberately small.
+    moods: { winning: 'neutral', losing: 'neutral' },
   },
 }

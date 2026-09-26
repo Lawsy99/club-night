@@ -15,6 +15,8 @@ import { buildDemo } from '../logic/demo'
 import { PlayerStrip } from '../components/PlayerStrip'
 import { Portrait } from '../components/Portrait'
 import { playMoveSound } from '../components/moveSound'
+import { APPEARANCES } from '../data/appearances'
+import { moodFor } from '../logic/mood'
 import { HELP_STAGES } from '../data/helpStages'
 import { resolveOpponent } from '../data/opponents'
 import { analysePosition } from '../engine/analysis'
@@ -150,9 +152,18 @@ export function GameScreen({
     playerName,
     storyOnly: chatter === 'off',
   })
-  // The opponent's face shows the expression of their current line.
+  // The opponent's face: the expression of whatever they've just said, else
+  // how the game is going for them (or went, once it's over).
+  const moods = opponent.character ? APPEARANCES[opponent.character.id]?.moods : undefined
+  const gameMood = outcome
+    ? outcome.winner === null
+      ? 'neutral'
+      : outcome.winner === opponentColour
+        ? (moods?.winning ?? 'pleased')
+        : (moods?.losing ?? 'annoyed')
+    : moodFor(moods, game.opponentEvals?.at(-1) ?? null)
   const opponentFace =
-    dialogue.line && dialogue.line.face === opponent.character?.id ? dialogue.line.expression : 'neutral'
+    dialogue.line && dialogue.line.face === opponent.character?.id ? dialogue.line.expression : gameMood
   // Where this game sits in the story, so chapter lines ("kind:match chapter:c3") can be picked.
   const storyFlags = [
     ...(game.path ? [`kind:${game.path.kind}`] : []),
