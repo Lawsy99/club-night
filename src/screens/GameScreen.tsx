@@ -10,7 +10,7 @@ import { HINT_ARROW_COLOUR, lineArrows } from '../components/lineArrows'
 import { MoveStrip } from '../components/MoveStrip'
 import { DemoBoard } from '../components/DemoBoard'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
-import { buildDemo, demoSans } from '../logic/demo'
+import { buildDemo } from '../logic/demo'
 import { PlayerStrip } from '../components/PlayerStrip'
 import { Portrait } from '../components/Portrait'
 import { playMoveSound } from '../components/moveSound'
@@ -54,7 +54,7 @@ import { triggersFor } from '../logic/gameTriggers'
 import { useDialogue } from './useDialogue'
 import { Chess } from 'chess.js'
 import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
-import { nextInLine, repertoireHint, sanInWords } from '../logic/repertoire'
+import { repertoireHint, sanInWords } from '../logic/repertoire'
 import type { Chatter } from '../logic/settings'
 import '../components/ratings.css'
 import './GameScreen.css'
@@ -470,19 +470,11 @@ export function GameScreen({
 
   // Assisted and guided games only (no help in real games): the next move of
   // the opening the player usually plays, while the game is still following it.
-  // Your own opening first; otherwise the line Pemberton showed in his
-  // scouting report against this opponent, so what he teaches gets practised.
+  // (Pemberton's scouting line is never prompted move by move: that just told
+  // the player what to play. Removed Sep 2026.)
   const helpOn = (stage.id === 'assisted' || stage.id === 'guided') && playersTurn && !pending && !peeking && !viewing
   const ownLine = helpOn ? repertoireHint(sans, game.playerColour, game.repertoire) : null
-  const coachSan =
-    helpOn && !ownLine && opponent.character
-      ? nextInLine(sans, game.playerColour, demoSans(SCOUTING_DEMOS[opponent.character.id]?.[game.playerColour] ?? []))
-      : null
-  const bookNote = ownLine
-    ? { label: `Your ${ownLine.opening.replace(/^the /, '')}`, san: ownLine.san }
-    : coachSan
-      ? { label: 'Pemberton’s line', san: coachSan }
-      : null
+  const bookNote = ownLine ? { label: `Your ${ownLine.opening.replace(/^the /, '')}`, san: ownLine.san } : null
 
   const pendingLast = pending ?{ from: pending.uci.slice(0, 2), to: pending.uci.slice(2, 4) } : null
 

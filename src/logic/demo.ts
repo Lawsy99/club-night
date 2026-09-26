@@ -30,11 +30,6 @@ export function buildDemo(steps: readonly WrittenStep[], startFen?: string): Dem
 }
 
 /** A puzzle played out as an example: the setup move, then the solution. */
-/** All the moves a written demo plays, in order (ordinary notation). */
-export function demoSans(steps: readonly WrittenStep[]): string[] {
-  return steps.flatMap((s) => (s.moves ?? '').split(/\s+/).filter((t) => t && !/^\d+\.+$/.test(t)))
-}
-
 export function puzzleDemo(p: Puzzle, intro: string, caption: string): DemoStep[] {
   return [
     { caption: intro, moves: [p.moves[0]] },

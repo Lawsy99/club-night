@@ -274,7 +274,7 @@ Dialogue about clocks (pressing the clock with the wrong hand, starting your clo
 
 **The move rating** appears in practice games. In competitive games (revised Sep 2026) it's hidden; only a great move or a blunder shows, through the opponent's face and an occasional stage direction. It uses the same Lichess-style grading as the review.
 
-**Your opening, or Pemberton's line.** In assisted and guided games, while the game still follows the player's own usual opening (worked out from their games), or otherwise the line Pemberton showed in the scouting report against this opponent, a small note gives the next move in plain words. As White, the scouting report opens with a suggested opening to play against that opponent.
+**Your opening.** In assisted and guided games, while the game still follows the player's own usual opening (worked out from their games), a small note gives the next move in plain words. As White, the scouting report opens with a suggested opening to play against that opponent, but the game never prompts the moves of Pemberton's line: remembering them is the player's job, and a prompt would just tell them what to play.
 
 **The best-line panel** is shown on the board as arrows for the next few moves (your moves blue, the opponent's orange, each fainter than the last), with the score as text below.
 
