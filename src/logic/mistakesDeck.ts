@@ -62,6 +62,12 @@ export function warmupCards(cards: readonly MistakeCard[]): MistakeCard[] {
   for (const c of older) take(c)
   // 3. Only then the recent games, oldest of those first.
   for (const c of open) take(c)
+  // A mix (Joseph, Sep 2026): if a missed chance is waiting and none was
+  // picked, it takes the last place, so it isn't always "your mistake".
+  const missed = older.find((c) => c.kind === 'missed' && !picked.includes(c))
+  if (missed && picked.length === WARMUP_CARDS && !picked.some((c) => c.kind === 'missed')) {
+    picked[WARMUP_CARDS - 1] = missed
+  }
   return picked
 }
 

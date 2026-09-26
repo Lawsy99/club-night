@@ -146,7 +146,9 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
       </header>
       <h1 className="deck-title">
         {card.moveLabel}{' '}
-        <span className={`review-pill rating-${card.rating}`}>{RATING_LABELS[card.rating]}</span>
+        <span className={`review-pill rating-${card.rating}`}>
+          {card.kind === 'missed' ? 'Missed chance' : RATING_LABELS[card.rating]}
+        </span>
       </h1>
       <p className="deck-source">From a game on {formatDate(card.createdAt)}</p>
       <MomentTrainer key={`${index}-${card.id}`} moment={card} onFinished={handleFinished} />

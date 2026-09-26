@@ -19,4 +19,10 @@ export type Moment = {
    */
   prevMove?: string
   prevFen?: string
+  /**
+   * 'missed': the opponent had just slipped up and the player didn't punish
+   * it (Joseph, Sep 2026: missed opportunities, not only mistakes).
+   * 'mistake' (or missing): the player's own error.
+   */
+  kind?: 'mistake' | 'missed'
 }

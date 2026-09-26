@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { cardId, cardsFromMoments, type ReviewMoment } from './mistakeCards'
+import { cardId, cardsFromMoments, isMissedChance, type ReviewMoment } from './mistakeCards'
+
+describe('missed chances', () => {
+  it('are when their move handed you a real advantage and you let it go', () => {
+    expect(isMissedChance(20, 350)).toBe(true) // level, then they blundered
+    expect(isMissedChance(400, 450)).toBe(false) // you were already winning
+    expect(isMissedChance(0, 120)).toBe(false) // only a small chance
+  })
+})
 
 const moment = (ply: number, rating: ReviewMoment['rating']): ReviewMoment => ({
   fenBefore: '8/8/8/8/8/8/8/K6k w - - 0 1',

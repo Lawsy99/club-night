@@ -25,6 +25,9 @@ type Props = {
   ratingChange?: { from: number; to: number } | null
 }
 
+/** Games shorter than this (in single moves) aren't graded. */
+const SHORTEST_REVIEW = 8
+
 const RATING_ORDER: MoveRating[] = ['best', 'good', 'inaccuracy', 'mistake', 'blunder']
 
 const COUNT_LABELS: Record<MoveRating, [one: string, many: string]> = {
@@ -145,7 +148,9 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
           </div>
           <h1>
             {moment.moveLabel}{' '}
-            <span className={`review-pill rating-${moment.rating}`}>{RATING_LABELS[moment.rating]}</span>
+            <span className={`review-pill rating-${moment.rating}`}>
+              {moment.kind === 'missed' ? 'Missed chance' : RATING_LABELS[moment.rating]}
+            </span>
           </h1>
         </header>
         <MomentTrainer
@@ -197,6 +202,27 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
           {finalLabel}
         </button>
         {fullGameLink}
+      </main>
+    )
+  }
+
+  // A game over in a handful of moves (a resignation, a four-move mate) has
+  // nothing worth grading: say so, rather than showing empty numbers.
+  if (game.moves.length < SHORTEST_REVIEW) {
+    return (
+      <main className="review-screen">
+        <header>
+          <div className="review-topline">
+            <h1>Review</h1>
+          </div>
+          <p className="review-result">
+            {resultLine} {outcome && <span>{describeOutcome(outcome)}</span>}
+          </p>
+        </header>
+        <p className="review-note">Too short to review: only {Math.ceil(game.moves.length / 2)} moves.</p>
+        <button type="button" className="review-continue" onClick={onContinue}>
+          {finalLabel}
+        </button>
       </main>
     )
   }

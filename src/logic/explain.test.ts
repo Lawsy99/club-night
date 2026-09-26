@@ -12,7 +12,7 @@ describe('explainBestMove', () => {
 
   it('names a free piece', () => {
     const fen = replay(['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f3g5']).fen()
-    expect(explainBestMove(fen, 'd8g5', 300)).toBe('Qxg5 wins their knight for nothing: nothing can take back.')
+    expect(explainBestMove(fen, 'd8g5', 300)).toBe('Qxg5 wins their knight outright: nothing can take back.')
   })
 
   it('names a fork', () => {

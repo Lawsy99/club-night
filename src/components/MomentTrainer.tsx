@@ -153,7 +153,13 @@ export function MomentTrainer({ moment, onFinished }: Props) {
               {explainBestMove(moment.fenBefore, moment.bestMove, moment.bestCp, moment.played)}
             </p>
             <p className="moment-explanation">
-              And {moment.playedSan} in the game? {moment.explanation}
+              And {moment.playedSan} in the game?{' '}
+              {/* If the explanation is only about the move missed, don't say it twice. */}
+              {/^You (missed|had)/.test(moment.explanation)
+                ? moment.kind === 'missed'
+                  ? 'It let their mistake go.'
+                  : 'It let the chance go.'
+                : moment.explanation}
             </p>
           </div>
         </div>
@@ -168,7 +174,9 @@ export function MomentTrainer({ moment, onFinished }: Props) {
         {checking
           ? 'Checking…'
           : (feedback ??
-            `${theirSan ? `They played ${theirSan}. ` : ''}In the game you played ${moment.playedSan}. Find a better move.`)}
+            (moment.kind === 'missed'
+              ? `${theirSan ? `They played ${theirSan}, and it was a mistake. ` : 'They’d just slipped up. '}In the game you played ${moment.playedSan}. Find the move that punishes it.`
+              : `${theirSan ? `They played ${theirSan}. ` : ''}In the game you played ${moment.playedSan}. Find a better move.`))}
       </p>
       <p className="moment-tries">
         {triesLeft} {triesLeft === 1 ? 'try' : 'tries'} left

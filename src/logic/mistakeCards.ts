@@ -40,7 +40,10 @@ function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colou
   const forPlayer = (cp: number) => (player === 'w' ? cp : -cp)
   const cpBefore = forPlayer(evals[m.ply].cp)
   const cpAfter = forPlayer(evals[m.ply + 1].cp)
+  // Before the opponent's last move, from the player's side.
+  const cpEarlier = m.ply > 0 ? forPlayer(evals[m.ply - 1].cp) : 0
   return {
+    kind: isMissedChance(cpEarlier, cpBefore) ? 'missed' : 'mistake',
     fenBefore: m.fenBefore,
     playerColour: player,
     played: m.uci,
@@ -59,6 +62,15 @@ function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colou
     rating: m.rating,
     moveLabel: moveLabel(m),
   }
+}
+
+/**
+ * A missed chance: the opponent's last move handed over a real advantage
+ * (two pawns or more, from a position that wasn't already winning), and the
+ * player's reply let it go.
+ */
+export function isMissedChance(cpBeforeTheirMove: number, cpBeforeYourMove: number): boolean {
+  return cpBeforeYourMove >= 200 && cpBeforeYourMove - cpBeforeTheirMove >= 200 && cpBeforeTheirMove < 150
 }
 
 /** "14. Bxf7??" or "14… Nf6", with the usual annotation mark. */

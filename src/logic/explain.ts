@@ -102,7 +102,7 @@ export function explainBestMove(fenBefore: string, best: string, bestCp: number,
 
   if (move.captured) {
     const safe = after.attackers(move.to, opponent).length === 0
-    if (safe) return `${san} wins their ${NAMES[move.captured]} for nothing: nothing can take back.`
+    if (safe) return `${san} wins their ${NAMES[move.captured]} outright: nothing can take back.`
     if (VALUES[move.captured] > VALUES[move.piece]) {
       return `${san} wins material: your ${NAMES[move.piece]} for their ${NAMES[move.captured]}.`
     }

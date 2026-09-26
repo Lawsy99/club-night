@@ -40,6 +40,12 @@ describe('warm-ups', () => {
     expect(warmupCards(cards)).toHaveLength(3)
   })
 
+  it('mixes in a missed chance when one is waiting', () => {
+    const cards = [from(1, 4), from(2, 6), from(3, 5), { ...from(4, 3), kind: 'missed' as const }, from(5, 7), from(6, 9), from(7, 2)]
+    const ids = warmupCards(cards).map((c) => c.id)
+    expect(ids).toEqual(['g1:4', 'g2:6', 'g4:3'])
+  })
+
   it('never shows a retired card', () => {
     const cards = [{ ...from(1, 4), retired: true }, from(2, 6)]
     expect(warmupCards(cards).map((c) => c.id)).toEqual(['g2:6'])

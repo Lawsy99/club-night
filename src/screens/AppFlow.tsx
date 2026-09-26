@@ -482,7 +482,8 @@ async function gameMilestones(
       regularsBeaten: [...beaten],
       regulars,
       fixedRatings: after.fixedRatings,
-      errors: counts ? counts.mistake + counts.blunder : null,
+      // A clean game has to be a real game: at least 20 of your moves.
+      errors: counts && finished.moves.length >= 40 ? counts.mistake + counts.blunder : null,
     },
     before.milestones ?? [],
     names,
