@@ -58,5 +58,7 @@ Only build the current phase. Don't add features from later phases early.
 
 ## Current phase
 Phase 7 — Art, stats and polish (Phases 0–6 done: live at https://lawsy99.github.io/club-night/).
-Story review with Joseph is ongoing in `docs/story-outline.md` (open: Graham as the
-Taylor Doose figure, Vera's surname). Writing style: understated, no em dashes.
+Story review with Joseph in `docs/story-outline.md` is settled (Graham is the Taylor
+Doose figure; Vera's surname is Hart). Writing style: understated, no em dashes.
+Next up: keep playtesting and tuning from Joseph's feedback. Open question for him:
+should the "Your London: next, …" own-opening hint in assisted/guided games also go?
