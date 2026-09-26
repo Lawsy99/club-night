@@ -71,14 +71,8 @@ export function EndgameDrill({ position, onDone }: Props) {
   }, [thinking])
 
   const over = verdict !== 'going'
-  const message =
-    verdict === 'won'
-      ? position.success
-      : over
-        ? endgameAdvice(verdict)
-        : moves === 0
-          ? position.intro
-          : `${position.maxMoves - moves} moves left.`
+  // The method stays up while you play; the count goes underneath.
+  const message = verdict === 'won' ? position.success : over ? endgameAdvice(verdict) : position.intro
 
   return (
     <div className="coach-drill">
@@ -94,6 +88,11 @@ export function EndgameDrill({ position, onDone }: Props) {
         <Portrait who="pemberton" size={40} expression={verdict === 'won' ? 'pleased' : 'neutral'} />
         <p>{message}</p>
       </div>
+      {!over && (
+        <p className="coach-drill-progress">
+          {thinking ? 'They’re thinking…' : `${position.maxMoves - moves} moves left`}
+        </p>
+      )}
       {over && verdict !== 'won' && (
         <button type="button" className="review-continue" onClick={restart}>
           Try again
