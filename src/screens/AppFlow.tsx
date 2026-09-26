@@ -17,6 +17,7 @@ import {
   completeLesson,
   drawRule,
   NEW_PROGRESS,
+  storyPlayed,
   nextStep,
   recordGame,
   upgradeProgress,
@@ -30,6 +31,8 @@ import { inferRepertoire } from '../logic/repertoire'
 import { clubLadder, ladderChanges, type LadderNews } from '../logic/ladder'
 import { LadderScreen } from './LadderScreen'
 import { CalendarScreen } from './CalendarScreen'
+import { StoryScreen } from './StoryScreen'
+import { storyFor } from '../logic/storyContent'
 import { collectMistakes } from '../engine/collectMistakes'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
 import { ACT_1 } from '../data/act1'
@@ -130,6 +133,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
   const [milestoneBanner, setMilestoneBanner] = useState<Milestone[]>([])
   // Who the player passed on the club ladder (or who passed them) in the last game.
   const [ladderNews, setLadderNews] = useState<LadderNews[]>([])
+  // A story moment being watched again from the calendar.
+  const [replayStory, setReplayStory] = useState<string | null>(null)
 
   useEffect(() => {
     requestPersistentStorage()
@@ -287,7 +292,18 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
   if (view === 'stats') return <StatsScreen progress={progress} onBack={() => setView('home')} />
   const ladder = clubLadder(progress, progress.playerName ?? 'You')
   if (view === 'ladder' && ladder) return <LadderScreen ladder={ladder} news={ladderNews} onBack={() => setView('home')} />
-  if (view === 'calendar') return <CalendarScreen progress={progress} onBack={() => setView('home')} />
+  if (view === 'calendar') {
+    return (
+      <CalendarScreen
+        progress={progress}
+        onBack={() => setView('home')}
+        onReplayStory={(id) => {
+          setReplayStory(id)
+          setView('home')
+        }}
+      />
+    )
+  }
   if (view === 'settings') {
     return (
       <SettingsScreen settings={settings} onChange={onChangeSettings} onBack={() => setView('home')} />
@@ -374,6 +390,26 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
 
   // A game left with Pause (not finished): Home offers only a way back to it.
   const pausedGame = game && game.path && !outcomeOf(game) ? game.path : null
+
+  // Story moments play straight after the win that earned them, before Home
+  // (Joseph, Sep 2026). Also replayed from the calendar.
+  const pendingStory = pausedGame ? undefined : progress.pendingStory?.find((id) => storyFor(id))
+  if (view === 'home' && (replayStory || pendingStory)) {
+    const id = (replayStory ?? pendingStory)!
+    return (
+      <StoryScreen
+        key={id}
+        id={id}
+        playerName={progress.playerName}
+        onDone={() => {
+          if (replayStory) {
+            setReplayStory(null)
+            setView('calendar')
+          } else updateProgress(storyPlayed(progress, id))
+        }}
+      />
+    )
+  }
 
   return (
     <HomeScreen

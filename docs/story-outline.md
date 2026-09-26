@@ -215,7 +215,9 @@ The alternative is a new character, for example the pub landlord or the league s
 1. ~~Vera's surname~~ Decided: Hart.
 2. **The favouritism table.** Is that the right level: obvious by the end of the act, never said out loud?
 
-### C. A payoff every week (proposal, Sep 2026: for Joseph's go-ahead)
+### C. A payoff every week (built Sep 2026: src/data/weekStory.ts)
+
+Built as below, with small wording changes so every beat is true in the app (e.g. Terry's first Thursday is week 2). The monthly cutscenes are in src/data/cutscenes.ts and play straight after the week's way-out moment; both can be watched again from the club calendar, under "Moments".
 
 Joseph's note: each week should end with something that moves the story on and makes you want to finish next week, with small things progressing through the week.
 

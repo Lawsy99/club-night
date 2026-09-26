@@ -191,6 +191,17 @@
   color: var(--muted);
 }
 
+.club-week-beat {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--brass);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .club-week-day.later {
   color: var(--muted);
   border-style: dashed;

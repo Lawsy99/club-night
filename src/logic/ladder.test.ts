@@ -17,7 +17,8 @@ describe('the club ladder', () => {
   it('lists the cast and the background members by rating, with the player among them', () => {
     const p = withRating(1200)
     const ladder = clubLadder({ ...p, rating: { ...p.rating!, rating: p.baseline } }, 'Joseph')!
-    expect(ladder).toHaveLength(12)
+    expect(ladder).toHaveLength(13) // cast, background members, Terry, and you
+    expect(ladder.some((r) => r.id === 'terry')).toBe(true)
     expect(ladder[0].id).toBe('malcolm') // board one, well above
     expect(ladder.at(-1)!.id).toBe('bill') // a member since 1974, well below
     expect(ladder.find((r) => r.id === YOU)!.name).toBe('Joseph')

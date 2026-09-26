@@ -4,10 +4,23 @@ import { Portrait } from '../components/Portrait'
 import { findCharacter } from '../data/characters'
 import { seasonCalendar } from '../logic/calendar'
 import type { Progress } from '../logic/path'
+import { storyFor } from '../logic/storyContent'
 import './CalendarScreen.css'
 
-export function CalendarScreen({ progress, onBack }: { progress: Progress; onBack: () => void }) {
+type Props = {
+  progress: Progress
+  onBack: () => void
+  /** Watch a story moment again. */
+  onReplayStory: (id: string) => void
+}
+
+export function CalendarScreen({ progress, onBack, onReplayStory }: Props) {
   const months = seasonCalendar(progress)
+  // Story moments already seen, in the order they happened.
+  const moments = (progress.storySeen ?? []).flatMap((id) => {
+    const s = storyFor(id)
+    return s ? [{ id, label: s.title || s.kicker, scene: !!s.art }] : []
+  })
   return (
     <main className="calendar-screen">
       <header className="calendar-header">
@@ -43,6 +56,21 @@ export function CalendarScreen({ progress, onBack }: { progress: Progress; onBac
           </ol>
         </section>
       ))}
+      {moments.length > 0 && (
+        <section className="calendar-month">
+          <h2>Moments</h2>
+          <ul className="calendar-moments">
+            {moments.map((m) => (
+              <li key={m.id}>
+                <button type="button" onClick={() => onReplayStory(m.id)}>
+                  <span>{m.label}</span>
+                  <span className="calendar-moment-kind">{m.scene ? 'Scene' : 'On the way out'} ›</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <p className="calendar-note">More to come after the cup.</p>
     </main>
   )

@@ -7,6 +7,8 @@ import { characterRating, findCharacter, PRACTICE_REGULARS, storyOffset } from '
 import { MEMBERS } from '../data/members'
 import { sessionLabel } from '../data/clubWeek'
 import { findLesson } from '../data/lessons'
+import { WEEK_STORY } from '../data/weekStory'
+import { storyAfterCup, storyAfterWin } from './storyQueue'
 import { rateGame, type PlayerRating } from './glicko2'
 import { valveAdjustment, type RealGameResult } from './safetyValve'
 import {
@@ -58,6 +60,10 @@ export type Progress = {
   fixedVersion?: number
   /** The starting rating set after trial night (the fixed characters are measured from it). */
   trialStart?: number
+  /** Story moments waiting to play, in order ("wayout:c1", "scene:month-1"). */
+  pendingStory?: string[]
+  /** Story moments already played (the calendar can play them again). */
+  storySeen?: string[]
 }
 
 /**
@@ -76,6 +82,29 @@ export function upgradeProgress(p: Progress): Progress {
     if (c) fixedRatings[id] = characterRating(c, start)
   }
   return { ...p, fixedRatings, fixedVersion: FIXED_VERSION }
+}
+
+/** The next story moment has been played: off the queue, into the seen list. */
+export function storyPlayed(p: Progress, id: string): Progress {
+  return {
+    ...p,
+    pendingStory: (p.pendingStory ?? []).filter((s) => s !== id),
+    storySeen: [...(p.storySeen ?? []).filter((s) => s !== id), id],
+  }
+}
+
+/**
+ * This week's "Around the club" line on Home (Joseph, Sep 2026): Tuesday's
+ * once the coached game is done, Thursday's once practice night is.
+ */
+export function weekBeat(p: Progress): { day: 'Tuesday' | 'Thursday'; text: string } | null {
+  if (p.stage !== 'act') return null
+  const ch = ACT_1.chapters[p.chapter]
+  const story = ch ? WEEK_STORY[ch.id] : undefined
+  if (!story) return null
+  if (p.friendlies.played >= PRACTICE_GAMES) return { day: 'Thursday', text: story.thursday }
+  if (p.coachingDone) return { day: 'Tuesday', text: story.tuesday }
+  return null
 }
 
 /** Saturday's match is best of three: first to two. */
@@ -445,9 +474,12 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
     const series = { wins: before.wins + (won ? 1 : 0), losses: before.losses + (won ? 0 : 1) }
     if (series.wins >= SERIES_TO_WIN) {
       const met = next.met.includes(game.opponent) ? next.met : [...next.met, game.opponent]
+      const weekId = ACT_1.chapters[p.chapter]?.id
       next = {
         ...next,
         met,
+        // The week's closing moment (and the month's cutscene) play next.
+        pendingStory: [...(next.pendingStory ?? []), ...(weekId ? storyAfterWin(weekId) : [])],
         chapter: next.chapter + 1,
         lessonDone: false,
         coachingDone: false,
@@ -470,7 +502,7 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
   }
   // Boss: win the act, or back to qualifying (boss strength stays fixed).
   return won
-    ? { ...next, stage: 'act-complete' }
+    ? { ...next, stage: 'act-complete', pendingStory: [...(next.pendingStory ?? []), ...storyAfterCup()] }
     : { ...next, cup: { ...cup, round: 0, bossAttempts: cup.bossAttempts + 1, bossRating: Math.max(cup.bossRating, game.rating) } }
 }
 

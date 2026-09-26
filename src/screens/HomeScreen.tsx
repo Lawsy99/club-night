@@ -14,7 +14,7 @@ import { findCharacter } from '../data/characters'
 import { characterOpponentId } from '../data/opponents'
 import { shownRating } from '../logic/glicko2'
 import { warmupCards } from '../logic/mistakesDeck'
-import { wantsWarmup, type NextStep, type PathGame, type Progress } from '../logic/path'
+import { wantsWarmup, weekBeat, type NextStep, type PathGame, type Progress } from '../logic/path'
 import { TRIAL_LENGTH } from '../logic/trialNight'
 import { clubWeek } from '../logic/clubWeek'
 import { sessionLabel } from '../data/clubWeek'
@@ -245,6 +245,7 @@ function ActProgress({ progress }: { progress: Progress }) {
   // No act numbers on screen: it plays as one continuous story.
   const week = clubWeek(progress)
   if (!week) return null
+  const beat = weekBeat(progress)
   return (
     <div className="club-week">
       <p className="club-week-head">
@@ -264,8 +265,16 @@ function ActProgress({ progress }: { progress: Progress }) {
           </li>
         ))}
       </ol>
-      {/* One line of what else is going on at the club this week. */}
-      {week.note && <p className="club-week-note">{week.note}</p>}
+      {/* One line of what's going on at the club: the week's note to start
+          with, then what happened on Tuesday, then on Thursday (Joseph, Sep
+          2026: little things progressing through the week). */}
+      {beat ? (
+        <p className="club-week-note">
+          <span className="club-week-beat">Around the club · {beat.day}</span> {beat.text}
+        </p>
+      ) : (
+        week.note && <p className="club-week-note">{week.note}</p>
+      )}
     </div>
   )
 }
