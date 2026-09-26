@@ -29,6 +29,9 @@ export const MAX_ACTIVE_CARDS = 30
 /** Cards shown in one sitting; the rest wait for next time. */
 export const MAX_CARDS_PER_SESSION = 10
 
+/** A chapter's warm-up is a shorter sitting (design document: "up to 5 cards"). */
+export const WARMUP_CARDS = 5
+
 /**
  * Chess positions aren't vocabulary: minute-by-minute relearning steps make no
  * sense, so cards are scheduled in days. A missed card is shown once more at

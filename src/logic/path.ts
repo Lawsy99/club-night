@@ -43,6 +43,16 @@ export type Progress = {
   playerName?: string
   /** What the player plays, chosen when Coach Pemberton asks at the start of Act 1. */
   repertoire?: Repertoire
+  /** The chapter whose mistakes-deck warm-up has been done (or skipped). */
+  warmupDone?: string
+}
+
+/** A chapter opens with a warm-up when at least this many deck cards are due. */
+export const WARMUP_MIN_DUE = 3
+
+/** Should this chapter start with a warm-up from the mistakes deck? */
+export function wantsWarmup(p: Progress, next: NextStep, dueCount: number): boolean {
+  return next.kind === 'lesson' && dueCount >= WARMUP_MIN_DUE && p.warmupDone !== next.chapterId
 }
 
 export const NEW_PROGRESS: Progress = {

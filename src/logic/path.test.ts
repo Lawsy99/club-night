@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { ACT_1 } from '../data/act1'
-import { beginTrial, completeLesson, NEW_PROGRESS, nextStep, recordGame, type Progress } from './path'
+import { beginTrial, completeLesson, NEW_PROGRESS, nextStep, recordGame, wantsWarmup, type Progress } from './path'
 
 /** The game the Next card offers (fails the test if it isn't a game). */
 function nextGame(p: Progress) {
@@ -54,6 +54,17 @@ describe('the path', () => {
     const after = recordGame(oldSave, nextGame(oldSave).game, false, null)
     expect(after.stage).toBe('act')
     expect(after.rating?.rating).toBeGreaterThan(900)
+  })
+
+  it('warms up with the mistakes deck before a lesson, once per chapter, when cards are due', () => {
+    const p = throughTrial()
+    const next = nextStep(p)
+    expect(wantsWarmup(p, next, 5)).toBe(true)
+    expect(wantsWarmup(p, next, 2)).toBe(false) // too few due to bother
+    expect(wantsWarmup({ ...p, warmupDone: ACT_1.chapters[0].id }, next, 5)).toBe(false)
+    // Not mid-chapter (the lesson is done, games are next).
+    const midChapter = completeLesson(p)
+    expect(wantsWarmup(midChapter, nextStep(midChapter), 5)).toBe(false)
   })
 
   it('opens each chapter with its lesson', () => {

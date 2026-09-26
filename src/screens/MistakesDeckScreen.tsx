@@ -8,6 +8,7 @@ import {
   dueCards,
   MAX_CARDS_PER_SESSION,
   nextDue,
+  WARMUP_CARDS,
   retireCard,
   type Answer,
   type MistakeCard,
@@ -20,7 +21,13 @@ import './MistakesDeckScreen.css'
 /** A card in this session's queue; repeats are practice only (not re-graded). */
 type QueueItem = { card: MistakeCard; repeat: boolean }
 
-export function MistakesDeckScreen({ onBack }: { onBack: () => void }) {
+type Props = {
+  onBack: () => void
+  /** Warm-up before a chapter's lesson: fewer cards, and it leads on to the lesson. */
+  warmup?: boolean
+}
+
+export function MistakesDeckScreen({ onBack, warmup = false }: Props) {
   const [queue, setQueue] = useState<QueueItem[] | null>(null)
   const [allCards, setAllCards] = useState<MistakeCard[]>([])
   const [index, setIndex] = useState(0)
@@ -32,10 +39,11 @@ export function MistakesDeckScreen({ onBack }: { onBack: () => void }) {
       .then((cards) => {
         setAllCards(cards)
         // Short sittings: at most MAX_CARDS_PER_SESSION, oldest-due first.
-        setQueue(dueCards(cards).slice(0, MAX_CARDS_PER_SESSION).map((card) => ({ card, repeat: false })))
+        const size = warmup ? WARMUP_CARDS : MAX_CARDS_PER_SESSION
+        setQueue(dueCards(cards).slice(0, size).map((card) => ({ card, repeat: false })))
       })
       .catch(() => setQueue([]))
-  }, [])
+  }, [warmup])
 
   function handleFinished(answer: Answer) {
     setAnswered(true)
@@ -77,6 +85,21 @@ export function MistakesDeckScreen({ onBack }: { onBack: () => void }) {
     const active = allCards.filter((c) => !c.retired).length
     const learned = allCards.length - active
     const stillDue = dueCards(allCards).length
+    if (warmup) {
+      return (
+        <main className="review-screen">
+          <header>
+            <h1>Warm-up done</h1>
+          </header>
+          <p className="review-note">
+            {stillDue > 0 ? `${stillDue} more in the deck for another time.` : 'Nothing else due.'}
+          </p>
+          <button type="button" className="review-continue" onClick={onBack}>
+            On to the lesson
+          </button>
+        </main>
+      )
+    }
     return (
       <main className="review-screen">
         <header>
@@ -111,6 +134,7 @@ export function MistakesDeckScreen({ onBack }: { onBack: () => void }) {
           ‹ Back
         </button>
         <p className="review-kicker">
+          {warmup ? 'Warm-up · ' : ''}
           {item.repeat ? 'One more go' : `Card ${index + 1} of ${queue.length}`}
         </p>
       </header>

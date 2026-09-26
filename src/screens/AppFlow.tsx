@@ -49,7 +49,7 @@ import { PuzzleSetScreen } from './PuzzleSetScreen'
 import { ReviewScreen } from './ReviewScreen'
 import { WelcomeScreen } from './WelcomeScreen'
 
-const VIEWS = ['home', 'game', 'review', 'deck', 'history', 'lesson', 'puzzles'] as const
+const VIEWS = ['home', 'game', 'review', 'deck', 'warmup', 'history', 'lesson', 'puzzles'] as const
 type View = (typeof VIEWS)[number]
 
 /**
@@ -179,6 +179,13 @@ export function AppFlow() {
 
   if (view === 'deck') return <MistakesDeckScreen onBack={() => setView('home')} />
 
+  // The chapter's warm-up: done (or abandoned) either way, then on to the lesson.
+  const finishWarmup = () => {
+    if (next.kind === 'lesson') updateProgress({ ...progress, warmupDone: next.chapterId })
+    setView('home')
+  }
+  if (view === 'warmup') return <MistakesDeckScreen warmup onBack={finishWarmup} />
+
   if (view === 'puzzles' && next.kind === 'play' && next.targetedPuzzles) {
     return (
       <PuzzleSetScreen
@@ -261,6 +268,8 @@ export function AppFlow() {
       onOpenHistory={() => setView('history')}
       onSetName={(playerName) => updateProgress({ ...progress, playerName })}
       onSetRepertoire={(repertoire) => updateProgress({ ...progress, repertoire })}
+      onStartWarmup={() => setView('warmup')}
+      onSkipWarmup={finishWarmup}
       onSkipStep={() => {
         setLastChange(null)
         if (next.kind === 'lesson') updateProgress(completeLesson(progress))

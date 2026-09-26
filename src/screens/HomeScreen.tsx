@@ -13,7 +13,8 @@ import { NOTICEBOARD } from '../data/noticeboard'
 import { characterOpponentId } from '../data/opponents'
 import { shownRating } from '../logic/glicko2'
 import { dueCards } from '../logic/mistakesDeck'
-import type { NextStep, PathGame, Progress } from '../logic/path'
+import { wantsWarmup, type NextStep, type PathGame, type Progress } from '../logic/path'
+import { WARMUP_CARDS } from '../logic/mistakesDeck'
 import { TRIAL_LENGTH } from '../logic/trialNight'
 import { headToHead, loadCards } from '../storage/db'
 import './HomeScreen.css'
@@ -32,6 +33,9 @@ type Props = {
   onSetName: (name: string) => void
   /** Answering "Right. What do you play?" at the start of Act 1. */
   onSetRepertoire: (r: Repertoire) => void
+  /** A chapter's mistakes-deck warm-up: play it, or skip straight to the lesson. */
+  onStartWarmup: () => void
+  onSkipWarmup: () => void
   onSkipStep: () => void
   onReset: () => void
 }
@@ -57,6 +61,8 @@ export function HomeScreen(props: Props) {
     onOpenHistory,
     onSetName,
     onSetRepertoire,
+    onStartWarmup,
+    onSkipWarmup,
     onSkipStep,
     onReset,
   } = props
@@ -95,6 +101,8 @@ export function HomeScreen(props: Props) {
 
       {progress.stage === 'act' && !progress.repertoire ? (
         <RepertoireCard onChoose={onSetRepertoire} />
+      ) : wantsWarmup(progress, next, due ?? 0) ? (
+        <WarmupCard due={due ?? 0} onStart={onStartWarmup} onSkip={onSkipWarmup} />
       ) : (
         <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} onTargetedPuzzles={onTargetedPuzzles} />
       )}
@@ -199,6 +207,34 @@ function Noticeboard({ progress, next }: { progress: Progress; next: NextStep })
         “{notice.text}”<span className="noticeboard-by">{notice.speaker}</span>
       </p>
     </aside>
+  )
+}
+
+/** Before a chapter's lesson: a few due cards from the mistakes deck. */
+function WarmupCard({ due, onStart, onSkip }: { due: number; onStart: () => void; onSkip: () => void }) {
+  const count = Math.min(due, WARMUP_CARDS)
+  return (
+    <section className="next-card">
+      <p className="next-kind">Warm-up · before the lesson</p>
+      <h2>
+        {count} of your old mistakes
+      </h2>
+      <p className="next-opponent">
+        <span className="next-portrait" aria-hidden="true">
+          P
+        </span>
+        <span>
+          <strong>Coach Pemberton</strong>{' '}
+          <span className="next-rating">“A few from your own games first.”</span>
+        </span>
+      </p>
+      <button type="button" className="next-play" onClick={onStart}>
+        Start warm-up
+      </button>
+      <button type="button" className="next-secondary" onClick={onSkip}>
+        Skip to the lesson
+      </button>
+    </section>
   )
 }
 
