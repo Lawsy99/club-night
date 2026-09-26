@@ -558,7 +558,9 @@ Dialogue comes from a large library of short, pre-written lines, picked by what 
 | Moment | Friendlies | Matches |
 | --- | --- | --- |
 | Before the game | 1 to 3 bubbles | 1 to 3 bubbles |
-| During the game | Up to 3 lines per game, at least 6 moves apart | None. Only "Draw?" offers, and the portrait's expression still changes silently |
+| During the game | Up to 3 lines per game, at least 6 moves apart: reactions to the board, and "plan hints" where the character says what they're planning (teaching the player to read plans) | No chatter. Up to 2 silent stage directions at key moments ("(She stops stirring her tea.)"), at least 10 moves apart; plus "Draw?" offers |
+
+**Revised Sep 2026 (Joseph's feedback):** lines should respond to the board. Friendlies get plan hints tied to the opening on the board and the character's colour. Matches get tension as stage directions (never speech, so no one chats in a serious game). When the opponent has just blundered and the player has a big move available, the character sometimes gives it away (spoken in friendlies, a stage direction in matches), about half the time.
 | After the game | 1 or 2 bubbles | 1 or 2 bubbles |
 
 **Timing rules:** a line appears only straight after the bot's move, fades after about 4 seconds or on tap, and never covers the board or interrupts the player moving a piece. When several triggers fire at once, the most important wins: a blunder, a turnaround or a queen capture beats a check, which beats everything else.

@@ -37,7 +37,8 @@ import {
 } from '../logic/gameRecord'
 import { acceptsDraw, piecesLeft, shouldOfferDraw, shouldResign } from '../logic/opponentDecisions'
 import { planFor, shouldPausePlan } from '../logic/planPause'
-import { chatterAllowed, mostImportant } from '../logic/dialogue'
+import { chatterAllowed, matchLineAllowed, mostImportant, TENSION_MOVES } from '../logic/dialogue'
+import { detectOpening } from '../logic/planPause'
 import { triggersFor } from '../logic/gameTriggers'
 import { useDialogue } from './useDialogue'
 import { Chess } from 'chess.js'
@@ -167,22 +168,47 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
         piecesLeft: piecesLeft(fen),
         lastOfferMove: game.opponentLastOfferMove,
       })
-      // Friendly chatter: straight after the opponent's move, rationed.
+      // Lines straight after the opponent's move: friendly chatter (reactions,
+      // or now and then their plan), or in matches a rare silent moment.
       const moveNumber = chess.moveNumber()
+      const after = new Chess(fen)
+      const botMove = after.move({ from: move.slice(0, 2), to: move.slice(2, 4), promotion: move[4] })
+      const flags = boardFlags([...sans, botMove.san], piecesLeft(after.fen()), opponentColour)
+      const lineState = { linesSoFar: talk.lines, moveNumber, lastLineMove: talk.lastLineMove }
       let spoke = false
-      if (!offer && chatterAllowed({ gameType, linesSoFar: talk.lines, moveNumber, lastLineMove: talk.lastLineMove })) {
-        const botMove = new Chess(fen).move({ from: move.slice(0, 2), to: move.slice(2, 4), promotion: move[4] })
-        const trigger = mostImportant(triggersFor({ botMove, playerRating: ratedRef.current, botEvalCp: cp }))
-        spoke = trigger ? dialogue.speak(trigger) : false
+      if (!offer && gameType === 'friendly' && chatterAllowed({ gameType, ...lineState })) {
+        let trigger = mostImportant(triggersFor({ botMove, playerRating: ratedRef.current, botEvalCp: cp }))
+        // Nothing dramatic? Sometimes they say what they're planning instead.
+        if (!trigger && moveNumber >= 6 && moveNumber <= 25 && Math.random() < 0.4) trigger = 'plan_hint'
+        spoke = trigger ? dialogue.speak(trigger, false, flags) : false
+      } else if (!offer && gameType === 'match' && matchLineAllowed(lineState)) {
+        if (TENSION_MOVES.includes(moveNumber) && Math.abs(cp) <= 100) spoke = dialogue.speak('tension', false, flags)
       }
+      const talkAfter = spoke ? { ...talk, lines: talk.lines + 1, lastLineMove: moveNumber } : talk
       setGame((g) => {
         if (!g) return g
         let next = withMove(withOpponentEval(g, cp), move)
         if (offer) next = { ...next, opponentLastOfferMove: moveNumber }
-        if (spoke) next = { ...next, talk: { ...talk, lines: talk.lines + 1, lastLineMove: moveNumber } }
+        if (spoke) next = { ...next, talk: talkAfter }
         return next
       })
       if (offer) setBubble({ kind: 'offer' })
+
+      // Did that move hand the player a big chance? Sometimes the opponent gives it away.
+      if (!spoke && !offer) {
+        analysePosition(after.fen())
+          .then((a) => {
+            if (!a || cancelled) return
+            const playerCp = toCentipawns(a.score) // the player is to move
+            const swing = playerCp + cp // how much the player gained (cp was the opponent's view)
+            const allowed =
+              gameType === 'friendly' ? chatterAllowed({ gameType, ...lineState }) : matchLineAllowed(lineState)
+            if (swing >= 200 && allowed && Math.random() < 0.5 && dialogue.speak('opportunity', false, flags)) {
+              setGame((g) => (g ? { ...g, talk: { ...talkAfter, lines: talkAfter.lines + 1, lastLineMove: moveNumber } } : g))
+            }
+          })
+          .catch(() => undefined)
+      }
     })().catch((err: Error) => setEngineError(err.message))
     return () => {
       cancelled = true
@@ -533,6 +559,17 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
       </p>
     </main>
   )
+}
+
+/**
+ * Dialogue flags describing the board: which opening, which phase of the
+ * game, and which colour the speaking character has ("me:w" / "me:b"), so a
+ * plan line is only said by the side it belongs to.
+ */
+function boardFlags(sans: readonly string[], pieces: number, characterColour: 'w' | 'b'): string[] {
+  const opening = detectOpening(sans)
+  const phase = sans.length < 20 ? 'opening' : pieces <= 6 ? 'endgame' : 'middlegame'
+  return [...(opening ? [`opening:${opening}`] : []), `phase:${phase}`, `me:${characterColour}`]
 }
 
 function downloadLabel(status: MaiaStatus): string {

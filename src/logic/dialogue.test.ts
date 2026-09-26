@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   chatterAllowed,
+  matchLineAllowed,
   mostImportant,
   rememberLine,
   selectLine,
@@ -66,6 +67,23 @@ describe('dialogue selection', () => {
   it('picks the most important of several triggers', () => {
     expect(mostImportant(['castling', 'check_given', 'player_blunder'])).toBe('player_blunder')
     expect(mostImportant(['capture_minor', 'check_received'])).toBe('check_received')
+  })
+
+  it('allows matches two silent moments, 10 moves apart', () => {
+    expect(matchLineAllowed({ linesSoFar: 0, moveNumber: 15, lastLineMove: null })).toBe(true)
+    expect(matchLineAllowed({ linesSoFar: 1, moveNumber: 20, lastLineMove: 15 })).toBe(false)
+    expect(matchLineAllowed({ linesSoFar: 1, moveNumber: 25, lastLineMove: 15 })).toBe(true)
+    expect(matchLineAllowed({ linesSoFar: 2, moveNumber: 40, lastLineMove: 25 })).toBe(false)
+  })
+
+  it('matches lines by opening flags (plan hints)', () => {
+    const lines = [
+      line('london-plan', { trigger: 'plan_hint', conditions: { flags: ['opening:london'] } }),
+      line('any-plan', { trigger: 'plan_hint' }),
+    ]
+    const hint = { ...ctx, trigger: 'plan_hint' as const }
+    expect(selectLine(lines, { ...hint, flags: ['opening:french'] }, empty)?.id).toBe('any-plan')
+    expect(selectLine(lines, { ...hint, flags: ['opening:london'] }, empty, () => 0)?.id).toBe('london-plan')
   })
 
   it('rations chatter: friendlies only, 3 a game, 6 moves apart', () => {

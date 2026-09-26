@@ -868,5 +868,540 @@
   "conditions": {},
   "weight": 1,
   "once": false
+ },
+ {
+  "id": "marjorie-plan-01",
+  "character": "marjorie",
+  "trigger": "plan_hint",
+  "text": "I'll just pop my knight on e5, I think. It likes it there.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly",
+   "flags": [
+    "opening:london"
+   ]
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "marjorie-plan-02",
+  "character": "marjorie",
+  "trigger": "plan_hint",
+  "text": "My bishop's staying on that diagonal, dear. It's been there forty years.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly",
+   "flags": [
+    "opening:london"
+   ]
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "marjorie-plan-03",
+  "character": "marjorie",
+  "trigger": "plan_hint",
+  "text": "I'll wait for you to push, and then I'll push back. That's the French.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly",
+   "flags": [
+    "opening:french",
+    "me:b"
+   ]
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "marjorie-plan-04",
+  "character": "marjorie",
+  "trigger": "plan_hint",
+  "text": "I'm going to swap a few pieces, if it's all the same. I like an endgame.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-plan-01",
+  "character": "dex",
+  "trigger": "plan_hint",
+  "text": "Everything's going at your king. That's the plan. That's always the plan.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-plan-02",
+  "character": "dex",
+  "trigger": "plan_hint",
+  "text": "My queen's coming over. Keep an eye on the corner.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-plan-03",
+  "character": "dex",
+  "trigger": "plan_hint",
+  "text": "You took the pawn. Now I get all the open lines. Worth it.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly",
+   "flags": [
+    "opening:gambit"
+   ]
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "oscar-plan-01",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "plan_hint",
+  "text": "He'll go for the square next to your king. He always does.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly",
+   "flags": [
+    "opening:italian"
+   ]
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "oscar-plan-02",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "plan_hint",
+  "text": "His coach says: get castled, then attack. He's very good at the attacking bit.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-plan-01",
+  "character": "clive",
+  "trigger": "plan_hint",
+  "text": "I'll probably swap these off. Easier to hold.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-plan-02",
+  "character": "clive",
+  "trigger": "plan_hint",
+  "text": "Keep it symmetrical and nobody gets hurt.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly",
+   "flags": [
+    "opening:exchange"
+   ]
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "priya-plan-01",
+  "character": "priya",
+  "trigger": "plan_hint",
+  "text": "The book says my knight goes round to g3 here. Via f1. It takes a while.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly",
+   "flags": [
+    "opening:ruy-lopez",
+    "me:w"
+   ]
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "priya-plan-02",
+  "character": "priya",
+  "trigger": "plan_hint",
+  "text": "Next is the pawn break in the centre. It's in chapter four.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-plan-01",
+  "character": "graham",
+  "trigger": "plan_hint",
+  "text": "Minority attack. b4, then b5. Textbook.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly",
+   "flags": [
+    "opening:qgd",
+    "me:w"
+   ]
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "graham-plan-02",
+  "character": "graham",
+  "trigger": "plan_hint",
+  "text": "I'm fixing that pawn of yours. Then I'll win it. Eventually.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-plan-01",
+  "character": "toby",
+  "trigger": "plan_hint",
+  "text": "I'm just going to put a bit of pressure on your queenside. Nothing personal.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-plan-02",
+  "character": "toby",
+  "trigger": "plan_hint",
+  "text": "Honestly, the plan is just improving my worst piece. Coach's idea.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-plan-03",
+  "character": "toby",
+  "trigger": "plan_hint",
+  "text": "That bishop on the long diagonal does most of the work. I just let it.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly",
+   "flags": [
+    "opening:catalan",
+    "me:w"
+   ]
+  },
+  "weight": 2,
+  "once": false
+ },
+ {
+  "id": "marjorie-tension-01",
+  "character": "marjorie",
+  "trigger": "tension",
+  "text": "(She stops stirring her tea.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-tension-02",
+  "character": "marjorie",
+  "trigger": "tension",
+  "text": "(Marjorie takes her glasses off, looks at the board, and puts them back on.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-tension-01",
+  "character": "dex",
+  "trigger": "tension",
+  "text": "(Dex has stopped looking at his phone.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-tension-02",
+  "character": "dex",
+  "trigger": "tension",
+  "text": "(He's gone quiet. That's new.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-tension-01",
+  "character": "oscar",
+  "trigger": "tension",
+  "text": "(Oscar is sitting on his hands.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-tension-02",
+  "character": "oscar",
+  "trigger": "tension",
+  "text": "(Neil has moved his chair closer to the board.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-tension-01",
+  "character": "clive",
+  "trigger": "tension",
+  "text": "(Clive glances at the clock on the wall. It's nearly ten.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-tension-01",
+  "character": "priya",
+  "trigger": "tension",
+  "text": "(Priya has been staring at the board for twenty minutes.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-tension-01",
+  "character": "graham",
+  "trigger": "tension",
+  "text": "(Graham straightens his scoresheet. Twice.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-tension-01",
+  "character": "toby",
+  "trigger": "tension",
+  "text": "(Toby smiles. It doesn't reach his eyes.)",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-tension-02",
+  "character": "toby",
+  "trigger": "tension",
+  "text": "(He's stopped saying 'mate'.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-chance-01",
+  "character": "marjorie",
+  "trigger": "opportunity",
+  "text": "Oh. Hang on. I've not been very careful there, have I?",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-chance-02",
+  "character": "marjorie",
+  "trigger": "opportunity",
+  "text": "(Marjorie has gone very still.)",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-chance-01",
+  "character": "dex",
+  "trigger": "opportunity",
+  "text": "Wait. Don't look at that.",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-chance-02",
+  "character": "dex",
+  "trigger": "opportunity",
+  "text": "(Dex goes pale.)",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-chance-01",
+  "character": "oscar",
+  "trigger": "opportunity",
+  "text": "(Oscar looks up from the board for the first time.)",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-chance-01",
+  "character": "clive",
+  "trigger": "opportunity",
+  "text": "Ah.",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-chance-02",
+  "character": "clive",
+  "trigger": "opportunity",
+  "text": "(Clive puts his flask down.)",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-chance-01",
+  "character": "priya",
+  "trigger": "opportunity",
+  "text": "That wasn't in the course.",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-chance-02",
+  "character": "priya",
+  "trigger": "opportunity",
+  "text": "(Priya flicks through a notebook that isn't there.)",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-chance-01",
+  "character": "graham",
+  "trigger": "opportunity",
+  "text": "That was... not correct of me.",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-chance-02",
+  "character": "graham",
+  "trigger": "opportunity",
+  "text": "(Graham looks at the ceiling for a long time.)",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-chance-01",
+  "character": "toby",
+  "trigger": "opportunity",
+  "text": "Hm. Probably fine. Probably.",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-chance-02",
+  "character": "toby",
+  "trigger": "opportunity",
+  "text": "(Toby's leg has started jiggling under the table.)",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
  }
 ]

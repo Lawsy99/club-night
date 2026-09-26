@@ -20,6 +20,12 @@ export type Trigger =
   | 'promotion'
   | 'clearly_winning'
   | 'clearly_losing'
+  /** Friendlies: the character says what they're planning (teaches the player to read plans). */
+  | 'plan_hint'
+  /** Matches: a stage direction at a key moment, to build tension (no chatter). */
+  | 'tension'
+  /** The character has just blundered and the player has a big move available. */
+  | 'opportunity'
 
 export type Expression = 'neutral' | 'pleased' | 'annoyed' | 'surprised' | 'smug'
 
@@ -138,6 +144,20 @@ export function mostImportant(triggers: readonly Trigger[]): Trigger | null {
 /** In-game chatter (friendlies only): up to 3 lines a game, at least 6 moves apart. */
 export const CHATTER_LIMIT = 3
 export const CHATTER_GAP_MOVES = 6
+
+/**
+ * Matches (revised Sep 2026, Joseph's decision): no chatter, but up to two
+ * silent stage directions at key moments, at least 10 moves apart.
+ */
+export const MATCH_LINE_LIMIT = 2
+export const MATCH_LINE_GAP_MOVES = 10
+/** Move numbers where a quiet, level match gets a moment of tension. */
+export const TENSION_MOVES = [15, 25, 35]
+
+export function matchLineAllowed(options: { linesSoFar: number; moveNumber: number; lastLineMove: number | null }): boolean {
+  if (options.linesSoFar >= MATCH_LINE_LIMIT) return false
+  return options.lastLineMove === null || options.moveNumber - options.lastLineMove >= MATCH_LINE_GAP_MOVES
+}
 
 export function chatterAllowed(options: {
   gameType: 'friendly' | 'match'

@@ -39,10 +39,10 @@ export function useDialogue({ character, gameType, act, rematch, losingStreak }:
 
   /** Says something for this trigger, if there's a fitting line. Returns whether it did. */
   const speak = useCallback(
-    (trigger: Trigger, stay = false): boolean => {
+    (trigger: Trigger, stay = false, flags: readonly string[] = []): boolean => {
       if (!character) return false
       const h = history.current ?? { recent: [], onceShown: [] }
-      const chosen = selectLine(DIALOGUE, { character, trigger, act, gameType, rematch, losingStreak, flags: [] }, h)
+      const chosen = selectLine(DIALOGUE, { character, trigger, act, gameType, rematch, losingStreak, flags }, h)
       if (!chosen) return false
       history.current = rememberLine(h, chosen)
       saveDialogueHistory(history.current).catch(() => undefined)
