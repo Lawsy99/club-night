@@ -11,7 +11,6 @@ import { WEEK_STORY } from '../data/weekStory'
 import { actNumber, actPlan, hasNextAct } from '../data/acts'
 import { storyAfterFinal, storyAfterWin } from './storyQueue'
 import { rateGame, type PlayerRating } from './glicko2'
-import { valveAdjustment, type RealGameResult } from './safetyValve'
 import {
   firstOpponentRating,
   FULL_STRENGTH_RATING,
@@ -42,8 +41,6 @@ export type Progress = {
   /** Match lost at least once in this chapter (a guided friendly is then offered). */
   matchLost: boolean
   cup: { round: number; bossRating: number; bossAttempts: number } | null
-  /** Real games since the safety valve last moved (or the act began). */
-  recentReal: RealGameResult[]
   /** The player's name, as given to Graham on trial night (older saves may lack it). */
   playerName?: string
   /** The chapter whose mistakes-deck warm-up has been done (or skipped). */
@@ -152,7 +149,6 @@ export const NEW_PROGRESS: Progress = {
   met: [],
   matchLost: false,
   cup: null,
-  recentReal: [],
 }
 
 /**
@@ -512,7 +508,7 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
   }
 
   // Real games: rating, then the safety valve (never during the cup).
-  let next = rateReal(p, game.rating, won, accuracyStrength)
+  let next = rateReal(p, game.rating, won)
   if (game.kind === 'match') {
     // Best of three: each game is rated; first to two takes the week.
     const before = next.series ?? { wins: 0, losses: 0 }
@@ -581,18 +577,17 @@ function settleTrial(p: Progress, games: TrialGame[]): Progress {
     fixedRatings,
     fixedVersion: FIXED_VERSION,
     trialStart: baseline,
-    recentReal: [],
     ratingHistory: withHistory(p, start),
   }
 }
 
-function rateReal(p: Progress, opponentRatingValue: number, won: boolean, accuracyStrength: number | null): Progress {
+/**
+ * A rated game: the new rating, and a point on the graph. (The old "safety
+ * valve", which nudged a baseline after lopsided runs, was removed in Sep
+ * 2026: opponents are now either fixed or follow your rating, so it no
+ * longer did anything useful.)
+ */
+function rateReal(p: Progress, opponentRatingValue: number, won: boolean): Progress {
   const rating = p.rating ? rateGame(p.rating, opponentRatingValue, won ? 1 : 0) : p.rating
-  const ratingHistory = withHistory(p, rating)
-  const recentReal = [...p.recentReal, { won, accuracyStrength }]
-  const inCup = p.chapter >= actPlan(p).chapters.length
-  const shift = inCup ? 0 : valveAdjustment(recentReal, p.baseline)
-  return shift
-    ? { ...p, rating, ratingHistory, baseline: p.baseline + shift, recentReal: [] }
-    : { ...p, rating, ratingHistory, recentReal: recentReal.slice(-10) }
+  return { ...p, rating, ratingHistory: withHistory(p, rating) }
 }

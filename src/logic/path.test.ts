@@ -81,7 +81,6 @@ describe('the path', () => {
     const after = recordGame(p, step.game, false, 300)
     expect(after.stage).toBe('act')
     expect(after.rating).toEqual(rating)
-    expect(after.recentReal).toEqual([])
   })
 
   it('finishes an older save that stopped after four trial games', () => {

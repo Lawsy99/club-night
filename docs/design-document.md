@@ -102,22 +102,7 @@ The player has one visible rating, and each act has a fixed baseline that oppone
 
 At the start of each act, the player's current rating becomes that act's **baseline**. Every scaling opponent's strength is the baseline plus their offset (see Opponents). The baseline stays put through the act, so improvement during the act makes games feel easier.
 
-### The safety valve
-
-If the baseline is clearly wrong, it moves, quietly and only between games.
-
-| Trigger (last 5 real games) | Change to the baseline |
-| --- | --- |
-| 4 or more wins, with accuracy suggesting a strength at least 150 above the baseline | Up 100 |
-| 4 or more losses, with accuracy suggesting a strength at least 150 below the baseline | Down 100 |
-
-Rules for the safety valve:
-
-- It can trigger at most once every 5 real games.
-- It never changes a boss once the gauntlet has started. Bosses are fixed at that point.
-- It never changes a game in progress.
-- Fixed characters (like Marjorie) are unaffected, because they don't scale.
-- Nothing is announced. The player simply finds the next opponents better pitched.
+*Revised Sep 2026:* the baseline is now only used to set the fixed ratings once after trial night. The scaling cast follow the player's current rating instead (see "Scaling characters" below). **The safety valve was removed** (Joseph's decision): it nudged the baseline after lopsided runs, but with opponents either fixed or following your rating it no longer did anything useful.
 
 ## Opponents
 
@@ -151,7 +136,7 @@ Nobody goes below 200.
 | Dex | −75, dropping to −90 once beaten, then creeping back to −55 by the cup |
 | Oscar | −110, −120 once beaten, then closing to −90 by the cup |
 
-Fixed characters (Marjorie, Clive, Graham) and the background members keep the rating set after trial night, so the player climbs past them for good. A character's rating is always the strength they play at, everywhere, including in the cup. (The act baseline and the safety valve now only matter for the fixed ratings set after trial night.)
+Fixed characters (Marjorie, Clive, Graham) and the background members keep the rating set after trial night, so the player climbs past them for good. A character's rating is always the strength they play at, everywhere, including in the cup. (The baseline now only matters for the fixed ratings set after trial night.)
 
 ### The club ladder
 
