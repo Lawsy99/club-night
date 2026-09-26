@@ -80,6 +80,57 @@ export function explainMistake(f: MistakeFacts): string {
   return 'There was a stronger move here.'
 }
 
+const VALUES: Record<PieceSymbol, number> = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 }
+
+/**
+ * Why the engine's move was the right one, in one line (Joseph, Sep 2026:
+ * the coach should say why the best move is best, not just what it was).
+ * Only states what the board shows: mate, winning material, a fork, saving
+ * a piece, or a check. Otherwise it says what the move keeps, from the score.
+ */
+export function explainBestMove(fenBefore: string, best: string, bestCp: number, played?: string): string {
+  const before = new Chess(fenBefore)
+  const mover = before.turn()
+  const opponent: Colour = mover === 'w' ? 'b' : 'w'
+  const after = new Chess(fenBefore)
+  const move = applyUci(after, best)
+  if (!move) return ''
+  const san = move.san
+
+  if (after.isCheckmate()) return `${san} is checkmate.`
+  if (bestCp >= MATE_THRESHOLD) return `${san} starts a forced checkmate.`
+
+  if (move.captured) {
+    const safe = after.attackers(move.to, opponent).length === 0
+    if (safe) return `${san} wins their ${NAMES[move.captured]} for nothing: nothing can take back.`
+    if (VALUES[move.captured] > VALUES[move.piece]) {
+      return `${san} wins material: your ${NAMES[move.piece]} for their ${NAMES[move.captured]}.`
+    }
+  }
+
+  // A fork: the piece that moved now attacks two or more of theirs, one of them big.
+  const targets = forkedPieces(after, move.to, opponent, mover)
+  if (targets.length >= 2 && targets.some((t) => t === 'king' || t === 'queen' || t === 'rook')) {
+    return `${san} is a fork: your ${NAMES[move.piece]} attacks their ${listOf(targets)} at once.`
+  }
+
+  // Saving a piece that was in trouble (and the move played didn't).
+  const from = best.slice(0, 2) as Square
+  const threatened = before.attackers(from, opponent)
+  if (move.piece !== 'p' && move.piece !== 'k' && threatened.length > 0 && played?.slice(0, 2) !== from) {
+    const defended = before.attackers(from, mover).length > 0
+    const cheaperAttacker = threatened.some((sq) => VALUES[before.get(sq)!.type] < VALUES[move.piece])
+    if (!defended || cheaperAttacker) return `${san} gets your ${NAMES[move.piece]} out of danger.`
+  }
+
+  if (after.inCheck()) return `${san} is check, so they have to deal with that first.`
+
+  if (bestCp >= 300) return `${san} keeps you well on top.`
+  if (bestCp >= 80) return `${san} keeps your advantage.`
+  if (bestCp > -80) return `${san} keeps the game level.`
+  return `${san} was the best defence in a difficult spot.`
+}
+
 /** Why the best move of the game was good, in one line. */
 export function explainGoodMove(fenBefore: string, uci: string, punished: boolean): string {
   const chess = new Chess(fenBefore)

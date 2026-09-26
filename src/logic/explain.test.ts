@@ -1,8 +1,36 @@
 import { describe, expect, it } from 'vitest'
-import { explainGoodMove, explainMistake } from './explain'
+import { explainBestMove, explainGoodMove, explainMistake } from './explain'
 import { replay } from './game'
 
 const afterNc6 = replay(['e2e4', 'e7e5', 'g1f3', 'b8c6']).fen()
+
+describe('explainBestMove', () => {
+  it('names a checkmate', () => {
+    const fen = replay(['e2e4', 'e7e5', 'f1c4', 'b8c6', 'd1h5', 'g8f6']).fen()
+    expect(explainBestMove(fen, 'h5f7', 9999)).toBe('Qxf7# is checkmate.')
+  })
+
+  it('names a free piece', () => {
+    const fen = replay(['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f3g5']).fen()
+    expect(explainBestMove(fen, 'd8g5', 300)).toBe('Qxg5 wins their knight for nothing: nothing can take back.')
+  })
+
+  it('names a fork', () => {
+    expect(explainBestMove('r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1', 'b5c7', 500)).toBe(
+      'Nc7+ is a fork: your knight attacks their king and rook at once.',
+    )
+  })
+
+  it('names saving a piece the move played left hanging', () => {
+    expect(explainBestMove('4k3/8/8/8/4p3/5N2/8/4K3 w - - 0 1', 'f3d4', 200, 'e1d2')).toBe(
+      'Nd4 gets your knight out of danger.',
+    )
+  })
+
+  it('otherwise says what the move keeps', () => {
+    expect(explainBestMove(replay([]).fen(), 'e2e4', 30)).toBe('e4 keeps the game level.')
+  })
+})
 
 describe('explainMistake', () => {
   it('spots walking into mate', () => {

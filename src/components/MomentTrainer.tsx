@@ -5,11 +5,13 @@ import { Chess } from 'chess.js'
 import { useState } from 'react'
 import { analysePosition } from '../engine/analysis'
 import { flipScore, winChance } from '../logic/evaluation'
+import { explainBestMove } from '../logic/explain'
 import { applyUci } from '../logic/game'
 import type { Answer } from '../logic/mistakesDeck'
 import type { Moment } from '../logic/moment'
 import { Board } from './Board'
 import { HINT_ARROW_COLOUR } from './lineArrows'
+import { Portrait } from './Portrait'
 import './MomentTrainer.css'
 
 /**
@@ -107,9 +109,20 @@ export function MomentTrainer({ moment, onFinished }: Props) {
               : `Yes: ${solvedSan} works too. The engine's choice was ${bestSan}.`
             : `The best move was ${bestSan}.`}
         </p>
-        <p className="moment-explanation">
-          You played {moment.playedSan}. {moment.explanation}
-        </p>
+        {/* Pemberton explains both sides (Joseph, Sep 2026): why the best
+            move works, and what went wrong with the move played. */}
+        <div className="moment-coach">
+          <Portrait who="pemberton" size={40} />
+          <div>
+            <p className="moment-coach-name">Coach Pemberton</p>
+            <p className="moment-explanation">
+              {explainBestMove(moment.fenBefore, moment.bestMove, moment.bestCp, moment.played)}
+            </p>
+            <p className="moment-explanation">
+              And {moment.playedSan} in the game? {moment.explanation}
+            </p>
+          </div>
+        </div>
       </div>
     )
   }

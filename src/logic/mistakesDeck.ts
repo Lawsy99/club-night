@@ -30,18 +30,39 @@ export const MAX_ACTIVE_CARDS = 30
 export const MAX_CARDS_PER_SESSION = 10
 
 /**
- * Coaching night opens with three warm-ups from the player's own recent
- * errors (Joseph, Sep 2026: this replaces a separate deck, so they actually
- * get done). Freshest first; one answered correctly is gone for good.
+ * Coaching night opens with three warm-ups from the player's own errors
+ * (Joseph, Sep 2026: this replaces a separate deck, so they actually get
+ * done). Each is shown once, then gone for good.
  */
 export const WARMUP_CARDS = 3
+/**
+ * The last few games' errors are held back: the player has only just seen
+ * them in the review (Joseph, Sep 2026: older mistakes, not the same ones
+ * straight after reviewing). They come round in later weeks instead.
+ */
+export const RECENT_GAMES_HELD_BACK = 3
 
-/** The warm-ups for tonight: the most recent errors not yet put right. */
+/**
+ * The warm-ups for tonight: older errors first, one per game so the three
+ * aren't all from the same bad evening. If there aren't enough older ones,
+ * recent ones make up the numbers.
+ */
 export function warmupCards(cards: readonly MistakeCard[]): MistakeCard[] {
-  return cards
-    .filter((c) => !c.retired)
-    .sort((a, b) => b.createdAt - a.createdAt)
-    .slice(0, WARMUP_CARDS)
+  const open = cards.filter((c) => !c.retired).sort((a, b) => a.createdAt - b.createdAt) // oldest first
+  const gamesNewestFirst = [...new Set([...open].reverse().map((c) => c.gameId))]
+  const recent = new Set(gamesNewestFirst.slice(0, RECENT_GAMES_HELD_BACK))
+  const older = open.filter((c) => !recent.has(c.gameId))
+  const picked: MistakeCard[] = []
+  const take = (c: MistakeCard) => {
+    if (picked.length < WARMUP_CARDS && !picked.includes(c)) picked.push(c)
+  }
+  // 1. One per game, oldest games first.
+  for (const c of older) if (!picked.some((p) => p.gameId === c.gameId)) take(c)
+  // 2. More from those older games.
+  for (const c of older) take(c)
+  // 3. Only then the recent games, oldest of those first.
+  for (const c of open) take(c)
+  return picked
 }
 
 /**

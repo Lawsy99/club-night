@@ -313,6 +313,12 @@ The app is one fixed path through four acts. The home screen shows only what com
 
 **The mistakes deck** is no longer a separate screen (Sep 2026, Joseph): past errors come back only as Tuesday's warm-ups, so they actually get done, and the deck never piles up. Every warm-up is a first look and is shown once only, right or wrong (no repeats, so it never becomes a memory test). A moment already retried in the post-game review never becomes a warm-up. Games the player doesn't review are checked quietly in the background afterwards, so their errors are still found.
 
+**Older positions first (Sep 2026, Joseph):** errors from the last three games are held back, since the player has just seen them in the review. Warm-ups come from older games, one per game where possible; recent ones only make up the numbers when nothing older is waiting. Pemberton's line on the Home screen changes each week.
+
+**Pemberton explains every position**, in the warm-ups and in the review: why the best move works (mate, winning material, a fork, saving a piece, a check, or what it keeps), and what went wrong with the move played. Every sentence is built from what's actually on the board, never guessed.
+
+**Every decided game goes on to the review** a few seconds after it ends (looking back through the moves holds it). The review has a Skip, but the intention is that every game gets reviewed.
+
 The cup is "Cup week" (round 1, round 2, semi-final, final). Trial night keeps its own strip. The week header ("Week 3 · Junior night ›") opens the club calendar.
 
 **Runway (Sep 2026).** Act 1 is 16 weeks over 4 months: seven story weeks, each introducing someone, with ordinary club weeks between them (the same shape, against someone already known, with a general coaching topic), then cup week. The story moves slowly on purpose; the essence is playing chess.

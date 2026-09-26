@@ -8,6 +8,7 @@ import {
   nextDue,
   planAdditions,
   qualifiesForDeck,
+  warmupCards,
   type MistakeCard,
 } from './mistakesDeck'
 
@@ -23,6 +24,27 @@ const moment: Moment = {
 const DAY = 24 * 60 * 60 * 1000
 const start = new Date('2026-09-25T20:00:00Z')
 const card = () => newCard(moment, { gameId: 'g1', ply: 4, rating: 'blunder', moveLabel: '3. Ng5??' }, start)
+
+describe('warm-ups', () => {
+  // Card from game n, made n days after the start.
+  const from = (game: number, ply: number) =>
+    newCard(moment, { gameId: `g${game}`, ply, rating: 'blunder', moveLabel: '' }, new Date(start.getTime() + game * DAY))
+
+  it('holds back the last three games and takes older ones, one per game', () => {
+    const cards = [from(1, 4), from(1, 8), from(2, 6), from(3, 5), from(4, 3), from(5, 7), from(6, 9)]
+    expect(warmupCards(cards).map((c) => c.id)).toEqual(['g1:4', 'g2:6', 'g3:5'])
+  })
+
+  it('uses recent games only when there is nothing older', () => {
+    const cards = [from(5, 7), from(6, 9), from(6, 11)]
+    expect(warmupCards(cards)).toHaveLength(3)
+  })
+
+  it('never shows a retired card', () => {
+    const cards = [{ ...from(1, 4), retired: true }, from(2, 6)]
+    expect(warmupCards(cards).map((c) => c.id)).toEqual(['g2:6'])
+  })
+})
 
 describe('mistakes deck', () => {
   it('only takes real errors', () => {

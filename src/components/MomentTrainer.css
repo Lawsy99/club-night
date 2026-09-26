@@ -33,3 +33,30 @@
 .moment-explanation {
   line-height: 1.45;
 }
+
+/* Pemberton's explanation after each position */
+.moment-coach {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 0 16px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.moment .moment-coach p {
+  padding: 0;
+}
+
+.moment-coach p + p {
+  margin-top: 6px;
+}
+
+.moment-coach-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brass);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
