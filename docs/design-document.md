@@ -301,9 +301,11 @@ The app is one fixed path through four acts. The home screen shows only what com
 
 | Night | Session | What happens |
 | --- | --- | --- |
-| Tuesday | Coaching night | Pemberton's lesson and puzzles, with a mistakes-deck warm-up ("drills") first when cards are due |
-| Thursday | Practice night | Three practice games, with help: the week's person first (assisted if new), then two against whoever else is in: regulars already met, and Sheila and Bill. Saturday opens after the three |
-| Saturday | Match day | The match against the week's person, rated, no help. One game, as at a real club; a loss is simply replayed (Joseph suggested best of three; kept to one so the match stays weighty and the week doesn't repeat one opponent) |
+| Tuesday | Coaching night | Three warm-ups from the player's own recent errors (whenever any are waiting; one answered correctly is gone for good), then Pemberton's lesson and puzzles, then a coached game against Pemberton, who plays at exactly the player's level, with full help (hints, takebacks, the best line, his running commentary). Unrated |
+| Thursday | Practice night | Three practice games, light help: the week's person first, then one stronger and one weaker from whoever's in (regulars already met, Ray after junior night, Sheila, Bill). Every so often Toby turns up. Saturday opens after the three |
+| Saturday | Match day | Best of three against the week's person (Joseph's decision), each game rated, no help. First to two takes the week; losing two means the series is played again from 0–0 |
+
+**The mistakes deck** is no longer a separate screen (Sep 2026, Joseph): past errors come back only as Tuesday's warm-ups, so they actually get done, and the deck never piles up.
 
 The cup is "Cup week" (round 1, round 2, semi-final, final). Trial night keeps its own strip. The week header ("Week 3 · Junior night ›") opens the club calendar.
 

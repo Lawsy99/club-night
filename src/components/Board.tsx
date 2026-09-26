@@ -2,7 +2,7 @@
 // legal move from the player (by dragging, or tapping piece then square).
 // It never changes the game itself: it hands the chosen move to `onMove`.
 import { Chess, type Square } from 'chess.js'
-import { useMemo, useState, type CSSProperties } from 'react'
+import { useId, useMemo, useState, type CSSProperties } from 'react'
 import { Chessboard } from 'react-chessboard'
 import {
   checkedKingSquare,
@@ -49,6 +49,9 @@ export function Board({
   // Legal moves depend only on the current position, so a FEN is enough here.
   const chess = useMemo(() => new Chess(fen), [fen])
   const colours = useBoardColours()
+  // Each board its own name, so a new board (e.g. the next puzzle) never
+  // inherits the previous one's pieces from the board library's memory.
+  const boardId = `board-${useId().replace(/[^a-zA-Z0-9]/g, '')}`
   const [selected, setSelected] = useState<Square | null>(null)
   const [pendingPromotion, setPendingPromotion] = useState<{ from: Square; to: Square } | null>(null)
 
@@ -103,6 +106,7 @@ export function Board({
     <div className="board-wrap" style={{ background: colours.frame }}>
       <Chessboard
         options={{
+          id: boardId,
           position: fen,
           boardOrientation: orientation,
           lightSquareStyle: { backgroundColor: colours.light },

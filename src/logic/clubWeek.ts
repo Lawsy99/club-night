@@ -6,7 +6,8 @@ import { matchUnlocked, PRACTICE_GAMES, type Progress } from './path'
 
 export type SlotState = 'done' | 'today' | 'later'
 export type Slot = { key: string; day: string; name: string; state: SlotState }
-export type Week = { title: string; subtitle: string; slots: Slot[] }
+/** `note`: one line of what else is going on at the club this week. */
+export type Week = { title: string; subtitle: string; slots: Slot[]; note?: string }
 
 const CUP_SLOTS = ['Round 1', 'Round 2', 'Semi-final', 'Final']
 
@@ -22,6 +23,7 @@ export function clubWeek(p: Progress): Week | null {
     return {
       title: `Week ${p.chapter + 1}`,
       subtitle: ch.title,
+      note: ch.note,
       slots: [
         // Tuesday is the lesson, then the coached game.
         { key: 'coaching', day: 'Tue', name: SESSIONS.coaching.short, state: state(!!p.coachingDone, !p.coachingDone) },
@@ -46,6 +48,7 @@ export function clubWeek(p: Progress): Week | null {
   return {
     title: 'Cup week',
     subtitle: ACT_1.gauntlet.title,
+    note: p.stage === 'act-complete' ? ACT_1.gauntlet.afterNote : ACT_1.gauntlet.note,
     slots: CUP_SLOTS.map((name, i) => ({
       key: name,
       day: i === CUP_SLOTS.length - 1 ? 'Sat' : '',

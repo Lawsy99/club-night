@@ -33,7 +33,7 @@ export function seasonCalendar(p: Progress): CalendarMonth[] {
     week: cupIndex + 1,
     title: 'Cup week',
     opponent: ACT_1.gauntlet.boss.opponent,
-    note: 'The club knockout cup, round by round.',
+    note: ACT_1.gauntlet.note,
     state: p.stage === 'act-complete' ? 'done' : current === cupIndex ? 'now' : 'later',
   })
   const months: CalendarMonth[] = []

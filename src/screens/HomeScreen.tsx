@@ -9,9 +9,8 @@ import { LadderCard } from '../components/ClubLadder'
 import { describeNews, type LadderNews, type Rung } from '../logic/ladder'
 import type { Milestone } from '../logic/milestones'
 import { cleanName } from '../logic/playerName'
-import { ACT_1 } from '../data/act1'
+import { TRIAL_NOTE } from '../data/act1'
 import { findCharacter } from '../data/characters'
-import { NOTICEBOARD } from '../data/noticeboard'
 import { characterOpponentId } from '../data/opponents'
 import { shownRating } from '../logic/glicko2'
 import { warmupCards } from '../logic/mistakesDeck'
@@ -82,6 +81,7 @@ export function HomeScreen(props: Props) {
   } = props
   // Past errors waiting to be put right (the coach's warm-ups on Tuesday).
   const [waiting, setWaiting] = useState(0)
+  const [stampTaps, setStampTaps] = useState(0)
 
   useEffect(() => {
     loadCards()
@@ -135,7 +135,6 @@ export function HomeScreen(props: Props) {
 
       {ladder && progress.stage !== 'trial' && <LadderCard ladder={ladder} news={ladderNews} onOpen={onOpenLadder} />}
 
-      <Noticeboard progress={progress} next={next} />
 
       <nav className="home-links">
         <button type="button" onClick={onOpenHistory}>
@@ -152,24 +151,29 @@ export function HomeScreen(props: Props) {
         </button>
       </nav>
 
-      <details className="playtest">
-        <summary>Playtest tools (temporary)</summary>
-        <p>For testing the path quickly. Removed before the app is finished.</p>
-        <button type="button" onClick={onSkipStep}>
-          Skip this step (counts as a win)
-        </button>
-        <button
-          type="button"
-          className="danger"
-          onClick={() => {
-            if (window.confirm('Reset all progress, including your rating? Past games and the mistakes deck are kept.')) onReset()
-          }}
-        >
-          Reset progress
-        </button>
-      </details>
+      {/* Playtest tools: hidden unless the version line is tapped five times. */}
+      {stampTaps >= 5 && (
+        <details className="playtest" open>
+          <summary>Playtest tools</summary>
+          <p>For testing the path quickly.</p>
+          <button type="button" onClick={onSkipStep}>
+            Skip this step (counts as a win)
+          </button>
+          <button
+            type="button"
+            className="danger"
+            onClick={() => {
+              if (window.confirm('Reset all progress, including your rating? Past games are kept.')) onReset()
+            }}
+          >
+            Reset progress
+          </button>
+        </details>
+      )}
 
-      <p className="build-stamp">Version: {BUILD_LABEL}</p>
+      <p className="build-stamp" onClick={() => setStampTaps((n) => n + 1)}>
+        Version: {BUILD_LABEL}
+      </p>
     </main>
   )
 }
@@ -181,11 +185,14 @@ function ActProgress({ progress }: { progress: Progress }) {
     // The placement games, then Toby's.
     const total = TRIAL_LENGTH + 1
     return (
-      <div className="act-progress" aria-label={`Trial night: game ${played + 1} of ${total}`}>
-        <span className="act-label">Trial night</span>
-        {Array.from({ length: total }, (_, i) => (
-          <span key={i} className={`act-dot ${i < played ? 'done' : i === played ? 'current' : ''}`} />
-        ))}
+      <div className="club-week">
+        <div className="act-progress" aria-label={`Trial night: game ${played + 1} of ${total}`}>
+          <span className="act-label">Trial night</span>
+          {Array.from({ length: total }, (_, i) => (
+            <span key={i} className={`act-dot ${i < played ? 'done' : i === played ? 'current' : ''}`} />
+          ))}
+        </div>
+        {played >= 2 && <p className="club-week-note">{TRIAL_NOTE}</p>}
       </div>
     )
   }
@@ -203,40 +210,18 @@ function ActProgress({ progress }: { progress: Progress }) {
           <li key={s.key} className={`club-week-day ${s.state}`}>
             {s.day && <span className="club-week-dow">{s.day}</span>}
             <span className="club-week-name">{s.name}</span>
-            {s.state === 'done' && <span className="club-week-tick" aria-label="done">✓︎</span>}
+            {s.state === 'done' && (
+              <span className="club-week-tick" aria-label="done">
+                ✓︎
+              </span>
+            )}
             {s.state === 'today' && <span className="club-week-tonight">tonight</span>}
           </li>
         ))}
       </ol>
+      {/* One line of what else is going on at the club this week. */}
+      {week.note && <p className="club-week-note">{week.note}</p>}
     </div>
-  )
-}
-
-/** One line from a club member about what's coming up. */
-function Noticeboard({ progress, next }: { progress: Progress; next: NextStep }) {
-  const key =
-    progress.stage === 'act-complete'
-      ? 'complete'
-      : progress.stage !== 'act'
-        ? next.kind === 'play' && next.game.kind === 'exhibition'
-          ? 'trial-finale'
-          : (progress.trial?.games.length ?? 0) >= 2
-            ? 'trial-honours'
-            : 'trial'
-        : progress.chapter < ACT_1.chapters.length
-          ? ACT_1.chapters[progress.chapter].id
-          : next.kind === 'play' && next.game.kind === 'boss'
-            ? 'final'
-            : 'cup'
-  const notice = NOTICEBOARD[key]
-  if (!notice) return null
-  return (
-    <aside className="noticeboard">
-      <span className="noticeboard-pin" aria-hidden="true" />
-      <p>
-        “{notice.text}”<span className="noticeboard-by">{notice.speaker}</span>
-      </p>
-    </aside>
   )
 }
 
@@ -267,7 +252,11 @@ function MissingName({ onSave }: { onSave: (name: string) => void }) {
   const [name, setName] = useState('')
   return (
     <section className="missing-name">
-      <NameField value={name} onChange={setName} prompt="We never got your name for the membership list. Strictly speaking, that's irregular." />
+      <NameField
+        value={name}
+        onChange={setName}
+        prompt="We never got your name for the membership list. Strictly speaking, that's irregular."
+      />
       <button type="button" disabled={!cleanName(name)} onClick={() => onSave(cleanName(name))}>
         Sign the list
       </button>
@@ -321,7 +310,19 @@ function NextCard({
 
   const { game, optionalFriendly, note } = next
   const character = findCharacter(game.opponent)
-  return <PlayCard {...{ game, optionalFriendly, note, character, onPlay, onTargetedPuzzles, next }} />
+  return (
+    <PlayCard
+      {...{
+        game,
+        optionalFriendly,
+        note,
+        character,
+        onPlay,
+        onTargetedPuzzles,
+        next,
+      }}
+    />
+  )
 }
 
 function PlayCard({
@@ -376,7 +377,9 @@ function PlayCard({
       </button>
       {optionalFriendly && (
         <button type="button" className="next-secondary" onClick={() => onPlay(optionalFriendly)}>
-          {optionalFriendly.stage === 'assisted' ? 'Study him first: a practice game, help on' : 'Another practice game first'}
+          {optionalFriendly.stage === 'assisted'
+            ? 'Study him first: a practice game, help on'
+            : 'Another practice game first'}
         </button>
       )}
       {next.targetedPuzzles && (

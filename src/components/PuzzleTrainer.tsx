@@ -13,11 +13,13 @@ type Props = {
   puzzle: Puzzle
   /** Told when the puzzle is done: solved without any wrong answer or not. */
   onFinished: (solvedCleanly: boolean) => void
+  /** The lesson's themes, listed first (so a forks lesson says "fork" first). */
+  focus?: readonly string[]
 }
 
 const PAUSE_MS = 600
 
-export function PuzzleTrainer({ puzzle, onFinished }: Props) {
+export function PuzzleTrainer({ puzzle, onFinished, focus = [] }: Props) {
   const [fen, setFen] = useState(puzzle.fen)
   const [step, setStep] = useState(0) // index into puzzle.moves of the next move to play
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null)
@@ -115,7 +117,13 @@ export function PuzzleTrainer({ puzzle, onFinished }: Props) {
       <p className={`puzzle-prompt${done ? (clean ? ' solved' : ' helped') : ''}`}>{prompt}</p>
       <p className="puzzle-meta">
         Puzzle rated {puzzle.rating}
-        {puzzle.themes.length > 0 && ` · ${puzzle.themes.slice(0, 3).map(themeName).join(', ')}`}
+        {puzzle.themes.length > 0 &&
+          ` · ${[...puzzle.themes]
+            .filter((t) => !['advantage', 'crushing', 'equality', 'middlegame', 'endgame', 'opening', 'short', 'long'].includes(t))
+            .sort((a, b) => Number(focus.includes(b)) - Number(focus.includes(a)))
+            .slice(0, 2)
+            .map(themeName)
+            .join(', ')}`}
       </p>
     </div>
   )

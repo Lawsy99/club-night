@@ -24,7 +24,7 @@ export const LESSONS: Lesson[] = [
   {
     id: 'c1',
     title: 'Forks in the London',
-    intro: "Marjorie's London looks tidy, but it leaves pieces where one move can hit two of them. Spot the forks.",
+    intro: "Marjorie's London looks tidy, but a knight jumping into the middle can hit two things at once. Spot the forks.",
     openings: ['london'],
     themes: ['fork'],
     count: 4,
@@ -52,28 +52,30 @@ export const LESSONS: Lesson[] = [
     themes: ['quietMove'],
     count: 4,
   },
+  // (Sep 2026: each opening's theme checked against the puzzle database, so the
+  // lesson teaches what really does happen in that opening more than usual.)
   {
     id: 'c5',
-    title: 'Pins in the Ruy Lopez',
-    intro: "The Ruy Lopez is full of pinned pieces. When Priya's out of her book, pins decide it.",
+    title: 'Trapped pieces in the Ruy Lopez',
+    intro: "The Ruy Lopez's famous trap shuts White's bishop in behind a wall of pawns. Priya knows it. Look for pieces with nowhere to go.",
     openings: ['ruy-lopez'],
-    themes: ['pin'],
+    themes: ['trappedPiece'],
     count: 4,
   },
   {
     id: 'c6',
-    title: 'Discovered attacks',
-    intro: "In Graham's positions, pieces line up. Move one aside and the one behind strikes. Toby's very good at these.",
+    title: 'Double attacks in the Queen’s Gambit',
+    intro: "Graham's positions look quiet, but the centre is tense. When it opens, one piece often hits two. Toby's very good at these.",
     openings: ['qgd'],
-    themes: ['discoveredAttack'],
+    themes: ['fork'],
     count: 4,
   },
   {
     id: 'c7',
-    title: "Toby's openings",
-    intro: "Toby's Najdorf, Catalan and Nimzo lead to sharp tactics. Forks, pins, discoveries: find them first.",
+    title: 'Discovered attacks',
+    intro: "Toby's Najdorf, Catalan and Nimzo line pieces up behind each other. Move one aside and the one behind strikes.",
     openings: ['najdorf', 'catalan', 'nimzo'],
-    themes: ['fork', 'pin', 'discoveredAttack'],
+    themes: ['discoveredAttack'],
     count: 5,
   },
   // Club weeks (between the story weeks): general topics every club player needs.
@@ -114,9 +116,9 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: 'w12',
-    title: 'Trapped pieces',
-    intro: 'A piece with nowhere to go is a piece you can win. Look before you chase.',
-    themes: ['trappedPiece'],
+    title: 'Pins',
+    intro: 'A pinned piece can’t move without losing something bigger behind it. Look for them everywhere.',
+    themes: ['pin'],
     count: 4,
   },
   {

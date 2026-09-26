@@ -197,7 +197,7 @@ A former county champion who left the club years ago after the coach put her on 
 
 ## Coach Pemberton
 
-A retired former club captain who presents the lessons and gives you a scouting report before each match on the opponent's actual style. He is the reason Vera left, and he has quietly been giving Toby your scouting reports too. His name is Pemberton. Nobody at a real English club gets called "Coach", so it's a nickname: Dex started it ironically and it stuck. Marjorie never uses it; she calls him by his first name, as she has for 40 years.
+A retired former club captain who presents the lessons and gives you a scouting report before each match on the opponent's actual style. Every Tuesday he also plays you a coached game, pitched at exactly your level, talking you through it: what he's planning, what you missed, what Toby would have done. He is the reason Vera left, and he has quietly been giving Toby your scouting reports too. His name is Pemberton. Nobody at a real English club gets called "Coach", so it's a nickname: Dex started it ironically and it stuck. Marjorie never uses it; she calls him by his first name, as she has for 40 years.
 
 **Voice:** Confident, opinionated, a little old-fashioned. Gives genuinely useful chess advice, then undercuts it with favouritism or an old grudge. Justifies every unfair decision as sound judgement.
 
@@ -212,6 +212,22 @@ A retired former club captain who presents the lessons and gives you a scouting 
 - *After a loss:* "You knew the plan. You just didn't fancy it."
 - *On the old days:* "In my day we adjourned at ten and analysed all week."
 - *When you find out about the scouting reports:* "I coach everyone. It's only fair."
+- *Coached game, his plan:* "I'm going to put a rook on the open file. Stop me."
+- *Coached game, your blunder:* "That's a piece. Use the takeback. That's what Tuesdays are for."
+- *Coached game, he wins:* "Toby would have held that. Just so you know."
+
+## The background members
+
+Not main characters. They are never labelled; the player learns who they are from the noticeboard, from being mentioned, and from stage directions. Three of them turn up on practice night; Malcolm doesn't.
+
+| Member | Who they are | How they show up |
+| --- | --- | --- |
+| Malcolm | Board one; only comes in for league matches. Well above the player on the ladder, a long-term target | Nods back at Toby across the room; "Malcolm sends his apologies. He always does." Never plays on club nights |
+| Ray | Runs junior night on Thursdays; lends Priya books; Oscar's actual coach, though Neil would prefer Pemberton | Looks in from the junior room; plays on practice night once the juniors have gone. Stronger than the player |
+| Sheila | Here for the company; sells the raffle tickets | Coming round with the raffle; plays on practice night, cheerfully. Weaker |
+| Bill | A member since 1974; remembers everyone, including V. Hart | Pulls up a chair to watch; looks over at the honours board. Plays on practice night, slowly, and never resigns. Weaker |
+
+**Voice:** each is small and consistent. Sheila is warm and self-deprecating ("I'll stick to the raffle"). Bill is slow and kind and faintly elegiac ("You'll go far. They all do. Some come back."). Ray is a tired, decent teacher ("I'll try not to explain everything. Force of habit."). Malcolm hardly speaks.
 
 ## Graham
 

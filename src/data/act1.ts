@@ -25,6 +25,9 @@ export type ChapterPlan = {
 export type GauntletPlan = {
   title: string
   location: string
+  /** Cup week's note, and the note once the act is won. */
+  note: string
+  afterNote: string
   /** The three cup rounds, against club members. */
   rounds: { opponent: string; label: string }[]
   boss: { opponent: string; label: string }
@@ -37,12 +40,13 @@ export type ActPlan = {
   gauntlet: GauntletPlan
 }
 
-const story = (id: string, title: string, opponent: string, name: string): ChapterPlan => ({
+const story = (id: string, title: string, opponent: string, name: string, note: string): ChapterPlan => ({
   id,
   kind: 'story',
   title,
   opponent,
   matchLabel: `Club match vs ${name}`,
+  note,
 })
 
 const club = (id: string, title: string, opponent: string, name: string, note: string): ChapterPlan => ({
@@ -58,25 +62,27 @@ export const ACT_1: ActPlan = {
   act: 1,
   title: 'Club nights',
   chapters: [
-    story('c1', 'First proper club night', 'marjorie', 'Marjorie'),
-    story('c2', 'The streamer', 'dex', 'Dex'),
+    story('c1', 'First proper club night', 'marjorie', 'Marjorie', 'Graham wants your subs. Not now. After.'),
+    story('c2', 'The streamer', 'dex', 'Dex', 'Dex has his phone propped against a water bottle.'),
     club('w3', 'Raffle night', 'marjorie', 'Marjorie', 'Sheila is selling raffle tickets.'),
-    story('c3', 'Junior night', 'oscar', 'Oscar'),
+    story('c3', 'Junior night', 'oscar', 'Oscar', 'Junior night. Neil would prefer Mr Pemberton.'),
     club('w5', 'Off camera', 'dex', 'Dex', 'Graham has put up a notice about filming.'),
-    story('c4', 'A quiet one', 'clive', 'Clive'),
+    story('c4', 'A quiet one', 'clive', 'Clive', 'Pemberton is going over Toby’s game after club.'),
     club('w7', 'Junior night overruns', 'oscar', 'Oscar', 'Ray needs the big room.'),
-    story('c5', 'By the book', 'priya', 'Priya'),
+    story('c5', 'By the book', 'priya', 'Priya', 'Priya has brought three books.'),
     club('w9', 'A long evening', 'clive', 'Clive', 'Bill stays to watch.'),
-    story('c6', 'Subs are due', 'graham', 'Graham'),
+    story('c6', 'Subs are due', 'graham', 'Graham', 'The pub wants eight pounds more a night. Graham has done a spreadsheet.'),
     club('w11', 'Chapter nine', 'priya', 'Priya', 'Priya has the new edition.'),
     club('w12', 'General meeting', 'marjorie', 'Marjorie', 'The general meeting is on Tuesday.'),
-    story('c7', 'No pressure, mate', 'toby', 'Toby'),
+    story('c7', 'No pressure, mate', 'toby', 'Toby', 'A draft league team is up, in pencil. Board two: Toby.'),
     club('w14', 'Minutes of the last meeting', 'graham', 'Graham', 'Graham reads the minutes.'),
     club('w15', 'Before the cup', 'dex', 'Dex', 'The cup draw goes up.'),
   ],
   gauntlet: {
     title: 'The club knockout cup',
     location: 'The back room of the Red Lion',
+    note: 'Marjorie did the draw. Malcolm sends his apologies. He always does.',
+    afterNote: 'The club ladder goes up next week. Toby has kindly agreed to start at the top.',
     rounds: [
       // Played at club ratings, so the draw is ordered to get harder each round:
       // Clive (settled, well below by now), Oscar (about −90), Priya (−20).
@@ -92,6 +98,9 @@ export const ACT_1: ActPlan = {
 export function storyWeeksBefore(week: number): number {
   return ACT_1.chapters.slice(0, week).filter((c) => c.kind === 'story').length
 }
+
+/** What's going on at the club on trial night (shown under the trial strip). */
+export const TRIAL_NOTE = 'The honours board says V. Hart, year after year. Then it stops.'
 
 /** Trial night: the four placement games, in order (design: "Trial night"). */
 export const TRIAL_OPPONENTS = ['marjorie', 'dex', 'graham', 'clive']

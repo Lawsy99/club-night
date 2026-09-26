@@ -182,7 +182,12 @@
   font-weight: 500;
 }
 
-.club-week-day.optional {
+/* This week at the club, in one line (replaced the noticeboard) */
+.club-week-note {
+  margin: 2px 0 0;
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.4;
   color: var(--muted);
 }
 
@@ -195,47 +200,6 @@
   margin: -4px 0 0;
   font-size: 13px;
   color: var(--muted);
-}
-
-/* The club noticeboard: one pinned note */
-.noticeboard {
-  position: relative;
-  margin: 2px 6px 0;
-  padding: 12px 14px 10px;
-  border-radius: 4px;
-  background: var(--buff);
-  color: var(--ink);
-  transform: rotate(-0.6deg);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-}
-
-.noticeboard p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.noticeboard p span {
-  color: var(--line);
-  font-style: italic;
-}
-
-/* The signature, on its own line like a handwritten note. */
-.noticeboard-by {
-  display: block;
-  margin-top: 2px;
-  text-align: right;
-}
-
-.noticeboard-pin {
-  position: absolute;
-  top: -5px;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #d03b3b;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* Tonight's session: a buff card, like the mat itself, in dark ink */

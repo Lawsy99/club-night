@@ -130,6 +130,12 @@ Each moment can be explained away on its own. Together, by the cup final, they c
 - **No act numbers on screen.** Acts are for us; the player sees one continuous story.
 - **The club ladder.** The main cast who scale sit a set distance from the player, chosen by the story, so the path is fixed: Toby is always ahead; Priya drops below you once you've beaten her. Four background members (Malcolm, Ray, Sheila, Bill) have fixed ratings well away from yours.
 
+## The shape of a week, and of the season (Sep 2026)
+
+- **A week at the club:** Tuesday coaching (warm-ups from your own errors, the lesson, a coached game with Pemberton), Thursday practice night (the week's person, then someone stronger and someone weaker, sometimes Toby), Saturday best of three against the week's person.
+- **The season:** sixteen weeks over four months. Seven story weeks each introduce someone; the club weeks between them are ordinary weeks with people you already know, so they become familiar, like old friends. Then cup week.
+- **Background members** (Malcolm, Ray, Sheila, Bill): never labelled; seen around the club and met on practice night. See the tone guide.
+
 ## For review
 
 ### A. Graham as the Taylor Doose figure (decided)

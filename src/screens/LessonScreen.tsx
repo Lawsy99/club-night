@@ -108,6 +108,7 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
         <PuzzleTrainer
           key={puzzle.id}
           puzzle={puzzle}
+          focus={lesson.themes}
           onFinished={(clean) => {
             setPuzzleDone(true)
             if (!progress) return
