@@ -23,6 +23,7 @@ import {
 import { replay } from '../logic/game'
 import { averageCentipawnLoss, ratingCounts, reviewMoves } from '../logic/review'
 import { newMilestones, noticeFor, type Milestone } from '../logic/milestones'
+import { inferRepertoire } from '../logic/repertoire'
 import { ACT_1 } from '../data/act1'
 import { CHARACTERS } from '../data/characters'
 import { rivalTarget } from '../logic/rival'
@@ -157,6 +158,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
 
     // Toby studies the player's games (rival level 1): the weakest opening, once there's evidence.
     const target = pathGame.opponent === 'toby' ? await playerWeakness().catch(() => null) : null
+    // What the player usually plays, from their recent games (for the "your opening" notes).
+    const repertoire = await usualOpenings().catch(() => ({}))
     // Scouting report before matches and the first (assisted) friendly against someone.
     const onTrialNight = pathGame.kind === 'trial' || pathGame.kind === 'exhibition'
     const scouted = !onTrialNight && (pathGame.kind !== 'friendly' || pathGame.stage === 'assisted')
@@ -174,6 +177,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       path: pathGame,
       scouting,
       rivalPrefer: target && target.colour === record.playerColour ? target.opening : undefined,
+      repertoire,
       talk: {
         rematch: h2h.played + 1,
         losingStreak: h2h.theirStreak,
@@ -315,7 +319,6 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
         setGame={setGame}
         playerRating={progress.rating ? Math.round(progress.rating.rating) : undefined}
         playerName={progress.playerName}
-        repertoire={progress.repertoire}
         chatter={settings.chatter}
         onReview={() => setView('review')}
         onContinue={() => void finishGame(game)}
@@ -337,7 +340,6 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       onOpenStats={() => setView('stats')}
       onOpenSettings={() => setView('settings')}
       onSetName={(playerName) => updateProgress({ ...progress, playerName })}
-      onSetRepertoire={(repertoire) => updateProgress({ ...progress, repertoire })}
       onStartWarmup={() => setView('warmup')}
       onSkipWarmup={finishWarmup}
       onSkipStep={() => {
@@ -356,6 +358,20 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
           .catch((err) => console.error('Reset failed', err))
       }}
     />
+  )
+}
+
+/** The player's usual openings, from their last 30 finished games. */
+async function usualOpenings() {
+  const games = (await listArchivedGames()).slice(0, 30)
+  return inferRepertoire(
+    games.flatMap((g) => {
+      try {
+        return [{ sans: replay(g.moves.slice(0, 8)).history(), playerColour: g.playerColour }]
+      } catch {
+        return []
+      }
+    }),
   )
 }
 

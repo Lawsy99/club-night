@@ -5,8 +5,6 @@ import { useEffect, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
 import { NameField } from '../components/NameField'
 import { Portrait } from '../components/Portrait'
-import { RepertoireCard } from '../components/RepertoireCard'
-import type { Repertoire } from '../data/repertoire'
 import type { Milestone } from '../logic/milestones'
 import { cleanName } from '../logic/playerName'
 import { ACT_1 } from '../data/act1'
@@ -37,8 +35,6 @@ type Props = {
   onOpenSettings: () => void
   /** For players who started before names were asked for. */
   onSetName: (name: string) => void
-  /** Answering "Right. What do you play?" at the start of Act 1. */
-  onSetRepertoire: (r: Repertoire) => void
   /** A chapter's mistakes-deck warm-up: play it, or skip straight to the lesson. */
   onStartWarmup: () => void
   onSkipWarmup: () => void
@@ -69,7 +65,6 @@ export function HomeScreen(props: Props) {
     onOpenStats,
     onOpenSettings,
     onSetName,
-    onSetRepertoire,
     onStartWarmup,
     onSkipWarmup,
     onSkipStep,
@@ -116,9 +111,7 @@ export function HomeScreen(props: Props) {
 
       <ActProgress progress={progress} />
 
-      {progress.stage === 'act' && !progress.repertoire ? (
-        <RepertoireCard onChoose={onSetRepertoire} />
-      ) : wantsWarmup(progress, next, due ?? 0) ? (
+      {wantsWarmup(progress, next, due ?? 0) ? (
         <WarmupCard due={due ?? 0} onStart={onStartWarmup} onSkip={onSkipWarmup} />
       ) : (
         <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} onTargetedPuzzles={onTargetedPuzzles} />

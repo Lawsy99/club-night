@@ -1,7 +1,7 @@
 import { Chess } from 'chess.js'
 import { describe, expect, it } from 'vitest'
 import { REPERTOIRE_CHOICES, type RepertoireSlot } from '../data/repertoire'
-import { repertoireHint, sanInWords } from './repertoire'
+import { inferRepertoire, openingPlayed, repertoireHint, sanInWords } from './repertoire'
 
 const slots = Object.keys(REPERTOIRE_CHOICES) as RepertoireSlot[]
 
@@ -41,6 +41,28 @@ describe('repertoire lines', () => {
   it('start with the right first move for each slot', () => {
     for (const choice of REPERTOIRE_CHOICES.vsE4) for (const l of choice.lines) expect(l[0]).toBe('e4')
     for (const choice of REPERTOIRE_CHOICES.vsD4) for (const l of choice.lines) expect(l[0]).toBe('d4')
+  })
+})
+
+describe('working out the repertoire from games', () => {
+  const g = (sans: string[], playerColour: 'w' | 'b') => ({ sans, playerColour })
+
+  it('recognises each opening from the player’s own moves', () => {
+    expect(openingPlayed(['d4', 'd5', 'Bf4'], 'w')).toEqual({ slot: 'white', id: 'london' })
+    expect(openingPlayed(['e4', 'e5', 'Nf3', 'Nc6', 'Bc4'], 'w')).toEqual({ slot: 'white', id: 'italian' })
+    expect(openingPlayed(['e4', 'c6'], 'b')).toEqual({ slot: 'vsE4', id: 'caro-kann' })
+    expect(openingPlayed(['d4', 'Nf6', 'c4', 'g6'], 'b')).toEqual({ slot: 'vsD4', id: 'kid' })
+    expect(openingPlayed(['e4', 'e6'], 'b')).toBeNull() // the French isn't one of the eight
+  })
+
+  it('takes the most played in each situation, from two games up', () => {
+    const rep = inferRepertoire([
+      g(['d4', 'd5', 'Bf4'], 'w'),
+      g(['d4', 'Nf6', 'Bf4'], 'w'),
+      g(['e4', 'e5', 'Nf3', 'Nc6', 'Bc4'], 'w'),
+      g(['e4', 'c5'], 'b'), // only once: not yet
+    ])
+    expect(rep).toEqual({ white: 'london' })
   })
 })
 

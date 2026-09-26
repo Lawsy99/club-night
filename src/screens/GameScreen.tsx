@@ -53,7 +53,6 @@ import { useDialogue } from './useDialogue'
 import { Chess } from 'chess.js'
 import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
 import { repertoireHint, sanInWords } from '../logic/repertoire'
-import type { Repertoire } from '../data/repertoire'
 import type { Chatter } from '../logic/settings'
 import '../components/ratings.css'
 import './GameScreen.css'
@@ -69,8 +68,6 @@ type Props = {
   playerRating?: number
   /** The player's name, for their name bar and for lines that use it. */
   playerName?: string
-  /** What the player plays: its next move is noted in assisted and guided games. */
-  repertoire?: Repertoire
   /** How much the characters say (Settings). */
   chatter?: Chatter
 }
@@ -88,7 +85,6 @@ export function GameScreen({
   onContinue,
   playerRating,
   playerName,
-  repertoire,
   chatter = 'full',
 }: Props) {
   const stage = HELP_STAGES[game.stage]
@@ -429,10 +425,10 @@ export function GameScreen({
       : `${stage.label} · ${stage.summary}`
 
   // Assisted and guided games only (no help in real games): the next move of
-  // the player's own opening, while the game is still following it.
+  // the opening the player usually plays, while the game is still following it.
   const bookNote =
     (stage.id === 'assisted' || stage.id === 'guided') && playersTurn && !pending && !peeking
-      ? repertoireHint(sans, game.playerColour, repertoire)
+      ? repertoireHint(sans, game.playerColour, game.repertoire)
       : null
 
   const pendingLast = pending ?{ from: pending.uci.slice(0, 2), to: pending.uci.slice(2, 4) } : null

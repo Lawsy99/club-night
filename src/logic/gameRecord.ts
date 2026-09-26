@@ -3,6 +3,7 @@
 import { HELP_STAGES, type HelpStageId } from '../data/helpStages'
 import { applyUci, getOutcome, replay, type Colour, type GameOutcome } from './game'
 import type { PathGame } from './path'
+import type { Repertoire } from '../data/repertoire'
 
 export type GameRecord = {
   id: string
@@ -35,6 +36,8 @@ export type GameRecord = {
   scoutingSeen?: boolean
   /** Toby's targeting: the opening family he steers towards (rival level 1). */
   rivalPrefer?: string
+  /** The player's usual openings (worked out from their games) when this game began. */
+  repertoire?: Partial<Repertoire>
   /** Dialogue state: head-to-head when the game began, and in-game chatter so far. */
   talk?: {
     rematch: number

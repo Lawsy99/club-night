@@ -5,7 +5,6 @@
 import { ACT_1, TRIAL_FINALE, TRIAL_OPPONENTS } from '../data/act1'
 import { characterRating, findCharacter } from '../data/characters'
 import { findLesson } from '../data/lessons'
-import type { Repertoire } from '../data/repertoire'
 import { rateGame, type PlayerRating } from './glicko2'
 import { valveAdjustment, type RealGameResult } from './safetyValve'
 import {
@@ -41,8 +40,6 @@ export type Progress = {
   recentReal: RealGameResult[]
   /** The player's name, as given to Graham on trial night (older saves may lack it). */
   playerName?: string
-  /** What the player plays, chosen when Coach Pemberton asks at the start of Act 1. */
-  repertoire?: Repertoire
   /** The chapter whose mistakes-deck warm-up has been done (or skipped). */
   warmupDone?: string
   /** The rating after each change, oldest first, for the stats graph (older saves start empty). */

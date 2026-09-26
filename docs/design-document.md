@@ -448,7 +448,7 @@ Lessons are short and always tied to the next opponent, so what you learn gets u
 
 ### Your repertoire
 
-At the start of Act 1, Coach Pemberton asks what you play ("Right. What do you play?") and the player picks one opening as White and one defence against each of 1.e4 and 1.d4. The choice can be changed at the start of each act.
+**Revised Sep 2026 (Joseph's decision): nobody asks.** The app works out what the player plays from their own recent games: the most-played of the eight openings below in each situation (as White, against 1.e4, against 1.d4), once it has been played at least twice. In assisted and guided games, while the game still follows one of that opening's main lines, a small note says the next move in plain words ("Your London: next, bishop to f4"). The plan pause also has plans for the player's own openings.
 
 | Colour | Options |
 | --- | --- |
