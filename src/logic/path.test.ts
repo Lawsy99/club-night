@@ -8,6 +8,7 @@ import {
   opponentRating,
   practiceOpponent,
   recordGame,
+  upgradeProgress,
   wantsWarmup,
   type Progress,
 } from './path'
@@ -170,6 +171,14 @@ describe('the path', () => {
     // Priya is just above until the player has beaten her (her story week is week 8), then just below.
     expect(opponentRating({ ...p, chapter: 7 }, 'priya')).toBe(1220)
     expect(opponentRating({ ...p, chapter: 8 }, 'priya')).toBe(1180)
+  })
+
+  it('brings older saves up to date with the fixed characters’ new ratings, once', () => {
+    const p = throughTrial()
+    const old: Progress = { ...p, fixedVersion: undefined, trialStart: undefined, fixedRatings: { ...p.fixedRatings, marjorie: 1 } }
+    const upgraded = upgradeProgress(old)
+    expect(upgraded.fixedRatings.marjorie).toBe(Math.round((p.baseline - 60) / 5) * 5)
+    expect(upgradeProgress(upgraded)).toBe(upgraded)
   })
 
   it('brings your rival to practice night now and then', () => {

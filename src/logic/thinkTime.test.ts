@@ -21,7 +21,7 @@ describe('opponents', () => {
   it('works out a character from the baseline, and keeps a saved rating', () => {
     const marjorie = resolveOpponent(characterOpponentId('marjorie'))
     expect(marjorie.name).toBe('Marjorie')
-    expect(marjorie.rating).toBe(850) // default baseline 1000 − 150
+    expect(marjorie.rating).toBe(940) // default baseline 1000 − 60
     expect(resolveOpponent(characterOpponentId('marjorie'), 700).engine).toBe('bot')
     expect(resolveOpponent(characterOpponentId('marjorie'), 1300).engine).toBe('maia')
   })

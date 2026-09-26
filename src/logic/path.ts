@@ -54,6 +54,28 @@ export type Progress = {
   coachingDone?: boolean
   /** This week's Saturday match: best of three (Joseph, Sep 2026). */
   series?: { wins: number; losses: number }
+  /** Which version of the fixed characters' offsets fixedRatings came from. */
+  fixedVersion?: number
+  /** The starting rating set after trial night (the fixed characters are measured from it). */
+  trialStart?: number
+}
+
+/**
+ * Fixed ratings are set once after trial night. When their offsets change
+ * (as in Sep 2026, bringing Marjorie and Clive closer), older saves are
+ * brought up to date once, from the same starting point.
+ */
+export const FIXED_VERSION = 2
+
+export function upgradeProgress(p: Progress): Progress {
+  if (!p.rating || (p.fixedVersion ?? 1) >= FIXED_VERSION) return p
+  const start = p.trialStart ?? p.baseline
+  const fixedRatings = { ...p.fixedRatings }
+  for (const id of ['marjorie', 'clive', 'graham']) {
+    const c = findCharacter(id)
+    if (c) fixedRatings[id] = characterRating(c, start)
+  }
+  return { ...p, fixedRatings, fixedVersion: FIXED_VERSION }
 }
 
 /** Saturday's match is best of three: first to two. */
@@ -453,6 +475,8 @@ function settleTrial(p: Progress, games: TrialGame[]): Progress {
     rating: start,
     baseline,
     fixedRatings,
+    fixedVersion: FIXED_VERSION,
+    trialStart: baseline,
     recentReal: [],
     ratingHistory: withHistory(p, start),
   }

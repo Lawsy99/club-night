@@ -17,6 +17,7 @@ import {
   NEW_PROGRESS,
   nextStep,
   recordGame,
+  upgradeProgress,
   type PathGame,
   type Progress,
 } from '../logic/path'
@@ -131,7 +132,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
     requestPersistentStorage()
     Promise.all([loadProgress(), loadCurrentGame(), loadScreen()])
       .then(([savedProgress, saved, screen]) => {
-        if (savedProgress) setProgress(savedProgress)
+        // (Older saves get the latest fixed-character ratings, once.)
+        if (savedProgress) setProgress(upgradeProgress(savedProgress))
         const upgraded = saved ? upgradeGameRecord(saved) : null
         const current = upgraded && isResumable(upgraded) ? upgraded : null
         setGame(current)

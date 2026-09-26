@@ -36,7 +36,9 @@ export const CHARACTERS: Character[] = [
     id: 'marjorie',
     name: 'Marjorie',
     strength: 'fixed',
-    offset: -150,
+    // Close enough to be a real game in week 1 (about a 58% chance); fixed, so
+    // the player pulls away from her over the weeks (Joseph, Sep 2026).
+    offset: -60,
     style: 'solid',
     thinkSpeed: 1,
     resigns: 'plays-to-mate',
@@ -76,7 +78,7 @@ export const CHARACTERS: Character[] = [
     id: 'clive',
     name: 'Clive',
     strength: 'fixed',
-    offset: -50,
+    offset: -30,
     style: 'simplifying',
     thinkSpeed: 0.9,
     resigns: 'normal',

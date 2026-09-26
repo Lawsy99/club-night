@@ -129,8 +129,8 @@ Scaling characters use the act baseline plus an offset. Fixed characters are set
 
 | Character | Type | Act 1 | Act 2 | Act 3 |
 | --- | --- | --- | --- | --- |
-| Marjorie | Fixed | Baseline −150 | Same number | Same number |
-| Clive | Fixed | Baseline −50 | Same number | Same number |
+| Marjorie | Fixed | Baseline −60 (was −150; Sep 2026, closer so week 1 is a real game) | Same number | Same number |
+| Clive | Fixed | Baseline −30 (was −50) | Same number | Same number |
 | Graham | Fixed | Baseline +50 | Same number | Same number |
 | Dex | Scaling | −100 | +0 | +50 |
 | Priya | Scaling | +0 | +0 | +0 |
