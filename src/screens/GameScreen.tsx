@@ -35,6 +35,7 @@ import { flipScore, scoreFor, toCentipawns } from '../logic/evaluation'
 import { describeOutcome, getOutcome, replay, type GameOutcome } from '../logic/game'
 import { drawRule } from '../logic/path'
 import { playtestOn } from '../logic/playtest'
+import { gameKindLabel } from '../logic/gameLabels'
 import { SHORTEST_REVIEW } from '../logic/review'
 import {
   canTakeBack,
@@ -544,18 +545,11 @@ export function GameScreen({
               : `Your move${chess.inCheck() ? ' · check' : ''}`
 
   // Games without help say what they are, not "Real" (an internal name).
-  const realLabel: Record<string, string> = {
-    trial: 'Trial night',
-    exhibition: 'Just for fun',
-    match: 'Best of three',
-    'cup-round': 'Knockout cup',
-    boss: 'Cup final',
-  }
   const stageLabel =
     stage.takebacks > 0 && Number.isFinite(stage.takebacks)
       ? `${stage.label} · ${takebacksLeft(game)} takeback${takebacksLeft(game) === 1 ? '' : 's'} left`
       : stage.id === 'real'
-        ? `${realLabel[game.path?.kind ?? ''] ?? 'Match'} · no help`
+        ? `${gameKindLabel(game)} · no help`
         : `${stage.label} · ${stage.summary}`
 
   // Full-help games only (the game with Pemberton): the next move of the

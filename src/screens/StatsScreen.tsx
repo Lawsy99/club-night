@@ -3,7 +3,7 @@
 // strongest and weakest openings. Quiet numbers, never a to-do list.
 import { useEffect, useState } from 'react'
 import { RatingGraph } from '../components/RatingGraph'
-import { CHARACTERS, findCharacter } from '../data/characters'
+import { CHARACTERS, COACH, findCharacter, PRACTICE_REGULARS } from '../data/characters'
 import { OPENING_NAMES } from '../data/scouting'
 import { replay } from '../logic/game'
 import { outcomeOf, upgradeGameRecord } from '../logic/gameRecord'
@@ -63,10 +63,9 @@ export function StatsScreen({ progress, onBack }: { progress: Progress; onBack: 
 }
 
 function RecordSection({ games }: { games: StatsGame[] }) {
-  const rows = recordByCharacter(
-    games,
-    CHARACTERS.map((c) => c.id),
-  )
+  // The main cast, then the practice-night regulars (Terry, Ray, Sheila, Bill)
+  // and Pemberton, for anyone you've played.
+  const rows = recordByCharacter(games, [...CHARACTERS, ...PRACTICE_REGULARS, COACH].map((c) => c.id))
   return (
     <section>
       <h2>Against the club</h2>
