@@ -15,6 +15,7 @@ import {
   firstOpponentRating,
   FULL_STRENGTH_RATING,
   nextTrialOpponentRating,
+  START_DEVIATION,
   TRIAL_LENGTH,
   trialEstimate,
   type Experience,
@@ -75,7 +76,12 @@ export type Progress = {
  */
 export const FIXED_VERSION = 2
 
-export function upgradeProgress(p: Progress): Progress {
+export function upgradeProgress(saved: Progress): Progress {
+  // Saves from before Sep 2026 started with a jumpier rating: settle it.
+  const p =
+    saved.rating && saved.rating.deviation > START_DEVIATION
+      ? { ...saved, rating: { ...saved.rating, deviation: START_DEVIATION } }
+      : saved
   if (!p.rating || (p.fixedVersion ?? 1) >= FIXED_VERSION) return p
   const start = p.trialStart ?? p.baseline
   const fixedRatings = { ...p.fixedRatings }
@@ -272,7 +278,7 @@ export function nextStep(p: Progress): NextStep {
         kind: 'play',
         game: coaching,
         optionalFriendly: null,
-        note: 'He plays at your level, and tells you what he thinks. Three hints, three takebacks.',
+        note: 'He plays at your level, and tells you what he thinks.',
       }
     }
     const rating = opponentRating(p, ch.opponent)

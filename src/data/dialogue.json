@@ -129,7 +129,7 @@
   "id": "toby-win-04",
   "character": "toby",
   "trigger": "game_win",
-  "text": "Tough run. I'll send you my Lichess study. No worries if not.",
+  "text": "Tough run. Want to go over them all some time? No worries if not.",
   "expression": "smug",
   "conditions": {
    "losingStreak": 3
@@ -1354,7 +1354,7 @@
   "id": "story-c1-marjorie",
   "character": "marjorie",
   "trigger": "game_start",
-  "text": "We used to need both rooms, you know. Phones off, love.",
+  "text": "Best of three, is it? I’ve put the good set out. Phones off, love.",
   "expression": "neutral",
   "conditions": {
    "flags": [
@@ -1385,7 +1385,7 @@
   "character": "oscar",
   "speaker": "neil",
   "trigger": "game_loss",
-  "text": "We asked Mr Pemberton about coaching. His Tuesdays are taken.",
+  "text": "He doesn’t lose two in a row. Well. He does now.",
   "expression": "neutral",
   "conditions": {
    "flags": [
@@ -1400,7 +1400,7 @@
   "id": "story-c4-clive",
   "character": "clive",
   "trigger": "game_loss",
-  "text": "Good game. I was board one once, when there was a proper board one. Mild for October.",
+  "text": "Good game. You made something out of nothing. Mild for October.",
   "expression": "neutral",
   "conditions": {
    "flags": [
@@ -1415,8 +1415,8 @@
   "id": "story-c5-priya",
   "character": "priya",
   "trigger": "game_loss",
-  "text": "What do you do when the book runs out?",
-  "expression": "neutral",
+  "text": "That wasn’t in chapter nine. Or ten.",
+  "expression": "surprised",
   "conditions": {
    "flags": [
     "kind:match",
@@ -1430,7 +1430,7 @@
   "id": "story-c6-graham",
   "character": "graham",
   "trigger": "game_loss",
-  "text": "Fair result. I've put a draft team sheet up. Pencil, for now.",
+  "text": "A fair result. I shall be recording it in full.",
   "expression": "annoyed",
   "conditions": {
    "flags": [
@@ -1445,7 +1445,7 @@
   "id": "story-c7-toby",
   "character": "toby",
   "trigger": "game_start",
-  "text": "No pressure, mate. I've made you a study, by the way. I'll send it over.",
+  "text": "No pressure, mate. Did you get a chance to look at the study?",
   "expression": "pleased",
   "conditions": {
    "flags": [

@@ -12,6 +12,7 @@ import { cleanName } from '../logic/playerName'
 import { playtestOn, setPlaytestOn } from '../logic/playtest'
 import { TRIAL_NOTE } from '../data/act1'
 import { findCharacter } from '../data/characters'
+import { findLesson } from '../data/lessons'
 import { characterOpponentId } from '../data/opponents'
 import { shownRating } from '../logic/glicko2'
 import { warmupCards } from '../logic/mistakesDeck'
@@ -338,6 +339,13 @@ function RatingChange({ from, to }: { from: number; to: number }) {
   )
 }
 
+/** What each kind of lesson involves, in a few words. */
+const LESSON_SHAPE = {
+  tactics: 'one example, then puzzles',
+  opening: 'he shows you, then you play it',
+  endgame: 'finish a won ending, then puzzles',
+} as const
+
 function NextCard({
   next,
   onPlay,
@@ -352,7 +360,7 @@ function NextCard({
         <p className="next-opponent">
           <Portrait who="pemberton" size={44} />
           <span>
-            <strong>Coach Pemberton</strong> <span className="next-rating">one example, then puzzles</span>
+            <strong>Coach Pemberton</strong> <span className="next-rating">{LESSON_SHAPE[findLesson(next.chapterId)?.kind ?? 'tactics']}</span>
           </span>
         </p>
         <button type="button" className="next-play" onClick={onStartLesson}>

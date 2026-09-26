@@ -52,6 +52,8 @@ export function nextTrialOpponentRating(games: readonly TrialGame[], first: numb
  */
 export const ACCURACY_WEIGHT = 0.65
 export const START_BELOW = 50
+/** How uncertain the rating is after trial night (Glicko deviation). */
+export const START_DEVIATION = 90
 
 export function trialEstimate(games: readonly TrialGame[], first: number): { estimate: number; start: PlayerRating } {
   // Results: run the games through Glicko-2 from an uncertain start.
@@ -64,8 +66,10 @@ export function trialEstimate(games: readonly TrialGame[], first: number): { est
     byAccuracy === null ? byResults.rating : ACCURACY_WEIGHT * byAccuracy + (1 - ACCURACY_WEIGHT) * byResults.rating
 
   const rating = Math.max(MIN_RATING, Math.round(estimate - START_BELOW))
-  // Still fairly uncertain after four games: it keeps moving quickly for a while.
-  return { estimate: Math.round(estimate), start: { rating, deviation: 150, volatility: 0.06 } }
+  // Reasonably sure after four games plus their accuracy. (Was 150, which
+  // swung the rating 60 points on a single game in playtesting: too jumpy
+  // for a club season. 90 moves it about 25 to 35 a game.)
+  return { estimate: Math.round(estimate), start: { rating, deviation: START_DEVIATION, volatility: 0.06 } }
 }
 
 /**

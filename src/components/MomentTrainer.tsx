@@ -101,7 +101,7 @@ export function MomentTrainer({ moment, onFinished }: Props) {
           : 0.5
       const bestChance = winChance({ type: 'cp', value: moment.bestCp })
       if (bestChance - attemptChance <= ACCEPT_DROP) return finish('solved', after.fen(), uci)
-      if (bestChance - attemptChance <= CLOSE_DROP) whyNot = ' Close: that’s playable, but there’s something stronger.'
+      if (bestChance - attemptChance <= CLOSE_DROP) whyNot = 'close'
       else if (analysis) {
         const reason = explainMistake({
           fenBefore: moment.fenBefore,
@@ -123,10 +123,9 @@ export function MomentTrainer({ moment, onFinished }: Props) {
       const best = new Chess(moment.fenBefore)
       applyUci(best, moment.bestMove)
       finish('revealed', best.fen(), moment.bestMove)
-    } else if (left === 1) {
-      setFeedback(`Not quite.${whyNot} Last try: the piece to move is highlighted.`)
     } else {
-      setFeedback(`Not quite.${whyNot} Try again.`)
+      const verdict = whyNot === 'close' ? 'Close: that’s playable, but there’s something stronger.' : `Not quite.${whyNot}`
+      setFeedback(`${verdict} ${left === 1 ? 'Last try: the piece to move is highlighted.' : 'Try again.'}`)
     }
   }
 

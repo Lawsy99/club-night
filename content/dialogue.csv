@@ -11,7 +11,7 @@ toby-start-05,toby,,game_start,"Big one tonight. Whatever happens, it's all lear
 toby-win-01,toby,,game_win,Good game! Want to go over it?,pleased,,,,,,,1,
 toby-win-02,toby,,game_win,"You were fine until the middle bit.",smug,,,,,,,1,
 toby-win-03,toby,,game_win,Really enjoyed that. You're getting there.,pleased,,,,,,,1,
-toby-win-04,toby,,game_win,Tough run. I'll send you my Lichess study. No worries if not.,smug,,,,,3,,3,
+toby-win-04,toby,,game_win,Tough run. Want to go over them all some time? No worries if not.,smug,,,,,3,,3,
 toby-loss-01,toby,,game_loss,So deserved. Genuinely made up for you.,annoyed,,,,,,,1,
 toby-loss-02,toby,,game_loss,"Honestly, great game. I learned loads.",annoyed,,,,,,,1,
 toby-loss-03,toby,,game_loss,We'll call that a learning moment for me.,annoyed,,,,,,,1,
@@ -123,13 +123,13 @@ story-trial-graham,graham,,game_start,"Your name's down. I checked the spelling.
 story-trial-marjorie,marjorie,,game_start,"You must be new. I’m Marjorie. The kettle’s on after, if you’re staying.",pleased,,,,,,kind:trial,1,yes
 story-trial-dex,dex,,game_start,"New? Cool. I’ll go easy. That’s a lie, I don’t know how.",smug,,,,,,kind:trial,1,yes
 story-trial-clive,clive,,game_start,"Clive. Evening. Shall we?",neutral,,,,,,kind:trial,1,yes
-story-c1-marjorie,marjorie,,game_start,"We used to need both rooms, you know. Phones off, love.",neutral,,,,,,kind:match chapter:c1,1,yes
+story-c1-marjorie,marjorie,,game_start,"Best of three, is it? I’ve put the good set out. Phones off, love.",neutral,,,,,,kind:match chapter:c1,1,yes
 story-c2-dex,dex,,game_loss,(Dex picks up his phone. The little red light is on.),neutral,,,,,,kind:match chapter:c2,1,yes
-story-c3-neil,oscar,neil,game_loss,We asked Mr Pemberton about coaching. His Tuesdays are taken.,neutral,,,,,,kind:match chapter:c3,1,yes
-story-c4-clive,clive,,game_loss,"Good game. I was board one once, when there was a proper board one. Mild for October.",neutral,,,,,,kind:match chapter:c4,1,yes
-story-c5-priya,priya,,game_loss,What do you do when the book runs out?,neutral,,,,,,kind:match chapter:c5,1,yes
-story-c6-graham,graham,,game_loss,"Fair result. I've put a draft team sheet up. Pencil, for now.",annoyed,,,,,,kind:match chapter:c6,1,yes
-story-c7-toby,toby,,game_start,"No pressure, mate. I've made you a study, by the way. I'll send it over.",pleased,,,,,,kind:match chapter:c7,1,yes
+story-c3-neil,oscar,neil,game_loss,He doesn’t lose two in a row. Well. He does now.,neutral,,,,,,kind:match chapter:c3,1,yes
+story-c4-clive,clive,,game_loss,"Good game. You made something out of nothing. Mild for October.",neutral,,,,,,kind:match chapter:c4,1,yes
+story-c5-priya,priya,,game_loss,That wasn’t in chapter nine. Or ten.,surprised,,,,,,kind:match chapter:c5,1,yes
+story-c6-graham,graham,,game_loss,"A fair result. I shall be recording it in full.",annoyed,,,,,,kind:match chapter:c6,1,yes
+story-c7-toby,toby,,game_start,"No pressure, mate. Did you get a chance to look at the study?",pleased,,,,,,kind:match chapter:c7,1,yes
 story-final-start,toby,,game_start,(Marjorie has got the good set out.),neutral,,,,,,kind:boss,1,yes
 story-final-won,toby,,game_loss,"(Pemberton shakes your hand, then goes to find Toby.)",annoyed,,,,,,kind:boss,1,yes
 notice-rating-marjorie,marjorie,,game_start,"Your rating's gone up, I see. Good for you.",pleased,,,,,,notice:rating,1,
