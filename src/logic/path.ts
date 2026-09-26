@@ -69,6 +69,8 @@ export type PathGame = {
   stage: 'assisted' | 'guided' | 'real'
   label: string
   location: string
+  /** The chapter this game belongs to (for its story lines), if any. */
+  chapter?: string
 }
 
 export type NextStep =
@@ -154,8 +156,17 @@ export function nextStep(p: Progress): NextStep {
       stage,
       label: `Friendly vs ${nameOf(ch.opponent)}`,
       location: ch.location,
+      chapter: ch.id,
     })
-    const match: PathGame = { kind: 'match', opponent: ch.opponent, rating, stage: 'real', label: ch.matchLabel, location: ch.location }
+    const match: PathGame = {
+      kind: 'match',
+      opponent: ch.opponent,
+      rating,
+      stage: 'real',
+      label: ch.matchLabel,
+      location: ch.location,
+      chapter: ch.id,
+    }
     const met = p.met.includes(ch.opponent)
     const unlocked = met || p.friendlies.wonGuided || p.friendlies.played >= 3
     if (!unlocked) {

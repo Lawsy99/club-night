@@ -173,7 +173,9 @@ function Noticeboard({ progress, next }: { progress: Progress; next: NextStep })
       : progress.stage !== 'act'
         ? next.kind === 'play' && next.game.kind === 'exhibition'
           ? 'trial-finale'
-          : 'trial'
+          : (progress.trial?.games.length ?? 0) >= 2
+            ? 'trial-honours'
+            : 'trial'
         : progress.chapter < ACT_1.chapters.length
           ? ACT_1.chapters[progress.chapter].id
           : next.kind === 'play' && next.game.kind === 'boss'

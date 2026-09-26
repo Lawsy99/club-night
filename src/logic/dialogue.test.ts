@@ -41,6 +41,15 @@ describe('dialogue selection', () => {
     expect(fillName(chosen!.text, 'Joseph')).toBe('Evening, Joseph.')
   })
 
+  it('puts story beats before general lines, once each', () => {
+    const lines = [line('general'), line('beat', { conditions: { flags: ['chapter:c3', 'kind:match'] }, once: true })]
+    const inMatch = { ...ctx, flags: ['kind:match', 'chapter:c3'] }
+    expect(selectLine(lines, inMatch, empty)?.id).toBe('beat')
+    expect(selectLine(lines, inMatch, { recent: [], onceShown: ['beat'] })?.id).toBe('general')
+    // In a friendly the beat doesn't apply.
+    expect(selectLine(lines, { ...ctx, flags: ['kind:friendly', 'chapter:c3'] }, empty)?.id).toBe('general')
+  })
+
   it("only picks this character's lines for this trigger", () => {
     const lines = [line('a'), line('b', { character: 'dex' }), line('c', { trigger: 'game_win' })]
     expect(selectLine(lines, ctx, empty)?.id).toBe('a')

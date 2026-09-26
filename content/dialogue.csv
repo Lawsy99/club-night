@@ -151,3 +151,13 @@ graham-think-03,graham,,long_think,(Graham writes the time in the margin.),neutr
 toby-think-01,toby,,long_think,(Toby leans back in his chair.),smug,,,,,,,1,
 toby-think-02,toby,,long_think,"(Toby glances up at you, then back at the board.)",smug,,,,,,,1,
 toby-think-03,toby,,long_think,(Toby waves to someone across the room.),smug,,,,,,,1,
+story-trial-graham,graham,,game_start,"Your name's down. I checked the spelling. Scoresheet, please.",neutral,,,,,,kind:trial,1,yes
+story-c1-marjorie,marjorie,,game_start,"We used to need both rooms, you know. Phones off, love.",neutral,,,,,,kind:match chapter:c1,1,yes
+story-c2-dex,dex,,game_loss,(Dex picks up his phone. The little red light is on.),neutral,,,,,,kind:match chapter:c2,1,yes
+story-c3-neil,oscar,neil,game_loss,We asked Mr Pemberton about coaching. His Tuesdays are taken.,neutral,,,,,,kind:match chapter:c3,1,yes
+story-c4-clive,clive,,game_loss,"Good game. I was board one once, when there was a proper board one. Mild for October.",neutral,,,,,,kind:match chapter:c4,1,yes
+story-c5-priya,priya,,game_loss,What do you do when the book runs out?,neutral,,,,,,kind:match chapter:c5,1,yes
+story-c6-graham,graham,,game_loss,"Fair result. I've put a draft team sheet up. Pencil, for now.",annoyed,,,,,,kind:match chapter:c6,1,yes
+story-c7-toby,toby,,game_start,"No pressure, mate. I've made you a study, by the way. I'll send it over.",pleased,,,,,,kind:match chapter:c7,1,yes
+story-final-start,toby,,game_start,(Marjorie has got the good set out.),neutral,,,,,,kind:boss,1,yes
+story-final-won,toby,,game_loss,"(Pemberton shakes your hand, then goes to find Toby.)",annoyed,,,,,,kind:boss,1,yes

@@ -1672,5 +1672,153 @@
   "conditions": {},
   "weight": 1,
   "once": false
+ },
+ {
+  "id": "story-trial-graham",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "Your name's down. I checked the spelling. Scoresheet, please.",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "kind:trial"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-c1-marjorie",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "We used to need both rooms, you know. Phones off, love.",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "kind:match",
+    "chapter:c1"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-c2-dex",
+  "character": "dex",
+  "trigger": "game_loss",
+  "text": "(Dex picks up his phone. The little red light is on.)",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "kind:match",
+    "chapter:c2"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-c3-neil",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "game_loss",
+  "text": "We asked Mr Pemberton about coaching. His Tuesdays are taken.",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "kind:match",
+    "chapter:c3"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-c4-clive",
+  "character": "clive",
+  "trigger": "game_loss",
+  "text": "Good game. I was board one once, when there was a proper board one. Mild for October.",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "kind:match",
+    "chapter:c4"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-c5-priya",
+  "character": "priya",
+  "trigger": "game_loss",
+  "text": "What do you do when the book runs out?",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "kind:match",
+    "chapter:c5"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-c6-graham",
+  "character": "graham",
+  "trigger": "game_loss",
+  "text": "Fair result. I've put a draft team sheet up. Pencil, for now.",
+  "expression": "annoyed",
+  "conditions": {
+   "flags": [
+    "kind:match",
+    "chapter:c6"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-c7-toby",
+  "character": "toby",
+  "trigger": "game_start",
+  "text": "No pressure, mate. I've made you a study, by the way. I'll send it over.",
+  "expression": "pleased",
+  "conditions": {
+   "flags": [
+    "kind:match",
+    "chapter:c7"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-final-start",
+  "character": "toby",
+  "trigger": "game_start",
+  "text": "(Marjorie has got the good set out.)",
+  "expression": "neutral",
+  "conditions": {
+   "flags": [
+    "kind:boss"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-final-won",
+  "character": "toby",
+  "trigger": "game_loss",
+  "text": "(Pemberton shakes your hand, then goes to find Toby.)",
+  "expression": "annoyed",
+  "conditions": {
+   "flags": [
+    "kind:boss"
+   ]
+  },
+  "weight": 1,
+  "once": true
  }
 ]

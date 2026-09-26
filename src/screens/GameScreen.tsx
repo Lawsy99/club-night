@@ -134,6 +134,10 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating, 
     losingStreak: talk.losingStreak,
     playerName,
   })
+  // Where this game sits in the story, so chapter lines ("kind:match chapter:c3") can be picked.
+  const storyFlags = game.path
+    ? [`kind:${game.path.kind}`, ...(game.path.chapter ? [`chapter:${game.path.chapter}`] : [])]
+    : []
   // The long-think stage direction: whether one is showing, and when the last was.
   const thinkLineShown = useRef(false)
   const lastThinkLineAt = useRef(-99)
@@ -144,7 +148,7 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating, 
     if (talk.startSaid || game.moves.length > 0 || !opponent.character) return
     // A moment's pause, so the dialogue history has loaded (no repeats).
     const t = window.setTimeout(() => {
-      dialogue.speak(isExhibition ? 'exhibition_start' : 'game_start', true)
+      dialogue.speak(isExhibition ? 'exhibition_start' : 'game_start', true, storyFlags)
       setGame((g) => (g ? { ...g, talk: { ...talk, startSaid: true } } : g))
     }, 400)
     return () => window.clearTimeout(t)
@@ -154,7 +158,9 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating, 
   useEffect(() => {
     if (!outcome || talk.endSaid || !opponent.character) return
     const theyWon = outcome.winner === opponentColour
-    if (outcome.winner !== null) dialogue.speak(theyWon ? (isExhibition ? 'exhibition_win' : 'game_win') : 'game_loss', true)
+    if (outcome.winner !== null) {
+      dialogue.speak(theyWon ? (isExhibition ? 'exhibition_win' : 'game_win') : 'game_loss', true, storyFlags)
+    }
     setGame((g) => (g ? { ...g, talk: { ...talk, endSaid: true } } : g))
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once, when the game ends
   }, [!!outcome])

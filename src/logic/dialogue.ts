@@ -98,8 +98,11 @@ export function selectLine(
   random: () => number = Math.random,
 ): DialogueLine | null {
   const matching = lines.filter((l) => l.character === ctx.character && l.trigger === ctx.trigger && conditionsMet(l, ctx))
-  const available = matching.filter((l) => !(l.once && history.onceShown.includes(l.id)))
+  let available = matching.filter((l) => !(l.once && history.onceShown.includes(l.id)))
   if (available.length === 0) return null
+  // Story beats (lines tied to a chapter or a kind of game) come before general chatter.
+  const story = available.filter(isStoryBeat)
+  if (story.length > 0) available = story
   const fresh = available.filter((l) => !history.recent.includes(l.id))
   // Nothing repeats until the whole set has been used; then it starts again.
   const pool = fresh.length > 0 ? fresh : available
@@ -110,6 +113,11 @@ export function selectLine(
     if (roll <= 0) return line
   }
   return pool[pool.length - 1]
+}
+
+/** A line written for a particular moment in the story ("chapter:c3", "kind:boss"). */
+function isStoryBeat(line: DialogueLine): boolean {
+  return !!line.conditions.flags?.some((f) => f.startsWith('chapter:') || f.startsWith('kind:'))
 }
 
 function conditionsMet(line: DialogueLine, ctx: DialogueContext): boolean {

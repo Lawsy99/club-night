@@ -1,7 +1,8 @@
 // Act 1, "Club nights": the fixed path from after trial night to the
 // knockout cup final (design document, "The path" and "Stakes").
-// PLACEHOLDER TEXT: titles and locations are stand-ins until the Act 1 story
-// outline is agreed (phase 6). Each chapter's lesson is in lessons.ts (same id).
+// The story beats for each chapter are in content/dialogue.csv (lines flagged
+// "chapter:c1" and so on) and data/noticeboard.ts; see docs/story-outline.md.
+// Each chapter's lesson is in lessons.ts (same id).
 
 export type ChapterPlan = {
   id: string

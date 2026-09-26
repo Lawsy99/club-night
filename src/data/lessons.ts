@@ -40,7 +40,7 @@ export const LESSONS: Lesson[] = [
   {
     id: 'c3',
     title: 'Attacks in the Italian',
-    intro: 'Italian games turn on the kingside quickly. Learn what the attack looks like, so it never surprises you.',
+    intro: 'Italian games turn on the kingside quickly. Toby found one of these last week. Learn what the attack looks like.',
     openings: ['italian'],
     themes: ['kingsideAttack'],
     count: 4,
@@ -63,7 +63,7 @@ export const LESSONS: Lesson[] = [
   {
     id: 'c6',
     title: 'Discovered attacks',
-    intro: "In Graham's classical positions, pieces line up. Move one out of the way and the one behind strikes.",
+    intro: "In Graham's positions, pieces line up. Move one aside and the one behind strikes. Toby's very good at these.",
     openings: ['qgd'],
     themes: ['discoveredAttack'],
     count: 4,
