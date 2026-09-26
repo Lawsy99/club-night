@@ -20,15 +20,18 @@ export type Trigger =
   | 'promotion'
   | 'clearly_winning'
   | 'clearly_losing'
-  /** Friendlies: the character says what they're planning (teaches the player to read plans). */
+  /**
+   * The character says what they're planning. Not used in games since Sep
+   * 2026 (fixed text often wasn't true on the board); kept for the file format.
+   */
   | 'plan_hint'
   /** Matches: a stage direction at a key moment, to build tension (no chatter). */
   | 'tension'
   /** The character has just blundered and the player has a big move available. */
   | 'opportunity'
   /**
-   * A long think: a small stage direction (never speech), so the player can
-   * see the character is thinking and the app isn't just slow.
+   * A long think: a small stage direction. Not used in games since Sep 2026
+   * (idle, unrelated to the game); kept for the file format.
    */
   | 'long_think'
   /**
@@ -207,13 +210,6 @@ export function matchLineAllowed(options: { linesSoFar: number; moveNumber: numb
   return options.lastLineMove === null || options.moveNumber - options.lastLineMove >= MATCH_LINE_GAP_MOVES
 }
 
-/**
- * A stage direction may appear once a think has lasted this long, and then
- * only sometimes. It shares the game's line budget, so it's rare. (The
- * thinking dots always show, so a long think never looks like a freeze.)
- */
-export const LONG_THINK_MS = 5000
-export const LONG_THINK_CHANCE = 0.35
 
 export function chatterAllowed(options: {
   gameType: 'friendly' | 'match'

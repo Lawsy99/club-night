@@ -48,8 +48,6 @@ import { acceptsDraw, piecesLeft, shouldOfferDraw, shouldResign } from '../logic
 import {
   chatterAllowed,
   isBigMoment,
-  LONG_THINK_CHANCE,
-  LONG_THINK_MS,
   matchLineAllowed,
   mostImportant,
   ROUTINE_REMARK_CHANCE,
@@ -214,8 +212,6 @@ export function GameScreen({
     ...(game.path?.chapter ? [`chapter:${game.path.chapter}`] : []),
     ...(game.talk?.notice ? [`notice:${game.talk.notice}`] : []),
   ]
-  // The long-think stage direction: whether one is showing.
-  const thinkLineShown = useRef(false)
   const ratedRef = useRef(ratedMove?.rating ?? null)
   ratedRef.current = ratedMove?.rating ?? null
 
@@ -304,17 +300,18 @@ export function GameScreen({
       const flags = boardFlags([...sans, botMove.san], piecesLeft(after.fen()), opponentColour)
       const lineState = { linesSoFar: talk.lines, moveNumber, lastLineMove: talk.lastLineMove }
       let spoke = false
-      const thoughtAloud = thinkLineShown.current
-      if (quietGame || thoughtAloud) {
-        // Nothing said during trial-night games, or straight after a thinking line.
+      // What people say is about the game in front of them (Joseph, Sep 2026):
+      // reactions to what just happened on the board, never idle chatter. (The
+      // old "here's my plan" lines went too: fixed text often wasn't true on
+      // the board.) In the coached game Pemberton's own comments do the talking.
+      if (quietGame || coachVoice) {
+        // Nothing said during trial-night games; the coach speaks for himself.
       } else if (!offer && gameType === 'friendly' && chatterAllowed({ gameType, ...lineState })) {
         let trigger = mostImportant(triggersFor({ botMove, playerRating: ratedRef.current, botEvalCp: cp }))
         // Everyday things (a check, a swap, castling) happen every game; only
         // now and then are they worth a remark (Joseph, Sep 2026: far fewer lines).
         if (trigger && !isBigMoment(trigger) && Math.random() > ROUTINE_REMARK_CHANCE) trigger = null
-        // Nothing dramatic? Occasionally they say what they're planning instead.
-        if (!trigger && moveNumber >= 6 && moveNumber <= 25 && Math.random() < 0.15) trigger = 'plan_hint'
-        spoke = trigger ? dialogue.speak(trigger, false, flags) : false
+        spoke = trigger ? dialogue.speak(trigger, false, flags, { piece: capturedName(botMove) }) : false
       } else if (!offer && gameType === 'match' && matchLineAllowed(lineState)) {
         if (TENSION_MOVES.includes(moveNumber) && Math.abs(cp) <= 100) spoke = dialogue.speak('tension', false, flags)
       }
@@ -327,12 +324,9 @@ export function GameScreen({
         return next
       })
       if (offer) setBubble({ kind: 'offer' })
-      // They've moved: the thinking stage direction goes (unless a new line replaced it).
-      if (thinkLineShown.current && !spoke) dialogue.dismiss()
-      thinkLineShown.current = false
 
       // Did that move hand the player a big chance? Sometimes the opponent gives it away.
-      if (!spoke && !offer && !quietGame && !thoughtAloud) {
+      if (!spoke && !offer && !quietGame && !coachVoice) {
         analysePosition(after.fen())
           .then((a) => {
             if (!a || cancelled) return
@@ -486,29 +480,9 @@ export function GameScreen({
 
   const downloading = maiaStatus.state === 'downloading' && opponentToMove
 
-  // A long think gets a small stage direction ("Priya closes her eyes."), so
-  // slow thinkers read as thinking, not as the app running slowly. Not on
-  // their first move (the opening line is still showing), and not too often.
-  // Revised Sep 2026 (Joseph: the same glasses-adjusting over and over): it
-  // shares the game's small line budget, so it's rare and never piles up.
-  useEffect(() => {
-    if (!opponentToMove || downloading || engineError || !opponent.character || game.moves.length < 2) return
-    if (chatter !== 'full' || quietGame) return // the thinking dots still show
-    const lineState = { linesSoFar: talk.lines, moveNumber: chess.moveNumber(), lastLineMove: talk.lastLineMove }
-    if (!(gameType === 'friendly' ? chatterAllowed({ gameType, ...lineState }) : matchLineAllowed(lineState))) return
-    const t = window.setTimeout(() => {
-      if (Math.random() < LONG_THINK_CHANCE && dialogue.speak('long_think', true)) {
-        thinkLineShown.current = true
-        setGame((g) => {
-          if (!g) return g
-          const now = g.talk ?? talk
-          return { ...g, talk: { ...now, lines: now.lines + 1, lastLineMove: lineState.moveNumber } }
-        })
-      }
-    }, LONG_THINK_MS)
-    return () => window.clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per opponent turn
-  }, [opponentToMove, fen, downloading, engineError])
+  // (Long-think stage directions, e.g. "Marjorie stirs her tea", were removed
+  // in Sep 2026: idle and unrelated to the game. The thinking dots show a
+  // think instead, and opponents are quicker now anyway.)
   const status = viewing
     ? `Looking back: ${viewPly === 0 ? 'the start' : `after move ${Math.ceil(viewPly! / 2)}`}`
     : engineError && opponentToMove
@@ -795,6 +769,13 @@ export function GameScreen({
       </p>
     </main>
   )
+}
+
+const PIECE_WORDS: Record<string, string> = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen' }
+
+/** The player's piece the opponent just took, in words, for lines like "Your {piece}, I think." */
+function capturedName(move: { captured?: string }): string | undefined {
+  return move.captured ? PIECE_WORDS[move.captured] : undefined
 }
 
 /**

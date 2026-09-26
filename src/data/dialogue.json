@@ -5856,5 +5856,1433 @@
   "conditions": {},
   "weight": 1,
   "once": false
+ },
+ {
+  "id": "r-marjorie-pb-01",
+  "character": "marjorie",
+  "trigger": "player_blunder",
+  "text": "Oh dear. Are you sure, love? Too late now.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-pb-02",
+  "character": "marjorie",
+  "trigger": "player_blunder",
+  "text": "I think you’ve left something behind there, dear.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-pb-03",
+  "character": "marjorie",
+  "trigger": "player_blunder",
+  "text": "Oh. I’ll have to take that, I’m afraid. Sorry, love.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-pb-04",
+  "character": "marjorie",
+  "trigger": "player_blunder",
+  "text": "That’s one for the review, I think.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-pb-05",
+  "character": "marjorie",
+  "trigger": "player_blunder",
+  "text": "You’ll kick yourself in a minute. I did that in 1987.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-sm-01",
+  "character": "marjorie",
+  "trigger": "strong_move",
+  "text": "Ooh. Somebody’s been listening on Tuesdays.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-sm-02",
+  "character": "marjorie",
+  "trigger": "strong_move",
+  "text": "Well, that’s spoilt my plans.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-sm-03",
+  "character": "marjorie",
+  "trigger": "strong_move",
+  "text": "Very tidy. I don’t like it at all.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-sm-04",
+  "character": "marjorie",
+  "trigger": "strong_move",
+  "text": "Oh, that’s rather good, isn’t it?",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-cap-01",
+  "character": "marjorie",
+  "trigger": "capture_minor",
+  "text": "Your {piece}, I think. Thank you, dear.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-cap-02",
+  "character": "marjorie",
+  "trigger": "capture_minor",
+  "text": "I’ll just pop that {piece} in the box.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-cap-03",
+  "character": "marjorie",
+  "trigger": "capture_rook",
+  "text": "That rook wasn’t doing much. Now it’s doing nothing.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-q-01",
+  "character": "marjorie",
+  "trigger": "capture_queen",
+  "text": "Oh, your queen. I do feel a bit mean.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-q-02",
+  "character": "marjorie",
+  "trigger": "capture_queen",
+  "text": "I’ll take the queen, love. Don’t tell Graham, he’ll want it minuted.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-win-01",
+  "character": "marjorie",
+  "trigger": "clearly_winning",
+  "text": "I’d start thinking about the endgame, if I were you. I have been.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-win-02",
+  "character": "marjorie",
+  "trigger": "clearly_winning",
+  "text": "We’ll have this finished before the tea goes cold.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-win-03",
+  "character": "marjorie",
+  "trigger": "clearly_winning",
+  "text": "Don’t give up, love. I never do. Mind you, I’m winning.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-lose-01",
+  "character": "marjorie",
+  "trigger": "clearly_losing",
+  "text": "Well. You’ve got me in a bit of a pickle.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-lose-02",
+  "character": "marjorie",
+  "trigger": "clearly_losing",
+  "text": "I’m not resigning. I’ve come back from worse. Not often.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-lose-03",
+  "character": "marjorie",
+  "trigger": "clearly_losing",
+  "text": "This is where I’d normally put the kettle on.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-chk-01",
+  "character": "marjorie",
+  "trigger": "check_given",
+  "text": "Check, dear.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-chk-02",
+  "character": "marjorie",
+  "trigger": "check_given",
+  "text": "Check. Sorry. Not really.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-marjorie-cas-01",
+  "character": "marjorie",
+  "trigger": "castling",
+  "text": "King in the corner. Safe as houses.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-pb-01",
+  "character": "dex",
+  "trigger": "player_blunder",
+  "text": "Oh, that’s a clip.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-pb-02",
+  "character": "dex",
+  "trigger": "player_blunder",
+  "text": "Mouse slip? There’s no mouse. That’s just a blunder.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-pb-03",
+  "character": "dex",
+  "trigger": "player_blunder",
+  "text": "Chat would’ve seen that.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-pb-04",
+  "character": "dex",
+  "trigger": "player_blunder",
+  "text": "Free. Thank you.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-pb-05",
+  "character": "dex",
+  "trigger": "player_blunder",
+  "text": "In bullet you’d have got away with that.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-sm-01",
+  "character": "dex",
+  "trigger": "strong_move",
+  "text": "OK. Didn’t see that.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-sm-02",
+  "character": "dex",
+  "trigger": "strong_move",
+  "text": "That’s annoying. That’s actually good.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-sm-03",
+  "character": "dex",
+  "trigger": "strong_move",
+  "text": "Engine move. Suspicious.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-sm-04",
+  "character": "dex",
+  "trigger": "strong_move",
+  "text": "Fine. Respect.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-cap-01",
+  "character": "dex",
+  "trigger": "capture_minor",
+  "text": "Your {piece}. Thanks.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-cap-02",
+  "character": "dex",
+  "trigger": "capture_minor",
+  "text": "Took the {piece}. Not even sorry.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-cap-03",
+  "character": "dex",
+  "trigger": "capture_rook",
+  "text": "There goes your rook. Keep up.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-q-01",
+  "character": "dex",
+  "trigger": "capture_queen",
+  "text": "Queen’s gone. GG, basically.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-q-02",
+  "character": "dex",
+  "trigger": "capture_queen",
+  "text": "That’s your queen. I’m going to enjoy the rest of this.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-win-01",
+  "character": "dex",
+  "trigger": "clearly_winning",
+  "text": "This is over. We can keep going if you want.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-win-02",
+  "character": "dex",
+  "trigger": "clearly_winning",
+  "text": "Plus five, easily. I don’t need an engine for that.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-win-03",
+  "character": "dex",
+  "trigger": "clearly_winning",
+  "text": "I’d resign here. I’d have resigned three moves ago.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-lose-01",
+  "character": "dex",
+  "trigger": "clearly_losing",
+  "text": "It’s fine. I’m setting something up.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-lose-02",
+  "character": "dex",
+  "trigger": "clearly_losing",
+  "text": "This is a swindle position. Watch.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-lose-03",
+  "character": "dex",
+  "trigger": "clearly_losing",
+  "text": "OK. Don’t clip this.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-chk-01",
+  "character": "dex",
+  "trigger": "check_given",
+  "text": "Check. Keep up.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-chk-02",
+  "character": "dex",
+  "trigger": "check_given",
+  "text": "Check. That’s how it starts.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-dex-cas-01",
+  "character": "dex",
+  "trigger": "castling",
+  "text": "Castled. Don’t get used to it.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-pb-01",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "player_blunder",
+  "text": "He’ll have seen that. He sees everything.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-pb-02",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "player_blunder",
+  "text": "Oh, that’s a gift. Say thank you, Oscar. Oscar.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-pb-03",
+  "character": "oscar",
+  "trigger": "player_blunder",
+  "text": "(Oscar looks up at you, then straight back down.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-sm-01",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "strong_move",
+  "text": "Good move, that. Wasn’t it, Oscar? Oscar?",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-sm-02",
+  "character": "oscar",
+  "trigger": "strong_move",
+  "text": "(Oscar frowns at the board.)",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-sm-03",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "strong_move",
+  "text": "He won’t like that. He doesn’t show it, but he won’t.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-cap-01",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "capture_minor",
+  "text": "That’s your {piece} gone. He’s quick, isn’t he?",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-cap-02",
+  "character": "oscar",
+  "trigger": "capture_minor",
+  "text": "(Oscar puts your {piece} neatly beside the board.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-q-01",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "capture_queen",
+  "text": "Your queen! He does that at school, you know.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-win-01",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "clearly_winning",
+  "text": "He’s winning, I think. I can never tell. He can.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-win-02",
+  "character": "oscar",
+  "trigger": "clearly_winning",
+  "text": "(Oscar has started swinging his legs.)",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-lose-01",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "clearly_losing",
+  "text": "He’ll come back. He always comes back. Mostly.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-lose-02",
+  "character": "oscar",
+  "trigger": "clearly_losing",
+  "text": "(Oscar has gone very quiet. Quieter.)",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-oscar-chk-01",
+  "character": "oscar",
+  "trigger": "check_given",
+  "text": "(Oscar says “check” so quietly you almost miss it.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-pb-01",
+  "character": "clive",
+  "trigger": "player_blunder",
+  "text": "Ah. That’s a shame. For you.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-pb-02",
+  "character": "clive",
+  "trigger": "player_blunder",
+  "text": "I’ll take that, and then offer you a draw. No, I won’t.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-pb-03",
+  "character": "clive",
+  "trigger": "player_blunder",
+  "text": "Mm. I’d have played something else.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-pb-04",
+  "character": "clive",
+  "trigger": "player_blunder",
+  "text": "That’s the trouble with attacking. It leaves things lying about.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-sm-01",
+  "character": "clive",
+  "trigger": "strong_move",
+  "text": "Hm. Yes. Annoying.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-sm-02",
+  "character": "clive",
+  "trigger": "strong_move",
+  "text": "That’s the move. I was hoping you wouldn’t find it.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-sm-03",
+  "character": "clive",
+  "trigger": "strong_move",
+  "text": "Well played. I suppose we’re not drawing, then.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-cap-01",
+  "character": "clive",
+  "trigger": "capture_minor",
+  "text": "Your {piece}. Thank you.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-cap-02",
+  "character": "clive",
+  "trigger": "capture_minor",
+  "text": "One {piece} fewer. Simpler.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-q-01",
+  "character": "clive",
+  "trigger": "capture_queen",
+  "text": "Queens off. Well, yours is.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-win-01",
+  "character": "clive",
+  "trigger": "clearly_winning",
+  "text": "I think I’m better. Don’t tell anyone, they’ll expect it.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-win-02",
+  "character": "clive",
+  "trigger": "clearly_winning",
+  "text": "This is the sort of ending I like. Mine.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-lose-01",
+  "character": "clive",
+  "trigger": "clearly_losing",
+  "text": "I don’t suppose you’d take a draw.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-lose-02",
+  "character": "clive",
+  "trigger": "clearly_losing",
+  "text": "It’s not lost. It’s just not very good.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-clive-chk-01",
+  "character": "clive",
+  "trigger": "check_given",
+  "text": "Check. Nothing exciting.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-pb-01",
+  "character": "priya",
+  "trigger": "player_blunder",
+  "text": "That isn’t in any of the books. For a reason.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-pb-02",
+  "character": "priya",
+  "trigger": "player_blunder",
+  "text": "Oh. I think that loses a piece. I’ve checked. It does.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-pb-03",
+  "character": "priya",
+  "trigger": "player_blunder",
+  "text": "You should look at that one afterwards.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-sm-01",
+  "character": "priya",
+  "trigger": "strong_move",
+  "text": "That’s the main line. How do you know the main line?",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-sm-02",
+  "character": "priya",
+  "trigger": "strong_move",
+  "text": "That wasn’t in my notes.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-sm-03",
+  "character": "priya",
+  "trigger": "strong_move",
+  "text": "Oh. That’s good. That’s really good.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-cap-01",
+  "character": "priya",
+  "trigger": "capture_minor",
+  "text": "Your {piece}. Sorry. It was theory.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-cap-02",
+  "character": "priya",
+  "trigger": "capture_minor",
+  "text": "I’m taking the {piece}. I think that’s right.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-q-01",
+  "character": "priya",
+  "trigger": "capture_queen",
+  "text": "Your queen. I didn’t think you’d allow that.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-win-01",
+  "character": "priya",
+  "trigger": "clearly_winning",
+  "text": "I think I’m winning. I don’t know what to do when I’m winning.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-win-02",
+  "character": "priya",
+  "trigger": "clearly_winning",
+  "text": "Plus three. Probably. Don’t quote me.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-lose-01",
+  "character": "priya",
+  "trigger": "clearly_losing",
+  "text": "I’m out of book and I’m losing. That’s the worst combination.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-lose-02",
+  "character": "priya",
+  "trigger": "clearly_losing",
+  "text": "I need to think. For quite a long time.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-priya-chk-01",
+  "character": "priya",
+  "trigger": "check_given",
+  "text": "Check. Is that right? Yes. Check.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-pb-01",
+  "character": "graham",
+  "trigger": "player_blunder",
+  "text": "I shall be recording that with a question mark. Two, in fact.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-pb-02",
+  "character": "graham",
+  "trigger": "player_blunder",
+  "text": "An error. I’m not obliged to point it out. I just like to.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-pb-03",
+  "character": "graham",
+  "trigger": "player_blunder",
+  "text": "Irregular. And, I’m afraid, losing.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-pb-04",
+  "character": "graham",
+  "trigger": "player_blunder",
+  "text": "I’ll note that for the club’s records.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-sm-01",
+  "character": "graham",
+  "trigger": "strong_move",
+  "text": "A correct move. Noted.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-sm-02",
+  "character": "graham",
+  "trigger": "strong_move",
+  "text": "That’s in accordance with principle. Annoyingly.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-sm-03",
+  "character": "graham",
+  "trigger": "strong_move",
+  "text": "Well found. I’ll minute it.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-cap-01",
+  "character": "graham",
+  "trigger": "capture_minor",
+  "text": "Your {piece}, I believe. Duly taken.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-cap-02",
+  "character": "graham",
+  "trigger": "capture_minor",
+  "text": "The {piece} is forfeit. Those are the rules.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-q-01",
+  "character": "graham",
+  "trigger": "capture_queen",
+  "text": "Your queen. I trust you’ll want a moment.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-win-01",
+  "character": "graham",
+  "trigger": "clearly_winning",
+  "text": "The position is, by any reasonable standard, won.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-win-02",
+  "character": "graham",
+  "trigger": "clearly_winning",
+  "text": "Formally, I can’t advise resignation. Informally, I would.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-lose-01",
+  "character": "graham",
+  "trigger": "clearly_losing",
+  "text": "The position is under review.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-lose-02",
+  "character": "graham",
+  "trigger": "clearly_losing",
+  "text": "I’m considering my options. All three of them.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-graham-chk-01",
+  "character": "graham",
+  "trigger": "check_given",
+  "text": "Check. Stated clearly, as the rules require.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-pb-01",
+  "character": "toby",
+  "trigger": "player_blunder",
+  "text": "Ah, unlucky. Honestly, happens to everyone.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-pb-02",
+  "character": "toby",
+  "trigger": "player_blunder",
+  "text": "Ooh. Want to take that back? Joking. Can’t, sorry.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-pb-03",
+  "character": "toby",
+  "trigger": "player_blunder",
+  "text": "That’s a shame. You were playing really well, honestly.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-sm-01",
+  "character": "toby",
+  "trigger": "strong_move",
+  "text": "Oh, nice. Genuinely.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-sm-02",
+  "character": "toby",
+  "trigger": "strong_move",
+  "text": "Oh, that’s good. Who showed you that?",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-sm-03",
+  "character": "toby",
+  "trigger": "strong_move",
+  "text": "Hm. OK. Nice find.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-cap-01",
+  "character": "toby",
+  "trigger": "capture_minor",
+  "text": "I’ll just take the {piece}, if that’s all right.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-cap-02",
+  "character": "toby",
+  "trigger": "capture_minor",
+  "text": "Sorry about the {piece}. Had to, really.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-q-01",
+  "character": "toby",
+  "trigger": "capture_queen",
+  "text": "Oh, your queen. Sorry, mate. Genuinely.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-win-01",
+  "character": "toby",
+  "trigger": "clearly_winning",
+  "text": "Honestly, it could go either way. It can’t, but it could.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-win-02",
+  "character": "toby",
+  "trigger": "clearly_winning",
+  "text": "Close game. Closer than it looks.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-lose-01",
+  "character": "toby",
+  "trigger": "clearly_losing",
+  "text": "You’re playing really well tonight. Really well.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-toby-lose-02",
+  "character": "toby",
+  "trigger": "clearly_losing",
+  "text": "Wow. OK. Coach would be proud of you.",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-pb-02",
+  "character": "terry",
+  "trigger": "player_blunder",
+  "text": "I’d have done that too. I have done that, actually.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-pb-03",
+  "character": "terry",
+  "trigger": "player_blunder",
+  "text": "Ah. You’ve gone for it. I respect that.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-sm-01",
+  "character": "terry",
+  "trigger": "strong_move",
+  "text": "That’s a very sensible move. I don’t hold with sensible moves.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-sm-02",
+  "character": "terry",
+  "trigger": "strong_move",
+  "text": "Hm. Proper chess. I was worried about that.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-sm-03",
+  "character": "terry",
+  "trigger": "strong_move",
+  "text": "Good move. I’ll pretend I expected it.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-cap-01",
+  "character": "terry",
+  "trigger": "capture_minor",
+  "text": "Your {piece}. I’ve been after that since move one.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-cap-02",
+  "character": "terry",
+  "trigger": "capture_minor",
+  "text": "I’ll have the {piece}. It’s the principle of the thing.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-q-01",
+  "character": "terry",
+  "trigger": "capture_queen",
+  "text": "Your queen. I’ve never got this far before.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-win-01",
+  "character": "terry",
+  "trigger": "clearly_winning",
+  "text": "I appear to be winning. Nobody’s more surprised than me.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-win-02",
+  "character": "terry",
+  "trigger": "clearly_winning",
+  "text": "It’s working. I’d like it noted that it’s working.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-lose-01",
+  "character": "terry",
+  "trigger": "clearly_losing",
+  "text": "This is the part I’m less keen on.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-terry-lose-02",
+  "character": "terry",
+  "trigger": "clearly_losing",
+  "text": "My king’s out for a walk. It may not be back.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-sheila-pb-01",
+  "character": "sheila",
+  "trigger": "player_blunder",
+  "text": "Ooh, was that a mistake? I only know because you’ve gone pale.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-sheila-pb-02",
+  "character": "sheila",
+  "trigger": "player_blunder",
+  "text": "Oh, I can take that. Is that allowed? Lovely.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-sheila-sm-01",
+  "character": "sheila",
+  "trigger": "strong_move",
+  "text": "Ooh, that looks clever.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-sheila-cap-01",
+  "character": "sheila",
+  "trigger": "capture_minor",
+  "text": "I’ve got your {piece}! Look at that.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-sheila-lose-01",
+  "character": "sheila",
+  "trigger": "clearly_losing",
+  "text": "I think you’re winning. I usually can tell by now.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-bill-pb-01",
+  "character": "bill",
+  "trigger": "player_blunder",
+  "text": "Steady on. Look again. Too late, mind.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-bill-sm-01",
+  "character": "bill",
+  "trigger": "strong_move",
+  "text": "That’s a good move. We had a board one who played like that.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-bill-cap-01",
+  "character": "bill",
+  "trigger": "capture_minor",
+  "text": "Your {piece}. Slowly does it.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-bill-lose-01",
+  "character": "bill",
+  "trigger": "clearly_losing",
+  "text": "I’ll play on. Always have.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-ray-pb-01",
+  "character": "ray",
+  "trigger": "player_blunder",
+  "text": "I’d normally explain that one. I’ll leave it for the review.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-ray-sm-01",
+  "character": "ray",
+  "trigger": "strong_move",
+  "text": "Good. That’s what I tell the juniors.",
+  "expression": "surprised",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-ray-cap-01",
+  "character": "ray",
+  "trigger": "capture_minor",
+  "text": "That {piece} was loose. First thing I tell the juniors.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "r-ray-win-01",
+  "character": "ray",
+  "trigger": "clearly_winning",
+  "text": "Don’t worry. The juniors do this to me all the time.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
  }
 ]

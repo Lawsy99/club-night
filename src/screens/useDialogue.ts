@@ -50,11 +50,13 @@ export function useDialogue({ character, gameType, act, rematch, losingStreak, p
 
   /** Says something for this trigger, if there's a fitting line. Returns whether it did. */
   const speak = useCallback(
-    (trigger: Trigger, stay = false, flags: readonly string[] = []): boolean => {
+    (trigger: Trigger, stay = false, flags: readonly string[] = [], vars: Record<string, string | undefined> = {}): boolean => {
       if (!character) return false
       const h = history.current ?? { recent: [], onceShown: [] }
+      // Lines that name something on the board ("{piece}") only when we know it.
+      const usable = DIALOGUE.filter((l) => [...l.text.matchAll(/\{(\w+)\}/g)].every(([, k]) => k === 'name' || vars[k]))
       const chosen = selectLine(
-        DIALOGUE,
+        usable,
         { character, trigger, act, gameType, rematch, losingStreak, flags, playerName, storyOnly },
         h,
       )
@@ -63,7 +65,7 @@ export function useDialogue({ character, gameType, act, rematch, losingStreak, p
       saveDialogueHistory(history.current).catch(() => undefined)
       setPersist(stay)
       setLine({
-        text: fillName(chosen.text, playerName),
+        text: fillName(chosen.text, playerName).replace(/\{(\w+)\}/g, (all, k: string) => vars[k] ?? all),
         speaker: chosen.speaker ? (SPEAKER_NAMES[chosen.speaker] ?? chosen.speaker) : null,
         face: chosen.speaker ?? chosen.character,
         expression: chosen.expression,
