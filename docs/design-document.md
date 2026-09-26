@@ -417,10 +417,10 @@ Lessons are short and always tied to the next opponent, so what you learn gets u
 
 ### Lessons
 
-- Coach Pemberton presents each lesson in speech bubbles over a demonstration board. It's 3 to 5 bubbles, with the key idea shown as moves on the board.
+- Coach Pemberton presents each lesson in one or two lines, while a real puzzle from the character's opening plays itself out on the board as the worked example ("Watch: one piece attacks two at once…"). Then 3 to 5 more of the same kind. (Revised Sep 2026, Joseph's feedback: lessons were too wordy and the puzzles didn't always match. Puzzles now share both the opening and the theme, and the example is a real, verified puzzle, so hand-written positions can't be wrong.)
 - Then come 3 to 5 puzzles on the same theme.
 - The topic is chosen for the chapter's opponent. Before Dex, it's how to meet a gambit calmly. Before Marjorie, it's the London System's plan and how to break it. Before Clive, it's how to create winning chances in a level position.
-- Each topic has three versions by player strength: under 800, 800 to 1400, and over 1400. The idea is the same; the depth and puzzle difficulty differ.
+- Difficulty follows the player's puzzle rating (which starts at their playing rating and moves as they solve), so the same lesson gives a 1200 player 1200-level puzzles. This replaces the three written versions by strength.
 
 ### Topics across the story
 
@@ -476,7 +476,7 @@ The review is offered, not forced: a Skip button sits beside "Review game" and i
 1. **The character's post-game bubbles** (one or two), then the review opens.
 2. **Analysis.** Stockfish checks every move, with a progress bar. Depth is capped so it finishes in well under a minute on a phone.
 3. **Summary:** the result, an accuracy score, and for real games the rating change.
-4. **Your three biggest moments.** For each one, the board shows the position before the mistake and asks the player to find a better move, with 2 tries before the answer is revealed. Each gets one plain-language explanation, for example "This left your bishop undefended" or "You missed a fork that wins the rook".
+4. **Your three biggest moments.** For each one, the board shows the position before the mistake and asks the player to find a better move, with 3 tries before the answer is revealed: two plain, the third with the piece to move highlighted (revised Sep 2026). Each gets one plain-language explanation, for example "This left your bishop undefended" or "You missed a fork that wins the rook".
 5. **Best move of the game.** One highlight of something the player did well.
 6. **Opening note.** Against a character with a signature opening, where the player left the recommended approach, and a one-line comment from Coach Pemberton.
 7. **Full game (optional).** Step through every move with an evaluation graph.
@@ -502,7 +502,7 @@ Explanations are built from engine facts (material lost, a piece left undefended
 
 ### Scouting reports
 
-Before every match, and before the first friendly against a new character, Coach Pemberton gives a scouting report in 2 to 4 bubbles:
+Before every match, and before the first friendly against a new character, Coach Pemberton gives a scouting report. It plays out on the board like a YouTube teacher (revised Sep 2026): the character's usual opening against the player's colour plays itself move by move, then the right way to meet it, with plain-English captions and no move notation. It covers:
 
 - the opponent's likely opening against the player's colour, and the key idea for meeting it
 - their style, in one line

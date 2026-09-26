@@ -33,7 +33,7 @@ describe('the path', () => {
 
   it('opens each chapter with its lesson', () => {
     const p = throughTrial()
-    expect(nextStep(p)).toMatchObject({ kind: 'lesson', topic: ACT_1.chapters[0].lesson })
+    expect(nextStep(p)).toMatchObject({ kind: 'lesson', chapterId: ACT_1.chapters[0].id, topic: 'Forks in the London' })
   })
 
   it('runs friendlies: assisted first, then guided, until the match unlocks', () => {

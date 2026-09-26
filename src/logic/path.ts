@@ -4,6 +4,7 @@
 // game flow reports results back.
 import { ACT_1, TRIAL_OPPONENTS } from '../data/act1'
 import { characterRating, findCharacter } from '../data/characters'
+import { findLesson } from '../data/lessons'
 import { rateGame, type PlayerRating } from './glicko2'
 import { valveAdjustment, type RealGameResult } from './safetyValve'
 import {
@@ -118,7 +119,13 @@ export function nextStep(p: Progress): NextStep {
   if (p.chapter < chapters.length) {
     const ch = chapters[p.chapter]
     if (!p.lessonDone) {
-      return { kind: 'lesson', chapterId: ch.id, chapterTitle: ch.title, topic: ch.lesson, location: ch.location }
+      return {
+        kind: 'lesson',
+        chapterId: ch.id,
+        chapterTitle: ch.title,
+        topic: findLesson(ch.id)?.title ?? ch.title,
+        location: ch.location,
+      }
     }
     const rating = opponentRating(p, ch.opponent)
     const friendly = (stage: 'assisted' | 'guided'): PathGame => ({

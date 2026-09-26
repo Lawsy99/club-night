@@ -18,7 +18,8 @@ import './MomentTrainer.css'
  * an aimless move like a3 doesn't pass, loose enough for real alternatives.
  */
 const ACCEPT_DROP = 0.025
-const TRIES = 2
+/** Three tries: two plain, then a third with the piece to move highlighted. */
+const TRIES = 3
 
 type Result = 'solved' | 'revealed'
 
@@ -38,6 +39,7 @@ export function MomentTrainer({ moment, onFinished }: Props) {
 
   function finish(kind: Result, fen: string, move: string) {
     setResult({ kind, fen, move })
+    // For the mistakes deck: first try is a clean pass; later tries a harder one.
     onFinished?.(kind === 'revealed' ? 'revealed' : triesLeft === TRIES ? 'first-try' : 'second-try')
   }
 
@@ -70,10 +72,15 @@ export function MomentTrainer({ moment, onFinished }: Props) {
     setTriesLeft(left)
     if (left <= 0) {
       finish('revealed', moment.fenBefore, moment.bestMove)
+    } else if (left === 1) {
+      setFeedback('Not quite. Last try: the piece to move is highlighted.')
     } else {
-      setFeedback('Not quite. One more try.')
+      setFeedback('Not quite. Try again.')
     }
   }
+
+  // The last try comes with a hint: which piece to move.
+  const hintSquare = triesLeft === 1 ? moment.bestMove.slice(0, 2) : null
 
   const orientation = moment.playerColour === 'w' ? 'white' : 'black'
 
@@ -115,6 +122,7 @@ export function MomentTrainer({ moment, onFinished }: Props) {
         movableColour={checking ? null : moment.playerColour}
         lastMove={null}
         onMove={handleAttempt}
+        hintSquare={hintSquare}
       />
       <p className="moment-prompt">
         {checking

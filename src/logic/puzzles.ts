@@ -26,6 +26,8 @@ export function parsePuzzle([id, fen, moves, rating, themes, opening]: PuzzleRow
 export type PuzzleFilter = {
   themes?: string[]
   openings?: string[]
+  /** Require both a matching opening AND a matching theme (falls back to the opening alone if too few). */
+  both?: boolean
   /** Aim for puzzles near this rating. */
   rating: number
   count: number
@@ -38,13 +40,13 @@ export type PuzzleFilter = {
  * as possible (the window widens until there are enough).
  */
 export function pickPuzzles(all: readonly Puzzle[], f: PuzzleFilter, random: () => number = Math.random): Puzzle[] {
-  const matches = all.filter(
-    (p) =>
-      !f.exclude?.has(p.id) &&
-      ((!f.themes && !f.openings) ||
-        (f.themes?.some((t) => p.themes.includes(t)) ?? false) ||
-        (f.openings?.includes(p.opening) ?? false)),
-  )
+  const themeOk = (p: Puzzle) => f.themes?.some((t) => p.themes.includes(t)) ?? false
+  const openingOk = (p: Puzzle) => f.openings?.includes(p.opening) ?? false
+  const unseen = all.filter((p) => !f.exclude?.has(p.id))
+  let matches = f.both
+    ? unseen.filter((p) => themeOk(p) && openingOk(p))
+    : unseen.filter((p) => (!f.themes && !f.openings) || themeOk(p) || openingOk(p))
+  if (f.both && matches.length < f.count) matches = unseen.filter(openingOk)
   for (const window of [100, 200, 350, 600, 3000]) {
     const near = matches.filter((p) => Math.abs(p.rating - f.rating) <= window)
     if (near.length >= f.count) return shuffle(near, random).slice(0, f.count)

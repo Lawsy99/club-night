@@ -3,11 +3,14 @@
 // There is deliberately no free-play mode: the path decides what's next.
 import { useEffect, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
+import { ACT_1 } from '../data/act1'
 import { findCharacter } from '../data/characters'
+import { NOTICEBOARD } from '../data/noticeboard'
+import { characterOpponentId } from '../data/opponents'
 import { shownRating } from '../logic/glicko2'
 import { dueCards } from '../logic/mistakesDeck'
 import type { NextStep, PathGame, Progress } from '../logic/path'
-import { loadCards } from '../storage/db'
+import { headToHead, loadCards } from '../storage/db'
 import './HomeScreen.css'
 
 type Props = {
@@ -64,7 +67,11 @@ export function HomeScreen(props: Props) {
 
       {lastChange && <RatingChange {...lastChange} />}
 
+      <ActProgress progress={progress} />
+
       <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} onTargetedPuzzles={onTargetedPuzzles} />
+
+      <Noticeboard progress={progress} next={next} />
 
       <nav className="home-links">
         <button type="button" onClick={onOpenDeck}>
@@ -99,6 +106,68 @@ export function HomeScreen(props: Props) {
   )
 }
 
+/** A row of small circles: one per chapter's opponent, then the cup. */
+function ActProgress({ progress }: { progress: Progress }) {
+  if (progress.stage === 'trial' && progress.trial) {
+    const played = progress.trial.games.length
+    return (
+      <div className="act-progress" aria-label={`Trial night: game ${played + 1} of 5`}>
+        <span className="act-label">Trial night</span>
+        {Array.from({ length: 5 }, (_, i) => (
+          <span key={i} className={`act-dot ${i < played ? 'done' : i === played ? 'current' : ''}`} />
+        ))}
+      </div>
+    )
+  }
+  if (progress.stage !== 'act' && progress.stage !== 'act-complete') return null
+  const chapters = ACT_1.chapters
+  const inCup = progress.chapter >= chapters.length
+  return (
+    <div className="act-progress" aria-label={`Act 1, chapter ${Math.min(progress.chapter + 1, chapters.length)}`}>
+      <span className="act-label">Act 1</span>
+      {chapters.map((ch, i) => (
+        <span
+          key={ch.id}
+          className={`act-dot lettered ${i < progress.chapter ? 'done' : i === progress.chapter ? 'current' : ''}`}
+          title={findCharacter(ch.opponent)?.name}
+        >
+          {findCharacter(ch.opponent)?.name[0]}
+        </span>
+      ))}
+      <span
+        className={`act-dot lettered cup ${progress.stage === 'act-complete' ? 'done' : inCup ? 'current' : ''}`}
+        title="Knockout cup"
+      >
+        {'★︎'}
+      </span>
+    </div>
+  )
+}
+
+/** One line from a club member about what's coming up. */
+function Noticeboard({ progress, next }: { progress: Progress; next: NextStep }) {
+  const key =
+    progress.stage === 'act-complete'
+      ? 'complete'
+      : progress.stage !== 'act'
+        ? 'trial'
+        : progress.chapter < ACT_1.chapters.length
+          ? ACT_1.chapters[progress.chapter].id
+          : next.kind === 'play' && next.game.kind === 'boss'
+            ? 'final'
+            : 'cup'
+  const notice = NOTICEBOARD[key]
+  if (!notice) return null
+  return (
+    <aside className="noticeboard">
+      <span className="noticeboard-pin" aria-hidden="true" />
+      <p>
+        “{notice.text}”<span> — {notice.speaker}</span>
+      </p>
+    </aside>
+  )
+}
+
 function RatingChange({ from, to }: { from: number; to: number }) {
   const diff = Math.round(to) - Math.round(from)
   return (
@@ -125,7 +194,7 @@ function NextCard({
             P
           </span>
           <span>
-            <strong>Coach Pemberton</strong> <span className="next-rating">about two minutes, then puzzles</span>
+            <strong>Coach Pemberton</strong> <span className="next-rating">one example, then puzzles</span>
           </span>
         </p>
         <button type="button" className="next-play" onClick={onStartLesson}>
@@ -147,6 +216,33 @@ function NextCard({
 
   const { game, optionalFriendly, note } = next
   const character = findCharacter(game.opponent)
+  return <PlayCard {...{ game, optionalFriendly, note, character, onPlay, onTargetedPuzzles, next }} />
+}
+
+function PlayCard({
+  game,
+  optionalFriendly,
+  note,
+  character,
+  onPlay,
+  onTargetedPuzzles,
+  next,
+}: {
+  game: PathGame
+  optionalFriendly: PathGame | null
+  note: string | null
+  character: ReturnType<typeof findCharacter>
+  onPlay: (g: PathGame) => void
+  onTargetedPuzzles: () => void
+  next: Extract<NextStep, { kind: 'play' }>
+}) {
+  // Head-to-head so far against this opponent.
+  const [record, setRecord] = useState<{ wins: number; losses: number } | null>(null)
+  useEffect(() => {
+    headToHead(characterOpponentId(game.opponent))
+      .then((h) => setRecord({ wins: h.wins, losses: h.losses }))
+      .catch(() => setRecord(null))
+  }, [game.opponent])
   return (
     <section className="next-card">
       <p className="next-kind">
@@ -162,6 +258,11 @@ function NextCard({
         </span>
         <span className="next-stage">{stageText(game.stage)}</span>
       </p>
+      {record && record.wins + record.losses > 0 && (
+        <p className="next-record">
+          Your record against {character?.name ?? 'them'}: {record.wins} won, {record.losses} lost
+        </p>
+      )}
       {note && <p className="next-note">{note}</p>}
       <button type="button" className="next-play" onClick={() => onPlay(game)}>
         Play

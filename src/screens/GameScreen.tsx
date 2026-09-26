@@ -9,6 +9,9 @@ import { EvalBar } from '../components/EvalBar'
 import { HINT_ARROW_COLOUR, lineArrows } from '../components/lineArrows'
 import { MoveStrip } from '../components/MoveStrip'
 import { PlanPause } from '../components/PlanPause'
+import { DemoBoard } from '../components/DemoBoard'
+import { SCOUTING_DEMOS } from '../data/scoutingDemos'
+import { buildDemo } from '../logic/demo'
 import { PlayerStrip } from '../components/PlayerStrip'
 import { HELP_STAGES } from '../data/helpStages'
 import { resolveOpponent } from '../data/opponents'
@@ -316,6 +319,34 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
       : null
   const boardFen = peeking ? ratedMove.fenBefore : pending ? pending.fenAfter : fen
 
+  // The scouting report plays out on the board before the game (YouTube-teacher style).
+  if (showScouting && opponent.character) {
+    const written = SCOUTING_DEMOS[opponent.character.id]?.[game.playerColour] ?? []
+    const steps = [
+      ...buildDemo(written),
+      // Last: their style, your record and (for Toby) his target, with no moves.
+      { caption: (game.scouting ?? []).slice(1).join(' '), moves: [] },
+    ]
+    return (
+      <main className="game-screen">
+        <header className="game-header">
+          {game.path && (
+            <p className="game-title">
+              {game.path.label} <span>· {game.path.location}</span>
+            </p>
+          )}
+          <p className="stage-label">Scouting report · {opponent.name}</p>
+        </header>
+        <DemoBoard
+          steps={steps}
+          orientation={game.playerColour === 'w' ? 'white' : 'black'}
+          finishLabel="Let's play"
+          onFinish={() => setGame((g) => (g ? { ...g, scoutingSeen: true } : g))}
+        />
+      </main>
+    )
+  }
+
   return (
     <main className="game-screen">
       <header className="game-header">
@@ -382,25 +413,6 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
             arrows={arrows}
             badges={bestLine?.badges}
           />
-          {showScouting && (
-            <div className="scouting-backdrop" role="dialog" aria-label="Scouting report">
-              <div className="scouting-card">
-                <p className="scouting-kicker">Scouting report · {opponent.name}</p>
-                {game.scouting!.map((line) => (
-                  <p key={line} className="scouting-line">
-                    {line}
-                  </p>
-                ))}
-                <p className="scouting-by">Coach Pemberton</p>
-                <button
-                  type="button"
-                  onClick={() => setGame((g) => (g ? { ...g, scoutingSeen: true } : g))}
-                >
-                  Let's play
-                </button>
-              </div>
-            </div>
-          )}
           {planSet && (
             <PlanPause plans={planSet} onDone={() => setGame((g) => (g ? { ...g, planPauseDone: true } : g))} />
           )}

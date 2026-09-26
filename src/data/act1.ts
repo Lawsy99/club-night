@@ -1,15 +1,13 @@
 // Act 1, "Club nights": the fixed path from after trial night to the
 // knockout cup final (design document, "The path" and "Stakes").
 // PLACEHOLDER TEXT: titles and locations are stand-ins until the Act 1 story
-// outline is written (phase 6). Lessons arrive in phase 5.
+// outline is agreed (phase 6). Each chapter's lesson is in lessons.ts (same id).
 
 export type ChapterPlan = {
   id: string
   title: string
   /** e.g. "Club night · Tuesday", shown on the Next card. */
   location: string
-  /** Lesson topic (phase 5); shown as a placeholder step until then. */
-  lesson: string
   /** The chapter's opponent: friendlies, then the match. */
   opponent: string
   matchLabel: string
@@ -38,7 +36,6 @@ export const ACT_1: ActPlan = {
       id: 'c1',
       title: 'First proper club night',
       location: 'Club night · Tuesday',
-      lesson: "The London System's plan, and how to break it",
       opponent: 'marjorie',
       matchLabel: 'Club match vs Marjorie',
     },
@@ -46,7 +43,6 @@ export const ACT_1: ActPlan = {
       id: 'c2',
       title: 'The streamer',
       location: 'Club night · Tuesday',
-      lesson: 'Meeting a gambit calmly',
       opponent: 'dex',
       matchLabel: 'Club match vs Dex',
     },
@@ -54,7 +50,6 @@ export const ACT_1: ActPlan = {
       id: 'c3',
       title: 'Junior night',
       location: 'Club night · Thursday',
-      lesson: 'Staying calm against fast, confident play',
       opponent: 'oscar',
       matchLabel: 'Club match vs Oscar',
     },
@@ -62,7 +57,6 @@ export const ACT_1: ActPlan = {
       id: 'c4',
       title: 'A quiet one',
       location: 'Club night · Tuesday',
-      lesson: 'Creating winning chances in a level position',
       opponent: 'clive',
       matchLabel: 'Club match vs Clive',
     },
@@ -70,7 +64,6 @@ export const ACT_1: ActPlan = {
       id: 'c5',
       title: 'By the book',
       location: 'Club night · Tuesday',
-      lesson: 'What to do once the opening theory runs out',
       opponent: 'priya',
       matchLabel: 'Club match vs Priya',
     },
@@ -78,7 +71,6 @@ export const ACT_1: ActPlan = {
       id: 'c6',
       title: 'Subs are due',
       location: 'Club night · Tuesday',
-      lesson: 'Classical, principled positions',
       opponent: 'graham',
       matchLabel: 'Club match vs Graham',
     },
@@ -86,7 +78,6 @@ export const ACT_1: ActPlan = {
       id: 'c7',
       title: 'No pressure, mate',
       location: 'Club night · Tuesday',
-      lesson: 'Fixing your own weak spots',
       opponent: 'toby',
       matchLabel: 'Club match vs Toby',
     },

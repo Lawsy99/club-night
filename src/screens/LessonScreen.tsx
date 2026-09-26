@@ -1,20 +1,20 @@
-// A lesson: Coach Pemberton's bubbles over a demonstration board, then a few
-// puzzles on the same theme (design document, "Lessons"). About two minutes.
+// A lesson: a line or two from Coach Pemberton while a real puzzle from the
+// character's opening plays itself out as the example, then a few more of the
+// same kind to solve (design document, "Lessons", as revised Sep 2026).
 import { useEffect, useMemo, useState } from 'react'
-import { Board } from '../components/Board'
+import { DemoBoard } from '../components/DemoBoard'
 import { PuzzleTrainer } from '../components/PuzzleTrainer'
-import { findLesson, lessonLevel } from '../data/lessons'
+import { findLesson } from '../data/lessons'
+import { themeCaption } from '../data/themes'
 import { loadPuzzleBank } from '../engine/puzzleBank'
-import type { PlayerRating } from '../logic/glicko2'
-import { lessonFrames } from '../logic/lessons'
-import { pickPuzzles, ratePuzzle, type Puzzle } from '../logic/puzzles'
+import { puzzleDemo } from '../logic/demo'
+import { pickPuzzles, ratePuzzle, solverColour, type Puzzle } from '../logic/puzzles'
 import { loadPuzzleProgress, savePuzzleProgress, type PuzzleProgress } from '../storage/db'
-import './LessonScreen.css'
 import './ReviewScreen.css'
 
 type Props = {
   chapterId: string
-  /** The player's rating picks the lesson version and the puzzles' difficulty. */
+  /** Sets the first puzzle rating, if the player has none yet. */
   playerRating: number
   onDone: () => void
   onBack: () => void
@@ -22,44 +22,47 @@ type Props = {
 
 export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props) {
   const lesson = findLesson(chapterId)
-  const version = lesson?.[lessonLevel(playerRating)]
-  const frames = useMemo(() => (version ? lessonFrames(version.bubbles) : []), [version])
-  const [bubble, setBubble] = useState(0)
-  const [phase, setPhase] = useState<'talk' | 'puzzles' | 'done'>('talk')
+  const [phase, setPhase] = useState<'demo' | 'puzzles' | 'done'>('demo')
+  const [example, setExample] = useState<Puzzle | null>(null)
   const [puzzles, setPuzzles] = useState<Puzzle[] | null>(null)
-  const [puzzleIndex, setPuzzleIndex] = useState(0)
+  const [index, setIndex] = useState(0)
   const [puzzleDone, setPuzzleDone] = useState(false)
   const [progress, setProgress] = useState<PuzzleProgress | null>(null)
   const [loadError, setLoadError] = useState(false)
 
-  // Load the puzzles while the player reads the bubbles.
   useEffect(() => {
-    if (!version) return
+    if (!lesson) return
     Promise.all([loadPuzzleBank(), loadPuzzleProgress()])
       .then(([bank, saved]) => {
-        // A first puzzle rating starts from the playing rating, fairly uncertain.
-        const start: PuzzleProgress = saved ?? {
-          rating: { rating: playerRating, deviation: 250, volatility: 0.06 } satisfies PlayerRating,
-          seen: [],
-        }
+        const start: PuzzleProgress = saved ?? { rating: { rating: playerRating, deviation: 250, volatility: 0.06 }, seen: [] }
         setProgress(start)
-        setPuzzles(
-          pickPuzzles(bank, {
-            themes: version.puzzles.themes,
-            openings: version.puzzles.openings,
-            rating: start.rating.rating,
-            count: version.puzzles.count,
-            exclude: new Set(start.seen),
-          }),
-        )
+        const picked = pickPuzzles(bank, {
+          themes: lesson.themes,
+          openings: lesson.openings,
+          both: !!lesson.openings,
+          rating: start.rating.rating,
+          count: lesson.count + 1,
+          exclude: new Set(start.seen),
+        })
+        // The easiest one is the worked example; the rest are for the player.
+        const sorted = [...picked].sort((a, b) => a.rating - b.rating)
+        setExample(sorted[0] ?? null)
+        setPuzzles(sorted.slice(1))
       })
       .catch(() => setLoadError(true))
-  }, [version, playerRating])
+  }, [lesson, playerRating])
 
-  if (!lesson || !version) {
+  const demo = useMemo(
+    () => (example && lesson ? puzzleDemo(example, lesson.intro, themeCaption(lesson.themes)) : null),
+    [example, lesson],
+  )
+
+  if (!lesson || loadError) {
     return (
       <main className="review-screen">
-        <p className="review-note">This lesson isn't written yet.</p>
+        <p className="review-note">
+          {loadError ? "The puzzles couldn't load (are you offline?). You can carry on without them." : "This lesson isn't written yet."}
+        </p>
         <button type="button" className="review-continue" onClick={onDone}>
           Continue
         </button>
@@ -67,104 +70,66 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
     )
   }
 
-  function finishPuzzle(clean: boolean, puzzle: Puzzle) {
-    setPuzzleDone(true)
-    if (!progress) return
-    const next: PuzzleProgress = {
-      rating: ratePuzzle(progress.rating, puzzle.rating, clean),
-      seen: [...progress.seen, puzzle.id],
-    }
-    setProgress(next)
-    savePuzzleProgress(next).catch((err) => console.error('Save failed', err))
-  }
+  if (!demo || !puzzles) return <main className="review-screen">Setting up the lesson…</main>
 
-  if (phase === 'talk') {
-    const frame = frames[bubble]
-    const last = bubble === frames.length - 1
+  if (phase === 'demo') {
     return (
-      <main className="review-screen with-board lesson">
+      <main className="review-screen with-board">
         <header className="review-topline">
-          <p className="review-kicker">Lesson · {bubble + 1} of {frames.length}</p>
+          <p className="review-kicker">Lesson · {lesson.title}</p>
           <button type="button" className="review-skip" onClick={onBack}>
             Back
           </button>
         </header>
-        <h1 className="lesson-title">{lesson.title}</h1>
-        <Board fen={frame.fen} orientation={lesson.orientation} movableColour={null} lastMove={frame.lastMove} onMove={() => {}} />
-        <div className="coach-bubble">
-          <span className="coach-portrait" aria-hidden="true">
-            P
-          </span>
-          <div>
-            <strong>Coach Pemberton</strong>
-            <p>{frame.text}</p>
-          </div>
-        </div>
-        <div className="lesson-nav">
-          <button type="button" disabled={bubble === 0} onClick={() => setBubble((b) => b - 1)}>
-            Back
-          </button>
-          <button
-            type="button"
-            className="primary"
-            onClick={() => (last ? setPhase('puzzles') : setBubble((b) => b + 1))}
-          >
-            {last ? 'Puzzles' : 'Next'}
-          </button>
-        </div>
+        <DemoBoard
+          key={example!.id}
+          startFen={example!.fen}
+          steps={demo}
+          orientation={solverColour(example!) === 'w' ? 'white' : 'black'}
+          finishLabel="Your turn"
+          onFinish={() => setPhase('puzzles')}
+        />
       </main>
     )
   }
 
-  if (phase === 'puzzles') {
-    if (loadError) {
-      return (
-        <main className="review-screen">
-          <p className="review-note">The puzzles couldn't load (are you offline?). You can carry on without them.</p>
-          <button type="button" className="review-continue" onClick={() => setPhase('done')}>
-            Continue
-          </button>
-        </main>
-      )
-    }
-    if (!puzzles) return <main className="review-screen">Finding puzzles…</main>
-    const puzzle = puzzles[puzzleIndex]
-    if (!puzzle) {
-      return (
-        <main className="review-screen">
-          <p className="review-note">No puzzles to show for this one.</p>
-          <button type="button" className="review-continue" onClick={() => setPhase('done')}>
-            Continue
-          </button>
-        </main>
-      )
-    }
+  if (phase === 'puzzles' && puzzles[index]) {
+    const puzzle = puzzles[index]
     return (
       <main className="review-screen with-board">
         <header className="review-topline">
           <p className="review-kicker">
-            Puzzle {puzzleIndex + 1} of {puzzles.length}
+            {lesson.title} · {index + 1} of {puzzles.length}
           </p>
           <button type="button" className="review-skip" onClick={() => setPhase('done')}>
             Skip
           </button>
         </header>
-        <PuzzleTrainer key={puzzle.id} puzzle={puzzle} onFinished={(clean) => finishPuzzle(clean, puzzle)} />
+        <PuzzleTrainer
+          key={puzzle.id}
+          puzzle={puzzle}
+          onFinished={(clean) => {
+            setPuzzleDone(true)
+            if (!progress) return
+            const next = { rating: ratePuzzle(progress.rating, puzzle.rating, clean), seen: [...progress.seen, puzzle.id] }
+            setProgress(next)
+            savePuzzleProgress(next).catch((err) => console.error('Save failed', err))
+          }}
+        />
         <button
           type="button"
           className="review-continue"
           disabled={!puzzleDone}
           onClick={() => {
-            if (puzzleIndex + 1 >= puzzles.length) {
-              setPhase('done')
-              return
+            if (index + 1 >= puzzles.length) setPhase('done')
+            else {
+              setIndex((i) => i + 1)
+              setPuzzleDone(false)
+              window.scrollTo({ top: 0 })
             }
-            setPuzzleIndex((i) => i + 1)
-            setPuzzleDone(false)
-            window.scrollTo({ top: 0 })
           }}
         >
-          {puzzleIndex + 1 < puzzles.length ? 'Next puzzle' : 'Finish'}
+          {index + 1 < puzzles.length ? 'Next puzzle' : 'Finish'}
         </button>
       </main>
     )
@@ -176,9 +141,7 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
         <p className="review-kicker">Lesson complete</p>
         <h1>{lesson.title}</h1>
       </header>
-      {progress && (
-        <p className="review-note">Puzzle rating: {Math.round(progress.rating.rating)}</p>
-      )}
+      {progress && <p className="review-note">Puzzle rating: {Math.round(progress.rating.rating)}</p>}
       <button type="button" className="review-continue" onClick={onDone}>
         Continue
       </button>

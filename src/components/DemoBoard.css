@@ -1,14 +1,14 @@
-.review-screen .lesson-title {
-  margin: -6px 16px 0;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.25;
+.demo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.coach-bubble {
+.demo-caption {
   display: flex;
   gap: 10px;
   align-items: flex-start;
+  min-height: 72px;
   margin: 0 16px;
   padding: 12px 14px;
   border-radius: 14px;
@@ -16,20 +16,21 @@
   color: #1f2a24;
 }
 
-.coach-bubble strong {
+.demo-caption strong {
   font-size: 13px;
 }
 
-.coach-bubble p {
+.demo-caption p {
   margin: 2px 0 0;
   line-height: 1.45;
 }
 
 /* Placeholder portrait until the portraits are drawn (phase 7) */
-.coach-portrait {
+.demo-portrait {
   flex: 0 0 40px;
   display: grid;
   place-items: center;
+  width: 40px;
   height: 40px;
   border-radius: 50%;
   background: #1f2a24;
@@ -37,14 +38,14 @@
   font-weight: 700;
 }
 
-.lesson-nav {
+.demo-nav {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 8px;
   margin: 0 16px;
 }
 
-.lesson-nav button {
+.demo-nav button {
   min-height: 48px;
   border: 1px solid #4a5a50;
   border-radius: 12px;
@@ -54,14 +55,14 @@
   cursor: pointer;
 }
 
-.lesson-nav button.primary {
+.demo-nav button.primary {
   border: none;
   background: #f0c95a;
   color: #1f2a24;
   font-weight: 600;
 }
 
-.lesson-nav button:disabled {
+.demo-nav button:disabled {
   opacity: 0.4;
   cursor: default;
 }

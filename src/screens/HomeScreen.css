@@ -53,6 +53,93 @@
   color: #ec835a;
 }
 
+/* Act 1 progress: one small circle per chapter's opponent, then the cup */
+.act-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.act-label {
+  margin-right: 4px;
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.act-dot {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid #4a5a50;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.act-dot.lettered {
+  width: 26px;
+  height: 26px;
+}
+
+.act-dot.done {
+  background: #4a5a50;
+  color: var(--text);
+}
+
+.act-dot.current {
+  border: 2px solid #f0c95a;
+  color: #f0c95a;
+}
+
+.act-dot.cup {
+  font-size: 13px;
+}
+
+.next-record {
+  margin: -4px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* The club noticeboard: one pinned note */
+.noticeboard {
+  position: relative;
+  margin: 2px 6px 0;
+  padding: 12px 14px 10px;
+  border-radius: 4px;
+  background: #ece4cf;
+  color: #1f2a24;
+  transform: rotate(-0.6deg);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.noticeboard p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.noticeboard p span {
+  color: #4a5a50;
+  font-style: italic;
+}
+
+.noticeboard-pin {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d03b3b;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
 .next-card {
   display: flex;
   flex-direction: column;
@@ -87,6 +174,8 @@
 
 /* Placeholder portrait until the portraits are drawn (phase 7) */
 .next-portrait {
+  /* Never squashed by long text beside it */
+  flex: 0 0 44px;
   display: grid;
   place-items: center;
   width: 44px;

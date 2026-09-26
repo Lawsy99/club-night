@@ -55,6 +55,8 @@ describe('puzzles', () => {
     const forks = pickPuzzles(pool, { themes: ['fork'], rating: 1000, count: 2 })
     expect(forks.map((x) => x.id).sort()).toEqual(['a', 'b'])
     expect(pickPuzzles(pool, { openings: ['london'], rating: 1000, count: 1 })[0].id).toBe('d')
+    // Both: a London puzzle that is also a pin.
+    expect(pickPuzzles(pool, { openings: ['london'], themes: ['pin'], both: true, rating: 1000, count: 1 })[0].id).toBe('d')
     expect(pickPuzzles(pool, { themes: ['fork'], rating: 1000, count: 2, exclude: new Set(['a']) }).map((x) => x.id)).not.toContain('a')
   })
 
