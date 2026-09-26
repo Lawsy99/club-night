@@ -224,6 +224,53 @@
   min-width: 0;
 }
 
+/* The moves so far, with back and forward to look through them */
+.move-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.move-row > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.look-back {
+  display: flex;
+  gap: 4px;
+  padding-right: 12px;
+}
+
+.look-back button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.look-back button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.back-to-game {
+  min-height: 44px;
+  margin: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background: var(--brass);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .move-info {
   display: flex;
   align-items: center;

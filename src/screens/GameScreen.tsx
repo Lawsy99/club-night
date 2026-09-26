@@ -10,12 +10,14 @@ import { HINT_ARROW_COLOUR, lineArrows } from '../components/lineArrows'
 import { MoveStrip } from '../components/MoveStrip'
 import { DemoBoard } from '../components/DemoBoard'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
-import { buildDemo } from '../logic/demo'
+import { buildDemo, demoSans } from '../logic/demo'
 import { PlayerStrip } from '../components/PlayerStrip'
 import { Portrait } from '../components/Portrait'
 import { playMoveSound } from '../components/moveSound'
 import { APPEARANCES } from '../data/appearances'
 import { moodFor } from '../logic/mood'
+import { matchMoment } from '../logic/matchReaction'
+import type { Expression } from '../logic/dialogue'
 import { HELP_STAGES } from '../data/helpStages'
 import { resolveOpponent } from '../data/opponents'
 import { analysePosition } from '../engine/analysis'
@@ -52,7 +54,7 @@ import { triggersFor } from '../logic/gameTriggers'
 import { useDialogue } from './useDialogue'
 import { Chess } from 'chess.js'
 import { RATING_GLYPHS, RATING_LABELS } from '../logic/moveRating'
-import { repertoireHint, sanInWords } from '../logic/repertoire'
+import { nextInLine, repertoireHint, sanInWords } from '../logic/repertoire'
 import type { Chatter } from '../logic/settings'
 import '../components/ratings.css'
 import './GameScreen.css'
@@ -94,6 +96,9 @@ export function GameScreen({
   // when the player has turned chatter down in Settings.
   const quietGame = game.path?.kind === 'trial' || isExhibition || chatter !== 'full'
   const [engineError, setEngineError] = useState<string | null>(null)
+  // Looking back through the moves: how many moves in (null = the live position).
+  const [viewPly, setViewPly] = useState<number | null>(null)
+  const viewing = viewPly !== null && viewPly < game.moves.length
   // Bumped to try the opponent's move again after something failed (never stuck "thinking").
   const [moveAttempt, setMoveAttempt] = useState(0)
   const failedAttempts = useRef(0)
@@ -160,8 +165,35 @@ export function GameScreen({
         ? (moods?.winning ?? 'pleased')
         : (moods?.losing ?? 'annoyed')
     : moodFor(moods, game.opponentEvals?.at(-1) ?? null)
+  // Competitive games show no move ratings (Joseph, Sep 2026). A great move
+  // or a blunder shows only in the opponent: their face for a few seconds,
+  // and now and then a stage direction.
+  const competitive = stage.id === 'real'
+  const [reaction, setReaction] = useState<Expression | null>(null)
+  const previousWin = useRef<number | null>(null)
+  const ratedKey = ratedMove ? `${ratedMove.fenBefore} ${ratedMove.played}` : null
+  useEffect(() => {
+    if (!ratedMove || !competitive || outcome) return
+    const moment = matchMoment(ratedMove.rating, ratedMove.winAfter, previousWin.current)
+    previousWin.current = ratedMove.winAfter
+    if (!moment) return
+    const face = moment === 'great' ? 'surprised' : (moods?.winning ?? 'pleased')
+    const show = window.setTimeout(() => setReaction(face), 0)
+    const hide = window.setTimeout(() => setReaction(null), 3500)
+    const lineState = { linesSoFar: talk.lines, moveNumber: chess.moveNumber(), lastLineMove: talk.lastLineMove }
+    if (chatter === 'full' && matchLineAllowed(lineState) && Math.random() < 0.5) {
+      if (dialogue.speak(moment === 'great' ? 'match_great' : 'match_blunder', false, storyFlags)) {
+        setGame((g) => (g ? { ...g, talk: { ...talk, lines: talk.lines + 1, lastLineMove: lineState.moveNumber } } : g))
+      }
+    }
+    return () => {
+      window.clearTimeout(show)
+      window.clearTimeout(hide)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per rated move
+  }, [ratedKey])
   const opponentFace =
-    dialogue.line && dialogue.line.face === opponent.character?.id ? dialogue.line.expression : gameMood
+    dialogue.line && dialogue.line.face === opponent.character?.id ? dialogue.line.expression : (reaction ?? gameMood)
   // Where this game sits in the story, so chapter lines ("kind:match chapter:c3") can be picked.
   const storyFlags = [
     ...(game.path ? [`kind:${game.path.kind}`] : []),
@@ -412,7 +444,9 @@ export function GameScreen({
     return () => window.clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per opponent turn
   }, [opponentToMove, fen, downloading, engineError])
-  const status = engineError && opponentToMove
+  const status = viewing
+    ? `Looking back: ${viewPly === 0 ? 'the start' : `after move ${Math.ceil(viewPly! / 2)}`}`
+    : engineError && opponentToMove
     ? engineError
     : outcome
       ? `${describeOutcome(outcome)} ${resultForPlayer(outcome, game)}`
@@ -435,9 +469,18 @@ export function GameScreen({
 
   // Assisted and guided games only (no help in real games): the next move of
   // the opening the player usually plays, while the game is still following it.
-  const bookNote =
-    (stage.id === 'assisted' || stage.id === 'guided') && playersTurn && !pending && !peeking
-      ? repertoireHint(sans, game.playerColour, game.repertoire)
+  // Your own opening first; otherwise the line Pemberton showed in his
+  // scouting report against this opponent, so what he teaches gets practised.
+  const helpOn = (stage.id === 'assisted' || stage.id === 'guided') && playersTurn && !pending && !peeking && !viewing
+  const ownLine = helpOn ? repertoireHint(sans, game.playerColour, game.repertoire) : null
+  const coachSan =
+    helpOn && !ownLine && opponent.character
+      ? nextInLine(sans, game.playerColour, demoSans(SCOUTING_DEMOS[opponent.character.id]?.[game.playerColour] ?? []))
+      : null
+  const bookNote = ownLine
+    ? { label: `Your ${ownLine.opening.replace(/^the /, '')}`, san: ownLine.san }
+    : coachSan
+      ? { label: 'Pemberton’s line', san: coachSan }
       : null
 
   const pendingLast = pending ?{ from: pending.uci.slice(0, 2), to: pending.uci.slice(2, 4) } : null
@@ -445,7 +488,10 @@ export function GameScreen({
   // (The plan pause was removed, Sep 2026: its plans didn't respond to the
   // actual position. Plans now come from the characters' plan hints, which
   // follow the opening on the board.)
-  const boardFen = peeking ? ratedMove.fenBefore : pending ? pending.fenAfter : fen
+  // Looking back through the moves: an earlier position, shown but not playable.
+  const viewed = viewing ? replay(game.moves.slice(0, viewPly!)) : null
+  const viewedLast = viewed?.history({ verbose: true }).at(-1)
+  const boardFen = viewed ? viewed.fen() : peeking ? ratedMove.fenBefore : pending ? pending.fenAfter : fen
 
   // The scouting report plays out on the board before the game (YouTube-teacher style).
   if (showScouting && opponent.character) {
@@ -541,11 +587,19 @@ export function GameScreen({
           <Board
             fen={boardFen}
             orientation={game.playerColour === 'w' ? 'white' : 'black'}
-            movableColour={outcome || pending || peeking || showScouting ? null : game.playerColour}
-            lastMove={peeking ? null : (pendingLast ?? (last ? { from: last.from, to: last.to } : null))}
+            movableColour={outcome || pending || peeking || showScouting || viewing ? null : game.playerColour}
+            lastMove={
+              viewing
+                ? viewedLast
+                  ? { from: viewedLast.from, to: viewedLast.to }
+                  : null
+                : peeking
+                  ? null
+                  : (pendingLast ?? (last ? { from: last.from, to: last.to } : null))
+            }
             onMove={handlePlayerMove}
-            hintSquare={hintStep === 1 && hintMove ? hintMove.slice(0, 2) : null}
-            arrows={arrows}
+            hintSquare={!viewing && hintStep === 1 && hintMove ? hintMove.slice(0, 2) : null}
+            arrows={viewing ? [] : arrows}
             badges={bestLine?.badges}
           />
           {pending?.warning && (
@@ -560,15 +614,41 @@ export function GameScreen({
 
       <PlayerStrip name={playerName ?? 'You'} rating={playerRating} fen={fen} side={game.playerColour} />
 
-      <MoveStrip sans={sans} />
+      <div className="move-row">
+        <MoveStrip sans={viewing ? sans.slice(0, viewPly!) : sans} />
+        {/* Look back through the moves (any game; the board is locked while looking). */}
+        <div className="look-back" aria-label="Look through the moves">
+          <button
+            type="button"
+            aria-label="Previous move"
+            disabled={game.moves.length === 0 || viewPly === 0}
+            onClick={() => setViewPly((v) => Math.max(0, (v ?? game.moves.length) - 1))}
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            aria-label="Next move"
+            disabled={!viewing}
+            onClick={() => setViewPly((v) => (v === null || v + 1 >= game.moves.length ? null : v + 1))}
+          >
+            ›
+          </button>
+        </div>
+      </div>
+      {viewing && (
+        <button type="button" className="back-to-game" onClick={() => setViewPly(null)}>
+          Back to the game
+        </button>
+      )}
 
       {bookNote && (
         <p className="book-note">
-          Your {bookNote.opening.replace(/^the /, '')}: next, <strong>{sanInWords(bookNote.san)}</strong>
+          {bookNote.label}: next, <strong>{sanInWords(bookNote.san)}</strong>
         </p>
       )}
 
-      {ratedMove && (
+      {ratedMove && !competitive && !viewing && (
         <div className="move-info">
           <span className={`move-rating rating-${ratedMove.rating}`}>
             {ratedMove.san}

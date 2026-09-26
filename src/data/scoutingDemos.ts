@@ -13,8 +13,8 @@ export const SCOUTING_DEMOS: Record<string, { w: WrittenStep[]; b: WrittenStep[]
       { caption: 'Then the queen comes out to hit the pawn her bishop left unguarded. Now she has to defend.', moves: '4. c3 Nc6 5. Nd2 Qb6' },
     ],
     w: [
-      { caption: 'Against your king’s pawn she plays the French: one pawn forward, then the other to challenge.', moves: '1. e4 e6 2. d4 d5' },
-      { caption: 'Push past her pawn and grab space. Her pieces get cramped behind it.', moves: '3. e5 c5' },
+      { caption: 'Play the king’s pawn against her. She answers with the French: one pawn forward, then the other to challenge.', moves: '1. e4 e6 2. d4 d5' },
+      { caption: 'Push past her pawn and grab space. It’s called the Advance, and her pieces get cramped behind it.', moves: '3. e5 c5' },
       { caption: 'Support your centre with a pawn and a knight. Space is your advantage; keep it.', moves: '4. c3 Nc6 5. Nf3' },
     ],
   },
@@ -25,7 +25,7 @@ export const SCOUTING_DEMOS: Record<string, { w: WrittenStep[]; b: WrittenStep[]
       { caption: 'Don’t cling on to everything: get your pieces out and he’s the one who’s worried.', moves: '4. exd5 Nf6' },
     ],
     w: [
-      { caption: 'His Stafford: he lets you take a pawn, hoping you’ll grab more.', moves: '1. e4 e5 2. Nf3 Nf6 3. Nxe5 Nc6' },
+      { caption: 'Open with the king’s pawn and bring a knight out. He answers with the Stafford: he lets you take a pawn, hoping you’ll grab more.', moves: '1. e4 e5 2. Nf3 Nf6 3. Nxe5 Nc6' },
       { caption: 'Take the knight, then one quiet pawn move stops every trick against your centre.', moves: '4. Nxc6 dxc6 5. d3' },
       { caption: 'Develop and castle. He’s simply a pawn down.', moves: '5... Bc5 6. Be2' },
     ],
@@ -37,7 +37,7 @@ export const SCOUTING_DEMOS: Record<string, { w: WrittenStep[]; b: WrittenStep[]
       { caption: 'Castle early. His quick attack runs out of pieces.', moves: '6. O-O O-O' },
     ],
     w: [
-      { caption: 'Against your Italian he brings the other knight out: the Two Knights.', moves: '1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6' },
+      { caption: 'Play the Italian against him: king’s pawn, knight, then the bishop. He brings his other knight out: the Two Knights.', moves: '1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6' },
       { caption: 'The calm answer: a quiet pawn move protects your centre.', moves: '4. d3 Be7' },
       { caption: 'Castle and build slowly. Fast players hate slow positions.', moves: '5. O-O O-O 6. Re1 d6 7. c3' },
     ],
@@ -48,7 +48,7 @@ export const SCOUTING_DEMOS: Record<string, { w: WrittenStep[]; b: WrittenStep[]
       { caption: 'Symmetrical and very drawish. Don’t copy him: develop actively and keep pieces on.', moves: '4. Bd3 Nc6 5. c3 Bd6' },
     ],
     w: [
-      { caption: 'His Berlin Defence. He wants the queens off early.', moves: '1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6' },
+      { caption: 'Try the Ruy Lopez: king’s pawn, knight, then the bishop to pin his knight. He answers with the Berlin. He wants the queens off early.', moves: '1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6' },
       { caption: 'So keep them on: a quiet pawn move protects your centre and keeps the game alive.', moves: '4. d3' },
     ],
   },
@@ -58,7 +58,7 @@ export const SCOUTING_DEMOS: Record<string, { w: WrittenStep[]; b: WrittenStep[]
       { caption: 'She knows twenty moves of this. Play natural developing moves and wait for her book to run out.', moves: '6. Re1 b5 7. Bb3 d6' },
     ],
     w: [
-      { caption: 'Against your king’s pawn, she plays the long main line of the Ruy Lopez.', moves: '1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6' },
+      { caption: 'Play the Ruy Lopez, her own favourite. She follows the long main line, as you’d expect.', moves: '1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6' },
       { caption: 'Your plan: a small pawn move to prepare taking the centre. Know the plans, not just the moves.', moves: '8. c3 O-O 9. h3' },
     ],
   },
@@ -69,7 +69,7 @@ export const SCOUTING_DEMOS: Record<string, { w: WrittenStep[]; b: WrittenStep[]
       { caption: 'Castle, then look for a pawn break to free your position. Sitting still gets you squeezed.', moves: '5. e3 O-O 6. Nf3 h6' },
     ],
     w: [
-      { caption: 'His Petroff: he copies your first moves exactly.', moves: '1. e4 e5 2. Nf3 Nf6' },
+      { caption: 'The king’s pawn and a knight. He answers with the Petroff: he copies your first moves exactly.', moves: '1. e4 e5 2. Nf3 Nf6' },
       { caption: 'Take the pawn, but after he chases your knight, step it back before grabbing his.', moves: '3. Nxe5 d6 4. Nf3 Nxe4' },
       { caption: 'Then take the centre. Solid, and you keep a small edge.', moves: '5. d4 d5 6. Bd3' },
     ],
@@ -80,7 +80,7 @@ export const SCOUTING_DEMOS: Record<string, { w: WrittenStep[]; b: WrittenStep[]
       { caption: 'Develop and castle; you can take a pawn, but don’t hang on to it for dear life.', moves: '4... Be7 5. Nf3 O-O 6. O-O dxc4 7. Qc2 a6' },
     ],
     w: [
-      { caption: 'Against your king’s pawn, the Najdorf: the sharpest defence there is.', moves: '1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6' },
+      { caption: 'Play the Open Sicilian: king’s pawn, knight, then open the centre. He answers with the Najdorf, the sharpest defence there is.', moves: '1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6' },
       { caption: 'A good plan: bishop out, then pawns forward on the kingside. Race him.', moves: '6. Be3 e5 7. Nb3 Be6 8. f3' },
     ],
   },

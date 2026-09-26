@@ -31,6 +31,12 @@ export type Trigger =
    * see the character is thinking and the app isn't just slow.
    */
   | 'long_think'
+  /**
+   * Competitive games: the player has found a great move, or blundered.
+   * Stage directions only (no move ratings are shown in these games).
+   */
+  | 'match_great'
+  | 'match_blunder'
   /** Toby's full-strength game at the end of trial night: before it, and after he wins. */
   | 'exhibition_start'
   | 'exhibition_win'

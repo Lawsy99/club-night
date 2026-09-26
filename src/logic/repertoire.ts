@@ -74,6 +74,16 @@ export function inferRepertoire(
 }
 
 /**
+ * The player's next move along one given line (e.g. the one Pemberton showed
+ * in the scouting report), if it's their turn and the game still follows it.
+ */
+export function nextInLine(sans: readonly string[], playerColour: Colour, line: readonly string[]): string | null {
+  const playersTurn = (sans.length % 2 === 0) === (playerColour === 'w')
+  if (!playersTurn || line.length <= sans.length) return null
+  return sans.every((m, i) => line[i] === m) ? line[sans.length] : null
+}
+
+/**
  * The player's next move in their repertoire, if it's their turn and the
  * game so far matches one of their lines exactly. Null once anyone leaves
  * the book (that's where thinking for yourself starts).

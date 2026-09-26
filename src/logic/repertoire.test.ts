@@ -1,7 +1,7 @@
 import { Chess } from 'chess.js'
 import { describe, expect, it } from 'vitest'
 import { REPERTOIRE_CHOICES, type RepertoireSlot } from '../data/repertoire'
-import { inferRepertoire, openingPlayed, repertoireHint, sanInWords } from './repertoire'
+import { inferRepertoire, nextInLine, openingPlayed, repertoireHint, sanInWords } from './repertoire'
 
 const slots = Object.keys(REPERTOIRE_CHOICES) as RepertoireSlot[]
 
@@ -63,6 +63,16 @@ describe('working out the repertoire from games', () => {
       g(['e4', 'c5'], 'b'), // only once: not yet
     ])
     expect(rep).toEqual({ white: 'london' })
+  })
+})
+
+describe("following Pemberton's line", () => {
+  const line = ['e4', 'e6', 'd4', 'd5', 'e5']
+  it('gives the next move while the game follows the line, on your turn only', () => {
+    expect(nextInLine([], 'w', line)).toBe('e4')
+    expect(nextInLine(['e4', 'e6'], 'w', line)).toBe('d4')
+    expect(nextInLine(['e4'], 'w', line)).toBeNull()
+    expect(nextInLine(['e4', 'c5'], 'w', line)).toBeNull()
   })
 })
 
