@@ -64,6 +64,8 @@ export type Progress = {
   pendingStory?: string[]
   /** Story moments already played (the calendar can play them again). */
   storySeen?: string[]
+  /** Pemberton's traps already used in coached games, so they don't repeat too soon. */
+  scenariosUsed?: string[]
 }
 
 /**
@@ -160,6 +162,8 @@ export type PathGame = {
   location: string
   /** The chapter this game belongs to (for its story lines), if any. */
   chapter?: string
+  /** An extra game chosen from Home (e.g. another coached game), not the week's own. */
+  extra?: boolean
 }
 
 export type NextStep =
@@ -309,7 +313,7 @@ export function nextStep(p: Progress): NextStep {
       game: match,
       // One more practice game first, if wanted (against someone else who's in).
       optionalFriendly: gameNo === 1 ? friendly(Math.max(PRACTICE_GAMES, p.friendlies.played)) : null,
-      extraCoaching: { ...coaching, label: 'Another game with Coach Pemberton' },
+      extraCoaching: { ...coaching, label: 'Another game with Coach Pemberton', extra: true },
       note: p.matchLost
         ? 'Best of three again. Warm up with a practice game first, if you like.'
         : gameNo === 1

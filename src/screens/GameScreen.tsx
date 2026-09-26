@@ -9,6 +9,7 @@ import { EvalBar } from '../components/EvalBar'
 import { HINT_ARROW_COLOUR } from '../components/lineArrows'
 import { COACH_VOICES, pickLine } from '../data/coachLines'
 import { coachHint } from '../logic/coachHints'
+import { findScenario, scenarioMove, scenarioState, scenarioVerdict } from '../logic/coachScenario'
 import { coachComment } from '../logic/explain'
 import { MoveStrip } from '../components/MoveStrip'
 import { DemoBoard } from '../components/DemoBoard'
@@ -215,11 +216,34 @@ export function GameScreen({
   const ratedRef = useRef(ratedMove?.rating ?? null)
   ratedRef.current = ratedMove?.rating ?? null
 
+  // Pemberton's announced trap, if tonight has one (logic/coachScenario.ts).
+  const trap = game.scenario ? (findScenario(game.scenario.id) ?? null) : null
+  // How it went: said once, when it's clear (you went elsewhere, or a few
+  // moves after the trap the engine says whether you're still all right).
+  useEffect(() => {
+    // (If the game ends first, the end-of-game line gives the verdict instead.)
+    if (!trap || game.scenario?.result || !playersTurn || outcome) return
+    const state = scenarioState(trap, game.moves)
+    let result: 'avoided' | 'escaped' | 'fell' | null = null
+    if (state === 'avoided') {
+      result = 'avoided'
+    } else if (state === 'judge' && analysis.current && analysis.current.fen === fen) {
+      const a = analysis.current
+      result = scenarioVerdict(toCentipawns(scoreFor(game.playerColour, a.sideToMove, a.score)))
+    }
+    if (!result) return
+    dialogue.say(trap[result], result === 'fell' ? 'smug' : 'neutral')
+    setGame((g) => (g && g.scenario ? { ...g, scenario: { ...g.scenario, result: result! } } : g))
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- checked as the position changes
+  }, [fen, !!outcome, analysis.current?.fen])
+
   useEffect(() => {
     if (talk.startSaid || game.moves.length > 0 || !opponent.character) return
     // A moment's pause, so the dialogue history has loaded (no repeats).
     const t = window.setTimeout(() => {
-      dialogue.speak(isExhibition ? 'exhibition_start' : 'game_start', true, storyFlags)
+      // A trap night: Pemberton tells you what he's going to do instead.
+      if (trap) dialogue.say(trap.announce)
+      else dialogue.speak(isExhibition ? 'exhibition_start' : 'game_start', true, storyFlags)
       setGame((g) => (g ? { ...g, talk: { ...talk, startSaid: true } } : g))
     }, 400)
     return () => window.clearTimeout(t)
@@ -229,6 +253,15 @@ export function GameScreen({
   useEffect(() => {
     if (!outcome || talk.endSaid || !opponent.character) return
     const theyWon = outcome.winner === opponentColour
+    // A trap night that ended before he'd said how it went: that's his last word.
+    if (trap && !game.scenario?.result) {
+      const verdict = scenarioState(trap, game.moves) === 'avoided' ? 'avoided' : theyWon ? 'fell' : 'escaped'
+      dialogue.say(trap[verdict], verdict === 'fell' ? 'smug' : 'neutral')
+      setGame((g) =>
+        g && g.scenario ? { ...g, scenario: { ...g.scenario, result: verdict }, talk: { ...talk, endSaid: true } } : g,
+      )
+      return
+    }
     if (outcome.winner !== null) {
       dialogue.speak(theyWon ? (isExhibition ? 'exhibition_win' : 'game_win') : 'game_loss', true, storyFlags)
     }
@@ -279,7 +312,13 @@ export function GameScreen({
         setGame((g) => (g ? withResignation(g, opponentColour) : g))
         return
       }
-      const { move, maiaMs: ms } = await chooseOpponentMove(fen, game.moves, opponent, game.rivalPrefer)
+      const { move, maiaMs: ms } = await chooseOpponentMove(
+        fen,
+        game.moves,
+        opponent,
+        game.rivalPrefer,
+        trap ? scenarioMove(trap, game.moves) : null,
+      )
       if (cancelled || !move) return
       if (failedAttempts.current > 0) {
         failedAttempts.current = 0

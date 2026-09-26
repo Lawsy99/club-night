@@ -25,6 +25,7 @@ import {
   type Progress,
 } from '../logic/path'
 import { replay } from '../logic/game'
+import { pickScenario, scenarioWeek } from '../logic/coachScenario'
 import { averageCentipawnLoss, ratingCounts, reviewMoves } from '../logic/review'
 import { newMilestones, noticeFor, type Milestone } from '../logic/milestones'
 import { inferRepertoire } from '../logic/repertoire'
@@ -183,11 +184,19 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
     setLadderNews([])
     // Something for the characters to notice (e.g. the rating passing a hundred), said once.
     const notice = progress.notice ?? undefined
-    if (notice) updateProgress({ ...progress, notice: null })
+    let nextProgress = notice ? { ...progress, notice: null } : progress
     const opponentId = characterOpponentId(pathGame.opponent)
     // Head-to-head so far, for dialogue ("Third time lucky…").
     const h2h = await headToHead(opponentId).catch(() => ({ played: 0, wins: 0, losses: 0, theirStreak: 0 }))
     const record = newGameRecord(nextPlayerColour(game), opponentId, pathGame.stage, pathGame.rating)
+
+    // About one Tuesday in three, Pemberton announces a trap and plays it.
+    const trap =
+      pathGame.kind === 'coaching' && !pathGame.extra && scenarioWeek(progress.chapter)
+        ? pickScenario(pathGame.rating, opposite(record.playerColour), progress.scenariosUsed ?? [])
+        : null
+    if (trap) nextProgress = { ...nextProgress, scenariosUsed: [...(nextProgress.scenariosUsed ?? []), trap.id] }
+    if (nextProgress !== progress) updateProgress(nextProgress)
 
     // Toby studies the player's games (rival level 1): the weakest opening, once there's evidence.
     const target = pathGame.opponent === 'toby' ? await playerWeakness().catch(() => null) : null
@@ -216,6 +225,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       scouting,
       rivalPrefer: target && target.colour === record.playerColour ? target.opening : undefined,
       repertoire,
+      scenario: trap ? { id: trap.id } : undefined,
       talk: {
         rematch: h2h.played + 1,
         losingStreak: h2h.theirStreak,

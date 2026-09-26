@@ -28,10 +28,13 @@ export async function chooseOpponentMove(
   opponent: Opponent,
   /** Toby's targeting: prefer book lines heading into this opening. */
   preferOpening?: string,
+  /** A move that must be played (Pemberton's announced trap, while the game follows it). */
+  forced?: string | null,
 ): Promise<OpponentChoice> {
   const started = Date.now()
   const colour = new Chess(fen).turn()
-  const book = opponent.character ? bookMove(opponent.character.id, colour, movesSoFar, Math.random, preferOpening) : null
+  const book =
+    forced ?? (opponent.character ? bookMove(opponent.character.id, colour, movesSoFar, Math.random, preferOpening) : null)
 
   let choice: OpponentChoice
   let kind: MoveKind
