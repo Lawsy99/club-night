@@ -1,6 +1,6 @@
 // The mistakes deck: due cards one at a time, with a count of what's left.
 // Each card is a real position from the player's games; find a better move.
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MomentTrainer } from '../components/MomentTrainer'
 import { RATING_LABELS } from '../logic/moveRating'
 import {
@@ -34,7 +34,6 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
   const [allCards, setAllCards] = useState<MistakeCard[]>([])
   const [index, setIndex] = useState(0)
   const [answered, setAnswered] = useState(false)
-  const repeated = useRef(new Set<string>())
 
   useEffect(() => {
     loadCards()
@@ -53,14 +52,11 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
     const item = queue[index]
     if (item.repeat) return // practice round: the schedule was already set
 
+    // Seen once, right or wrong, and it's gone: no repeats, so it never
+    // becomes a memory test (Joseph, Sep 2026).
     const updated = answerCard(item.card, answer)
     saveCard(updated).catch((err) => console.error('Card save failed', err))
     setAllCards((cards) => cards.map((c) => (c.id === updated.id ? updated : c)))
-    // A missed card comes round once more at the end, while it's fresh.
-    if (answer === 'revealed' && !repeated.current.has(updated.id)) {
-      repeated.current.add(updated.id)
-      setQueue((q) => (q ? [...q, { card: updated, repeat: true }] : q))
-    }
   }
 
   function next() {
@@ -94,7 +90,7 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
             <h1>Warm-up done</h1>
           </header>
           <p className="review-note">
-            Any you got right are gone for good. Any you didn’t will come round again another week.
+            Next week’s will be from this week’s games.
           </p>
           <button type="button" className="review-continue" onClick={onDone ?? onBack}>
             On to the lesson

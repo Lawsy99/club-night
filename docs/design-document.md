@@ -305,7 +305,7 @@ The app is one fixed path through four acts. The home screen shows only what com
 | Thursday | Practice night | Three practice games, light help: the week's person first, then one stronger and one weaker from whoever's in (regulars already met, Ray after junior night, Sheila, Bill). Every so often Toby turns up. Saturday opens after the three |
 | Saturday | Match day | Best of three against the week's person (Joseph's decision), each game rated, no help. First to two takes the week; losing two means the series is played again from 0–0 |
 
-**The mistakes deck** is no longer a separate screen (Sep 2026, Joseph): past errors come back only as Tuesday's warm-ups, so they actually get done, and the deck never piles up.
+**The mistakes deck** is no longer a separate screen (Sep 2026, Joseph): past errors come back only as Tuesday's warm-ups, so they actually get done, and the deck never piles up. Every warm-up is a first look and is shown once only, right or wrong (no repeats, so it never becomes a memory test). A moment already retried in the post-game review never becomes a warm-up. Games the player doesn't review are checked quietly in the background afterwards, so their errors are still found.
 
 The cup is "Cup week" (round 1, round 2, semi-final, final). Trial night keeps its own strip. The week header ("Week 3 · Junior night ›") opens the club calendar.
 

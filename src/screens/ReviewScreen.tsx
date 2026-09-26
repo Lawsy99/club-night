@@ -5,23 +5,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { Board } from '../components/Board'
 import { FullGameView } from '../components/FullGameView'
 import { MomentTrainer } from '../components/MomentTrainer'
-import type { Moment } from '../logic/moment'
 import { analyseGame } from '../engine/reviewAnalysis'
-import { explainGoodMove, explainMistake } from '../logic/explain'
+import { explainGoodMove } from '../logic/explain'
 import { describeOutcome, replay, type Colour } from '../logic/game'
 import { outcomeOf, type GameRecord } from '../logic/gameRecord'
-import { RATING_GLYPHS, RATING_LABELS, type MoveRating } from '../logic/moveRating'
-import {
-  bestMoveOfGame,
-  biggestMoments,
-  gameAccuracy,
-  ratingCounts,
-  reviewMoves,
-  type PositionEval,
-  type ReviewedMove,
-} from '../logic/review'
-import { MAX_CARDS_PER_GAME, newCard, qualifiesForDeck } from '../logic/mistakesDeck'
-import { addCardsIfNew, getArchivedGame, saveGameAnalysis } from '../storage/db'
+import { RATING_LABELS, type MoveRating } from '../logic/moveRating'
+import { bestMoveOfGame, gameAccuracy, ratingCounts, reviewMoves, type PositionEval } from '../logic/review'
+import { cardId, cardsFromMoments, gameMoments, moveLabel } from '../logic/mistakeCards'
+import { addCardsIfNew, getArchivedGame, retireCardById, saveGameAnalysis } from '../storage/db'
 import '../components/ratings.css'
 import './ReviewScreen.css'
 
@@ -81,22 +72,17 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
   const outcome = outcomeOf(game)
   const reviewed = useMemo(() => (evals ? reviewMoves(game.moves, evals) : null), [evals, game.moves])
   const moments = useMemo(
-    () => (reviewed && evals ? biggestMoments(reviewed, player).map((m) => toMoment(m, evals, player)) : []),
-    [reviewed, evals, player],
+    () => (evals ? gameMoments(game.moves, evals, player) : []),
+    [evals, game.moves, player],
   )
   const best = useMemo(() => (reviewed ? bestMoveOfGame(reviewed, player) : null), [reviewed, player])
 
-  // Real errors (mistakes and blunders) go into the mistakes deck. Done as
-  // soon as the analysis is in, so they're kept even if the review is skipped.
+  // Real errors (mistakes and blunders) become Tuesday warm-ups. Done as soon
+  // as the analysis is in, so they're kept even if the review is skipped.
   useEffect(() => {
-    // The worst errors first (blunders before mistakes), then keep the top few.
-    const severity = (m: ReviewMoment) => (m.rating === 'blunder' ? 2 : 1)
-    const cards = moments
-      .filter((m) => qualifiesForDeck(m.rating))
-      .sort((a, b) => severity(b) - severity(a))
-      .slice(0, MAX_CARDS_PER_GAME)
-      .map((m) => newCard(m, { gameId: game.id, ply: m.ply, rating: m.rating, moveLabel: m.moveLabel }))
+    const cards = cardsFromMoments(game, moments)
     if (cards.length) addCardsIfNew(cards).catch((err) => console.error('Deck save failed', err))
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per game's moments
   }, [moments, game.id])
 
   const resultLine = outcome
@@ -162,7 +148,16 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
             <span className={`review-pill rating-${moment.rating}`}>{RATING_LABELS[moment.rating]}</span>
           </h1>
         </header>
-        <MomentTrainer key={step} moment={moment} onFinished={() => setMomentDone(true)} />
+        <MomentTrainer
+          key={step}
+          moment={moment}
+          onFinished={() => {
+            setMomentDone(true)
+            // Retried here, so it won't come back as a warm-up: warm-ups are
+            // always a first look (Joseph, Sep 2026).
+            retireCardById(cardId(game.id, moment.ply)).catch(() => undefined)
+          }}
+        />
         <button
           type="button"
           className="review-continue"
@@ -286,36 +281,3 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
   )
 }
 
-type ReviewMoment = Moment & { ply: number; rating: MoveRating; moveLabel: string }
-
-function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colour): ReviewMoment {
-  const forPlayer = (cp: number) => (player === 'w' ? cp : -cp)
-  const cpBefore = forPlayer(evals[m.ply].cp)
-  const cpAfter = forPlayer(evals[m.ply + 1].cp)
-  return {
-    fenBefore: m.fenBefore,
-    playerColour: player,
-    played: m.uci,
-    playedSan: m.san,
-    bestMove: m.bestMove ?? m.uci,
-    bestCp: cpBefore,
-    explanation: explainMistake({
-      fenBefore: m.fenBefore,
-      played: m.uci,
-      bestMove: m.bestMove,
-      reply: evals[m.ply + 1].bestMove,
-      cpBefore,
-      cpAfter,
-    }),
-    ply: m.ply,
-    rating: m.rating,
-    moveLabel: moveLabel(m),
-  }
-}
-
-/** "14. Bxf7??" or "14… Nf6", with the usual annotation mark. */
-function moveLabel(m: ReviewedMove): string {
-  const number = Math.floor(m.ply / 2) + 1
-  const san = m.san + RATING_GLYPHS[m.rating]
-  return m.mover === 'w' ? `${number}. ${san}` : `${number}… ${san}`
-}

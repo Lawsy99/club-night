@@ -191,6 +191,13 @@ export async function saveCard(card: MistakeCard): Promise<void> {
   await (await db()).put('cards', card)
 }
 
+/** Takes a position out of the warm-ups for good (e.g. retried in the review). */
+export async function retireCardById(id: string): Promise<void> {
+  const database = await db()
+  const card = await database.get('cards', id)
+  if (card && !card.retired) await database.put('cards', { ...card, retired: true })
+}
+
 // --- Settings ----------------------------------------------------------------
 
 export async function loadSettings(): Promise<Settings> {

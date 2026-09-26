@@ -7,6 +7,7 @@ import { rateGame } from '../logic/glicko2'
 import {
   newGameRecord,
   nextPlayerColour,
+  opposite,
   outcomeOf,
   upgradeGameRecord,
   type GameRecord,
@@ -28,6 +29,7 @@ import { inferRepertoire } from '../logic/repertoire'
 import { clubLadder, ladderChanges, type LadderNews } from '../logic/ladder'
 import { LadderScreen } from './LadderScreen'
 import { CalendarScreen } from './CalendarScreen'
+import { collectMistakes } from '../engine/collectMistakes'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
 import { ACT_1 } from '../data/act1'
 import { CHARACTERS } from '../data/characters'
@@ -230,6 +232,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       startPathGame(finished.path)
       return
     }
+    // Not reviewed? Its errors are still found, quietly, for Tuesday's warm-ups.
+    if (finished.path.kind !== 'exhibition') collectMistakes(finished).catch(() => undefined)
     if (!finished.resultRecorded) {
       const won = outcome.winner === finished.playerColour // (a draw here only for Toby's game)
       const archived = await getArchivedGame(finished.id).catch(() => null)
@@ -378,7 +382,15 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       onSkipStep={() => {
         setLastChange(null)
         if (next.kind === 'lesson') updateProgress(completeLesson(progress))
-        else if (next.kind === 'play') updateProgress(recordGame(progress, next.game, true, null))
+        else if (next.kind === 'play') {
+          updateProgress(recordGame(progress, next.game, true, null))
+          // Keep a record of the skipped game as a win (the opponent resigned
+          // at once), so records and the ladder agree with the path.
+          const skipped = newGameRecord(nextPlayerColour(game), characterOpponentId(next.game.opponent), next.game.stage, next.game.rating)
+          archiveGame({ ...skipped, path: next.game, resignedBy: opposite(skipped.playerColour), resultRecorded: true }).catch(
+            () => undefined,
+          )
+        }
       }}
       onReset={() => {
         resetProgress()

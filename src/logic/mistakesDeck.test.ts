@@ -52,10 +52,10 @@ describe('mistakes deck', () => {
     expect(dueCards([c], new Date(start.getTime() + 1000 * DAY))).toEqual([])
   })
 
-  it('brings a card back soon when the answer had to be shown', () => {
+  it('never brings a card back, even when the answer had to be shown (no memory tests)', () => {
     const c = answerCard(card(), 'revealed', start)
-    expect(c.retired).toBe(false)
-    expect(dueCards([c], new Date(start.getTime() + 2 * DAY))).toHaveLength(1)
+    expect(c.retired).toBe(true)
+    expect(dueCards([c], new Date(start.getTime() + 2 * DAY))).toHaveLength(0)
   })
 
   it('never adds the same game move or the same position twice', () => {
@@ -77,8 +77,8 @@ describe('mistakes deck', () => {
 
   it('lists due cards oldest first and knows when the next is due', () => {
     const early = card()
-    const later = answerCard(card(), 'revealed', start) // missed: comes back later
-    expect(dueCards([later, early], start).map((c) => c.id)).toEqual(['g1:4'])
-    expect(nextDue([later])?.getTime()).toBe(new Date(later.schedule.due).getTime())
+    const answered = answerCard(card(), 'revealed', start) // seen once: gone
+    expect(dueCards([answered, early], start).map((c) => c.id)).toEqual(['g1:4'])
+    expect(nextDue([answered])).toBeNull()
   })
 })

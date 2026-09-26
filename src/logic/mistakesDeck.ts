@@ -51,9 +51,6 @@ export function warmupCards(cards: readonly MistakeCard[]): MistakeCard[] {
  */
 const scheduler = fsrs({ enable_short_term: false, enable_fuzz: true })
 
-/** Once a card's next review is this far away, it's learned: retire it. */
-const RETIRE_AFTER_DAYS = 30
-
 /** Only real errors become cards; small inaccuracies are skipped. */
 export function qualifiesForDeck(rating: MoveRating): boolean {
   return rating === 'mistake' || rating === 'blunder'
@@ -83,13 +80,12 @@ const GRADES: Record<Answer, Rating.Good | Rating.Hard | Rating.Again> = {
 }
 
 /**
- * The card after an answer. Found it (on any try) and it's gone for good
- * (Joseph, Sep 2026: the deck should only hold fresh errors, never pile up).
- * Had to be shown the answer, and it comes back soon, on the usual schedule.
+ * The card after an answer. Every warm-up is seen once only, right or wrong
+ * (Joseph, Sep 2026: bringing it back would turn it into a memory test).
  */
 export function answerCard(card: MistakeCard, answer: Answer, now = new Date()): MistakeCard {
   const { card: schedule } = scheduler.next(card.schedule, now, GRADES[answer])
-  return { ...card, schedule, retired: answer !== 'revealed' || schedule.scheduled_days >= RETIRE_AFTER_DAYS }
+  return { ...card, schedule, retired: true }
 }
 
 export function isDue(card: MistakeCard, now = new Date()): boolean {
