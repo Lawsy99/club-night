@@ -38,9 +38,11 @@ The aim is simple, sophisticated and clean: something that draws you back, which
 | Act | Setting | The story | Ends with |
 | --- | --- | --- | --- |
 | 1: Club nights | Trial night, then learning the ropes | You and Toby both join. He beats you easily on the first night and everyone likes him. The club is short of money and members. | Club knockout cup final: Toby |
-| 2: The club ladder | Fighting for a league team place | Toby goes straight to the top of the ladder and is made captain. Dex's stream is revealed. The wrong study shows you what Pemberton has been doing. | Top of the ladder: Toby |
-| 3: The league season | Match nights; the room-hire stakes | The pub raises the room hire. New members start turning up. Mid-season, Toby leaves for Kingsbridge and doesn't tell you; Marjorie does. | County cup final: Toby, then Vera |
-| 4: The tour | Weekend congresses, city by city | You play for yourself now. Vera watches your games. Whether she comes back to Wexley is the final question. | The final congress: a real last game against Toby, then his excuses |
+| 2: The club ladder | Fighting for a league team place; the club running out of money | Toby goes straight to the top of the ladder and is made captain. Dex's stream is revealed. The wrong study shows you what Pemberton has been doing. The room hire goes up; members drift away. | **The split:** at the club's lowest point, Toby and Pemberton leave together for Kingsbridge. Nobody tells you; Marjorie does |
+| 3: The league season | Rebuilding; the county league | Vera Hart turns up, the name from the honours board. She takes over as coach, differently: kinder, and stricter about the right things. Midway, you learn she was Pemberton's wife. New members arrive (Dex's stream, the juniors). Kingsbridge beats everyone. | **County championship final:** Wexley against Kingsbridge, club against club. You play Toby; somewhere in the season, you play Pemberton |
+| 4: The tour | The club abroad, country by country | The club goes touring, starting somewhere nobody thinks of for chess and ending in the strongest chess countries. Each stop has its own local characters. Vera travels with the team. | The final event: a real last game against Toby, then his excuses |
+
+**Revised Sep 2026 (Joseph).** The acts above replace the earlier plan, in which Toby left mid-season in Act 3. Details are below, under "Acts 2 to 4 (outline)". Everything past Act 1 is for later; this is the shape, so Act 1 can plant the right seeds.
 
 ## Act 1 in detail: "Club nights"
 
@@ -135,6 +137,60 @@ Each moment can be explained away on its own. Together, by the cup final, they c
 - **A week at the club:** Tuesday coaching (warm-ups from your own errors, the lesson, a coached game with Pemberton), Thursday practice night (the week's person, then someone stronger and someone weaker, sometimes Toby), Saturday best of three against the week's person.
 - **The season:** sixteen weeks over four months. Seven story weeks each introduce someone; the club weeks between them are ordinary weeks with people you already know, so they become familiar, like old friends. Then cup week.
 - **Background members** (Malcolm, Ray, Sheila, Bill): never labelled; seen around the club and met on practice night. See the tone guide.
+
+## Acts 2 to 4 (outline, Sep 2026)
+
+For later. Written down now so Act 1 plants the right things. All of it needs to be written with the same restraint as Act 1: understated, nothing explained, no villain speeches.
+
+### End of Act 2: the split
+
+- The club is at its lowest: the room hire has gone up again, the league team can barely raise eight, Graham's spreadsheets have stopped being funny.
+- Toby and Pemberton leave for Kingsbridge on the same week. It's never announced. The coaching slot on the noticeboard is blank; Toby's name is off the ladder.
+- Marjorie tells you, in the kitchen, in one line. Nobody at Wexley says "betrayal". They say "Kingsbridge have a lovely hall".
+- Seeds already in Act 1: Pemberton's Tuesdays are taken; Toby's typed name dated before trial night; "Toby's idea" for junior night; the two-line scouting report.
+
+### Act 3: Vera
+
+- She turns up on a Tuesday, in the week after the split, and sits in Pemberton's chair without comment. "V. Hart" from the honours board.
+- She becomes the coach. Her voice is the opposite of his: warm, short, exacting about the right things ("Good. Now tell me why."). In the coached game she's gentler with "are you sure?", and more interested in why you chose a move. (This is set up for in the code: the coach's lines are kept per coach.)
+- **The twist:** she was Pemberton's wife. Revealed mid-act and sideways. For example, Bill says "She beat him in the club final, the year they got married. He didn't come for a month." No one says the word "divorce".
+- The league season: Wexley against other clubs, each with a clear character and way of playing, as the story's weekly opponents. Kingsbridge wins every match, by a lot.
+- Somewhere in the season you play Pemberton himself, for Kingsbridge. He plays at his real strength, and he doesn't coach you. That's the point.
+- **The act ends** with the county championship final: Wexley against Kingsbridge. You're on the board against Toby. Vera sits on your side of the room (the mirror of Pemberton in the Act 1 cup final).
+
+### Act 4: the tour
+
+- The club goes touring, as a team. Each stop is a small arc: a local club, its characters, a match.
+- **The countries get stronger as you go.** It starts somewhere nobody thinks of for chess (Bermuda, say), then goes through stronger chess nations, and ends among the strongest (for example Uzbekistan, the USA, and the traditional chess powers).
+- **Local characters:** warm, specific people, never national stereotypes. They should be funny in the way the Wexley cast is funny: by being exactly themselves.
+- It ends with a real last game against Toby, and his excuses.
+
+## How long the story runs (Sep 2026)
+
+Joseph asked whether it needs another act. A rough count for Act 1: 16 weeks, each with the warm-ups, a lesson, a coached game, three practice games and a best of three (seven or eight games), plus the cup. That's about 120 games. At 10 to 15 minutes a game, it's 20 to 30 hours of chess before the end of Act 1.
+
+Four acts at that size is 80 to 120 hours, more than most story games. **Suggestion: no extra act.** Give each act its own season of about four months instead, and let Act 4's tour run as long as it's fun: it's easy to add stops. Terry and the practice-night regulars keep the weeks varied.
+
+## Short cutscenes (Joseph's idea, Sep 2026)
+
+**Suggestion:** once a month (every four weeks), and at the end of each act. Weekly would be too often: the weekly payoff (section C below) already does that job in words.
+
+**The rules (short, sharp, clean, not cringy):**
+
+- Twenty to thirty seconds, and tap to skip.
+- **One illustrated scene,** a place rather than a face in close-up: the club room at night with the chairs up, the car park, the honours board, the pub sign in the rain.
+- **Three to five lines at most,** appearing one at a time. The lines are dialogue or plain stage directions; there's no narrator and no music swell.
+- **Something has visibly changed** since the last one: the second room is in use, a new name on the board, an empty chair.
+- **No explaining.** The player puts it together.
+
+**Act 1, monthly** (drafts, for review):
+
+| When | Scene | What you see |
+| --- | --- | --- |
+| End of month 1 (week 4) | The club room, after everyone's gone | Marjorie wiping down the boards. One chair still out: Pemberton's, facing Toby's board. She pushes it in. |
+| End of month 2 (week 8) | The car park | Dex in his car with the phone lit up. The screen says 12 watching. He waits for the number to go up. It doesn't. |
+| End of month 3 (week 12) | The honours board | Bill with a duster. He stops at V. Hart. "Ten years. Then nothing." He moves on to the next name. |
+| Cup final (end of the act) | The club room, the next morning | A new sheet on the noticeboard: "Club ladder". One name typed at the top. Graham straightens it. |
 
 ## For review
 

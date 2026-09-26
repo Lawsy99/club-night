@@ -183,6 +183,11 @@ A former county champion who left the club years ago after the coach put her on 
 
 **She would never:** Chat, explain herself, show she's rattled, or mention the falling-out directly.
 
+**Revised Sep 2026 (Joseph), for Acts 3 and 4; see the story outline.** Vera no longer plays for Kingsbridge: Toby and Pemberton go there at the end of Act 2. She arrives at Wexley at the start of Act 3 and becomes the coach. She was Pemberton's wife, which is revealed sideways, and never by her. The falling-out with the club was really a falling-out with him.
+
+- **As coach**, she's the opposite of Pemberton: warm but spare, and interested in *why* you chose a move. For example, "Good. Now tell me why." and "You saw it. Trust that." Her "are you sure?" is gentler and rarer. She lets you find things.
+- She still never explains herself, and she never talks about him. If someone mentions Kingsbridge, she changes the subject to your pawn structure.
+
 **Sample lines**
 
 - *First game against her:* "Board two, is it? That's nice."

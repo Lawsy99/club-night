@@ -64,5 +64,11 @@ Help by game type (Sep 2026): Tuesday coached game = full help; Thursday practic
 move ratings, eval bar, 3 takebacks, never what to play; Saturday match = no help.
 The own-opening hint ("Your London: next, …") shows in the coached game only.
 Terry (practice-night comic relief, plays the Bongcloud/Grob/traps sincerely) added.
-Next up: Joseph to approve the weekly story payoffs (story-outline.md, section C),
-then build them (Tue/Thu "Around the club" lines, Saturday "On the way out" moment).
+Coached game (Sep 2026): Pemberton's "are you sure?" (some bad moves, uses one of 3
+takebacks), comments on mistakes/missed chances, 3 spoken hints; no best line.
+In-game lines only react to the board (no idle stage directions or fixed plan lines).
+Draws: practice/coached count and move on; best-of-three draws void; knockouts replay.
+Pause a game (nothing else starts until it's finished); extra coached games before a match.
+Waiting on Joseph: weekly story payoffs (story-outline.md section C), monthly cutscenes,
+Acts 2–4 outline, and docs/learning-plan.md (endgame drills, coach traps, banded lessons).
+Build those once he's approved them.
