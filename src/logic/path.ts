@@ -69,7 +69,14 @@ export type PathGame = {
 export type NextStep =
   | { kind: 'welcome' }
   | { kind: 'lesson'; chapterId: string; chapterTitle: string; topic: string; location: string }
-  | { kind: 'play'; game: PathGame; optionalFriendly: PathGame | null; note: string | null }
+  | {
+      kind: 'play'
+      game: PathGame
+      optionalFriendly: PathGame | null
+      note: string | null
+      /** After a third boss loss: puzzles from the boss's openings. */
+      targetedPuzzles?: { title: string; openings: string[] } | null
+    }
   | { kind: 'act-complete' }
 
 const GAUNTLET_OFFSETS = [-75, -50, -25]
@@ -160,14 +167,19 @@ export function nextStep(p: Progress): NextStep {
   // Support grows after boss losses; the boss never gets easier (design: "Support after boss losses").
   const studyFriendly: PathGame | null =
     cup.bossAttempts >= 2 ? { ...boss, kind: 'friendly', stage: 'assisted', label: `Assisted friendly vs ${nameOf(g.boss.opponent)}` } : null
-  return { kind: 'play', game: boss, optionalFriendly: studyFriendly, note: bossNote(cup.bossAttempts) }
+  const targetedPuzzles =
+    cup.bossAttempts >= 3 ? { title: `Puzzles from ${nameOf(g.boss.opponent)}'s openings`, openings: BOSS_OPENINGS[g.boss.opponent] ?? [] } : null
+  return { kind: 'play', game: boss, optionalFriendly: studyFriendly, note: bossNote(cup.bossAttempts), targetedPuzzles }
 }
+
+/** The opening families each boss plays (for the targeted puzzle set). */
+const BOSS_OPENINGS: Record<string, string[]> = { toby: ['najdorf', 'catalan', 'nimzo'] }
 
 function bossNote(attempts: number): string | null {
   if (attempts === 0) return null
   if (attempts === 1) return 'Scouting report (placeholder): he plays the Najdorf against 1.e4. Watch the phase where you lost last time.'
   if (attempts === 2) return 'You can study him first in an assisted friendly.'
-  return 'Targeted puzzles on his favourite ideas arrive with lessons (phase 5). The study friendly is still available.'
+  return 'A targeted puzzle set on his openings is ready, and the study friendly is still available.'
 }
 
 function startCup(p: Progress): Progress {

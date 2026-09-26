@@ -40,10 +40,11 @@ import { HomeScreen } from './HomeScreen'
 import { LessonScreen } from './LessonScreen'
 import { MistakesDeckScreen } from './MistakesDeckScreen'
 import { PastGamesScreen } from './PastGamesScreen'
+import { PuzzleSetScreen } from './PuzzleSetScreen'
 import { ReviewScreen } from './ReviewScreen'
 import { WelcomeScreen } from './WelcomeScreen'
 
-const VIEWS = ['home', 'game', 'review', 'deck', 'history', 'lesson'] as const
+const VIEWS = ['home', 'game', 'review', 'deck', 'history', 'lesson', 'puzzles'] as const
 type View = (typeof VIEWS)[number]
 
 /** Rated games: everything except friendlies (design: friendlies never change the rating). */
@@ -143,6 +144,18 @@ export function AppFlow() {
 
   if (view === 'deck') return <MistakesDeckScreen onBack={() => setView('home')} />
 
+  if (view === 'puzzles' && next.kind === 'play' && next.targetedPuzzles) {
+    return (
+      <PuzzleSetScreen
+        title={next.targetedPuzzles.title}
+        openings={next.targetedPuzzles.openings}
+        count={6}
+        playerRating={progress.rating?.rating ?? progress.baseline}
+        onDone={() => setView('home')}
+      />
+    )
+  }
+
   if (view === 'lesson' && next.kind === 'lesson') {
     return (
       <LessonScreen
@@ -206,6 +219,7 @@ export function AppFlow() {
       lastChange={lastChange}
       onPlay={startPathGame}
       onStartLesson={() => setView('lesson')}
+      onTargetedPuzzles={() => setView('puzzles')}
       onOpenDeck={() => setView('deck')}
       onOpenHistory={() => setView('history')}
       onSkipStep={() => {

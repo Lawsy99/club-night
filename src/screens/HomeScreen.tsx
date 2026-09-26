@@ -17,6 +17,7 @@ type Props = {
   lastChange: { from: number; to: number } | null
   onPlay: (game: PathGame) => void
   onStartLesson: () => void
+  onTargetedPuzzles: () => void
   onOpenDeck: () => void
   onOpenHistory: () => void
   onSkipStep: () => void
@@ -32,7 +33,8 @@ const KIND_LABELS: Record<PathGame['kind'], string> = {
 }
 
 export function HomeScreen(props: Props) {
-  const { progress, next, lastChange, onPlay, onStartLesson, onOpenDeck, onOpenHistory, onSkipStep, onReset } = props
+  const { progress, next, lastChange, onPlay, onStartLesson, onTargetedPuzzles, onOpenDeck, onOpenHistory, onSkipStep, onReset } =
+    props
   const [due, setDue] = useState<number | null>(null)
 
   useEffect(() => {
@@ -62,7 +64,7 @@ export function HomeScreen(props: Props) {
 
       {lastChange && <RatingChange {...lastChange} />}
 
-      <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} />
+      <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} onTargetedPuzzles={onTargetedPuzzles} />
 
       <nav className="home-links">
         <button type="button" onClick={onOpenDeck}>
@@ -107,7 +109,12 @@ function RatingChange({ from, to }: { from: number; to: number }) {
   )
 }
 
-function NextCard({ next, onPlay, onStartLesson }: Pick<Props, 'next' | 'onPlay' | 'onStartLesson'>) {
+function NextCard({
+  next,
+  onPlay,
+  onStartLesson,
+  onTargetedPuzzles,
+}: Pick<Props, 'next' | 'onPlay' | 'onStartLesson' | 'onTargetedPuzzles'>) {
   if (next.kind === 'lesson') {
     return (
       <section className="next-card">
@@ -162,6 +169,11 @@ function NextCard({ next, onPlay, onStartLesson }: Pick<Props, 'next' | 'onPlay'
       {optionalFriendly && (
         <button type="button" className="next-secondary" onClick={() => onPlay(optionalFriendly)}>
           {optionalFriendly.stage === 'assisted' ? 'Study him first: assisted friendly' : 'Play a friendly first'}
+        </button>
+      )}
+      {next.targetedPuzzles && (
+        <button type="button" className="next-secondary" onClick={onTargetedPuzzles}>
+          {next.targetedPuzzles.title}
         </button>
       )}
     </section>

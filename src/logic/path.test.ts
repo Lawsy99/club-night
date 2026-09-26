@@ -118,5 +118,10 @@ describe('the path', () => {
     }
     for (let r = 0; r < 3; r++) p = recordGame(p, nextGame(p).game, true, null)
     expect(nextGame(p).optionalFriendly).toMatchObject({ kind: 'friendly', stage: 'assisted', opponent: 'toby' })
+    expect(nextGame(p).targetedPuzzles).toBeNull()
+    // A third loss adds the targeted puzzle set on his openings.
+    p = recordGame(p, nextGame(p).game, false, null)
+    for (let r = 0; r < 3; r++) p = recordGame(p, nextGame(p).game, true, null)
+    expect(nextGame(p).targetedPuzzles?.openings).toContain('najdorf')
   })
 })
