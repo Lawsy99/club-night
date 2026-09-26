@@ -142,7 +142,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
         setGame(current)
         const unfinished = current && !outcomeOf(current)
         const awaitingResult = current && outcomeOf(current) && current.path && !current.resultRecorded
-        if (unfinished) setView('game')
+        // (A paused game reopens on Home, where it's waiting; otherwise straight back in.)
+        if (unfinished) setView(screen === 'home' ? 'home' : 'game')
         else if (awaitingResult) setView(screen === 'review' ? 'review' : 'game')
         else if (VIEWS.includes(screen as View) && screen !== 'game' && screen !== 'review') setView(screen as View)
         else setView('home')
@@ -160,6 +161,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
 
   useEffect(() => {
     if (loaded) saveScreen(view).catch((err) => console.error('Save failed', err))
+    // Every screen starts at the top (not wherever the last one was scrolled to).
+    window.scrollTo(0, 0)
   }, [view, loaded])
 
   if (!loaded) return <main className="game-screen loading">Setting up the board…</main>
@@ -364,9 +367,13 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
         chatter={settings.chatter}
         onReview={() => setView('review')}
         onContinue={() => void finishGame(game)}
+        onPause={() => setView('home')}
       />
     )
   }
+
+  // A game left with Pause (not finished): Home offers only a way back to it.
+  const pausedGame = game && game.path && !outcomeOf(game) ? game.path : null
 
   return (
     <HomeScreen
@@ -386,6 +393,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       onOpenSettings={() => setView('settings')}
       onSetName={(playerName) => updateProgress({ ...progress, playerName })}
       onStartWarmup={() => setView('warmup')}
+      pausedGame={pausedGame}
+      onResume={() => setView('game')}
       onSkipStep={() => {
         setLastChange(null)
         if (next.kind === 'lesson') updateProgress(completeLesson(progress))

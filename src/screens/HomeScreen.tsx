@@ -47,6 +47,9 @@ type Props = {
   onStartWarmup: () => void
   onSkipStep: () => void
   onReset: () => void
+  /** An unfinished game left with Pause: it must be finished or resigned first. */
+  pausedGame: PathGame | null
+  onResume: () => void
 }
 
 /** Remembers (on this phone only) that the playtest tools are switched on. */
@@ -90,6 +93,8 @@ export function HomeScreen(props: Props) {
     onStartWarmup,
     onSkipStep,
     onReset,
+    pausedGame,
+    onResume,
   } = props
   // Past errors waiting to be put right (the coach's warm-ups on Tuesday).
   const [waiting, setWaiting] = useState(0)
@@ -153,7 +158,10 @@ export function HomeScreen(props: Props) {
         <ActProgress progress={progress} />
       </button>
 
-      {wantsWarmup(progress, next, waiting) ? (
+      {/* A paused game comes first: finish it (or resign) before anything else. */}
+      {pausedGame ? (
+        <PausedCard game={pausedGame} onResume={onResume} />
+      ) : wantsWarmup(progress, next, waiting) ? (
         <WarmupCard count={waiting} week={progress.chapter} onStart={onStartWarmup} />
       ) : (
         <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} onTargetedPuzzles={onTargetedPuzzles} />
@@ -183,9 +191,11 @@ export function HomeScreen(props: Props) {
         <details className="playtest" open>
           <summary>Playtest tools</summary>
           <p>For testing the path quickly.</p>
-          <button type="button" onClick={onSkipStep}>
-            Skip this step (counts as a win)
-          </button>
+          {!pausedGame && (
+            <button type="button" onClick={onSkipStep}>
+              Skip this step (counts as a win)
+            </button>
+          )}
           <button
             type="button"
             className="danger"
@@ -277,6 +287,30 @@ function WarmupCard({ count, week, onStart }: { count: number; week: number; onS
       </p>
       <button type="button" className="next-play" onClick={onStart}>
         Start warm-ups
+      </button>
+    </section>
+  )
+}
+
+/**
+ * A game left with Pause (Joseph, Sep 2026). Nothing else starts until it's
+ * finished or resigned, so a game is never lost by accident.
+ */
+function PausedCard({ game, onResume }: { game: PathGame; onResume: () => void }) {
+  const name = findCharacter(game.opponent)?.name ?? game.opponent
+  return (
+    <section className="next-card">
+      <p className="next-kind">Paused</p>
+      <h2>{game.label}</h2>
+      <p className="next-opponent">
+        <Portrait who={game.opponent} size={44} />
+        <span>
+          <strong>{name}</strong> <span className="next-rating">is waiting</span>
+        </span>
+      </p>
+      <p className="next-note">Finish this game, or resign it, before starting anything else.</p>
+      <button type="button" className="next-play" onClick={onResume}>
+        Back to the game
       </button>
     </section>
   )
@@ -417,6 +451,11 @@ function PlayCard({
           {optionalFriendly.stage === 'assisted'
             ? 'Study him first: a practice game with full help'
             : 'Another practice game first'}
+        </button>
+      )}
+      {next.extraCoaching && (
+        <button type="button" className="next-secondary" onClick={() => onPlay(next.extraCoaching!)}>
+          A game with Pemberton first
         </button>
       )}
       {next.targetedPuzzles && (

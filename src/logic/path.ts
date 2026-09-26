@@ -140,6 +140,11 @@ export type NextStep =
       kind: 'play'
       game: PathGame
       optionalFriendly: PathGame | null
+      /**
+       * Before a match: another game with Pemberton, as many as you like
+       * (Joseph, Sep 2026: the coached game is one of the best parts).
+       */
+      extraCoaching?: PathGame | null
       note: string | null
       /** After a third boss loss: puzzles from the boss's openings. */
       targetedPuzzles?: { title: string; openings: string[] } | null
@@ -220,18 +225,19 @@ export function nextStep(p: Progress): NextStep {
     }
     // Tuesday, after the lesson: a game against Pemberton, who plays at your
     // level, with every kind of help (Joseph, Sep 2026: what a good coach does).
+    const coaching: PathGame = {
+      kind: 'coaching',
+      opponent: 'pemberton',
+      rating: rounded(p.rating ? p.rating.rating : p.baseline),
+      stage: 'assisted',
+      label: 'A game with Coach Pemberton',
+      location: sessionLabel('coaching'),
+      chapter: ch.id,
+    }
     if (!p.coachingDone) {
       return {
         kind: 'play',
-        game: {
-          kind: 'coaching',
-          opponent: 'pemberton',
-          rating: rounded(p.rating ? p.rating.rating : p.baseline),
-          stage: 'assisted',
-          label: 'A game with Coach Pemberton',
-          location: sessionLabel('coaching'),
-          chapter: ch.id,
-        },
+        game: coaching,
         optionalFriendly: null,
         note: 'He plays at your level, and tells you what he thinks. Three hints, three takebacks.',
       }
@@ -274,6 +280,7 @@ export function nextStep(p: Progress): NextStep {
       game: match,
       // One more practice game first, if wanted (against someone else who's in).
       optionalFriendly: gameNo === 1 ? friendly(Math.max(PRACTICE_GAMES, p.friendlies.played)) : null,
+      extraCoaching: { ...coaching, label: 'Another game with Coach Pemberton' },
       note: p.matchLost
         ? 'Best of three again. Warm up with a practice game first, if you like.'
         : gameNo === 1

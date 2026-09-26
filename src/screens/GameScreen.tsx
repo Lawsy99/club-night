@@ -72,6 +72,8 @@ type Props = {
   onReview: () => void
   /** Skip the review and carry on (a draw: replay straight away). */
   onContinue: () => void
+  /** Leave the game for Home; it waits there until finished or resigned. */
+  onPause?: () => void
   /** The player's rating, shown in their name bar (none during trial night). */
   playerRating?: number
   /** The player's name, for their name bar and for lines that use it. */
@@ -94,6 +96,7 @@ export function GameScreen({
   setGame,
   onReview,
   onContinue,
+  onPause,
   playerRating,
   playerName,
   chatter = 'full',
@@ -777,6 +780,11 @@ export function GameScreen({
             >
               Offer draw
             </button>
+            {onPause && (
+              <button type="button" disabled={pending !== null} onClick={onPause}>
+                Pause
+              </button>
+            )}
           </>
         )}
       </div>
