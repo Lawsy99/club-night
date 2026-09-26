@@ -112,14 +112,18 @@ export type NextStep =
     }
   | { kind: 'act-complete' }
 
-const GAUNTLET_OFFSETS = [-75, -50, -25]
-const BOSS_OFFSET = 25
 
-/** An opponent's strength right now (fixed characters keep their Act 1 number). */
+/**
+ * An opponent's strength right now, which is also their rating on the club
+ * ladder: fixed characters keep their Act 1 number; scaling ones are the
+ * baseline plus their offset, plus a little growth for each chapter played.
+ */
 export function opponentRating(p: Progress, id: string): number {
   if (p.fixedRatings[id] !== undefined) return p.fixedRatings[id]
   const character = findCharacter(id)
-  return character ? characterRating(character, p.baseline) : p.baseline
+  if (!character) return p.baseline
+  const chapters = Math.min(p.chapter, ACT_1.chapters.length)
+  return characterRating(character, p.baseline + (character.growthPerChapter ?? 0) * chapters)
 }
 
 const nameOf = (id: string) => findCharacter(id)?.name ?? id
@@ -217,7 +221,8 @@ export function nextStep(p: Progress): NextStep {
       game: {
         kind: 'cup-round',
         opponent: round.opponent,
-        rating: rounded(p.baseline + GAUNTLET_OFFSETS[cup.round]),
+        // At their club rating, as on the ladder (the draw is ordered so it gets harder).
+        rating: opponentRating(p, round.opponent),
         stage: 'real',
         label: round.label,
         location: g.location,
@@ -245,8 +250,10 @@ function bossNote(attempts: number): string | null {
   return 'A targeted puzzle set on his openings is ready, and the study friendly is still available.'
 }
 
+/** The boss plays at their club rating when the cup starts, then stays fixed (never drops after a loss). */
 function startCup(p: Progress): Progress {
-  return { ...p, cup: p.cup ?? { round: 0, bossRating: rounded(p.baseline + BOSS_OFFSET), bossAttempts: 0 } }
+  const boss = ACT_1.gauntlet.boss.opponent
+  return { ...p, cup: p.cup ?? { round: 0, bossRating: rounded(opponentRating(p, boss)), bossAttempts: 0 } }
 }
 
 // --- Events -----------------------------------------------------------------

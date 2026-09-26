@@ -24,6 +24,8 @@ import { replay } from '../logic/game'
 import { averageCentipawnLoss, ratingCounts, reviewMoves } from '../logic/review'
 import { newMilestones, noticeFor, type Milestone } from '../logic/milestones'
 import { inferRepertoire } from '../logic/repertoire'
+import { clubLadder, ladderChanges, type LadderNews } from '../logic/ladder'
+import { LadderScreen } from './LadderScreen'
 import { ACT_1 } from '../data/act1'
 import { CHARACTERS } from '../data/characters'
 import { rivalTarget } from '../logic/rival'
@@ -60,7 +62,7 @@ import { SettingsScreen } from './SettingsScreen'
 import { StatsScreen } from './StatsScreen'
 import { WelcomeScreen } from './WelcomeScreen'
 
-const VIEWS = ['home', 'game', 'review', 'deck', 'warmup', 'history', 'lesson', 'puzzles', 'stats', 'settings'] as const
+const VIEWS = ['home', 'game', 'review', 'deck', 'warmup', 'history', 'lesson', 'puzzles', 'stats', 'settings', 'ladder'] as const
 type View = (typeof VIEWS)[number]
 
 /**
@@ -107,6 +109,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
   const [pastGame, setPastGame] = useState<ArchivedGame | null>(null)
   const [lastChange, setLastChange] = useState<{ from: number; to: number } | null>(null)
   const [milestoneBanner, setMilestoneBanner] = useState<Milestone[]>([])
+  // Who the player passed on the club ladder (or who passed them) in the last game.
+  const [ladderNews, setLadderNews] = useState<LadderNews[]>([])
 
   useEffect(() => {
     requestPersistentStorage()
@@ -148,6 +152,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
   const startPathGame = async (pathGame: PathGame) => {
     setLastChange(null)
     setMilestoneBanner([])
+    setLadderNews([])
     // Something for the characters to notice (e.g. the rating passing a hundred), said once.
     const notice = progress.notice ?? undefined
     if (notice) updateProgress({ ...progress, notice: null })
@@ -222,6 +227,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
         }
         setMilestoneBanner(reached)
       }
+      setLadderNews(ladderChanges(clubLadder(progress), clubLadder(next)))
       updateProgress(next)
       setGame({ ...finished, resultRecorded: true })
     }
@@ -243,6 +249,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
 
   if (view === 'deck') return <MistakesDeckScreen onBack={() => setView('home')} />
   if (view === 'stats') return <StatsScreen progress={progress} onBack={() => setView('home')} />
+  const ladder = clubLadder(progress, progress.playerName ?? 'You')
+  if (view === 'ladder' && ladder) return <LadderScreen ladder={ladder} news={ladderNews} onBack={() => setView('home')} />
   if (view === 'settings') {
     return (
       <SettingsScreen settings={settings} onChange={onChangeSettings} onBack={() => setView('home')} />
@@ -332,6 +340,9 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       next={next}
       lastChange={lastChange}
       milestones={milestoneBanner}
+      ladder={ladder}
+      ladderNews={ladderNews}
+      onOpenLadder={() => setView('ladder')}
       onPlay={startPathGame}
       onStartLesson={() => setView('lesson')}
       onTargetedPuzzles={() => setView('puzzles')}

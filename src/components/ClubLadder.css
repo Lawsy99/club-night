@@ -1,0 +1,129 @@
+.ladder-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 12px 14px;
+  border: 1px solid #4a5a50;
+  border-radius: 14px;
+  background: #26332b;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ladder-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.ladder-card-head span {
+  font-size: 13px;
+  color: #f0c95a;
+}
+
+.ladder-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each person is a rung: a board-coloured bar with their face on it */
+.ladder-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 10px 4px 6px;
+  border-radius: 10px;
+  background: #2f3d34;
+  transition: transform 0.3s ease;
+}
+
+.ladder-row.is-you {
+  background: #f0c95a;
+  color: #1f2a24;
+  font-weight: 600;
+}
+
+.ladder-row.news-passed {
+  opacity: 0.75;
+}
+
+.ladder-row.news-passed-by {
+  box-shadow: inset 0 0 0 2px #d07a5a;
+}
+
+.ladder-place {
+  width: 18px;
+  font-size: 13px;
+  text-align: right;
+  color: var(--muted);
+}
+
+.ladder-row.is-you .ladder-place {
+  color: #1f2a24;
+}
+
+.ladder-name {
+  flex: 1;
+  font-size: 15px;
+}
+
+.ladder-rating {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ladder-you-face {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #1f2a24;
+  color: #f0c95a;
+  font-weight: 700;
+}
+
+.ladder-climb {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.ladder-climb strong {
+  color: var(--text);
+}
+
+.ladder-climb.top {
+  margin: 0;
+  color: #f0c95a;
+}
+
+.ladder-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: #33423a;
+  overflow: hidden;
+}
+
+.ladder-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: #f0c95a;
+  transition: width 0.6s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ladder-row,
+  .ladder-bar i {
+    transition: none;
+  }
+}

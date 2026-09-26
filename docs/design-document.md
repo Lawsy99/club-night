@@ -140,7 +140,13 @@ Scaling characters use the act baseline plus an offset. Fixed characters are set
 | Derek | Scaling | — | — | +25 |
 | Tour locals (Act 4) | Scaling | — | — | −50 to +50 |
 
-Boss and gauntlet strengths are set separately, in Stakes. Nobody goes below 200.
+Nobody goes below 200.
+
+**Revised Sep 2026 (Joseph: the club ladder).** Scaling characters also improve a little each chapter: Dex 5, Oscar 4 and Priya 3 points per chapter. Toby stays at baseline +50 through Act 1. That's slower than a typical player (about 7 a chapter, see "The maths behind these numbers"), so the player gradually climbs past them, while Dex and Oscar creep up from below. A character's rating is always the strength they play at, everywhere, including in the cup.
+
+### The club ladder
+
+Everyone at the club by rating, with the player among them: a compact card on Home (the player in gold, the people either side, and a bar showing how close the next person is, e.g. "12 to pass Priya"), and the full ladder behind it. Faces, not a table. After each game, a line says who the player moved above ("You moved above Priya on the club ladder"), or who moved above them. Fixed members stay put, so the player passes them for good; growing members can come back past. It is also the natural lead-in to Act 2's club ladder.
 
 ### Which engine plays
 
@@ -337,12 +343,14 @@ Every format is a real chess format.
 
 ### Strength settings
 
+**Revised Sep 2026:** cup opponents play at their club ratings (as shown on the ladder), so the Act 1 draw is ordered to get harder: Oscar (about −120 by then), Clive (−50), Priya (about +20), then Toby at his club rating (+50), fixed when the cup starts. A typical player who has improved about 50 during the act meets Toby as an equal: about 2 attempts.
+
 | Opponent | Strength |
 | --- | --- |
-| Gauntlet match 1 | Baseline −75 |
-| Gauntlet match 2 | Baseline −50 |
-| Gauntlet match 3 | Baseline −25 |
-| Toby as boss | Baseline +25 |
+| Gauntlet match 1 | Oscar's club rating (about baseline −120) |
+| Gauntlet match 2 | Clive's club rating (baseline −50) |
+| Gauntlet match 3 | Priya's club rating (about baseline +20) |
+| Toby as boss | Toby's club rating (baseline +50) |
 | Vera as boss (Act 3) | Baseline +50 |
 
 Boss strengths are fixed once the gauntlet starts and never drop after a loss.

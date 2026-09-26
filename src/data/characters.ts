@@ -20,6 +20,12 @@ export type Character = {
   offersDraw: 'rarely' | 'move-12-when-level' | 'when-worse'
   /** Whether they'll accept the player's offer when clearly worse (Vera and Derek never do). */
   acceptsDraws: boolean
+  /**
+   * Scaling characters improve a little each chapter (club ladder, Joseph
+   * Sep 2026): slower than a typical player (about 7 a chapter), so the
+   * player gradually climbs past them. Fixed characters never change.
+   */
+  growthPerChapter?: number
 }
 
 export const CHARACTERS: Character[] = [
@@ -45,6 +51,8 @@ export const CHARACTERS: Character[] = [
     resigns: 'normal',
     offersDraw: 'rarely',
     acceptsDraws: true,
+    // "Improves faster than anyone" (tone guide).
+    growthPerChapter: 5,
   },
   {
     id: 'oscar',
@@ -57,6 +65,7 @@ export const CHARACTERS: Character[] = [
     resigns: 'quickly',
     offersDraw: 'rarely',
     acceptsDraws: true,
+    growthPerChapter: 4,
   },
   {
     id: 'clive',
@@ -79,6 +88,7 @@ export const CHARACTERS: Character[] = [
     resigns: 'normal',
     offersDraw: 'rarely',
     acceptsDraws: true,
+    growthPerChapter: 3,
   },
   {
     id: 'graham',

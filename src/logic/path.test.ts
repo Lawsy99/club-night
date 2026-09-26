@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { ACT_1 } from '../data/act1'
-import { beginTrial, completeLesson, NEW_PROGRESS, nextStep, recordGame, wantsWarmup, type Progress } from './path'
+import {
+  beginTrial,
+  completeLesson,
+  NEW_PROGRESS,
+  nextStep,
+  opponentRating,
+  recordGame,
+  wantsWarmup,
+  type Progress,
+} from './path'
 
 /** The game the Next card offers (fails the test if it isn't a game). */
 function nextGame(p: Progress) {
@@ -122,6 +131,14 @@ describe('the path', () => {
     expect(nextStep(p).kind).toBe('lesson')
   })
 
+  it('scaling characters improve a little each chapter; fixed ones never change', () => {
+    const p = throughTrial()
+    const later = { ...p, chapter: 4 }
+    expect(opponentRating(later, 'dex') - opponentRating(p, 'dex')).toBe(20) // 5 a chapter
+    expect(opponentRating(later, 'marjorie')).toBe(opponentRating(p, 'marjorie'))
+    expect(opponentRating(later, 'toby')).toBe(opponentRating(p, 'toby')) // always baseline +50 in Act 1
+  })
+
   it('offers the match straight away against someone already met', () => {
     // Oscar is met in chapter 3; he's also a cup opponent, but check the rule directly.
     let p = completeLesson(throughTrial())
@@ -139,10 +156,13 @@ describe('the path', () => {
       ratings.push(round.rating)
       p = recordGame(p, round, true, null)
     }
-    expect(ratings[0]).toBeLessThan(ratings[2]) // −75, −50, −25
+    // At club ratings, and harder each round: Oscar, Clive, Priya.
+    expect(ratings[0]).toBeLessThan(ratings[1])
+    expect(ratings[1]).toBeLessThan(ratings[2])
     const boss = nextGame(p).game
     expect(boss).toMatchObject({ kind: 'boss', opponent: 'toby' })
-    expect(boss.rating).toBe(Math.round((baseline + 25) / 5) * 5)
+    expect(boss.rating).toBe(Math.round((baseline + 50) / 5) * 5) // Toby's club rating
+    expect(boss.rating).toBeGreaterThan(ratings[2])
 
     p = recordGame(p, boss, false, null)
     expect(nextGame(p).game.kind).toBe('cup-round') // back to round 1

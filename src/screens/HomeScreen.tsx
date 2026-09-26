@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
 import { NameField } from '../components/NameField'
 import { Portrait } from '../components/Portrait'
+import { LadderCard } from '../components/ClubLadder'
+import { describeNews, type LadderNews, type Rung } from '../logic/ladder'
 import type { Milestone } from '../logic/milestones'
 import { cleanName } from '../logic/playerName'
 import { ACT_1 } from '../data/act1'
@@ -26,6 +28,10 @@ type Props = {
   lastChange: { from: number; to: number } | null
   /** Milestones reached in the game just finished (shown once). */
   milestones: Milestone[]
+  /** The club ladder (null before the player has a rating), and who moved last game. */
+  ladder: Rung[] | null
+  ladderNews: LadderNews[]
+  onOpenLadder: () => void
   onPlay: (game: PathGame) => void
   onStartLesson: () => void
   onTargetedPuzzles: () => void
@@ -57,6 +63,9 @@ export function HomeScreen(props: Props) {
     next,
     lastChange,
     milestones,
+    ladder,
+    ladderNews,
+    onOpenLadder,
     onPlay,
     onStartLesson,
     onTargetedPuzzles,
@@ -99,10 +108,13 @@ export function HomeScreen(props: Props) {
 
       {lastChange && <RatingChange {...lastChange} />}
 
-      {milestones.length > 0 && (
+      {milestones.length + ladderNews.length > 0 && (
         <aside className="milestone-banner" role="status">
           {milestones.map((m) => (
             <p key={m.id}>{m.text}</p>
+          ))}
+          {ladderNews.map((n) => (
+            <p key={`${n.kind}:${n.id}`}>{describeNews(n)}</p>
           ))}
         </aside>
       )}
@@ -116,6 +128,8 @@ export function HomeScreen(props: Props) {
       ) : (
         <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} onTargetedPuzzles={onTargetedPuzzles} />
       )}
+
+      {ladder && progress.stage !== 'trial' && <LadderCard ladder={ladder} news={ladderNews} onOpen={onOpenLadder} />}
 
       <Noticeboard progress={progress} next={next} />
 

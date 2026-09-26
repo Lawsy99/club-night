@@ -93,7 +93,7 @@ Trial night, seven chapters (one per club regular), then the knockout cup. Each 
 
 ### The knockout cup
 
-- Three rounds (Oscar, Clive, Graham), then the final against Toby. Marjorie gets out the good set.
+- Three rounds (Oscar, Clive, Priya), then the final against Toby. Marjorie gets out the good set. (Priya replaced Graham in the semi-final so the rounds get harder at club ratings.)
 - **If you lose:** "Good game! Want to go over it?" Qualify again next month.
 - **If you win:** "So deserved. Genuinely." Pemberton congratulates you, then goes to find Toby.
 - **The act ends on:** a new sheet on the noticeboard, "Club ladder", with Toby's name already at the top.
