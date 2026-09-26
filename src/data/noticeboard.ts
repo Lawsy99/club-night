@@ -10,9 +10,10 @@ export const NOTICEBOARD: Record<string, Notice> = {
   'trial-honours': { speaker: 'Marjorie', text: 'That’s the honours board. V. Hart, mostly, for a good while. Board two. Honestly. Thirty years.' },
   // Before Toby's game at the end of trial night.
   'trial-finale': { speaker: 'Graham', text: "Toby isn't on the membership list yet. Strictly speaking, that game is unofficial." },
-  c1: { speaker: 'Graham', text: 'Reminder: subs are due. Not now. After.' },
+  c1: { speaker: 'Sheila', text: 'Raffle tickets on the side. Top prize is a bottle of something.' },
   c2: { speaker: 'Graham', text: 'Filming on club nights requires the committee’s permission. Forms are available. From me.' },
   c3: { speaker: 'Neil', text: "Junior night Thursday. Ray says Oscar's ahead of schedule. We'd prefer Mr Pemberton." },
+  // (Background members appear here and in passing lines, never labelled.)
   c4: { speaker: 'Coach Pemberton', text: "Going over Toby's game after club tonight. Anyone else's after, if there's time." },
   c5: { speaker: 'Priya', text: "Has anyone got the new edition? Chapter nine's changed." },
   c6: { speaker: 'Graham', text: "The pub want another eight pounds a night. I've done a spreadsheet." },

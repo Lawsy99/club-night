@@ -9,13 +9,13 @@ import { opponentRating, type Progress } from './path'
 
 export const YOU = 'you'
 
-export type Rung = { id: string; name: string; rating: number; note?: string }
+export type Rung = { id: string; name: string; rating: number }
 
 /** Everyone, highest first. On a tie the player sits below: you have to get past, not level. */
 export function clubLadder(p: Progress, playerName = 'You'): Rung[] | null {
   if (!p.rating) return null
   const cast = CHARACTERS.map((c) => ({ id: c.id, name: c.name, rating: opponentRating(p, c.id) }))
-  const background = MEMBERS.map((m) => ({ id: m.id, name: m.name, rating: opponentRating(p, m.id), note: m.note }))
+  const background = MEMBERS.map((m) => ({ id: m.id, name: m.name, rating: opponentRating(p, m.id) }))
   const you = { id: YOU, name: playerName, rating: Math.round(p.rating.rating) }
   return [...cast, ...background, you].sort((a, b) => b.rating - a.rating || (a.id === YOU ? 1 : b.id === YOU ? -1 : 0))
 }

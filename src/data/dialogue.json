@@ -1711,9 +1711,105 @@
   "id": "toby-think-03",
   "character": "toby",
   "trigger": "long_think",
-  "text": "(Toby waves to someone across the room.)",
+  "text": "(Toby waves to Malcolm across the room. Malcolm nods back.)",
   "expression": "smug",
   "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "bg-marjorie-think",
+  "character": "marjorie",
+  "trigger": "long_think",
+  "text": "(Sheila comes round with the raffle tickets. Marjorie buys two.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "bg-clive-think",
+  "character": "clive",
+  "trigger": "long_think",
+  "text": "(Bill has pulled up a chair to watch.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "bg-dex-think",
+  "character": "dex",
+  "trigger": "long_think",
+  "text": "(Bill is watching over Dex's shoulder. Dex has noticed.)",
+  "expression": "annoyed",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "bg-oscar-think",
+  "character": "oscar",
+  "trigger": "long_think",
+  "text": "(Ray looks in from the junior room and gives Oscar a nod.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "bg-priya-think",
+  "character": "priya",
+  "trigger": "long_think",
+  "text": "(Priya has a book on the chair beside her. It's Ray's, and she's flagged most of it.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "bg-graham-think",
+  "character": "graham",
+  "trigger": "long_think",
+  "text": "(Graham breaks off to remind Sheila about the raffle licence.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "bg-marjorie-start",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "Bill was asking after you. He asks after everyone, mind.",
+  "expression": "pleased",
+  "conditions": {
+   "minRematch": 3
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "bg-graham-start",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "Ray wants the big room on Thursdays for the juniors. I've said we'll see.",
+  "expression": "neutral",
+  "conditions": {
+   "minRematch": 2
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "bg-clive-start",
+  "character": "clive",
+  "trigger": "game_start",
+  "text": "Malcolm's in on Saturday, apparently. For the league. He won't play us.",
+  "expression": "neutral",
+  "conditions": {
+   "minRematch": 2
+  },
   "weight": 1,
   "once": false
  },

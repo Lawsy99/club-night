@@ -4,10 +4,13 @@
 // the ladder depth without crowding the main cast. The two above are
 // long-term targets (and natural Act 2 ladder opponents).
 
+// They're never labelled on screen (like everyone else). The player learns
+// who they are from the noticeboard and from being mentioned or seen around
+// the club: see content/dialogue.csv (lines mentioning them) and data/noticeboard.ts.
 export type Member = {
   id: string
   name: string
-  /** A few words on the full ladder. */
+  /** For us, not shown: who they are at the club. */
   note: string
   /** From the player's starting rating (set once after trial night). */
   offset: number

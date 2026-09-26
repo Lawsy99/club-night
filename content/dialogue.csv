@@ -154,7 +154,16 @@ graham-think-02,graham,,long_think,(Graham straightens a knight on its square.),
 graham-think-03,graham,,long_think,(Graham writes the time in the margin.),neutral,,,,,,,1,
 toby-think-01,toby,,long_think,(Toby leans back in his chair.),smug,,,,,,,1,
 toby-think-02,toby,,long_think,"(Toby glances up at you, then back at the board.)",smug,,,,,,,1,
-toby-think-03,toby,,long_think,(Toby waves to someone across the room.),smug,,,,,,,1,
+toby-think-03,toby,,long_think,(Toby waves to Malcolm across the room. Malcolm nods back.),smug,,,,,,,1,
+bg-marjorie-think,marjorie,,long_think,(Sheila comes round with the raffle tickets. Marjorie buys two.),neutral,,,,,,,1,
+bg-clive-think,clive,,long_think,(Bill has pulled up a chair to watch.),neutral,,,,,,,1,
+bg-dex-think,dex,,long_think,(Bill is watching over Dex's shoulder. Dex has noticed.),annoyed,,,,,,,1,
+bg-oscar-think,oscar,,long_think,(Ray looks in from the junior room and gives Oscar a nod.),neutral,,,,,,,1,
+bg-priya-think,priya,,long_think,"(Priya has a book on the chair beside her. It's Ray's, and she's flagged most of it.)",neutral,,,,,,,1,
+bg-graham-think,graham,,long_think,(Graham breaks off to remind Sheila about the raffle licence.),neutral,,,,,,,1,
+bg-marjorie-start,marjorie,,game_start,"Bill was asking after you. He asks after everyone, mind.",pleased,,,,3,,,1,
+bg-graham-start,graham,,game_start,"Ray wants the big room on Thursdays for the juniors. I've said we'll see.",neutral,,,,2,,,1,
+bg-clive-start,clive,,game_start,"Malcolm's in on Saturday, apparently. For the league. He won't play us.",neutral,,,,2,,,1,
 story-trial-graham,graham,,game_start,"Your name's down. I checked the spelling. Scoresheet, please.",neutral,,,,,,kind:trial,1,yes
 story-c1-marjorie,marjorie,,game_start,"We used to need both rooms, you know. Phones off, love.",neutral,,,,,,kind:match chapter:c1,1,yes
 story-c2-dex,dex,,game_loss,(Dex picks up his phone. The little red light is on.),neutral,,,,,,kind:match chapter:c2,1,yes

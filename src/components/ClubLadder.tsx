@@ -23,10 +23,7 @@ function Row({ rung, place, news }: { rung: Rung; place: number; news?: LadderNe
     <li className={`ladder-row ${rung.id === YOU ? 'is-you' : ''} ${news ? `news-${news.kind}` : ''}`}>
       <span className="ladder-place">{place}</span>
       <Face rung={rung} size={36} />
-      <span className="ladder-name">
-        {rung.name}
-        {rung.note && <small>{rung.note}</small>}
-      </span>
+      <span className="ladder-name">{rung.name}</span>
       <span className="ladder-rating">{rung.rating}</span>
     </li>
   )
