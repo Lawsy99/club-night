@@ -702,6 +702,50 @@
   "once": false
  },
  {
+  "id": "graham-start-03",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "Under rule fourteen, phones are to be off. Not silent. Off.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-start-04",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "Before we start: the general meeting is on the fourteenth. Attendance is expected, not compulsory.",
+  "expression": "neutral",
+  "conditions": {
+   "minRematch": 2
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-start-05",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "I've written to the brewery again. Recorded delivery. Right, your move. Well, mine.",
+  "expression": "neutral",
+  "conditions": {
+   "minRematch": 3
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-win-02",
+  "character": "graham",
+  "trigger": "game_win",
+  "text": "Good game. It'll go in the newsletter. Briefly.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
   "id": "graham-loss-name",
   "character": "graham",
   "trigger": "game_loss",

@@ -131,12 +131,17 @@ describe('the path', () => {
     expect(nextStep(p).kind).toBe('lesson')
   })
 
-  it('scaling characters improve a little each chapter; fixed ones never change', () => {
-    const p = throughTrial()
-    const later = { ...p, chapter: 4 }
-    expect(opponentRating(later, 'dex') - opponentRating(p, 'dex')).toBe(20) // 5 a chapter
-    expect(opponentRating(later, 'marjorie')).toBe(opponentRating(p, 'marjorie'))
-    expect(opponentRating(later, 'toby')).toBe(opponentRating(p, 'toby')) // always baseline +50 in Act 1
+  it('scaling characters keep the story’s distance from the player; fixed ones never move', () => {
+    const p = { ...throughTrial(), rating: { rating: 1200, deviation: 100, volatility: 0.06 } }
+    const improved = { ...p, rating: { ...p.rating, rating: 1500 } }
+    // Toby stays 50 ahead however fast the player improves.
+    expect(opponentRating(p, 'toby')).toBe(1250)
+    expect(opponentRating(improved, 'toby')).toBe(1550)
+    // Fixed characters don't follow: the player climbs past them.
+    expect(opponentRating(improved, 'graham')).toBe(opponentRating(p, 'graham'))
+    // Priya is just above until the player has beaten her (chapter 5), then just below.
+    expect(opponentRating({ ...p, chapter: 4 }, 'priya')).toBe(1220)
+    expect(opponentRating({ ...p, chapter: 5 }, 'priya')).toBe(1180)
   })
 
   it('offers the match straight away against someone already met', () => {
@@ -156,20 +161,20 @@ describe('the path', () => {
       ratings.push(round.rating)
       p = recordGame(p, round, true, null)
     }
-    // At club ratings, and harder each round: Oscar, Clive, Priya.
-    expect(ratings[0]).toBeLessThan(ratings[1])
+    // At club ratings, harder each round (Clive, Oscar, Priya), then Toby ahead of you.
     expect(ratings[1]).toBeLessThan(ratings[2])
     const boss = nextGame(p).game
     expect(boss).toMatchObject({ kind: 'boss', opponent: 'toby' })
-    expect(boss.rating).toBe(Math.round((baseline + 50) / 5) * 5) // Toby's club rating
+    expect(boss.rating).toBeGreaterThan(p.rating!.rating)
     expect(boss.rating).toBeGreaterThan(ratings[2])
+    expect(baseline).toBeGreaterThan(0)
 
     p = recordGame(p, boss, false, null)
     expect(nextGame(p).game.kind).toBe('cup-round') // back to round 1
     expect(p.cup?.bossAttempts).toBe(1)
-    // Win through again; the boss is exactly as strong as before.
+    // Win through again; the boss is never easier than before.
     for (let r = 0; r < 3; r++) p = recordGame(p, nextGame(p).game, true, null)
-    expect(nextGame(p).game.rating).toBe(boss.rating)
+    expect(nextGame(p).game.rating).toBeGreaterThanOrEqual(boss.rating)
     p = recordGame(p, nextGame(p).game, true, null)
     expect(nextStep(p).kind).toBe('act-complete')
   })

@@ -33,6 +33,10 @@
   list-style: none;
 }
 
+.ladder-rows.full {
+  margin-bottom: 14px;
+}
+
 /* Each person is a rung: a board-coloured bar with their face on it */
 .ladder-row {
   display: flex;
@@ -71,8 +75,15 @@
 }
 
 .ladder-name {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   font-size: 15px;
+}
+
+.ladder-name small {
+  font-size: 12px;
+  color: var(--muted);
 }
 
 .ladder-rating {

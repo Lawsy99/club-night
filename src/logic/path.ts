@@ -3,7 +3,8 @@
 // "Stakes"). Pure state + functions; the Home screen asks `nextStep` and the
 // game flow reports results back.
 import { ACT_1, TRIAL_FINALE, TRIAL_OPPONENTS } from '../data/act1'
-import { characterRating, findCharacter } from '../data/characters'
+import { characterRating, findCharacter, storyOffset } from '../data/characters'
+import { MEMBERS } from '../data/members'
 import { findLesson } from '../data/lessons'
 import { rateGame, type PlayerRating } from './glicko2'
 import { valveAdjustment, type RealGameResult } from './safetyValve'
@@ -115,15 +116,20 @@ export type NextStep =
 
 /**
  * An opponent's strength right now, which is also their rating on the club
- * ladder: fixed characters keep their Act 1 number; scaling ones are the
- * baseline plus their offset, plus a little growth for each chapter played.
+ * ladder. Fixed characters keep the number set after trial night, so the
+ * player climbs past them. Scaling ones sit a set distance from the player's
+ * current rating, chosen by the story for each chapter (Joseph, Sep 2026:
+ * a fixed path, e.g. Toby always ahead, however fast the player improves).
  */
 export function opponentRating(p: Progress, id: string): number {
   if (p.fixedRatings[id] !== undefined) return p.fixedRatings[id]
+  // A background member on a save from before they existed: from today's baseline.
+  const member = MEMBERS.find((m) => m.id === id)
+  if (member) return rounded(p.baseline + member.offset)
   const character = findCharacter(id)
   if (!character) return p.baseline
-  const chapters = Math.min(p.chapter, ACT_1.chapters.length)
-  return characterRating(character, p.baseline + (character.growthPerChapter ?? 0) * chapters)
+  const you = p.rating ? p.rating.rating : p.baseline
+  return rounded(you + storyOffset(character, p.chapter))
 }
 
 const nameOf = (id: string) => findCharacter(id)?.name ?? id
@@ -231,7 +237,10 @@ export function nextStep(p: Progress): NextStep {
       note: cup.bossAttempts > 0 ? `Qualifying again for the final (attempt ${cup.bossAttempts + 1}).` : null,
     }
   }
-  const boss: PathGame = { kind: 'boss', opponent: g.boss.opponent, rating: cup.bossRating, stage: 'real', label: g.boss.label, location: g.location }
+  // The boss stays ahead of the player however they've improved, and never
+  // gets easier after a loss (design: "Boss strengths ... never drop").
+  const bossRating = Math.max(cup.bossRating, opponentRating(p, g.boss.opponent))
+  const boss: PathGame = { kind: 'boss', opponent: g.boss.opponent, rating: bossRating, stage: 'real', label: g.boss.label, location: g.location }
   // Support grows after boss losses; the boss never gets easier (design: "Support after boss losses").
   const studyFriendly: PathGame | null =
     cup.bossAttempts >= 2 ? { ...boss, kind: 'friendly', stage: 'assisted', label: `Assisted friendly vs ${nameOf(g.boss.opponent)}` } : null
@@ -313,7 +322,9 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
     return { ...next, cup: won ? { ...cup, round: cup.round + 1 } : cup }
   }
   // Boss: win the act, or back to qualifying (boss strength stays fixed).
-  return won ? { ...next, stage: 'act-complete' } : { ...next, cup: { ...cup, round: 0, bossAttempts: cup.bossAttempts + 1 } }
+  return won
+    ? { ...next, stage: 'act-complete' }
+    : { ...next, cup: { ...cup, round: 0, bossAttempts: cup.bossAttempts + 1, bossRating: Math.max(cup.bossRating, game.rating) } }
 }
 
 function recordTrialGame(p: Progress, game: PathGame, won: boolean, accuracyStrength: number | null): Progress {
@@ -336,6 +347,8 @@ function settleTrial(p: Progress, games: TrialGame[]): Progress {
     const c = findCharacter(id)
     if (c) fixedRatings[id] = characterRating(c, baseline)
   }
+  // Background members on the club ladder: set once, like the fixed characters.
+  for (const m of MEMBERS) fixedRatings[m.id] = rounded(baseline + m.offset)
   return {
     ...p,
     trial: { ...p.trial, games },

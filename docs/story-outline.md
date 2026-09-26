@@ -123,11 +123,18 @@ Each moment can be explained away on its own. Together, by the cup final, they c
 | Dex's stream | The phone that was recording | Act 2 and the club's rescue in Act 3 |
 | Priya and plans | "What do you do when the book runs out?" | Act 2 |
 
+## Decided since draft 3
+
+- **Graham is the Taylor Doose figure** (below, now in the tone guide and his lines).
+- **Vera Hart.** "V. Hart" on the honours board.
+- **No act numbers on screen.** Acts are for us; the player sees one continuous story.
+- **The club ladder.** The main cast who scale sit a set distance from the player, chosen by the story, so the path is fixed: Toby is always ahead; Priya drops below you once you've beaten her. Four background members (Malcolm, Ray, Sheila, Bill) have fixed ratings well away from yours.
+
 ## For review
 
-### A. Which character is the Taylor Doose figure? (proposal)
+### A. Graham as the Taylor Doose figure (decided)
 
-**Recommendation:** Graham. He already runs the rules and the money, so the bureaucrat is a small step. He becomes the club's self-appointed authority on everything:
+Graham. He already runs the rules and the money, so the bureaucrat is a small step. He becomes the club's self-appointed authority on everything:
 - general meetings and sub-committees;
 - laminated notices, and a newsletter nobody asked for;
 - a long-running correspondence with the brewery about the room.
@@ -143,5 +150,5 @@ The alternative is a new character, for example the pub landlord or the league s
 
 ### B. Still open from earlier drafts
 
-1. **Vera's surname.** "V. Hart" as a placeholder, introduced through the honours board: OK?
+1. ~~Vera's surname~~ Decided: Hart.
 2. **The favouritism table.** Is that the right level: obvious by the end of the act, never said out loud?

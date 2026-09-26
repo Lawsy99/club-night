@@ -16,7 +16,7 @@ export function LadderScreen({ ladder, news, onBack }: { ladder: readonly Rung[]
         <LadderList ladder={ladder} news={news} />
       </section>
       <p className="stats-note">
-        Everyone's club rating. Some members are still improving, a little each week. The rest have settled.
+        Everyone's club rating, as of this week.
       </p>
     </main>
   )

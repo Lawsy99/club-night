@@ -217,9 +217,11 @@ A retired former club captain who presents the lessons and gives you a scouting 
 
 Club treasurer and unofficial rules authority. He chases membership fees, keeps immaculate scoresheets and knows the rulebook better than anyone. He gives the league season its stakes: the pub is putting up the room hire, and his spreadsheets say the club can't afford it without a good season.
 
-**Voice:** Precise and procedural. Everything is "technically" or "strictly speaking". Not unkind, just unable to let anything go.
+He is also the club's self-appointed authority on everything else (Joseph, Sep 2026: the club's Taylor Doose). He calls general meetings, chairs sub-committees of one, writes a newsletter nobody asked for, laminates notices, and conducts a long correspondence with the brewery about the room. The noticeboard is his.
 
-**He would never:** Bend a rule, round a number, or claim anything he isn't entitled to.
+**Voice:** Precise, procedural and a little pompous. Everything is "technically" or "strictly speaking". Not unkind, just unable to let anything go, and quietly delighted by a proper process.
+
+**He would never:** Bend a rule, round a number, claim anything he isn't entitled to, or let a decision be made without minutes.
 
 **Sample lines**
 
@@ -230,6 +232,10 @@ Club treasurer and unofficial rules authority. He chases membership fees, keeps 
 - *You beat him:* "Fair result. It'll be on the website by Thursday."
 - *On the room hire:* "They want another eight pounds a night." / "I've done a spreadsheet."
 - *On Toby becoming captain:* "He did offer to do the fixtures. Nobody else did."
+- *Calling a meeting:* "I've called an extraordinary general meeting. It's on the noticeboard. Laminated."
+- *On phones:* "Under rule fourteen, phones are to be off. Not silent. Off."
+- *On the centenary:* "The centenary committee met on Tuesday. I am the centenary committee."
+- *On the brewery:* "I've written to the brewery again. Recorded delivery."
 
 ## Clive
 

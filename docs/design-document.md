@@ -142,11 +142,20 @@ Scaling characters use the act baseline plus an offset. Fixed characters are set
 
 Nobody goes below 200.
 
-**Revised Sep 2026 (Joseph: the club ladder).** Scaling characters also improve a little each chapter: Dex 5, Oscar 4 and Priya 3 points per chapter. Toby stays at baseline +50 through Act 1. That's slower than a typical player (about 7 a chapter, see "The maths behind these numbers"), so the player gradually climbs past them, while Dex and Oscar creep up from below. A character's rating is always the strength they play at, everywhere, including in the cup.
+**Revised Sep 2026 (Joseph: a fixed story path).** Scaling characters no longer follow the baseline. They sit a set distance from the **player's current rating**, chosen by the story for each chapter, so the story stays on its path however fast or slowly the player improves:
+
+| Character | Act 1 distance from the player, chapter by chapter |
+| --- | --- |
+| Toby | +50 throughout: always ahead |
+| Priya | +20 until the player has beaten her in chapter 5, then −20 |
+| Dex | −75, dropping to −90 once beaten, then creeping back to −55 by the cup |
+| Oscar | −110, −120 once beaten, then closing to −90 by the cup |
+
+Fixed characters (Marjorie, Clive, Graham) and the background members keep the rating set after trial night, so the player climbs past them for good. A character's rating is always the strength they play at, everywhere, including in the cup. (The act baseline and the safety valve now only matter for the fixed ratings set after trial night.)
 
 ### The club ladder
 
-Everyone at the club by rating, with the player among them: a compact card on Home (the player in gold, the people either side, and a bar showing how close the next person is, e.g. "12 to pass Priya"), and the full ladder behind it. Faces, not a table. After each game, a line says who the player moved above ("You moved above Priya on the club ladder"), or who moved above them. Fixed members stay put, so the player passes them for good; growing members can come back past. It is also the natural lead-in to Act 2's club ladder.
+Everyone at the club by rating, with the player among them, including four background members who don't play (yet): Malcolm (+320) and Ray (+190) above, Sheila (−240) and Bill (−330) below, all fixed after trial night. Shown as: a compact card on Home (the player in gold, the people either side, and a bar showing how close the next person is, e.g. "12 to pass Priya"), and the full ladder behind it. Faces, not a table. After each game, a line says who the player moved above ("You moved above Priya on the club ladder"), or who moved above them. Fixed members stay put, so the player passes them for good; growing members can come back past. It is also the natural lead-in to Act 2's club ladder.
 
 ### Which engine plays
 
@@ -343,14 +352,14 @@ Every format is a real chess format.
 
 ### Strength settings
 
-**Revised Sep 2026:** cup opponents play at their club ratings (as shown on the ladder), so the Act 1 draw is ordered to get harder: Oscar (about −120 by then), Clive (−50), Priya (about +20), then Toby at his club rating (+50), fixed when the cup starts. A typical player who has improved about 50 during the act meets Toby as an equal: about 2 attempts.
+**Revised Sep 2026:** cup opponents play at their club ratings (as shown on the ladder), so the Act 1 draw is ordered to get harder: Clive (settled, well below by then), Oscar (player −90), Priya (player −20), then Toby (player +50). The boss never gets easier after a loss, and never drops behind the player. Win chance against Toby is about 43%: a little over 2 attempts on average.
 
 | Opponent | Strength |
 | --- | --- |
-| Gauntlet match 1 | Oscar's club rating (about baseline −120) |
-| Gauntlet match 2 | Clive's club rating (baseline −50) |
-| Gauntlet match 3 | Priya's club rating (about baseline +20) |
-| Toby as boss | Toby's club rating (baseline +50) |
+| Gauntlet match 1 | Clive's club rating (fixed; about player −100 by then) |
+| Gauntlet match 2 | Oscar's club rating (player −90) |
+| Gauntlet match 3 | Priya's club rating (player −20) |
+| Toby as boss | Toby's club rating (player +50), never lower than at the last attempt |
 | Vera as boss (Act 3) | Baseline +50 |
 
 Boss strengths are fixed once the gauntlet starts and never drop after a loss.

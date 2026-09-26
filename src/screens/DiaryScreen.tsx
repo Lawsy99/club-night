@@ -33,7 +33,6 @@ export function DiaryScreen({ progress, onBack }: { progress: Progress; onBack: 
         <button type="button" className="diary-back" onClick={onBack}>
           ‹ Back
         </button>
-        <p className="diary-kicker">Act 1 · {ACT_1.title}</p>
         <h1>The story so far</h1>
       </header>
       <ol className="diary-list">

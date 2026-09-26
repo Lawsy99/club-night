@@ -1,20 +1,23 @@
 // The club ladder (Joseph, Sep 2026): everyone at the club by rating, with
-// the player among them. Fixed members stay put; scaling ones improve a
-// little each chapter, slower than a typical player, so the player climbs
-// past them. Ratings are the ones they actually play at.
+// the player among them. Fixed members (and the background members) stay
+// put, so the player climbs past them for good. The main cast who scale sit
+// a set distance from the player, chosen by the story, so they're overtaken
+// only at story moments (and Toby never is). Ratings are the ones they play at.
 import { CHARACTERS } from '../data/characters'
+import { MEMBERS } from '../data/members'
 import { opponentRating, type Progress } from './path'
 
 export const YOU = 'you'
 
-export type Rung = { id: string; name: string; rating: number }
+export type Rung = { id: string; name: string; rating: number; note?: string }
 
 /** Everyone, highest first. On a tie the player sits below: you have to get past, not level. */
 export function clubLadder(p: Progress, playerName = 'You'): Rung[] | null {
   if (!p.rating) return null
-  const members = CHARACTERS.map((c) => ({ id: c.id, name: c.name, rating: opponentRating(p, c.id) }))
+  const cast = CHARACTERS.map((c) => ({ id: c.id, name: c.name, rating: opponentRating(p, c.id) }))
+  const background = MEMBERS.map((m) => ({ id: m.id, name: m.name, rating: opponentRating(p, m.id), note: m.note }))
   const you = { id: YOU, name: playerName, rating: Math.round(p.rating.rating) }
-  return [...members, you].sort((a, b) => b.rating - a.rating || (a.id === YOU ? 1 : b.id === YOU ? -1 : 0))
+  return [...cast, ...background, you].sort((a, b) => b.rating - a.rating || (a.id === YOU ? 1 : b.id === YOU ? -1 : 0))
 }
 
 /** The player's place (1 = top), the next person up, and how far away they are. */

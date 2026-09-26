@@ -87,9 +87,10 @@ export const ACT_1: ActPlan = {
     title: 'The club knockout cup',
     location: 'The back room of the Red Lion',
     rounds: [
-      // Played at club ratings, so the draw is ordered to get harder each round.
-      { opponent: 'oscar', label: 'Cup round 1 vs Oscar' },
-      { opponent: 'clive', label: 'Cup round 2 vs Clive' },
+      // Played at club ratings, so the draw is ordered to get harder each round:
+      // Clive (settled, well below by now), Oscar (about −90), Priya (−20).
+      { opponent: 'clive', label: 'Cup round 1 vs Clive' },
+      { opponent: 'oscar', label: 'Cup round 2 vs Oscar' },
       { opponent: 'priya', label: 'Cup semi-final vs Priya' },
     ],
     boss: { opponent: 'toby', label: 'Cup final vs Toby' },

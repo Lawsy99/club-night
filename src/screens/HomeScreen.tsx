@@ -198,8 +198,9 @@ function ActProgress({ progress }: { progress: Progress }) {
   const chapters = ACT_1.chapters
   const inCup = progress.chapter >= chapters.length
   return (
-    <div className="act-progress" aria-label={`Act 1, chapter ${Math.min(progress.chapter + 1, chapters.length)}`}>
-      <span className="act-label">Act 1</span>
+    // No act numbers on screen (Joseph): it plays as one continuous story.
+    <div className="act-progress">
+      <span className="act-label">Story ›</span>
       {chapters.map((ch, i) => (
         <span
           key={ch.id}
@@ -322,9 +323,9 @@ function NextCard({
   if (next.kind === 'act-complete') {
     return (
       <section className="next-card">
-        <p className="next-kind">Act 1 complete</p>
-        <h2>You won the club knockout cup.</h2>
-        <p className="next-note">Act 2, the club ladder, is still being written.</p>
+        <p className="next-kind">The club knockout cup</p>
+        <h2>You won the cup.</h2>
+        <p className="next-note">More to come. The ladder goes up next week.</p>
       </section>
     )
   }

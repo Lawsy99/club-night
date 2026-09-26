@@ -21,11 +21,14 @@ export type Character = {
   /** Whether they'll accept the player's offer when clearly worse (Vera and Derek never do). */
   acceptsDraws: boolean
   /**
-   * Scaling characters improve a little each chapter (club ladder, Joseph
-   * Sep 2026): slower than a typical player (about 7 a chapter), so the
-   * player gradually climbs past them. Fixed characters never change.
+   * Scaling characters sit a set distance from the PLAYER's current rating
+   * (Joseph, Sep 2026: a fixed story path, however fast the player improves).
+   * One number per point in the story: index = chapters finished (0 to 7,
+   * 7 being the cup). The story changes the distance only at its own moments,
+   * e.g. Priya drops below you once you've beaten her. Fixed characters
+   * don't use this: they're set once and the player climbs past them.
    */
-  growthPerChapter?: number
+  storyOffsets?: number[]
 }
 
 export const CHARACTERS: Character[] = [
@@ -51,8 +54,9 @@ export const CHARACTERS: Character[] = [
     resigns: 'normal',
     offersDraw: 'rarely',
     acceptsDraws: true,
-    // "Improves faster than anyone" (tone guide).
-    growthPerChapter: 5,
+    // Below you, dropping further once you've beaten him, then creeping back
+    // up: he "improves faster than anyone" (tone guide).
+    storyOffsets: [-75, -75, -90, -85, -80, -70, -60, -55],
   },
   {
     id: 'oscar',
@@ -65,7 +69,8 @@ export const CHARACTERS: Character[] = [
     resigns: 'quickly',
     offersDraw: 'rarely',
     acceptsDraws: true,
-    growthPerChapter: 4,
+    // A junior, well below you at first and closing the gap all season.
+    storyOffsets: [-110, -110, -110, -120, -110, -100, -95, -90],
   },
   {
     id: 'clive',
@@ -88,7 +93,8 @@ export const CHARACTERS: Character[] = [
     resigns: 'normal',
     offersDraw: 'rarely',
     acceptsDraws: true,
-    growthPerChapter: 3,
+    // Just above you until you beat her (chapter 5), then just below.
+    storyOffsets: [20, 20, 20, 20, 20, -20, -20, -20],
   },
   {
     id: 'graham',
@@ -113,6 +119,8 @@ export const CHARACTERS: Character[] = [
     resigns: 'normal',
     offersDraw: 'when-worse',
     acceptsDraws: true,
+    // Always ahead of you, however fast you improve (the rival).
+    storyOffsets: [50, 50, 50, 50, 50, 50, 50, 50],
   },
 ]
 
@@ -121,6 +129,13 @@ export const MIN_RATING = 200
 
 export function characterRating(character: Character, baseline: number): number {
   return Math.max(MIN_RATING, Math.round((baseline + character.offset) / 5) * 5)
+}
+
+/** A scaling character's distance from the player at this point in the story. */
+export function storyOffset(character: Character, chaptersDone: number): number {
+  const offsets = character.storyOffsets
+  if (!offsets?.length) return character.offset
+  return offsets[Math.max(0, Math.min(chaptersDone, offsets.length - 1))]
 }
 
 export function findCharacter(id: string): Character | undefined {

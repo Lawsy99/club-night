@@ -7,11 +7,11 @@ export type Notice = { speaker: string; text: string }
 export const NOTICEBOARD: Record<string, Notice> = {
   trial: { speaker: 'Marjorie', text: "New members' night. Tea's fifty pence. Graham will want your name spelt properly." },
   // Halfway through trial night: the first sign of Vera (the honours board).
-  'trial-honours': { speaker: 'Marjorie', text: 'That’s the honours board. One name, mostly, for a good while. Board two. Honestly. Thirty years.' },
+  'trial-honours': { speaker: 'Marjorie', text: 'That’s the honours board. V. Hart, mostly, for a good while. Board two. Honestly. Thirty years.' },
   // Before Toby's game at the end of trial night.
   'trial-finale': { speaker: 'Graham', text: "Toby isn't on the membership list yet. Strictly speaking, that game is unofficial." },
   c1: { speaker: 'Graham', text: 'Reminder: subs are due. Not now. After.' },
-  c2: { speaker: 'Marjorie', text: 'Dex is filming again. Try not to be in it.' },
+  c2: { speaker: 'Graham', text: 'Filming on club nights requires the committee’s permission. Forms are available. From me.' },
   c3: { speaker: 'Neil', text: "Junior night Thursday. Oscar's coach says he's ahead of schedule." },
   c4: { speaker: 'Coach Pemberton', text: "Going over Toby's game after club tonight. Anyone else's after, if there's time." },
   c5: { speaker: 'Priya', text: "Has anyone got the new edition? Chapter nine's changed." },
