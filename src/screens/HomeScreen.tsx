@@ -397,7 +397,9 @@ function PlayCard({
         <Portrait who={game.opponent} size={44} />
         <span>
           <strong>{character?.name ?? game.opponent}</strong>{' '}
-          <span className="next-rating">{game.kind === 'exhibition' ? 'unrated' : game.rating}</span>
+          {/* No ratings on trial night (Joseph, Sep 2026): they'd differ from
+              the ladder once your own rating is worked out. Names only. */}
+          {game.kind !== 'trial' && game.kind !== 'exhibition' && <span className="next-rating">{game.rating}</span>}
         </span>
         <span className="next-stage">{stageText(game.stage)}</span>
       </p>

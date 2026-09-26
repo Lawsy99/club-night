@@ -559,7 +559,8 @@ export function GameScreen({
       <PlayerStrip
         portrait={opponent.character ? <Portrait who={opponent.character.id} size={36} expression={opponentFace} /> : undefined}
         name={opponent.name}
-        rating={opponent.unrated ? 'unrated' : opponent.rating}
+        // Trial night shows names only (ratings would differ from the ladder later).
+        rating={opponent.unrated || game.path?.kind === 'trial' ? undefined : opponent.rating}
         fen={fen}
         side={opponentColour}
         thinking={opponentToMove && !downloading}

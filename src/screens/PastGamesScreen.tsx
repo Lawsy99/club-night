@@ -66,7 +66,8 @@ function PastGameRow({ game }: { game: ArchivedGame }) {
       <span className={`past-result ${result.toLowerCase()}`}>{result}</span>
       <span className="past-main">
         <strong>
-          vs {opponent.name} <span className="past-rating">{opponent.unrated ? 'unrated' : opponent.rating}</span>
+          vs {opponent.name}{' '}
+          {!opponent.unrated && game.path?.kind !== 'trial' && <span className="past-rating">{opponent.rating}</span>}
         </strong>
         <span className="past-meta">
           {date} · {HELP_STAGES[game.stage]?.label ?? 'Real'} · {game.playerColour === 'w' ? 'White' : 'Black'} ·{' '}
