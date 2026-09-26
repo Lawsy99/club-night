@@ -16,6 +16,7 @@ export function clubWeek(p: Progress): Week | null {
   const chapters = act.chapters
   // Week numbers carry on from one season to the next (Week 17 follows the cup).
   const weekNo = (i: number) => weeksBefore(p) + i + 1
+  const saturday = act.matchPrefix === 'Ladder challenge' ? 'Ladder' : SESSIONS.match.short
   if (p.stage === 'act' && p.chapter < chapters.length) {
     const ch = chapters[p.chapter]
     const open = matchUnlocked(p)
@@ -37,8 +38,11 @@ export function clubWeek(p: Progress): Week | null {
         {
           key: 'match',
           day: 'Sat',
-          // Best of three: the score so far once it's started.
-          name: p.series && p.series.wins + p.series.losses > 0 ? `Match ${p.series.wins}–${p.series.losses}` : SESSIONS.match.short,
+          // Best of three: the score so far once it's started. (A ladder challenge from Act 2.)
+          name:
+            p.series && p.series.wins + p.series.losses > 0
+              ? `${saturday} ${p.series.wins}–${p.series.losses}`
+              : saturday,
           state: state(false, !!p.coachingDone && open),
         },
       ],
