@@ -28,6 +28,9 @@ type Props = {
 
 type Phase = 'demo' | 'drill' | 'puzzles' | 'done'
 
+/** From this rating, the opening basics are offered as optional. */
+const STRONG_PLAYER = 1600
+
 export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props) {
   const lesson = findLesson(chapterId)
   const kind = lesson?.kind ?? 'tactics'
@@ -65,11 +68,17 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
       .catch(() => setLoadError(true))
   }, [lesson, playerRating, wantsPuzzles, kind])
 
+  // Opening lessons are basics: a strong player is told so, and can skip
+  // (Joseph, Sep 2026: lessons have to suit 500 and 2500 alike).
+  const strong = playerRating >= STRONG_PLAYER
   const demo = useMemo(() => {
     if (!lesson) return null
-    if (opening) return buildDemo([{ caption: lesson.intro }, ...opening.demo])
+    if (opening) {
+      const first = strong ? `${lesson.intro} You’ll know most of this already. Humour me, or skip it: your call.` : lesson.intro
+      return buildDemo([{ caption: first }, ...opening.demo])
+    }
     return example ? puzzleDemo(example, lesson.intro, themeCaption(lesson.themes)) : null
-  }, [example, lesson, opening])
+  }, [example, lesson, opening, strong])
 
   const header = (label: string, action: { text: string; onClick: () => void }) => (
     <header className="review-topline">
@@ -98,7 +107,7 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
     if (!demo) return <main className="review-screen">Setting up the lesson…</main>
     return (
       <main className="review-screen with-board">
-        {header(`Lesson · ${lesson.title}`, { text: 'Back', onClick: onBack })}
+        {header(`Lesson · ${lesson.title}`, opening && strong ? { text: 'Skip', onClick: onDone } : { text: 'Back', onClick: onBack })}
         <DemoBoard
           key={opening ? opening.id : example!.id}
           startFen={opening ? undefined : example!.fen}

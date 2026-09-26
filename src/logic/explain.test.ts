@@ -28,7 +28,10 @@ describe('explainBestMove', () => {
   })
 
   it('otherwise says what the move keeps', () => {
-    expect(explainBestMove(replay([]).fen(), 'e2e4', 30)).toBe('e4 keeps the game level.')
+    // Says what the move does where it can…
+    expect(explainBestMove(replay([]).fen(), 'e2e4', 30)).toBe('e4 takes space in the centre.')
+    // …and only falls back on the score when there's nothing specific to say.
+    expect(explainBestMove(replay([]).fen(), 'a2a3', 30)).toBe('a3 keeps the game level.')
   })
 })
 
@@ -36,7 +39,7 @@ describe('coachComment', () => {
   it('says what went wrong, then what was better', () => {
     expect(
       coachComment({ fenBefore: afterNc6, played: 'f3g5', bestMove: 'd2d4', reply: 'd8g5', cpBefore: 30, cpAfter: -300 }),
-    ).toBe('Your knight on g5 was left undefended. Instead, d4 keeps the game level.')
+    ).toBe('Your knight on g5 was left undefended. Instead, d4 takes space in the centre.')
   })
 
   it("doesn't repeat itself when the point was a missed chance", () => {

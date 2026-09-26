@@ -69,6 +69,10 @@ takebacks), comments on mistakes/missed chances, 3 spoken hints; no best line.
 In-game lines only react to the board (no idle stage directions or fixed plan lines).
 Draws: practice/coached count and move on; best-of-three draws void; knockouts replay.
 Pause a game (nothing else starts until it's finished); extra coached games before a match.
-Waiting on Joseph: weekly story payoffs (story-outline.md section C), monthly cutscenes,
-Acts 2–4 outline, and docs/learning-plan.md (endgame drills, coach traps, banded lessons).
-Build those once he's approved them.
+Story (Sep 2026): weekly Tue/Thu "Around the club" lines + Saturday "On the way out"
+(data/weekStory.ts), monthly cutscenes (data/cutscenes.ts, drawn in SceneArt.tsx),
+replayable from the calendar. Acts 2–4 are outlined in story-outline.md, for later.
+Learning (Sep 2026): opening lessons first (c1 Italian, w3 London, drill in
+OpeningDrill.tsx), finishing drills vs the engine by rating (data/endgameDrills.ts),
+Pemberton's traps (data/coachScenarios.ts), move explanations (logic/moveIdeas.ts).
+Next: the rest of docs/learning-plan.md ("Still to build"), and playtest feedback.

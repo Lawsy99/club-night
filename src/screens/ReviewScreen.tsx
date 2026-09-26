@@ -2,9 +2,9 @@
 // every move (with a progress bar), then a short sequence: summary, your
 // biggest moments (find a better move), and the best move of the game.
 import { useEffect, useMemo, useState } from 'react'
-import { Board } from '../components/Board'
 import { FullGameView } from '../components/FullGameView'
 import { MomentTrainer } from '../components/MomentTrainer'
+import { MoveReplay } from '../components/MoveReplay'
 import { analyseGame } from '../engine/reviewAnalysis'
 import { explainGoodMove } from '../logic/explain'
 import { describeOutcome, replay, type Colour } from '../logic/game'
@@ -184,14 +184,9 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
         </header>
         {best ? (
           <>
-            <Board
-              fen={replay(game.moves.slice(0, best.move.ply + 1)).fen()}
-              orientation={player === 'w' ? 'white' : 'black'}
-              movableColour={null}
-              lastMove={{ from: best.move.uci.slice(0, 2), to: best.move.uci.slice(2, 4) }}
-              onMove={() => {}}
-            />
+            <MoveReplay moves={game.moves} ply={best.move.ply} orientation={player === 'w' ? 'white' : 'black'} />
             <p className="review-explanation">
+              {best.move.ply > 0 && <>They played {replay(game.moves.slice(0, best.move.ply)).history().at(-1)}. </>}
               {explainGoodMove(best.move.fenBefore, best.move.uci, best.punished)}
             </p>
           </>

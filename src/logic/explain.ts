@@ -4,6 +4,7 @@
 // something that is actually true on the board.
 import { Chess, type PieceSymbol, type Square } from 'chess.js'
 import { applyUci, type Colour } from './game'
+import { joinIdeas, moveIdeas } from './moveIdeas'
 
 const NAMES: Record<PieceSymbol, string> = {
   p: 'pawn',
@@ -123,6 +124,10 @@ export function explainBestMove(fenBefore: string, best: string, bestCp: number,
     if (!defended || cheaperAttacker) return `${san} gets your ${NAMES[move.piece]} out of danger.`
   }
 
+  // What the move actually does: stops a threat, pins, opens a file…
+  const ideas = moveIdeas(fenBefore, best, bestCp)
+  if (ideas.length) return `${san} ${joinIdeas(ideas)}.`
+
   if (after.inCheck()) return `${san} is check, so they have to deal with that first.`
 
   if (bestCp >= 300) return `${san} keeps you well on top.`
@@ -151,6 +156,8 @@ export function explainGoodMove(fenBefore: string, uci: string, punished: boolea
   if (chess.isCheckmate()) return `${move.san}: checkmate.`
   if (punished) return `You punished their mistake with ${move.san}.`
   if (move.captured) return `${move.san} won their ${NAMES[move.captured]}.`
+  const ideas = moveIdeas(fenBefore, uci)
+  if (ideas.length) return `${move.san} ${joinIdeas(ideas)}. The strongest move on the board.`
   return `${move.san} was the strongest move in the position.`
 }
 

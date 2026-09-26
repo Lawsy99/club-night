@@ -1,4 +1,23 @@
-# Club Night: the learning plan (draft 1, Sep 2026, for Joseph's review)
+# Club Night: the learning plan (draft 1, Sep 2026)
+
+**Built so far (26 Sep 2026):**
+
+- **Opening lessons first.** Week 1 is "How to start a game" (the Italian) and week 3 is the London. Pemberton demonstrates each, then you play White while he varies Black's replies, and wrong moves get the principle they break. From 1600, these lessons can be skipped.
+- **Finishing lessons.** You play a won ending out against the engine, with the position chosen by your rating:
+  - Week 5: a lone king (two rooks, a queen, or a rook).
+  - Week 9: king and pawn.
+  - Week 14: rook endings, including the Lucena.
+- **Coach traps.** About one Tuesday in three, Pemberton announces a trap and plays it; see `data/coachScenarios.ts`.
+- **Coach explanations.** They now say what a move does: stops a threat, pins, attacks, opens a file, and so on (`logic/moveIdeas.ts`).
+- **Warm-ups include missed chances.**
+
+**Still to build from this plan:**
+
+- Explanations banded by rating for the tactics lessons.
+- Converting and defending drills.
+- Guess the move.
+- Pawn-structure lessons.
+- Pemberton's monthly test.
 
 Joseph's brief: the learning is what sets Club Night apart from Lichess. You don't just play and maybe review; there's structure, as at a real club. It has to be real, useful chess, and work for a player rated 500 and one rated 2500. It has to scale without the coach talking too much, and the focus is always playing chess.
 

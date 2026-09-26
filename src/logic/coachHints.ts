@@ -4,6 +4,7 @@
 // order of what matters most.
 import { Chess, type PieceSymbol, type Square } from 'chess.js'
 import { applyUci, type Colour } from './game'
+import { moveIdeas } from './moveIdeas'
 
 const NAMES: Record<PieceSymbol, string> = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' }
 const VALUES: Record<PieceSymbol, number> = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 }
@@ -43,6 +44,14 @@ export function coachHint(fen: string, best: string, cp: number): string {
   }
   if (move.san.includes('+')) return 'Look at your checks.'
   if (move.isKingsideCastle() || move.isQueensideCastle()) return 'Your king would be happier tucked away.'
+  // The idea behind the move, as a question rather than the answer.
+  const ideas = moveIdeas(fen, best, cp)
+  if (ideas.some((i) => i.startsWith('pins'))) return 'Can you pin one of their pieces?'
+  if (ideas.includes('threatens mate')) return 'Is there a way to threaten mate?'
+  if (ideas.some((i) => i.startsWith('defends'))) return 'What are they threatening? Deal with that first.'
+  if (ideas.some((i) => i.includes('passed pawn'))) return 'Think about your passed pawn.'
+  if (ideas.some((i) => i.includes('-file'))) return 'Is there an open file for a rook?'
+  if (ideas.some((i) => i.startsWith('brings your king'))) return 'In an ending, the king is a fighting piece.'
   if (move.piece === 'p') return 'Think about your pawns.'
   return `Think about your ${NAMES[move.piece]}.`
 }
