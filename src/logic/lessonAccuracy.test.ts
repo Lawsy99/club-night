@@ -12,7 +12,8 @@ const has = (row: PuzzleRow, theme: string) => row[4].split(' ').includes(theme)
 const share = (set: PuzzleRow[], themes: string[]) => set.filter((r) => themes.some((t) => has(r, t))).length / set.length
 
 describe('lessons are true to chess', () => {
-  for (const lesson of LESSONS) {
+  // (Opening lessons have no puzzles: their drill is playing the opening.)
+  for (const lesson of LESSONS.filter((l) => l.count > 0)) {
     it(`${lesson.title}: enough real puzzles to learn from`, () => {
       const pool = rows.filter(
         (r) => lesson.themes.some((t) => has(r, t)) && (!lesson.openings || lesson.openings.includes(r[5])),

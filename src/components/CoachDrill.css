@@ -1,0 +1,27 @@
+/* Drills in lessons (openings, finishing): the board, then Pemberton underneath. */
+.coach-drill {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.coach-drill-say {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 16px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.coach-drill-say p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.coach-drill-progress {
+  margin: 0 16px;
+  font-size: 13px;
+  color: var(--muted);
+}

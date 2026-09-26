@@ -10,6 +10,14 @@ export type Lesson = {
   /** Matches the week's id in act1.ts (c1 to c7 story weeks, w3 and so on club weeks). */
   id: string
   title: string
+  /**
+   * What kind of lesson (Joseph, Sep 2026): tactics (an example, then puzzles),
+   * an opening (a demonstration, then you play it), or finishing (you play a
+   * won ending out against the engine, then puzzles). Tactics if not set.
+   */
+  kind?: 'tactics' | 'opening' | 'endgame'
+  /** The opening drill (data/openingLessons.ts) or finishing drill (data/endgameDrills.ts). */
+  drill?: string
   /** One or two short lines, about exactly what the puzzles will test. */
   intro: string
   /** Opening families the puzzles come from (see scripts/buildPuzzles.mjs). */
@@ -21,13 +29,16 @@ export type Lesson = {
 }
 
 export const LESSONS: Lesson[] = [
+  // Openings first (Joseph, Sep 2026): "where do I move my first few pieces?"
+  // is the biggest barrier for new players, so the season starts there.
   {
     id: 'c1',
-    title: 'Forks in the London',
-    intro: "Marjorie's London looks tidy, but a knight jumping into the middle can hit two things at once. Spot the forks.",
-    openings: ['london'],
-    themes: ['fork'],
-    count: 4,
+    title: 'How to start a game',
+    kind: 'opening',
+    drill: 'italian',
+    intro: 'Before anything else: how to begin. Three ideas, and one simple opening to play as White.',
+    themes: [],
+    count: 0,
   },
   {
     id: 'c2',
@@ -81,17 +92,23 @@ export const LESSONS: Lesson[] = [
   // Club weeks (between the story weeks): general topics every club player needs.
   {
     id: 'w3',
-    title: 'Back-rank mates',
-    intro: 'Club players forget their back rank. Marjorie never does. Learn to spot it, for both sides.',
-    themes: ['backRankMate'],
-    count: 4,
+    title: 'Another way to start: the London',
+    kind: 'opening',
+    drill: 'london',
+    intro: 'Marjorie’s opening. The same set-up against almost anything, which is why she’s played it for forty years.',
+    themes: [],
+    count: 0,
   },
+  // Finishing (Joseph, Sep 2026): won positions have to be won. The position
+  // you play out is chosen by your rating (data/endgameDrills.ts).
   {
     id: 'w5',
-    title: 'Removing the defender',
-    intro: 'Take the piece doing the defending, and whatever it was guarding falls.',
-    themes: ['capturingDefender'],
-    count: 4,
+    title: 'Finishing: mating a lone king',
+    kind: 'endgame',
+    drill: 'lone-king',
+    intro: 'A won game isn’t won until it’s mate. Tonight you finish one off, against a king that won’t make it easy.',
+    themes: ['mateIn1'],
+    count: 3,
   },
   {
     id: 'w7',
@@ -103,9 +120,11 @@ export const LESSONS: Lesson[] = [
   {
     id: 'w9',
     title: 'King and pawn endings',
-    intro: 'Clive swaps everything off, so you will end up here. Count carefully.',
+    kind: 'endgame',
+    drill: 'king-pawn',
+    intro: 'Clive swaps everything off, so you will end up here. First, win one against a king that knows what it’s doing. Then count carefully.',
     themes: ['pawnEndgame'],
-    count: 4,
+    count: 3,
   },
   {
     id: 'w11',
@@ -124,9 +143,11 @@ export const LESSONS: Lesson[] = [
   {
     id: 'w14',
     title: 'Rook endings',
-    intro: 'Graham will reach a rook ending if he can. Most games do. Active rooks win them.',
+    kind: 'endgame',
+    drill: 'rook-ending',
+    intro: 'Graham will reach a rook ending if he can. Most games do. First, finish one off. Then some puzzles: active rooks win them.',
     themes: ['rookEndgame'],
-    count: 4,
+    count: 3,
   },
   {
     id: 'w15',

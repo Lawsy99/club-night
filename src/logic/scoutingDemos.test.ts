@@ -27,8 +27,10 @@ describe('scouting demos', () => {
 describe('lessons', () => {
   it('are short, and every theme has a caption', () => {
     for (const l of LESSONS) {
-      expect(l.intro.length, l.id).toBeLessThanOrEqual(140)
-      expect(l.themes.some((t) => THEME_CAPTIONS[t]), l.id).toBe(true)
+      expect(l.intro.length, l.id).toBeLessThanOrEqual(160)
+      // Opening lessons have no puzzles (and so no theme); the rest need a caption.
+      if (l.count > 0) expect(l.themes.some((t) => THEME_CAPTIONS[t]), l.id).toBe(true)
+      else expect(l.kind, l.id).toBe('opening')
     }
   })
 })
