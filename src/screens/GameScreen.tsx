@@ -6,7 +6,10 @@ import { BUILD_LABEL } from '../buildInfo'
 import { Board, type BoardArrow } from '../components/Board'
 import { BlunderWarning } from '../components/BlunderWarning'
 import { EvalBar } from '../components/EvalBar'
-import { HINT_ARROW_COLOUR, lineArrows } from '../components/lineArrows'
+import { HINT_ARROW_COLOUR } from '../components/lineArrows'
+import { COACH_VOICES, pickLine } from '../data/coachLines'
+import { coachHint } from '../logic/coachHints'
+import { coachComment } from '../logic/explain'
 import { MoveStrip } from '../components/MoveStrip'
 import { DemoBoard } from '../components/DemoBoard'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
@@ -18,7 +21,7 @@ import { APPEARANCES } from '../data/appearances'
 import { moodFor } from '../logic/mood'
 import { matchMoment } from '../logic/matchReaction'
 import type { Expression } from '../logic/dialogue'
-import { HELP_STAGES } from '../data/helpStages'
+import { COACH_STEPS_IN, HELP_STAGES } from '../data/helpStages'
 import { resolveOpponent } from '../data/opponents'
 import { analysePosition } from '../engine/analysis'
 import { getMaia, type MaiaStatus } from '../engine/maia/maia'
@@ -27,7 +30,7 @@ import { useAnalysis } from '../engine/useAnalysis'
 import { useMoveRating } from '../engine/useMoveRating'
 import { useWakeLock } from './useWakeLock'
 import { assessMove, describeBlunder } from '../logic/blunder'
-import { flipScore, formatScore, scoreFor, toCentipawns } from '../logic/evaluation'
+import { flipScore, scoreFor, toCentipawns } from '../logic/evaluation'
 import { describeOutcome, getOutcome, replay, type GameOutcome } from '../logic/game'
 import { drawRule } from '../logic/path'
 import {
@@ -109,8 +112,9 @@ export function GameScreen({
   const [moveAttempt, setMoveAttempt] = useState(0)
   const failedAttempts = useRef(0)
   const [pending, setPending] = useState<PendingMove | null>(null)
-  const [hint, setHint] = useState<{ fen: string; step: 1 | 2 } | null>(null)
-  const [showBestLine, setShowBestLine] = useState(false)
+  // The coach's last "are you sure?", so he doesn't say the same thing twice running.
+  const lastQuery = useRef<string | null>(null)
+  const coachVoice = opponent.character ? COACH_VOICES[opponent.character.id] : undefined
   const [peekKey, setPeekKey] = useState<string | null>(null)
   const [maiaStatus, setMaiaStatus] = useState<MaiaStatus>({ state: 'idle' })
   const [maiaMs, setMaiaMs] = useState<number | null>(null)
@@ -384,7 +388,9 @@ export function GameScreen({
 
   /** The player dropped a piece: check it for a blunder if the stage says so. */
   function handlePlayerMove(uci: string) {
-    const rule = stage.blunderWarning
+    // The coach only queries a bad move some of the time, and only while
+    // there's a takeback left to pay for taking it back (Joseph, Sep 2026).
+    const rule = stage.blunderWarning && takebacksLeft(game) > 0 && Math.random() < COACH_STEPS_IN ? stage.blunderWarning : null
     const chessAfter = replay([...game.moves, uci])
     // No warning in Real, or when the move ends the game.
     if (!rule || getOutcome(chessAfter)) {
@@ -409,7 +415,14 @@ export function GameScreen({
         if (!before || !after) return finish(null)
         // Both scores from the player's point of view.
         const kind = assessMove({ bestBefore: before.score, after: flipScore(after.score) }, rule)
-        finish(kind ? describeBlunder(kind, fenAfter, after.bestMove) : null)
+        if (!kind) return finish(null)
+        // The coach doesn't say what's wrong, just that something is: you look.
+        if (coachVoice) {
+          const query = pickLine(coachVoice.areYouSure, lastQuery.current)
+          lastQuery.current = query
+          return finish(query)
+        }
+        finish(describeBlunder(kind, fenAfter, after.bestMove))
       })
       // If the engine fails, never block the player's move.
       .catch(() => finish(null))
@@ -417,14 +430,23 @@ export function GameScreen({
 
   function resolveWarning(playIt: boolean) {
     if (pending && playIt) commitMove(pending.uci)
-    // Taking it back here is free: it doesn't use up a takeback.
+    // Taking it back uses one of the game's takebacks (Joseph, Sep 2026:
+    // otherwise the warning is just free extra takebacks).
+    if (pending && !playIt) setGame((g) => (g ? { ...g, takebacksUsed: g.takebacksUsed + 1 } : g))
     setPending(null)
-    setHint(null)
   }
 
-  // A hint belongs to one position, and disappears once a move is made.
-  const hintStep = hint?.fen === fen && !pending ? hint.step : 0
+  // The coach's hints: a nudge in words about the engine's move, three a game.
   const hintMove = playersTurn ? analysis.current?.bestMove ?? null : null
+  const hintsLeft = Math.max(0, stage.hints - (game.hintsUsed ?? 0))
+  function askForHint() {
+    const a = analysis.current
+    if (!a?.bestMove || hintsLeft <= 0) return
+    const cp = toCentipawns(scoreFor(game.playerColour, a.sideToMove, a.score))
+    const opener = coachVoice ? pickLine(coachVoice.hintOpeners, null) + ' ' : ''
+    dialogue.say(opener + coachHint(fen, a.bestMove, cp))
+    setGame((g) => (g ? { ...g, hintsUsed: (g.hintsUsed ?? 0) + 1 } : g))
+  }
 
   // Assisted: after a weaker move, the player can look back at what was better.
   const canPeek =
@@ -434,22 +456,30 @@ export function GameScreen({
     ['inaccuracy', 'mistake', 'blunder'].includes(ratedMove.rating)
   const peeking = canPeek && peekKey === ratedMove.fenBefore && !pending
 
-  const bestLineShown = showBestLine && stage.bestLine && !outcome && !pending && !peeking
-  const bestLine =
-    bestLineShown && analysis.current
-      ? lineArrows(analysis.current.pv, analysis.current.sideToMove, game.playerColour)
-      : null
   const arrows: BoardArrow[] = peeking
     ? [
         { from: ratedMove.played.slice(0, 2), to: ratedMove.played.slice(2, 4), colour: PLAYED_ARROW_COLOUR },
         { from: ratedMove.betterMove!.slice(0, 2), to: ratedMove.betterMove!.slice(2, 4), colour: HINT_ARROW_COLOUR },
       ]
-    : [
-        ...(bestLine?.arrows ?? []),
-        ...(hintStep === 2 && hintMove
-          ? [{ from: hintMove.slice(0, 2), to: hintMove.slice(2, 4), colour: HINT_ARROW_COLOUR }]
-          : []),
-      ]
+    : []
+
+  // After a mistake he let you make, the coach says what went wrong and what
+  // was better (Joseph, Sep 2026). Coached game only; practice games don't advise.
+  useEffect(() => {
+    if (!ratedMove || stage.id !== 'assisted' || !coachVoice || outcome) return
+    if (ratedMove.rating !== 'mistake' && ratedMove.rating !== 'blunder') return
+    if (ratedMove.cpBefore === null || ratedMove.cpAfter === null) return
+    const comment = coachComment({
+      fenBefore: ratedMove.fenBefore,
+      played: ratedMove.played,
+      bestMove: ratedMove.betterMove,
+      reply: ratedMove.reply,
+      cpBefore: ratedMove.cpBefore,
+      cpAfter: ratedMove.cpAfter,
+    })
+    dialogue.say(`${pickLine(coachVoice.afterMistake, null)} ${comment}`, 'annoyed')
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per rated move
+  }, [ratedKey])
 
   const downloading = maiaStatus.state === 'downloading' && opponentToMove
 
@@ -622,13 +652,13 @@ export function GameScreen({
                   : (pendingLast ?? (last ? { from: last.from, to: last.to } : null))
             }
             onMove={handlePlayerMove}
-            hintSquare={!viewing && hintStep === 1 && hintMove ? hintMove.slice(0, 2) : null}
             arrows={viewing ? [] : arrows}
-            badges={bestLine?.badges}
           />
           {pending?.warning && (
             <BlunderWarning
               message={pending.warning}
+              coach={coachVoice ? opponent.character!.id : undefined}
+              takebacksLeft={takebacksLeft(game)}
               onPlayAnyway={() => resolveWarning(true)}
               onTakeBack={() => resolveWarning(false)}
             />
@@ -690,30 +720,15 @@ export function GameScreen({
         </div>
       )}
 
-      {bestLineShown && (
-        <p className="best-line">
-          {analysis.current ? (
-            <>
-              Best line · {formatScore(scoreFor(game.playerColour, analysis.current.sideToMove, analysis.current.score))} for you
-              <span className="best-line-key">
-                <i className="key-yours" /> you <i className="key-theirs" /> them
-              </span>
-            </>
-          ) : (
-            'Working out the best line…'
-          )}
-        </p>
-      )}
-
-      {!outcome && (stage.hints || stage.takebacks > 0 || stage.bestLine) && (
+      {!outcome && (stage.hints > 0 || stage.takebacks > 0) && (
         <div className="game-actions help-actions">
-          {stage.hints && (
+          {stage.hints > 0 && (
             <button
               type="button"
-              disabled={!hintMove || hintStep === 2 || pending !== null || peeking}
-              onClick={() => setHint({ fen, step: hintStep === 0 ? 1 : 2 })}
+              disabled={!hintMove || hintsLeft === 0 || pending !== null || peeking}
+              onClick={askForHint}
             >
-              {hintStep === 0 ? 'Hint' : 'Show move'}
+              Hint ({hintsLeft} left)
             </button>
           )}
           {stage.takebacks > 0 && (
@@ -725,16 +740,7 @@ export function GameScreen({
                 setGame((g) => (g ? withTakeback(g) : g))
               }}
             >
-              Take back
-            </button>
-          )}
-          {stage.bestLine && (
-            <button
-              type="button"
-              className={showBestLine ? 'active' : undefined}
-              onClick={() => setShowBestLine((s) => !s)}
-            >
-              Best line
+              Take back ({takebacksLeft(game)} left)
             </button>
           )}
         </div>

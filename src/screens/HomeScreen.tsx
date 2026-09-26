@@ -429,5 +429,5 @@ function PlayCard({
 }
 
 function stageText(stage: PathGame['stage']): string {
-  return stage === 'assisted' ? 'Full help' : stage === 'guided' ? 'Move feedback, 3 takebacks' : 'No help'
+  return stage === 'assisted' ? '3 hints, 3 takebacks' :stage === 'guided' ? 'Move feedback, 3 takebacks' : 'No help'
 }

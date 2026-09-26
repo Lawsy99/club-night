@@ -80,8 +80,8 @@ describe('takebacks', () => {
     expect(canTakeBack(play(['e2e4', 'e7e5'], 'w', 'real'))).toBe(false)
   })
 
-  it('are unlimited in assisted', () => {
-    expect(takebacksLeft(play(['e2e4']))).toBe(Infinity)
+  it('are three in the coached game', () => {
+    expect(takebacksLeft(play(['e2e4']))).toBe(3)
   })
 
   it('are not allowed once the game is over', () => {

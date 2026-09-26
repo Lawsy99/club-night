@@ -233,7 +233,7 @@ export function nextStep(p: Progress): NextStep {
           chapter: ch.id,
         },
         optionalFriendly: null,
-        note: 'He plays at your level. Full help: hints, takebacks, the best line.',
+        note: 'He plays at your level, and tells you what he thinks. Three hints, three takebacks.',
       }
     }
     const rating = opponentRating(p, ch.opponent)

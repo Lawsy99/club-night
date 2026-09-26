@@ -16,6 +16,8 @@ export type GameRecord = {
   opponentRating?: number
   stage: HelpStageId
   takebacksUsed: number
+  /** The coach's hints asked for in this game (the coached game allows three). */
+  hintsUsed?: number
   startedAt: number
   /** Set when the game ends in a way the board can't show (resignation). */
   resignedBy?: Colour

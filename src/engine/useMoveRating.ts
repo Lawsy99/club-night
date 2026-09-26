@@ -3,7 +3,7 @@
 // Sep 2026), so it never delays the move itself.
 import { Chess } from 'chess.js'
 import { useEffect, useMemo, useState } from 'react'
-import { flipScore, winChance } from '../logic/evaluation'
+import { flipScore, toCentipawns, winChance } from '../logic/evaluation'
 import { applyUci, getOutcome, replay, type Colour } from '../logic/game'
 import { rateMove, type MoveRating } from '../logic/moveRating'
 import { analysePosition } from './analysis'
@@ -19,6 +19,10 @@ export type RatedMove = {
   betterSan: string | null
   /** The player's winning chances (0–1) after the move, when analysed. */
   winAfter: number | null
+  /** For the coach's comments: the opponent's best reply, and the scores (player's view, centipawns). */
+  reply: string | null
+  cpBefore: number | null
+  cpAfter: number | null
 }
 
 export function useMoveRating(moves: readonly string[], playerColour: Colour): RatedMove | null {
@@ -42,10 +46,19 @@ export function useMoveRating(moves: readonly string[], playerColour: Colour): R
     const san = after.history().at(-1) ?? played
 
     const fenBefore = before.fen()
-    const finish = (rating: MoveRating | null, betterMove: string | null = null, winAfter: number | null = null) => {
+    const finish = (
+      rating: MoveRating | null,
+      betterMove: string | null = null,
+      winAfter: number | null = null,
+      extra: { reply: string | null; cpBefore: number | null; cpAfter: number | null } = {
+        reply: null,
+        cpBefore: null,
+        cpAfter: null,
+      },
+    ) => {
       if (cancelled || !rating) return
       const betterSan = betterMove ? (applyUci(new Chess(fenBefore), betterMove)?.san ?? null) : null
-      setResult({ key, rated: { san, rating, played, fenBefore, betterMove, betterSan, winAfter } })
+      setResult({ key, rated: { san, rating, played, fenBefore, betterMove, betterSan, winAfter, ...extra } })
     }
 
     const outcome = getOutcome(after)
@@ -59,7 +72,11 @@ export function useMoveRating(moves: readonly string[], playerColour: Colour): R
           if (!b || !a) return finish(null)
           const mine = flipScore(a.score) // back to the player's point of view
           const rating = rateMove({ bestBefore: b.score, after: mine, playedBestMove: b.bestMove === played })
-          finish(rating, b.bestMove && b.bestMove !== played ? b.bestMove : null, winChance(mine))
+          finish(rating, b.bestMove && b.bestMove !== played ? b.bestMove : null, winChance(mine), {
+            reply: a.bestMove,
+            cpBefore: toCentipawns(b.score),
+            cpAfter: toCentipawns(mine),
+          })
         })
         .catch(() => finish(null))
     }

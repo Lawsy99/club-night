@@ -131,6 +131,18 @@ export function explainBestMove(fenBefore: string, best: string, bestCp: number,
   return `${san} was the best defence in a difficult spot.`
 }
 
+/**
+ * The coach's comment on a mistake during the coached game: what went wrong
+ * (or what was missed), then what to play instead, unless the first part
+ * already said it.
+ */
+export function coachComment(f: MistakeFacts): string {
+  const why = explainMistake(f)
+  if (!f.bestMove || /^You (missed|had)/.test(why)) return why
+  const instead = explainBestMove(f.fenBefore, f.bestMove, f.cpBefore, f.played)
+  return why.endsWith('was stronger.') ? instead : `${why} Instead, ${instead}`
+}
+
 /** Why the best move of the game was good, in one line. */
 export function explainGoodMove(fenBefore: string, uci: string, punished: boolean): string {
   const chess = new Chess(fenBefore)

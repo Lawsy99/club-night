@@ -74,6 +74,20 @@ export function useDialogue({ character, gameType, act, rematch, losingStreak, p
     [character, act, gameType, rematch, losingStreak, playerName, storyOnly],
   )
 
+  /**
+   * Says something written on the spot (the coach's comments and hints, which
+   * are built from the board, not picked from the dialogue file). It stays
+   * until tapped or the next move, since it's something to read.
+   */
+  const say = useCallback(
+    (text: string, expression: Expression = 'neutral') => {
+      if (!character) return
+      setPersist(true)
+      setLine({ text, speaker: null, face: character, expression, key: ++counter.current })
+    },
+    [character],
+  )
+
   const dismiss = useCallback(() => setLine(null), [])
-  return { line, speak, dismiss }
+  return { line, speak, say, dismiss }
 }

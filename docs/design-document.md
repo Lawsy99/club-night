@@ -268,12 +268,13 @@ Which game gets which stage (Joseph, Sep 2026): **Coached** (full help) is the T
 | Feature | Coached | Practice | Real |
 | --- | --- | --- | --- |
 | Evaluation bar (shows who's winning and by how much) | On | On | Off |
-| Best-line panel (the engine's suggested continuation) | Available on tap | Off | Off |
-| Hints | Unlimited, in two steps: which piece, then the move | Off | Off |
+| Best-line panel | Removed (Sep 2026) | Off | Off |
+| Hints | Three per game, as a nudge in Pemberton's words ("Is your king safe?", "Think about your knight"), never the move | Off | Off |
 | "See better move" after a weak move | On | Off | Off |
+| Pemberton's comments | After a mistake or blunder: what went wrong or what you missed, and what was better | Off | Off |
 | Your opening's next move | On | Off | Off |
-| Takebacks | Unlimited | 3 per game | None |
-| Blunder warning (asks before a bad move is played) | When a move gives away 2 pawns' worth of advantage or more, or allows mate | None (it amounted to free extra takebacks) | None |
+| Takebacks | 3 per game | 3 per game | None |
+| "Are you sure?" before a bad move | Pemberton, in his own varied words, on about 60% of moves that give away 2 pawns or allow mate, only while a takeback is left. He doesn't say what's wrong. Thinking again uses a takeback | None (it amounted to free extra takebacks) | None |
 | Move rating (after each of your moves: Best move, Good, Inaccuracy, Mistake, Blunder) | On | On | Off: only great moves and blunders, shown in the opponent |
 
 **Practice games** tell you how each move rated, show the evaluation bar and allow three takebacks, but never what you should have played or what to play next. That is for the review afterwards.

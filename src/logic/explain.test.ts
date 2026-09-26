@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { explainBestMove, explainGoodMove, explainMistake } from './explain'
+import { coachComment, explainBestMove, explainGoodMove, explainMistake } from './explain'
 import { replay } from './game'
 
 const afterNc6 = replay(['e2e4', 'e7e5', 'g1f3', 'b8c6']).fen()
@@ -29,6 +29,21 @@ describe('explainBestMove', () => {
 
   it('otherwise says what the move keeps', () => {
     expect(explainBestMove(replay([]).fen(), 'e2e4', 30)).toBe('e4 keeps the game level.')
+  })
+})
+
+describe('coachComment', () => {
+  it('says what went wrong, then what was better', () => {
+    expect(
+      coachComment({ fenBefore: afterNc6, played: 'f3g5', bestMove: 'd2d4', reply: 'd8g5', cpBefore: 30, cpAfter: -300 }),
+    ).toBe('Your knight on g5 was left undefended. Instead, d4 keeps the game level.')
+  })
+
+  it("doesn't repeat itself when the point was a missed chance", () => {
+    const fen = replay(['e2e4', 'e7e5', 'f1c4', 'b8c6', 'd1h5', 'g8f6']).fen()
+    expect(
+      coachComment({ fenBefore: fen, played: 'h5h3', bestMove: 'h5f7', reply: null, cpBefore: 9999, cpAfter: 50 }),
+    ).toBe('You had a forced checkmate, starting with Qxf7#.')
   })
 })
 
