@@ -296,12 +296,16 @@ The app is one fixed path through four acts. The home screen shows only what com
 
 ### Acts
 
-| Act | Setting | Rough length | Ends with |
+Revised Sep 2026: each act is a season of sixteen weeks. Acts 1 and 2 are built (`src/data/act1.ts`, `act2.ts`, joined in `acts.ts`). The story itself is in `docs/story-outline.md`.
+
+| Act | Setting | Length | Ends with |
 | --- | --- | --- | --- |
-| 1 — Club nights | Trial night, then learning the ropes at the club | About 8 chapters | Club knockout cup, final against Toby |
-| 2 — The club ladder | Fighting for a place on the league team | About 8 chapters | Ladder run, then Toby at the top |
-| 3 — The league season | Match nights against rival clubs; the room-hire stakes | About 10 fixtures | County cup, final against Kingsbridge: Toby, then Vera |
-| 4 — The tour | Congresses in different cities, one per chapter | Open-ended; new cities can keep being added | The final congress, and Toby in the last round: a real game, followed by his excuses |
+| 1: Club nights | Trial night, then learning the ropes at the club | 15 weeks, then cup week | The club knockout cup, final against Toby |
+| 2: The club ladder | Ladder challenges on Saturdays, the league team | 15 weeks, then the last rungs (Priya, Malcolm) | Top of the ladder against Toby; then the split, as Toby and Pemberton leave for Kingsbridge |
+| 3: Vera | Rebuilding with Vera as coach; the county league | A season (to be designed) | County championship final: Wexley against Kingsbridge |
+| 4: The tour | The club abroad, country by country | Open-ended; stops can keep being added | A real last game against Toby, followed by his excuses |
+
+**Between seasons:** winning an act's final shows its card on Home, with a button into the next season ("The ladder goes up"). The week numbers and months carry on (Week 17, Month 5), with no act numbers on screen. Fixed characters keep their ratings; the scaling cast take their distances from the new act's `offsets`.
 
 ### Chapters
 

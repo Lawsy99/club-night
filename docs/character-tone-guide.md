@@ -232,6 +232,13 @@ Not main characters. They are never labelled; the player learns who they are fro
 | Sheila | Here for the company; sells the raffle tickets | Coming round with the raffle; plays on practice night, cheerfully. Weaker |
 | Bill | A member since 1974; remembers everyone, including V. Hart | Pulls up a chair to watch; looks over at the honours board. Plays on practice night, slowly, and never resigns. Weaker |
 
+### Ray and Malcolm in Act 2 (the ladder)
+
+From Act 2 both are on the ladder above you, and you play them on Saturdays.
+
+- **Ray** runs junior night. He's a tired, decent teacher who won't beat himself and fades after nine o'clock. He plays the Italian as White and the Caro-Kann as Black. His one big line: "You'll do. I'll tell Pemberton you're ready for board four."
+- **Malcolm** is board one and still hardly speaks. He's patient and correct, and never offers a draw. He plays the Queen's Gambit, and the Closed Ruy as Black. When he does speak, it matters: "Whoever wrote that knows your game. Use it." Most of his lines are stage directions ("Malcolm nods, once. From him, that's a speech.").
+
 ### Terry (practice-night regular, comic relief)
 
 Added Sep 2026 (Joseph). Sixties, loud shirt, hair that has given up. Plays the Bongcloud, the Grob, the Parachute, Scholar's mate tries and the Blackburne Shilling trap, and means every one of them. **The comedy is that he isn't joking.** He never winks at the player, never says "lol", never calls anything "chaos". He is sincere, a little proud, and entirely at peace with losing in four moves. Out of the opening he plays decent chess, so games against him are fun, not free.
