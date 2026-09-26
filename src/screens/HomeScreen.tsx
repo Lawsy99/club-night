@@ -18,6 +18,7 @@ import { wantsWarmup, type NextStep, type PathGame, type Progress } from '../log
 import { TRIAL_LENGTH } from '../logic/trialNight'
 import { clubWeek } from '../logic/clubWeek'
 import { sessionLabel } from '../data/clubWeek'
+import { warmupLine } from '../data/warmupLines'
 import { headToHead, loadCards } from '../storage/db'
 import './HomeScreen.css'
 
@@ -153,7 +154,7 @@ export function HomeScreen(props: Props) {
       </button>
 
       {wantsWarmup(progress, next, waiting) ? (
-        <WarmupCard count={waiting} onStart={onStartWarmup} />
+        <WarmupCard count={waiting} week={progress.chapter} onStart={onStartWarmup} />
       ) : (
         <NextCard next={next} onPlay={onPlay} onStartLesson={onStartLesson} onTargetedPuzzles={onTargetedPuzzles} />
       )}
@@ -260,7 +261,7 @@ function ActProgress({ progress }: { progress: Progress }) {
 }
 
 /** Coaching night starts with warm-ups: your own recent errors, freshest first. */
-function WarmupCard({ count, onStart }: { count: number; onStart: () => void }) {
+function WarmupCard({ count, week, onStart }: { count: number; week: number; onStart: () => void }) {
   return (
     <section className="next-card">
       <p className="next-kind">{sessionLabel('coaching')} · warm-ups</p>
@@ -271,7 +272,7 @@ function WarmupCard({ count, onStart }: { count: number; onStart: () => void }) 
         <Portrait who="pemberton" size={44} />
         <span>
           <strong>Coach Pemberton</strong>{' '}
-          <span className="next-rating">“Your mistakes from last week. Find the better move.”</span>
+          <span className="next-rating">“{warmupLine(week)}”</span>
         </span>
       </p>
       <button type="button" className="next-play" onClick={onStart}>
@@ -412,7 +413,7 @@ function PlayCard({
       {optionalFriendly && (
         <button type="button" className="next-secondary" onClick={() => onPlay(optionalFriendly)}>
           {optionalFriendly.stage === 'assisted'
-            ? 'Study him first: a practice game, help on'
+            ? 'Study him first: a practice game with full help'
             : 'Another practice game first'}
         </button>
       )}
@@ -426,5 +427,5 @@ function PlayCard({
 }
 
 function stageText(stage: PathGame['stage']): string {
-  return stage === 'assisted' ? 'Assisted · help on' : stage === 'guided' ? 'Guided · light help' : 'No help'
+  return stage === 'assisted' ? 'Full help' : stage === 'guided' ? 'Move feedback, 3 takebacks' : 'No help'
 }

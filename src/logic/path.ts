@@ -238,7 +238,8 @@ export function nextStep(p: Progress): NextStep {
     }
     const rating = opponentRating(p, ch.opponent)
     // Thursday, practice night: the week's person first, then whoever else is
-    // in, one stronger and one weaker, as at a real club. Light help.
+    // in, one stronger and one weaker, as at a real club. Move feedback, the
+    // analysis bar and three takebacks, but no advice on what to play.
     const friendly = (k: number): PathGame => {
       const opponent = practiceOpponent(p, k)
       return {

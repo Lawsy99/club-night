@@ -43,10 +43,12 @@ import {
 import { acceptsDraw, piecesLeft, shouldOfferDraw, shouldResign } from '../logic/opponentDecisions'
 import {
   chatterAllowed,
-  LONG_THINK_GAP_MOVES,
+  isBigMoment,
+  LONG_THINK_CHANCE,
   LONG_THINK_MS,
   matchLineAllowed,
   mostImportant,
+  ROUTINE_REMARK_CHANCE,
   TENSION_MOVES,
 } from '../logic/dialogue'
 import { detectOpening } from '../logic/openings'
@@ -76,6 +78,9 @@ type Props = {
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
 type PendingMove = { uci: string; fenAfter: string; warning: string | null }
+
+/** How long the finished game stays on screen before the review opens. */
+const REVIEW_DELAY_MS = 3500
 
 /** Arrow colour for "the move you played" when showing a better one. */
 const PLAYED_ARROW_COLOUR = 'rgba(208, 59, 59, 0.75)'
@@ -182,7 +187,7 @@ export function GameScreen({
     const show = window.setTimeout(() => setReaction(face), 0)
     const hide = window.setTimeout(() => setReaction(null), 3500)
     const lineState = { linesSoFar: talk.lines, moveNumber: chess.moveNumber(), lastLineMove: talk.lastLineMove }
-    if (chatter === 'full' && matchLineAllowed(lineState) && Math.random() < 0.5) {
+    if (chatter === 'full' && matchLineAllowed(lineState) && Math.random() < 0.3) {
       if (dialogue.speak(moment === 'great' ? 'match_great' : 'match_blunder', false, storyFlags)) {
         setGame((g) => (g ? { ...g, talk: { ...talk, lines: talk.lines + 1, lastLineMove: lineState.moveNumber } } : g))
       }
@@ -201,9 +206,8 @@ export function GameScreen({
     ...(game.path?.chapter ? [`chapter:${game.path.chapter}`] : []),
     ...(game.talk?.notice ? [`notice:${game.talk.notice}`] : []),
   ]
-  // The long-think stage direction: whether one is showing, and when the last was.
+  // The long-think stage direction: whether one is showing.
   const thinkLineShown = useRef(false)
-  const lastThinkLineAt = useRef(-99)
   const ratedRef = useRef(ratedMove?.rating ?? null)
   ratedRef.current = ratedMove?.rating ?? null
 
@@ -227,6 +231,19 @@ export function GameScreen({
     setGame((g) => (g ? { ...g, talk: { ...talk, endSaid: true } } : g))
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once, when the game ends
   }, [!!outcome])
+
+  // Every decided game goes on to the review (Joseph, Sep 2026: you're meant
+  // to review each one; the review has its own Skip). A moment first, to see
+  // the final position and what they say; looking back through the moves
+  // holds it. Draws are replayed instead, and Toby's trial-night game is its
+  // own ending.
+  const reviewNext = !!outcome && outcome.winner !== null && !isExhibition
+  useEffect(() => {
+    if (!reviewNext || viewPly !== null) return
+    const t = window.setTimeout(onReview, REVIEW_DELAY_MS)
+    return () => window.clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- onReview is stable in effect
+  }, [reviewNext, viewPly])
 
   // A click for every move, the player's and the opponent's (not on resume).
   const movesHeard = useRef(game.moves.length)
@@ -277,12 +294,16 @@ export function GameScreen({
       const flags = boardFlags([...sans, botMove.san], piecesLeft(after.fen()), opponentColour)
       const lineState = { linesSoFar: talk.lines, moveNumber, lastLineMove: talk.lastLineMove }
       let spoke = false
-      if (quietGame) {
-        // Nothing said during trial-night games.
+      const thoughtAloud = thinkLineShown.current
+      if (quietGame || thoughtAloud) {
+        // Nothing said during trial-night games, or straight after a thinking line.
       } else if (!offer && gameType === 'friendly' && chatterAllowed({ gameType, ...lineState })) {
         let trigger = mostImportant(triggersFor({ botMove, playerRating: ratedRef.current, botEvalCp: cp }))
-        // Nothing dramatic? Sometimes they say what they're planning instead.
-        if (!trigger && moveNumber >= 6 && moveNumber <= 25 && Math.random() < 0.4) trigger = 'plan_hint'
+        // Everyday things (a check, a swap, castling) happen every game; only
+        // now and then are they worth a remark (Joseph, Sep 2026: far fewer lines).
+        if (trigger && !isBigMoment(trigger) && Math.random() > ROUTINE_REMARK_CHANCE) trigger = null
+        // Nothing dramatic? Occasionally they say what they're planning instead.
+        if (!trigger && moveNumber >= 6 && moveNumber <= 25 && Math.random() < 0.15) trigger = 'plan_hint'
         spoke = trigger ? dialogue.speak(trigger, false, flags) : false
       } else if (!offer && gameType === 'match' && matchLineAllowed(lineState)) {
         if (TENSION_MOVES.includes(moveNumber) && Math.abs(cp) <= 100) spoke = dialogue.speak('tension', false, flags)
@@ -301,7 +322,7 @@ export function GameScreen({
       thinkLineShown.current = false
 
       // Did that move hand the player a big chance? Sometimes the opponent gives it away.
-      if (!spoke && !offer && !quietGame) {
+      if (!spoke && !offer && !quietGame && !thoughtAloud) {
         analysePosition(after.fen())
           .then((a) => {
             if (!a || cancelled) return
@@ -432,14 +453,21 @@ export function GameScreen({
   // A long think gets a small stage direction ("Priya closes her eyes."), so
   // slow thinkers read as thinking, not as the app running slowly. Not on
   // their first move (the opening line is still showing), and not too often.
+  // Revised Sep 2026 (Joseph: the same glasses-adjusting over and over): it
+  // shares the game's small line budget, so it's rare and never piles up.
   useEffect(() => {
     if (!opponentToMove || downloading || engineError || !opponent.character || game.moves.length < 2) return
-    if (chatter !== 'full') return // the thinking dots still show
-    if (game.moves.length - lastThinkLineAt.current < LONG_THINK_GAP_MOVES * 2) return
+    if (chatter !== 'full' || quietGame) return // the thinking dots still show
+    const lineState = { linesSoFar: talk.lines, moveNumber: chess.moveNumber(), lastLineMove: talk.lastLineMove }
+    if (!(gameType === 'friendly' ? chatterAllowed({ gameType, ...lineState }) : matchLineAllowed(lineState))) return
     const t = window.setTimeout(() => {
-      if (dialogue.speak('long_think', true)) {
+      if (Math.random() < LONG_THINK_CHANCE && dialogue.speak('long_think', true)) {
         thinkLineShown.current = true
-        lastThinkLineAt.current = game.moves.length
+        setGame((g) => {
+          if (!g) return g
+          const now = g.talk ?? talk
+          return { ...g, talk: { ...now, lines: now.lines + 1, lastLineMove: lineState.moveNumber } }
+        })
       }
     }, LONG_THINK_MS)
     return () => window.clearTimeout(t)
@@ -468,11 +496,10 @@ export function GameScreen({
       ? `${stage.label} · ${takebacksLeft(game)} takeback${takebacksLeft(game) === 1 ? '' : 's'} left`
       : `${stage.label} · ${stage.summary}`
 
-  // Assisted and guided games only (no help in real games): the next move of
-  // the opening the player usually plays, while the game is still following it.
-  // (Pemberton's scouting line is never prompted move by move: that just told
-  // the player what to play. Removed Sep 2026.)
-  const helpOn = (stage.id === 'assisted' || stage.id === 'guided') && playersTurn && !pending && !peeking && !viewing
+  // Full-help games only (the game with Pemberton): the next move of the
+  // opening the player usually plays, while the game is still following it.
+  // Practice games tell you how a move rated, never what to play (Sep 2026).
+  const helpOn = stage.id === 'assisted' && playersTurn && !pending && !peeking && !viewing
   const ownLine = helpOn ? repertoireHint(sans, game.playerColour, game.repertoire) : null
   const bookNote = ownLine ? { label: `Your ${ownLine.opening.replace(/^the /, '')}`, san: ownLine.san } : null
 
@@ -711,14 +738,20 @@ export function GameScreen({
 
       <div className="game-actions">
         {outcome ? (
-          <>
+          reviewNext ? (
             <button type="button" className="primary" onClick={onReview}>
-              Review game
+              On to the review
             </button>
-            <button type="button" onClick={onContinue}>
-              {outcome.winner === null && !isExhibition ? 'Replay' : 'Continue'}
-            </button>
-          </>
+          ) : (
+            <>
+              <button type="button" className="primary" onClick={onReview}>
+                Review game
+              </button>
+              <button type="button" onClick={onContinue}>
+                {outcome.winner === null && !isExhibition ? 'Replay' : 'Continue'}
+              </button>
+            </>
+          )
         ) : (
           <>
             <ResignButton onResign={() => setGame((g) => (g ? withResignation(g, g.playerColour) : g))} />

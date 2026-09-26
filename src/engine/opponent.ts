@@ -54,6 +54,8 @@ export async function chooseOpponentMove(
     ;({ choice, kind } = await botMove(fen, opponent, movesSoFar))
   }
 
+  // Only one legal move: play it straight away, whatever the engine thought.
+  if (new Chess(fen).moves().length <= 1) kind = 'forced'
   const pause = opponent.character
     ? thinkTime(kind, opponent.character.thinkSpeed)
     : TEST_THINK_TIME.min + Math.random() * (TEST_THINK_TIME.max - TEST_THINK_TIME.min)

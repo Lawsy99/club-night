@@ -177,9 +177,21 @@ export function mostImportant(triggers: readonly Trigger[]): Trigger | null {
   return triggers[0] ?? null
 }
 
-/** In-game chatter (friendlies only): up to 3 lines a game, at least 6 moves apart. */
-export const CHATTER_LIMIT = 3
-export const CHATTER_GAP_MOVES = 6
+/**
+ * In-game chatter (friendlies only): up to 2 lines a game, at least 10 moves
+ * apart (revised Sep 2026, Joseph: far too many lines; they should be rare
+ * enough to be welcome). The long-think stage direction counts too.
+ */
+export const CHATTER_LIMIT = 2
+export const CHATTER_GAP_MOVES = 10
+
+/** Routine events (a check, a swap, castling) only prompt a remark this often. */
+export const ROUTINE_REMARK_CHANCE = 0.2
+
+/** Blunders, a lost queen, the game turning: always worth a word (budget allowing). */
+export function isBigMoment(trigger: Trigger): boolean {
+  return ['player_blunder', 'bot_blunder', 'capture_queen', 'clearly_losing', 'clearly_winning', 'strong_move'].includes(trigger)
+}
 
 /**
  * Matches (revised Sep 2026, Joseph's decision): no chatter, but up to two
@@ -195,10 +207,13 @@ export function matchLineAllowed(options: { linesSoFar: number; moveNumber: numb
   return options.lastLineMove === null || options.moveNumber - options.lastLineMove >= MATCH_LINE_GAP_MOVES
 }
 
-/** A stage direction appears once a think has lasted this long… */
-export const LONG_THINK_MS = 4500
-/** …and not again until the opponent has made this many more moves. */
-export const LONG_THINK_GAP_MOVES = 3
+/**
+ * A stage direction may appear once a think has lasted this long, and then
+ * only sometimes. It shares the game's line budget, so it's rare. (The
+ * thinking dots always show, so a long think never looks like a freeze.)
+ */
+export const LONG_THINK_MS = 5000
+export const LONG_THINK_CHANCE = 0.35
 
 export function chatterAllowed(options: {
   gameType: 'friendly' | 'match'

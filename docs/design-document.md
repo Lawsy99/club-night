@@ -215,7 +215,7 @@ There are two kinds of game, mirroring real club life: friendlies are practice w
 |  | Friendly | Match |
 | --- | --- | --- |
 | Setting | Casual club-night games | League matches, cup ties, ladder challenges, tournament rounds |
-| Help | Assisted or guided stage | None |
+| Help | Coached (with Pemberton) or practice stage | None |
 | Clock | Never | None by default. Before a gauntlet or boss match, the player may switch one on (see Clocks) |
 | Chatter during play | Yes, rationed | None. Characters speak only before and after |
 | Changes rating | No | Yes |
@@ -263,18 +263,24 @@ Dialogue about clocks (pressing the clock with the wrong hand, starting your clo
 
 ### The help stages
 
-| Feature | Assisted | Guided | Real |
+Which game gets which stage (Joseph, Sep 2026): **Coached** (full help) is the Tuesday game with Pemberton; **Practice** is Thursday's practice games; **Real** is Saturday's best of three, the cup, the boss and trial night. (In the code the stages are still called assisted, guided and real.)
+
+| Feature | Coached | Practice | Real |
 | --- | --- | --- | --- |
-| Evaluation bar (shows who's winning and by how much) | On | Off | Off |
+| Evaluation bar (shows who's winning and by how much) | On | On | Off |
 | Best-line panel (the engine's suggested continuation) | Available on tap | Off | Off |
 | Hints | Unlimited, in two steps: which piece, then the move | Off | Off |
+| "See better move" after a weak move | On | Off | Off |
+| Your opening's next move | On | Off | Off |
 | Takebacks | Unlimited | 3 per game | None |
-| Blunder warning | When a move gives away 2 pawns' worth of advantage or more, or allows mate | Only when a move loses a piece or allows mate | None |
+| Blunder warning (asks before a bad move is played) | When a move gives away 2 pawns' worth of advantage or more, or allows mate | None (it amounted to free extra takebacks) | None |
 | Move rating (after each of your moves: Best move, Good, Inaccuracy, Mistake, Blunder) | On | On | Off: only great moves and blunders, shown in the opponent |
 
-**The move rating** appears in practice games. In competitive games (revised Sep 2026) it's hidden; only a great move or a blunder shows, through the opponent's face and an occasional stage direction. It uses the same Lichess-style grading as the review.
+**Practice games** tell you how each move rated, show the evaluation bar and allow three takebacks, but never what you should have played or what to play next. That is for the review afterwards.
 
-**Your opening.** In assisted and guided games, while the game still follows the player's own usual opening (worked out from their games), a small note gives the next move in plain words. As White, the scouting report opens with a suggested opening to play against that opponent, but the game never prompts the moves of Pemberton's line: remembering them is the player's job, and a prompt would just tell them what to play.
+**The move rating** is hidden in competitive games (revised Sep 2026); only a great move or a blunder shows, through the opponent's face and an occasional stage direction. It uses the same Lichess-style grading as the review.
+
+**Your opening.** In the coached game only, while the game still follows the player's own usual opening (worked out from their games), a small note gives the next move in plain words. As White, the scouting report opens with a suggested opening to play against that opponent, but the game never prompts the moves of Pemberton's line: remembering them is the player's job, and a prompt would just tell them what to play.
 
 **The best-line panel** is shown on the board as arrows for the next few moves (your moves blue, the opponent's orange, each fainter than the last), with the score as text below.
 
@@ -702,7 +708,7 @@ The app has eight screens. The game screen is where almost everything happens.
 | --- | --- |
 | Welcome | First launch only: the experience question, an optional rating entry, and the rules walkthrough for new players |
 | Home | One large "Next" card (step type, opponent portrait, location label, Play button), the player's rating, and small links to the mistakes deck, past games, stats and settings |
-| Game | Opponent portrait, name, rating and speech bubbles at the top; the board with the evaluation bar when help allows it; the player's name and rating below; help buttons (Hint, Take back, Analysis) only in friendlies; a stage label such as "Assisted · help on"; a location label such as "Club night · Tuesday" |
+| Game | Opponent portrait, name, rating and speech bubbles at the top; the board with the evaluation bar when help allows it; the player's name and rating below; help buttons (Hint, Take back, Analysis) only in friendlies; a stage label such as "Practice · move feedback"; a location label such as "Club night · Tuesday" |
 | Lesson | Coach Pemberton's bubbles over a demonstration board, then the puzzles |
 | Review | Summary, the three biggest moments, best move, opening note, and the optional full-game view with an evaluation graph |
 | Mistakes deck | Due cards one at a time, with a count of what's left |

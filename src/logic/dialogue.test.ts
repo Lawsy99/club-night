@@ -103,11 +103,11 @@ describe('dialogue selection', () => {
     expect(selectLine(lines, { ...hint, flags: ['opening:london'] }, empty, () => 0)?.id).toBe('london-plan')
   })
 
-  it('rations chatter: friendlies only, 3 a game, 6 moves apart', () => {
-    const base = { gameType: 'friendly' as const, linesSoFar: 0, moveNumber: 10, lastLineMove: null }
+  it('rations chatter: friendlies only, 2 a game, 10 moves apart', () => {
+    const base = { gameType: 'friendly' as const, linesSoFar: 0, moveNumber: 14, lastLineMove: null }
     expect(chatterAllowed(base)).toBe(true)
     expect(chatterAllowed({ ...base, gameType: 'match' })).toBe(false)
-    expect(chatterAllowed({ ...base, linesSoFar: 3 })).toBe(false)
+    expect(chatterAllowed({ ...base, linesSoFar: 2 })).toBe(false)
     expect(chatterAllowed({ ...base, lastLineMove: 6 })).toBe(false)
     expect(chatterAllowed({ ...base, lastLineMove: 4 })).toBe(true)
   })

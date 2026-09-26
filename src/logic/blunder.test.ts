@@ -6,7 +6,8 @@ import { formatCp, formatScore, scoreFor, winChance } from './evaluation'
 const cp = (value: number) => ({ type: 'cp' as const, value })
 const mate = (value: number) => ({ type: 'mate' as const, value })
 const assisted = HELP_STAGES.assisted.blunderWarning
-const guided = HELP_STAGES.guided.blunderWarning
+// A stricter rule (only about a piece or mate), to test the thresholds.
+const pieceOnly = { minLossCp: 250, allowsMate: true }
 
 describe('blunder warnings', () => {
   it('assisted warns from 2 pawns lost', () => {
@@ -14,17 +15,18 @@ describe('blunder warnings', () => {
     expect(assessMove({ bestBefore: cp(30), after: cp(-150) }, assisted)).toBeNull()
   })
 
-  it('guided only warns for about a piece', () => {
-    expect(assessMove({ bestBefore: cp(30), after: cp(-180) }, guided)).toBeNull()
-    expect(assessMove({ bestBefore: cp(30), after: cp(-290) }, guided)).toBe('loses-material')
+  it('a stricter rule only warns for about a piece', () => {
+    expect(assessMove({ bestBefore: cp(30), after: cp(-180) }, pieceOnly)).toBeNull()
+    expect(assessMove({ bestBefore: cp(30), after: cp(-290) }, pieceOnly)).toBe('loses-material')
   })
 
-  it('real never warns', () => {
+  it('practice and real games never warn before a move', () => {
+    expect(assessMove({ bestBefore: cp(30), after: mate(-1) }, HELP_STAGES.guided.blunderWarning)).toBeNull()
     expect(assessMove({ bestBefore: cp(30), after: mate(-1) }, HELP_STAGES.real.blunderWarning)).toBeNull()
   })
 
   it('warns when a move walks into mate', () => {
-    expect(assessMove({ bestBefore: cp(50), after: mate(-2) }, guided)).toBe('allows-mate')
+    expect(assessMove({ bestBefore: cp(50), after: mate(-2) }, pieceOnly)).toBe('allows-mate')
   })
 
   it("doesn't nag when mate was coming anyway", () => {
@@ -37,7 +39,7 @@ describe('blunder warnings', () => {
   })
 
   it('does warn when throwing away a winning position', () => {
-    expect(assessMove({ bestBefore: mate(2), after: cp(0) }, guided)).toBe('loses-material')
+    expect(assessMove({ bestBefore: mate(2), after: cp(0) }, pieceOnly)).toBe('loses-material')
   })
 
   it('names the piece the reply would take', () => {

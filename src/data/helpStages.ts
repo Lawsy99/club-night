@@ -25,8 +25,8 @@ export type HelpStage = {
 export const HELP_STAGES: Record<HelpStageId, HelpStage> = {
   assisted: {
     id: 'assisted',
-    label: 'Assisted',
-    summary: 'help on',
+    label: 'Coached',
+    summary: 'full help',
     evalBar: true,
     bestLine: true,
     hints: true,
@@ -34,17 +34,19 @@ export const HELP_STAGES: Record<HelpStageId, HelpStage> = {
     // "When a move gives away 2 pawns' worth of advantage or more, or allows mate"
     blunderWarning: { minLossCp: 200, allowsMate: true },
   },
+  // Practice night (Joseph, Sep 2026): you see how each move rated and the
+  // analysis bar, and get three takebacks, but nothing that tells you what to
+  // play. No hints, no best line, and no "are you sure?" warning before a
+  // move (that was really just free extra takebacks).
   guided: {
     id: 'guided',
-    label: 'Guided',
-    summary: 'light help',
-    evalBar: false,
+    label: 'Practice',
+    summary: 'move feedback',
+    evalBar: true,
     bestLine: false,
     hints: false,
     takebacks: 3,
-    // "Only when a move loses a piece or allows mate". A minor piece is worth
-    // about 3 pawns; 2.5 allows for the small compensation you often get back.
-    blunderWarning: { minLossCp: 250, allowsMate: true },
+    blunderWarning: null,
   },
   real: {
     id: 'real',
