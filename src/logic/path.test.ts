@@ -9,10 +9,11 @@ function nextGame(p: Progress) {
   return step
 }
 
-function throughTrial(wins = [true, false, true, false, true]): Progress {
+/** Four placement games, then Toby's game (lost, as intended). */
+function throughTrial(wins = [true, false, true, false]): Progress {
   let p = beginTrial(NEW_PROGRESS, 'casual')
   for (const won of wins) p = recordGame(p, nextGame(p).game, won, 1100)
-  return p
+  return recordGame(p, nextGame(p).game, false, 400)
 }
 
 describe('the path', () => {
@@ -23,12 +24,36 @@ describe('the path', () => {
     expect(first).toMatchObject({ kind: 'trial', opponent: 'marjorie', rating: 1000, stage: 'real' })
   })
 
-  it('sets a rating and the Act 1 baseline after five trial games', () => {
+  it('sets a rating and the Act 1 baseline after four placement games', () => {
     const p = throughTrial()
     expect(p.stage).toBe('act')
     expect(p.rating?.rating).toBeGreaterThan(900)
     expect(p.baseline).toBe(Math.round(p.rating!.rating))
     expect(p.fixedRatings.marjorie).toBeDefined()
+  })
+
+  it("ends trial night with Toby at full strength, which doesn't count", () => {
+    let p = beginTrial(NEW_PROGRESS, 'casual')
+    for (const won of [true, false, true, false]) p = recordGame(p, nextGame(p).game, won, 1100)
+    // Rated after four games, but the night isn't over.
+    expect(p.stage).toBe('trial')
+    const rating = p.rating
+    expect(rating).not.toBeNull()
+    const step = nextGame(p)
+    expect(step.game).toMatchObject({ kind: 'exhibition', opponent: 'toby', stage: 'real' })
+    const after = recordGame(p, step.game, false, 300)
+    expect(after.stage).toBe('act')
+    expect(after.rating).toEqual(rating)
+    expect(after.recentReal).toEqual([])
+  })
+
+  it('finishes an older save that stopped after four trial games', () => {
+    let p = beginTrial(NEW_PROGRESS, 'casual')
+    for (const won of [true, false, true, false]) p = recordGame(p, nextGame(p).game, won, 1100)
+    const oldSave: Progress = { ...p, rating: null }
+    const after = recordGame(oldSave, nextGame(oldSave).game, false, null)
+    expect(after.stage).toBe('act')
+    expect(after.rating?.rating).toBeGreaterThan(900)
   })
 
   it('opens each chapter with its lesson', () => {

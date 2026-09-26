@@ -1,5 +1,8 @@
 id,character,speaker,trigger,text,expression,acts,gameType,rematch,minRematch,losingStreak,flags,weight,once
-toby-start-first,toby,,game_start,"Toby. I'm new too, actually. We'll be learning together.",pleased,1,,1,,,,3,yes
+toby-exh-start-01,toby,,exhibition_start,"Toby. I'm new too, actually. Quick one before they stack the chairs? Just for fun.",pleased,,,,,,,1,
+toby-exh-start-02,toby,,exhibition_start,"Toby. I'm new too, actually. We'll be learning together. No pressure.",pleased,,,,,,,1,
+toby-exh-win-01,toby,,exhibition_win,"Good game! Honestly, I got lucky. Want to go over it?",smug,,,,,,,1,
+toby-exh-win-02,toby,,exhibition_win,"Beginner's luck. Mine, I mean. You'll get me next time, mate.",smug,,,,,,,1,
 toby-start-01,toby,,game_start,"No pressure, mate. Honestly, just enjoy it.",pleased,,,,,,,1,
 toby-start-02,toby,,game_start,Good to see you. We should do this more often.,pleased,,,,,,,1,
 toby-start-03,toby,,game_start,"Round two! No pressure, honestly.",smug,,,2,,,,2,

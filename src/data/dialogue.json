@@ -1,18 +1,43 @@
 [
  {
-  "id": "toby-start-first",
+  "id": "toby-exh-start-01",
   "character": "toby",
-  "trigger": "game_start",
-  "text": "Toby. I'm new too, actually. We'll be learning together.",
+  "trigger": "exhibition_start",
+  "text": "Toby. I'm new too, actually. Quick one before they stack the chairs? Just for fun.",
   "expression": "pleased",
-  "conditions": {
-   "acts": [
-    1
-   ],
-   "rematch": 1
-  },
-  "weight": 3,
-  "once": true
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-exh-start-02",
+  "character": "toby",
+  "trigger": "exhibition_start",
+  "text": "Toby. I'm new too, actually. We'll be learning together. No pressure.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-exh-win-01",
+  "character": "toby",
+  "trigger": "exhibition_win",
+  "text": "Good game! Honestly, I got lucky. Want to go over it?",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-exh-win-02",
+  "character": "toby",
+  "trigger": "exhibition_win",
+  "text": "Beginner's luck. Mine, I mean. You'll get me next time, mate.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
  },
  {
   "id": "toby-start-01",

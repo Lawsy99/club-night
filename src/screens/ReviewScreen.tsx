@@ -103,7 +103,7 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
     ? outcome.winner === null
       ? fromHistory
         ? 'Drawn.'
-        : 'Drawn — replayed next.'
+        : 'Drawn: replayed next.'
       : outcome.winner === player
         ? 'You won.'
         : 'You lost.'

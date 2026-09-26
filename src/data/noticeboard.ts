@@ -6,6 +6,8 @@ export type Notice = { speaker: string; text: string }
 
 export const NOTICEBOARD: Record<string, Notice> = {
   trial: { speaker: 'Marjorie', text: "New members' night. Tea's fifty pence. Graham will want your name spelt properly." },
+  // Before Toby's game at the end of trial night.
+  'trial-finale': { speaker: 'Graham', text: "Toby isn't on the membership list yet. Strictly speaking, that game is unofficial." },
   c1: { speaker: 'Graham', text: 'Reminder: subs are due. Not now. After.' },
   c2: { speaker: 'Marjorie', text: 'Dex is filming again. Try not to be in it.' },
   c3: { speaker: 'Neil', text: "Junior night Thursday. Oscar's coach says he's ahead of schedule." },

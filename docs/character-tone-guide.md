@@ -106,7 +106,7 @@ Coach Pemberton doesn't play. He presents lessons and scouting reports.
 
 ## Toby, the rival
 
-Toby joins the club the same night you do and is always slightly stronger. He is the final opponent of every act. He is warm, encouraging and helpful, and you cannot justify why you dislike him.
+Toby joins the club the same night you do and is always slightly stronger. He is the final opponent of every act. He is warm, encouraging and helpful, and you cannot justify why you dislike him. He is genuinely very good and fake-humble about it: every win is luck, every result is "learning", and he goes straight to the top of the ladder without appearing to try.
 
 **Voice:** Relentlessly positive. Calls you "mate". Softens everything with "honestly", "no pressure" and "no worries if not". Speaks in "we" when credit is going and "I" when he's doing well. Uses personal-growth language about ordinary decisions.
 
@@ -127,7 +127,8 @@ Toby joins the club the same night you do and is always slightly stronger. He is
 - *As captain, explaining the team:* "It's not all about ratings. It's about who's in form."
 - *As captain, after your win saves the match:* "Really proud of how we handled it tonight." / "Match report's up. Gave you a mention."
 - *Sitting down for the away match, after leaving your club:* "Hey! Didn't want this to be weird." / "It's not weird, is it?"
-- *Avoiding you in the last round of the final congress:* "Took a half-point bye. Made sense, prize-wise."
+- *Beating you easily on trial night:* "Beginner's luck. Mine, I mean."
+- *Losing to you in the last round of the final congress:* "Honestly, a draw was fine for me prize-wise. I wasn't really pushing." / "Long drive this morning. Not an excuse."
 
 ## Marjorie
 

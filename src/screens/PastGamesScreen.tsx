@@ -52,7 +52,7 @@ export function PastGamesScreen({ onOpen, onBack }: Props) {
 }
 
 function PastGameRow({ game }: { game: ArchivedGame }) {
-  const opponent = resolveOpponent(game.levelId, game.opponentRating)
+  const opponent = resolveOpponent(game.levelId, game.opponentRating, game.path?.kind === 'exhibition')
   const outcome = safeOutcome(game)
   const result = !outcome ? '–' : outcome.winner === null ? 'Draw' : outcome.winner === game.playerColour ? 'Won' : 'Lost'
   const accuracy =
@@ -66,7 +66,7 @@ function PastGameRow({ game }: { game: ArchivedGame }) {
       <span className={`past-result ${result.toLowerCase()}`}>{result}</span>
       <span className="past-main">
         <strong>
-          vs {opponent.name} <span className="past-rating">{opponent.rating}</span>
+          vs {opponent.name} <span className="past-rating">{opponent.unrated ? 'unrated' : opponent.rating}</span>
         </strong>
         <span className="past-meta">
           {date} · {HELP_STAGES[game.stage]?.label ?? 'Real'} · {game.playerColour === 'w' ? 'White' : 'Black'} ·{' '}

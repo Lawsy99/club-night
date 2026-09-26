@@ -39,6 +39,8 @@ export async function chooseOpponentMove(
     kind = 'book'
   } else if (opponent.engine === 'maia') {
     ;({ choice, kind } = await maiaMove(fen, opponent, movesSoFar))
+  } else if (opponent.engine === 'full') {
+    ;({ choice, kind } = await fullStrengthMove(fen))
   } else {
     ;({ choice, kind } = await botMove(fen, opponent, movesSoFar))
   }
@@ -73,6 +75,13 @@ async function botMove(fen: string, opponent: Opponent, moves: readonly string[]
   const gap = candidates.length > 1 ? candidates[0].cp - candidates[1].cp : 1000
   const kind = classifyMove(gap > 150 ? 0.8 : gap < 30 ? 0.15 : 0.4, isRecaptureAvailable(fen, moves, move))
   return { choice: { move }, kind }
+}
+
+/** Stockfish's best move, no mistakes (Toby on trial night: the player is meant to lose). */
+async function fullStrengthMove(fen: string) {
+  const { bestMove, lines } = await getEngine().search(fen, { depth: 18, multiPv: 1, movetime: 1500 })
+  const move = bestMove ?? lines[0]?.pv[0] ?? null
+  return { choice: { move }, kind: 'normal' as MoveKind }
 }
 
 /** True if `move` takes back on the square where the opponent just captured. */

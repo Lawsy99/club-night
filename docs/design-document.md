@@ -45,7 +45,7 @@ The app starts as a web app installed to the iPhone home screen, then becomes pr
 
 ## Trial night
 
-The first session is five placement games, framed as your first night at the club, when members get you playing a few people to see where you fit. It also opens the story: you meet Marjorie, Dex, Graham, Clive and Coach Pemberton, and Toby turns up the same night.
+The first session is four placement games, framed as your first night at the club, when members get you playing a few people to see where you fit, then one last game against Toby. It also opens the story: you meet Marjorie, Dex, Graham, Clive and Coach Pemberton, and Toby turns up the same night.
 
 ### Before the games
 
@@ -60,23 +60,32 @@ One question: roughly how much chess have you played? The options are never, kno
 
 Players who have never played go through a short rules walkthrough first.
 
-### The five games
+### The four placement games
 
-- All five are real games: no help, untimed, colours alternating.
+- All four are real games: no help, untimed, colours alternating.
 - Characters speak only before and after each game, never during.
-- Each result sets the next opponent's strength. A win moves it up, a loss moves it down, and the step shrinks each game: 300, then 200, then 150, then 100.
+- Each result sets the next opponent's strength. A win moves it up, a loss moves it down, and the step shrinks each game: 300, then 200, then 150.
 - A draw is replayed, as everywhere in the app.
+
+### The last game: Toby (revised Sep 2026, Joseph's decision)
+
+Toby is new that night too, and asks for "a quick one, just for fun". It is the story's first sting.
+
+- He plays at full engine strength, so the player loses. No help, as in the placement games.
+- His rating is hidden: he shows as "unrated", as a new member would. From Act 1 onwards his rating is shown and scaled like everyone else's.
+- It doesn't count: no rating change, and it isn't replayed if drawn. It does appear in past games and the head-to-head record.
+- The rating is worked out after the four placement games, so the Toby game can't drag it down.
 
 ### Working out the starting rating
 
 The app combines two signals:
 
-1. **Results:** the rating that the five results imply against those opponents.
+1. **Results:** the rating that the four results imply against those opponents.
 2. **Accuracy:** Stockfish checks every move, and the average amount of advantage given away per move maps to an estimated playing strength. This means a lost game still gives useful information.
 
-The two are blended, with accuracy weighted more heavily because five results alone are noisy. The exact blend is tuned during testing.
+The two are blended, with accuracy weighted more heavily because four results alone are noisy. The exact blend is tuned during testing.
 
-The player starts Act 1 about 50 points **below** the estimate. Breezing through the first chapter feels good; getting crushed on day one doesn't. The trial-night games count towards the rating from then on.
+The player starts Act 1 about 50 points **below** the estimate. Breezing through the first chapter feels good; getting crushed on day one doesn't (Toby's game aside, which is the point). The placement games count towards the rating from then on.
 
 ## Your rating and behind-the-scenes adjustment
 
@@ -265,7 +274,7 @@ The app is one fixed path through four acts. The home screen shows only what com
 | 1 — Club nights | Trial night, then learning the ropes at the club | About 8 chapters | Club knockout cup, final against Toby |
 | 2 — The club ladder | Fighting for a place on the league team | About 8 chapters | Ladder run, then Toby at the top |
 | 3 — The league season | Match nights against rival clubs; the room-hire stakes | About 10 fixtures | County cup, final against Kingsbridge: Toby, then Vera |
-| 4 — The tour | Congresses in different cities, one per chapter | Open-ended; new cities can keep being added | The final congress, and Toby in the last round |
+| 4 — The tour | Congresses in different cities, one per chapter | Open-ended; new cities can keep being added | The final congress, and Toby in the last round: a real game, followed by his excuses |
 
 ### Chapters
 

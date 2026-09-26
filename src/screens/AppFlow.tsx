@@ -52,8 +52,13 @@ import { WelcomeScreen } from './WelcomeScreen'
 const VIEWS = ['home', 'game', 'review', 'deck', 'history', 'lesson', 'puzzles'] as const
 type View = (typeof VIEWS)[number]
 
-/** Rated games: everything except friendlies (design: friendlies never change the rating). */
-const isRated = (g: PathGame | undefined) => !!g && g.kind !== 'friendly' && g.kind !== 'trial'
+/**
+ * Games that change the rating one at a time: not friendlies (design: they
+ * never change it), not trial night (it sets the rating in one go at the end),
+ * and not Toby's trial-night game (it doesn't count).
+ */
+const isRated = (g: PathGame | undefined) =>
+  !!g && g.kind !== 'friendly' && g.kind !== 'trial' && g.kind !== 'exhibition'
 
 export function AppFlow() {
   const [loaded, setLoaded] = useState(false)
@@ -111,7 +116,8 @@ export function AppFlow() {
     // Toby studies the player's games (rival level 1): the weakest opening, once there's evidence.
     const target = pathGame.opponent === 'toby' ? await playerWeakness().catch(() => null) : null
     // Scouting report before matches and the first (assisted) friendly against someone.
-    const scouted = pathGame.kind !== 'trial' && (pathGame.kind !== 'friendly' || pathGame.stage === 'assisted')
+    const onTrialNight = pathGame.kind === 'trial' || pathGame.kind === 'exhibition'
+    const scouted = !onTrialNight && (pathGame.kind !== 'friendly' || pathGame.stage === 'assisted')
     const scouting = scouted
       ? scoutingReport({
           character: pathGame.opponent,
@@ -138,12 +144,13 @@ export function AppFlow() {
       setView('home')
       return
     }
-    if (outcome.winner === null) {
+    // (Toby's trial-night game isn't replayed: a draw just ends the night.)
+    if (outcome.winner === null && finished.path.kind !== 'exhibition') {
       startPathGame(finished.path)
       return
     }
     if (!finished.resultRecorded) {
-      const won = outcome.winner === finished.playerColour
+      const won = outcome.winner === finished.playerColour // (a draw here only for Toby's game)
       const archived = await getArchivedGame(finished.id).catch(() => null)
       const loss = archived?.evals ? averageCentipawnLoss(finished.moves, archived.evals, finished.playerColour) : null
       const accuracyStrength = loss === null ? null : strengthFromAccuracy(loss)
@@ -281,7 +288,7 @@ async function playerWeakness() {
           sans: replay(g.moves.slice(0, 16)).history(),
           playerColour: g.playerColour,
           won: outcome.winner === g.playerColour,
-          rated: !!g.path && g.path.kind !== 'friendly' && g.path.kind !== 'trial',
+          rated: isRated(g.path),
         },
       ]
     } catch {

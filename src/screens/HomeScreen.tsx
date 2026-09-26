@@ -10,6 +10,7 @@ import { characterOpponentId } from '../data/opponents'
 import { shownRating } from '../logic/glicko2'
 import { dueCards } from '../logic/mistakesDeck'
 import type { NextStep, PathGame, Progress } from '../logic/path'
+import { TRIAL_LENGTH } from '../logic/trialNight'
 import { headToHead, loadCards } from '../storage/db'
 import './HomeScreen.css'
 
@@ -29,6 +30,7 @@ type Props = {
 
 const KIND_LABELS: Record<PathGame['kind'], string> = {
   trial: 'Trial night',
+  exhibition: 'Trial night',
   friendly: 'Friendly',
   match: 'Match',
   'cup-round': 'Knockout cup',
@@ -110,10 +112,12 @@ export function HomeScreen(props: Props) {
 function ActProgress({ progress }: { progress: Progress }) {
   if (progress.stage === 'trial' && progress.trial) {
     const played = progress.trial.games.length
+    // The placement games, then Toby's.
+    const total = TRIAL_LENGTH + 1
     return (
-      <div className="act-progress" aria-label={`Trial night: game ${played + 1} of 5`}>
+      <div className="act-progress" aria-label={`Trial night: game ${played + 1} of ${total}`}>
         <span className="act-label">Trial night</span>
-        {Array.from({ length: 5 }, (_, i) => (
+        {Array.from({ length: total }, (_, i) => (
           <span key={i} className={`act-dot ${i < played ? 'done' : i === played ? 'current' : ''}`} />
         ))}
       </div>
@@ -150,7 +154,9 @@ function Noticeboard({ progress, next }: { progress: Progress; next: NextStep })
     progress.stage === 'act-complete'
       ? 'complete'
       : progress.stage !== 'act'
-        ? 'trial'
+        ? next.kind === 'play' && next.game.kind === 'exhibition'
+          ? 'trial-finale'
+          : 'trial'
         : progress.chapter < ACT_1.chapters.length
           ? ACT_1.chapters[progress.chapter].id
           : next.kind === 'play' && next.game.kind === 'boss'
@@ -162,7 +168,7 @@ function Noticeboard({ progress, next }: { progress: Progress; next: NextStep })
     <aside className="noticeboard">
       <span className="noticeboard-pin" aria-hidden="true" />
       <p>
-        “{notice.text}”<span> — {notice.speaker}</span>
+        “{notice.text}”<span className="noticeboard-by">{notice.speaker}</span>
       </p>
     </aside>
   )
@@ -254,7 +260,8 @@ function PlayCard({
           {character?.name[0] ?? '?'}
         </span>
         <span>
-          <strong>{character?.name ?? game.opponent}</strong> <span className="next-rating">{game.rating}</span>
+          <strong>{character?.name ?? game.opponent}</strong>{' '}
+          <span className="next-rating">{game.kind === 'exhibition' ? 'unrated' : game.rating}</span>
         </span>
         <span className="next-stage">{stageText(game.stage)}</span>
       </p>

@@ -94,5 +94,12 @@ export const ACT_1: ActPlan = {
   },
 }
 
-/** Trial night: the five placement games, in order (design: "Trial night"). */
-export const TRIAL_OPPONENTS = ['marjorie', 'dex', 'graham', 'clive', 'toby']
+/** Trial night: the four placement games, in order (design: "Trial night"). */
+export const TRIAL_OPPONENTS = ['marjorie', 'dex', 'graham', 'clive']
+
+/**
+ * Then one last game "for fun" against Toby, who is also new that night. He
+ * plays at full engine strength, so the player loses: the story's first sting.
+ * It doesn't count towards the rating, and his rating is hidden ("unrated").
+ */
+export const TRIAL_FINALE = { opponent: 'toby', label: 'Trial night · one for fun vs Toby' }

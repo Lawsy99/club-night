@@ -65,7 +65,10 @@ const PLAYED_ARROW_COLOUR = 'rgba(208, 59, 59, 0.75)'
 
 export function GameScreen({ game, setGame, onReview, onContinue, playerRating }: Props) {
   const stage = HELP_STAGES[game.stage]
-  const opponent = resolveOpponent(game.levelId, game.opponentRating)
+  const isExhibition = game.path?.kind === 'exhibition'
+  const opponent = resolveOpponent(game.levelId, game.opponentRating, isExhibition)
+  // Trial night: characters speak only before and after the game (design: "Trial night").
+  const quietGame = game.path?.kind === 'trial' || isExhibition
   const [engineError, setEngineError] = useState<string | null>(null)
   const [pending, setPending] = useState<PendingMove | null>(null)
   const [hint, setHint] = useState<{ fen: string; step: 1 | 2 } | null>(null)
@@ -125,7 +128,7 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
     if (talk.startSaid || game.moves.length > 0 || !opponent.character) return
     // A moment's pause, so the dialogue history has loaded (no repeats).
     const t = window.setTimeout(() => {
-      dialogue.speak('game_start', true)
+      dialogue.speak(isExhibition ? 'exhibition_start' : 'game_start', true)
       setGame((g) => (g ? { ...g, talk: { ...talk, startSaid: true } } : g))
     }, 400)
     return () => window.clearTimeout(t)
@@ -134,7 +137,8 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
 
   useEffect(() => {
     if (!outcome || talk.endSaid || !opponent.character) return
-    if (outcome.winner !== null) dialogue.speak(outcome.winner === opponentColour ? 'game_win' : 'game_loss', true)
+    const theyWon = outcome.winner === opponentColour
+    if (outcome.winner !== null) dialogue.speak(theyWon ? (isExhibition ? 'exhibition_win' : 'game_win') : 'game_loss', true)
     setGame((g) => (g ? { ...g, talk: { ...talk, endSaid: true } } : g))
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once, when the game ends
   }, [!!outcome])
@@ -176,7 +180,9 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
       const flags = boardFlags([...sans, botMove.san], piecesLeft(after.fen()), opponentColour)
       const lineState = { linesSoFar: talk.lines, moveNumber, lastLineMove: talk.lastLineMove }
       let spoke = false
-      if (!offer && gameType === 'friendly' && chatterAllowed({ gameType, ...lineState })) {
+      if (quietGame) {
+        // Nothing said during trial-night games.
+      } else if (!offer && gameType === 'friendly' && chatterAllowed({ gameType, ...lineState })) {
         let trigger = mostImportant(triggersFor({ botMove, playerRating: ratedRef.current, botEvalCp: cp }))
         // Nothing dramatic? Sometimes they say what they're planning instead.
         if (!trigger && moveNumber >= 6 && moveNumber <= 25 && Math.random() < 0.4) trigger = 'plan_hint'
@@ -195,7 +201,7 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
       if (offer) setBubble({ kind: 'offer' })
 
       // Did that move hand the player a big chance? Sometimes the opponent gives it away.
-      if (!spoke && !offer) {
+      if (!spoke && !offer && !quietGame) {
         analysePosition(after.fen())
           .then((a) => {
             if (!a || cancelled) return
@@ -387,7 +393,7 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
 
       <PlayerStrip
         name={opponent.name}
-        rating={opponent.rating}
+        rating={opponent.unrated ? 'unrated' : opponent.rating}
         fen={fen}
         side={opponentColour}
         thinking={opponentToMove && !downloading}
@@ -531,7 +537,7 @@ export function GameScreen({ game, setGame, onReview, onContinue, playerRating }
               Review game
             </button>
             <button type="button" onClick={onContinue}>
-              {outcome.winner === null ? 'Replay' : 'Continue'}
+              {outcome.winner === null && !isExhibition ? 'Replay' : 'Continue'}
             </button>
           </>
         ) : (
@@ -579,7 +585,7 @@ function downloadLabel(status: MaiaStatus): string {
 }
 
 function resultForPlayer(outcome: GameOutcome, game: GameRecord): string {
-  if (outcome.winner === null) return 'Draws are replayed.'
+  if (outcome.winner === null) return game.path?.kind === 'exhibition' ? '' : 'Draws are replayed.'
   return outcome.winner === game.playerColour ? 'You won.' : 'You lost.'
 }
 

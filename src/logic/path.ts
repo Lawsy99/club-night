@@ -2,13 +2,14 @@
 // next (design document, "The path", "How friendlies move you forward",
 // "Stakes"). Pure state + functions; the Home screen asks `nextStep` and the
 // game flow reports results back.
-import { ACT_1, TRIAL_OPPONENTS } from '../data/act1'
+import { ACT_1, TRIAL_FINALE, TRIAL_OPPONENTS } from '../data/act1'
 import { characterRating, findCharacter } from '../data/characters'
 import { findLesson } from '../data/lessons'
 import { rateGame, type PlayerRating } from './glicko2'
 import { valveAdjustment, type RealGameResult } from './safetyValve'
 import {
   firstOpponentRating,
+  FULL_STRENGTH_RATING,
   nextTrialOpponentRating,
   TRIAL_LENGTH,
   trialEstimate,
@@ -55,7 +56,8 @@ export const NEW_PROGRESS: Progress = {
   recentReal: [],
 }
 
-export type StepKind = 'trial' | 'friendly' | 'match' | 'cup-round' | 'boss'
+/** 'exhibition': trial night's last game, against Toby at full strength (unrated). */
+export type StepKind = 'trial' | 'exhibition' | 'friendly' | 'match' | 'cup-round' | 'boss'
 
 /** What a game counts as on the path. Stored with the game. */
 export type PathGame = {
@@ -99,6 +101,21 @@ export function nextStep(p: Progress): NextStep {
 
   if (p.stage === 'trial' && p.trial) {
     const n = p.trial.games.length
+    if (n >= TRIAL_LENGTH) {
+      return {
+        kind: 'play',
+        game: {
+          kind: 'exhibition',
+          opponent: TRIAL_FINALE.opponent,
+          rating: FULL_STRENGTH_RATING,
+          stage: 'real',
+          label: TRIAL_FINALE.label,
+          location: 'The Red Lion',
+        },
+        optionalFriendly: null,
+        note: "Just for fun: it doesn't count towards your rating.",
+      }
+    }
     const opponent = TRIAL_OPPONENTS[n]
     return {
       kind: 'play',
@@ -209,6 +226,13 @@ export function completeLesson(p: Progress): Progress {
  */
 export function recordGame(p: Progress, game: PathGame, won: boolean, accuracyStrength: number | null): Progress {
   if (game.kind === 'trial') return recordTrialGame(p, game, won, accuracyStrength)
+  // Toby's trial-night game: whatever happened, the night is over. No rating change.
+  if (game.kind === 'exhibition') {
+    if (p.stage !== 'trial' || !p.trial) return p
+    // (Saved by an older version mid-trial: four games but no rating yet.)
+    const placed = p.rating ? p : settleTrial(p, p.trial.games)
+    return { ...placed, stage: 'act' }
+  }
 
   if (game.kind === 'friendly') {
     // Friendlies never change the rating; they always count towards progress.
@@ -245,8 +269,15 @@ function recordTrialGame(p: Progress, game: PathGame, won: boolean, accuracyStre
   if (!p.trial) return p
   const games = [...p.trial.games, { opponentRating: game.rating, won, accuracyStrength }]
   if (games.length < TRIAL_LENGTH) return { ...p, trial: { ...p.trial, games } }
+  return settleTrial(p, games)
+}
 
-  // Trial night done: starting rating, the Act 1 baseline, and the fixed characters.
+/**
+ * Placement done: starting rating, the Act 1 baseline, and the fixed
+ * characters. The night isn't over yet: Toby's game comes next (stage stays 'trial').
+ */
+function settleTrial(p: Progress, games: TrialGame[]): Progress {
+  if (!p.trial) return p
   const { start } = trialEstimate(games, p.trial.first)
   const baseline = Math.round(start.rating)
   const fixedRatings: Record<string, number> = {}
@@ -254,7 +285,7 @@ function recordTrialGame(p: Progress, game: PathGame, won: boolean, accuracyStre
     const c = findCharacter(id)
     if (c) fixedRatings[id] = characterRating(c, baseline)
   }
-  return { ...p, stage: 'act', trial: { ...p.trial, games }, rating: start, baseline, fixedRatings, recentReal: [] }
+  return { ...p, trial: { ...p.trial, games }, rating: start, baseline, fixedRatings, recentReal: [] }
 }
 
 function rateReal(p: Progress, opponentRatingValue: number, won: boolean, accuracyStrength: number | null): Progress {

@@ -7,8 +7,13 @@ export type Opponent = {
   id: string
   name: string
   rating: number
-  /** Below 800 the custom mistake-model bot plays; from 800 up, Maia-3. */
-  engine: 'bot' | 'maia'
+  /**
+   * Below 800 the custom mistake-model bot plays; from 800 up, Maia-3.
+   * 'full': Stockfish's best move every time (only Toby on trial night).
+   */
+  engine: 'bot' | 'maia' | 'full'
+  /** Rating hidden on screen (Toby on trial night: new members are unrated). */
+  unrated?: boolean
   character?: Character
 }
 
@@ -26,11 +31,12 @@ export const characterOpponentId = (characterId: string) => CHARACTER_PREFIX + c
  * Works out the opponent for a game. `rating` is the strength saved with the
  * game when it started, so a character's rating never shifts mid-game.
  */
-export function resolveOpponent(opponentId: string, rating?: number): Opponent {
+export function resolveOpponent(opponentId: string, rating?: number, fullStrength = false): Opponent {
   if (opponentId.startsWith(CHARACTER_PREFIX)) {
     const character = findCharacter(opponentId.slice(CHARACTER_PREFIX.length))
     if (character) {
       const r = rating ?? characterRating(character, DEFAULT_BASELINE)
+      if (fullStrength) return { id: opponentId, name: character.name, rating: r, engine: 'full', unrated: true, character }
       return { id: opponentId, name: character.name, rating: r, engine: r < MAIA_FROM ? 'bot' : 'maia', character }
     }
   }

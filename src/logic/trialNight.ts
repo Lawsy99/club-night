@@ -1,5 +1,5 @@
-// Trial night: five placement games that set the starting rating (design
-// document, "Trial night").
+// Trial night: four placement games that set the starting rating, then a
+// game against Toby that doesn't count (design document, "Trial night").
 import { MIN_RATING } from '../data/characters'
 import { rateGame, type PlayerRating } from './glicko2'
 
@@ -29,7 +29,11 @@ export type TrialGame = {
   accuracyStrength: number | null
 }
 
-export const TRIAL_LENGTH = 5
+/** Placement games (the Toby game after them isn't one). */
+export const TRIAL_LENGTH = 4
+
+/** Stored as the Toby game's rating; never shown, and never used for rating maths. */
+export const FULL_STRENGTH_RATING = 3000
 
 export function nextTrialOpponentRating(games: readonly TrialGame[], first: number): number {
   let rating = first
@@ -40,9 +44,9 @@ export function nextTrialOpponentRating(games: readonly TrialGame[], first: numb
 }
 
 /**
- * The starting rating. Two signals, blended: the rating the five results
+ * The starting rating. Two signals, blended: the rating the four results
  * imply, and the strength the moves themselves suggest (accuracy). Accuracy
- * counts more because five results alone are noisy. The player then starts
+ * counts more because four results alone are noisy. The player then starts
  * 50 below the estimate, so the first chapter feels good.
  * (The 65/35 blend is to be tuned in playtesting.)
  */
@@ -60,7 +64,7 @@ export function trialEstimate(games: readonly TrialGame[], first: number): { est
     byAccuracy === null ? byResults.rating : ACCURACY_WEIGHT * byAccuracy + (1 - ACCURACY_WEIGHT) * byResults.rating
 
   const rating = Math.max(MIN_RATING, Math.round(estimate - START_BELOW))
-  // Still fairly uncertain after five games: it keeps moving quickly for a while.
+  // Still fairly uncertain after four games: it keeps moving quickly for a while.
   return { estimate: Math.round(estimate), start: { rating, deviation: 150, volatility: 0.06 } }
 }
 

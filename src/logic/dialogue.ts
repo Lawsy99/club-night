@@ -26,6 +26,9 @@ export type Trigger =
   | 'tension'
   /** The character has just blundered and the player has a big move available. */
   | 'opportunity'
+  /** Toby's full-strength game at the end of trial night: before it, and after he wins. */
+  | 'exhibition_start'
+  | 'exhibition_win'
 
 export type Expression = 'neutral' | 'pleased' | 'annoyed' | 'surprised' | 'smug'
 

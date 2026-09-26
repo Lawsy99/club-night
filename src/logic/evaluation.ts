@@ -47,7 +47,7 @@ export function formatCp(cp: number): string {
   return formatScore({ type: 'cp', value: cp })
 }
 
-/** "+1.4", "−0.3", "M3", "−M2" — the usual way to show an evaluation. */
+/** "+1.4", "−0.3", "M3", "−M2": the usual way to show an evaluation. */
 export function formatScore(score: Score): string {
   if (score.type === 'mate') {
     if (score.value === 0) return '#'
