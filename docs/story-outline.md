@@ -21,7 +21,7 @@ A struggling club, a newcomer who keeps getting better, and a rival who is lovel
 | 1 — Club nights | Trial night, then learning the ropes | You and Toby both join. He's instantly liked. The club is short of money and members. | Club knockout cup final: Toby |
 | 2 — The club ladder | Fighting for a league team place | Toby is made captain ("He did offer to do the fixtures"). Dex's stream is revealed: you're "fork guy." You learn Pemberton has been giving Toby your scouting reports. | Top of the ladder: Toby |
 | 3 — The league season | Match nights; the room-hire stakes | The pub raises the room hire; Graham's spreadsheets say the club needs a good season. Mid-season, Toby leaves for Kingsbridge ("Oh — I assumed he'd told you"). | County cup final: Toby, then Vera |
-| 4 — The tour | Weekend congresses, city by city | You play for yourself now. Vera's story comes into the open. Whether she returns to Wexley is the final question. | The last round, and Toby (who takes a half-point bye rather than play you) **[?]** |
+| 4 — The tour | Weekend congresses, city by city | You play for yourself now. Vera's story comes into the open. Whether she returns to Wexley is the final question. | Each congress: Toby in round 4. The very last congress: he takes a half-point bye rather than play you ("Made sense, prize-wise") **[?]** |
 
 ## Act 1 in detail — "Club nights"
 
@@ -36,7 +36,7 @@ Seven chapters, one per club regular, then the knockout cup. Each chapter is rou
   - Coach Pemberton watches from the side, arms folded, and says very little.
   - Halfway through the evening, Toby turns up. He's new too. Everyone likes him within ten minutes.
   - After game 5: Pemberton gives you your starting rating like it's a verdict. Then he spends longer talking to Toby.
-- **Seeds:** the honours board on the wall. One name has been painted over and repainted: V. Hart **[?]**, "Club champion" for several years in a row. Marjorie: "Board two. Honestly. Thirty years."
+- **Seeds:** the honours board on the wall. One name keeps coming up as club champion, year after year, and then stops: V. Hart **[?]**. Marjorie: "Board two. Honestly. Thirty years." (Vera left when the coach put her on board two; the player isn't told that yet.)
 
 ### Chapter 1 — Marjorie · "First proper club night"
 
@@ -105,4 +105,4 @@ Seven chapters, one per club regular, then the knockout cup. Each chapter is rou
 2. **How openly is Pemberton's favouritism hinted in Act 1?** My draft keeps it to two tiny moments (longer chats with Toby, a thin report on him). More, or less?
 3. **The order of chapters.** Currently Marjorie, Dex, Oscar, Clive, Priya, Graham, Toby. Should Toby appear earlier than chapter 7, for example a friendly in chapter 3 or 4, to build the rivalry before the cup?
 4. **Act 1's last beat.** Toby's name already at the top of the ladder: too much, or the right sting?
-5. **Act 4's ending.** Toby taking a half-point bye to avoid you in the last round (from the tone guide) is a very funny, very petty ending. Is that the finale, or does the final round need a real game against him?
+5. **Act 4's ending.** The tone guide has Toby taking a half-point bye to dodge you in the final congress. It's a very funny, very petty ending, but it means the last big moment is a game that never happens. Keep it, or give the finale one last real game against him (or against Vera)?
