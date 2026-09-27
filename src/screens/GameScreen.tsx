@@ -33,7 +33,8 @@ import { useMoveRating } from '../engine/useMoveRating'
 import { useWakeLock } from './useWakeLock'
 import { assessMove, describeBlunder } from '../logic/blunder'
 import { flipScore, scoreFor, toCentipawns } from '../logic/evaluation'
-import { describeOutcome, getOutcome, replay, type GameOutcome } from '../logic/game'
+import { applyUci, describeOutcome, getOutcome, replay, type GameOutcome } from '../logic/game'
+import { moveStep, nameOf, notationStyle, startWith } from '../logic/notation'
 import { drawRule } from '../logic/path'
 import { playtestOn } from '../logic/playtest'
 import { gameKindLabel } from '../logic/gameLabels'
@@ -590,7 +591,7 @@ export function GameScreen({
       : showScouting
         ? 'Scouting report first.'
         : peeking
-        ? `Before ${ratedMove.san}: ${ratedMove.betterSan} (blue) was better.`
+        ? peekLine(ratedMove.fenBefore, ratedMove.betterMove, ratedMove.san, ratedMove.betterSan)
         : pending && !pending.warning
           ? 'Checking your move…'
           : downloading
@@ -801,7 +802,7 @@ export function GameScreen({
       {ratedMove && !competitive && !viewing && (
         <div className="move-info">
           <span className={`move-rating rating-${ratedMove.rating}`}>
-            {ratedMove.san}
+            {shortName(ratedMove.fenBefore, ratedMove.played, ratedMove.san)}
             {RATING_GLYPHS[ratedMove.rating]} · {RATING_LABELS[ratedMove.rating]}
           </span>
           {canPeek && (
@@ -889,6 +890,20 @@ export function GameScreen({
       </p>
     </main>
   )
+}
+
+/** The move-rating chip: "Nd3", or "Knight to d3" below 1500 (notation.ts). */
+function shortName(fen: string, uci: string, san: string): string {
+  if (notationStyle() === 'san') return san
+  const move = applyUci(new Chess(fen), uci)
+  return move ? `${startWith(moveStep(move))} ` : san
+}
+
+/** "Before Nd3: Bc4 (blue) was better.", or in words for newer players. */
+function peekLine(fen: string, better: string | null, san: string, betterSan: string | null): string {
+  if (notationStyle() === 'san') return `Before ${san}: ${betterSan} (blue) was better.`
+  const name = better ? nameOf(fen, better) : null
+  return name ? `${startWith(name)} (blue) was better than your move.` : 'The blue arrow was better than your move.'
 }
 
 const PIECE_WORDS: Record<string, string> = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen' }

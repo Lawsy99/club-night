@@ -14,6 +14,7 @@ import { explainGoodMove } from '../logic/explain'
 import { describeOutcome, replay, type Colour } from '../logic/game'
 import { outcomeOf, type GameRecord } from '../logic/gameRecord'
 import { RATING_LABELS, type MoveRating } from '../logic/moveRating'
+import { moveName } from '../logic/notation'
 import { bestMoveOfGame, gameAccuracy, ratingCounts, reviewMoves, SHORTEST_REVIEW, type PositionEval } from '../logic/review'
 import { cardId, cardsFromMoments, gameMoments, moveLabel } from '../logic/mistakeCards'
 import { addCardsIfNew, getArchivedGame, listArchivedGames, retireCardById, saveGameAnalysis } from '../storage/db'
@@ -37,6 +38,12 @@ const COUNT_LABELS: Record<MoveRating, [one: string, many: string]> = {
   inaccuracy: ['Inaccuracy', 'Inaccuracies'],
   mistake: ['Mistake', 'Mistakes'],
   blunder: ['Blunder', 'Blunders'],
+}
+
+/** The opponent's move just before `ply`, named for the player ("Nf6" or "the knight move to f6"). */
+function theirMoveName(moves: readonly string[], ply: number): string {
+  const move = replay(moves.slice(0, ply)).history({ verbose: true }).at(-1)
+  return move ? moveName(move) : 'their move'
 }
 
 export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChange = null }: Props) {
@@ -193,7 +200,7 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
             {skipButton}
           </div>
           <h1>
-            {moment.moveLabel}{' '}
+            {moveLabel({ fenBefore: moment.fenBefore, uci: moment.played, ply: moment.ply, rating: moment.rating })}{' '}
             <span className={`review-pill rating-${moment.rating}`}>
               {moment.kind === 'missed' ? 'Missed chance' : RATING_LABELS[moment.rating]}
             </span>
@@ -232,7 +239,7 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
           <>
             <MoveReplay moves={game.moves} ply={best.move.ply} orientation={player === 'w' ? 'white' : 'black'} />
             <p className="review-explanation">
-              {best.move.ply > 0 && <>They played {replay(game.moves.slice(0, best.move.ply)).history().at(-1)}. </>}
+              {best.move.ply > 0 && <>They played {theirMoveName(game.moves, best.move.ply)}. </>}
               {explainGoodMove(best.move.fenBefore, best.move.uci, best.punished, evals?.[best.move.ply]?.pv, game.moves.slice(best.move.ply))}
             </p>
           </>

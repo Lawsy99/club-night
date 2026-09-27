@@ -8,6 +8,7 @@
 // so they're always true.
 import { Chess, type Move, type PieceSymbol, type Square } from 'chess.js'
 import { applyUci, type Colour } from './game'
+import { lineText } from './notation'
 
 export const PIECE_NAMES: Record<PieceSymbol, string> = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' }
 export const PIECE_VALUES: Record<PieceSymbol, number> = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 }
@@ -198,7 +199,8 @@ function prize(t: Tactic): PieceSymbol {
 
 /** The line in move notation ("Qh7+ Kf8 Qh8#"). */
 export function lineSan(outcome: LineOutcome, from = 0, to = outcome.moves.length): string {
-  return outcome.moves.slice(from, to).map((m) => m.san).join(' ')
+  // Notation or words, depending on the player's rating (notation.ts).
+  return lineText(outcome.moves.slice(from, to))
 }
 
 /**

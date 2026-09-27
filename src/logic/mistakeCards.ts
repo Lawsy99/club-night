@@ -1,12 +1,14 @@
 // A game's biggest moments (for the review) and the warm-up positions made
 // from them. Pure: the review screen and the background check after a game
 // both use it, so they always agree.
+import { Chess } from 'chess.js'
 import { explainMistake } from './explain'
-import { replay, type Colour } from './game'
+import { applyUci, replay, type Colour } from './game'
 import type { GameRecord } from './gameRecord'
 import { MAX_CARDS_PER_GAME, newCard, qualifiesForDeck, type MistakeCard } from './mistakesDeck'
 import type { Moment } from './moment'
 import { RATING_GLYPHS, type MoveRating } from './moveRating'
+import { moveHeading } from './notation'
 import { biggestMoments, reviewMoves, type PositionEval, type ReviewedMove } from './review'
 
 export type ReviewMoment = Moment & { ply: number; rating: MoveRating; moveLabel: string }
@@ -95,9 +97,12 @@ export function isMissedChance(cpBeforeTheirMove: number, cpBeforeYourMove: numb
   return cpBeforeYourMove >= 200 && cpBeforeYourMove - cpBeforeTheirMove >= 200 && cpBeforeTheirMove < 150
 }
 
-/** "14. Bxf7??" or "14… Nf6", with the usual annotation mark. */
-export function moveLabel(m: ReviewedMove): string {
-  const number = Math.floor(m.ply / 2) + 1
-  const san = m.san + RATING_GLYPHS[m.rating]
-  return m.mover === 'w' ? `${number}. ${san}` : `${number}… ${san}`
+/**
+ * "14. Bxf7??" or "14… Nf6", with the usual annotation mark; in words below
+ * 1500 ("Move 14: The bishop capture on f7 ??"). Worked out when shown, so
+ * saved cards follow the player's rating too.
+ */
+export function moveLabel(m: { fenBefore: string; uci: string; ply: number; rating: MoveRating }): string {
+  const move = applyUci(new Chess(m.fenBefore), m.uci)
+  return move ? moveHeading(m.ply, move, RATING_GLYPHS[m.rating]) : `Move ${Math.floor(m.ply / 2) + 1}`
 }

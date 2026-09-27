@@ -7,6 +7,7 @@ import { analysePosition } from '../engine/analysis'
 import { flipScore, toCentipawns, winChance } from '../logic/evaluation'
 import { explainBestMove, explainMistake } from '../logic/explain'
 import { applyUci } from '../logic/game'
+import { nameOf } from '../logic/notation'
 import type { Answer } from '../logic/mistakesDeck'
 import type { Moment } from '../logic/moment'
 import { Board } from './Board'
@@ -67,7 +68,9 @@ export function MomentTrainer({ moment, onFinished }: Props) {
     setReplaying(true)
   }
 
+  // Named in notation or words, by the player's rating (notation.ts).
   const bestSan = sanOf(moment.fenBefore, moment.bestMove)
+  const playedSan = sanOf(moment.fenBefore, moment.played)
 
   function finish(kind: Result, fen: string, move: string) {
     // Play the answer out: the question position, then the piece moving.
@@ -179,7 +182,7 @@ export function MomentTrainer({ moment, onFinished }: Props) {
               )}
             </p>
             <p className="moment-explanation">
-              And {moment.playedSan} in the game?{' '}
+              And {playedSan} in the game?{' '}
               {/* If the explanation is only about the move missed, don't say it twice. */}
               {/^You (missed|had|needed)/.test(moment.explanation)
                 ? moment.kind === 'missed'
@@ -206,8 +209,8 @@ export function MomentTrainer({ moment, onFinished }: Props) {
           ? 'Checking…'
           : (feedback ??
             (moment.kind === 'missed'
-              ? `${theirSan ? `They played ${theirSan}, and it was a mistake. ` : 'They’d just slipped up. '}In the game you played ${moment.playedSan}. Find the move that punishes it.`
-              : `${theirSan ? `They played ${theirSan}. ` : ''}In the game you played ${moment.playedSan}. Find a better move.`))}
+              ? `${theirSan ? `They played ${theirSan}, and it was a mistake. ` : 'They’d just slipped up. '}In the game you played ${playedSan}. Find the move that punishes it.`
+              : `${theirSan ? `They played ${theirSan}. ` : ''}In the game you played ${playedSan}. Find a better move.`))}
       </p>
       <p className="moment-tries">
         {triesLeft} {triesLeft === 1 ? 'try' : 'tries'} left
@@ -225,5 +228,5 @@ export function MomentTrainer({ moment, onFinished }: Props) {
 }
 
 function sanOf(fen: string, uci: string): string {
-  return applyUci(new Chess(fen), uci)?.san ?? uci
+  return nameOf(fen, uci) ?? uci
 }

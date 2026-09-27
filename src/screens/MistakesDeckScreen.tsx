@@ -12,7 +12,7 @@ import {
   type Answer,
   type MistakeCard,
 } from '../logic/mistakesDeck'
-import { refreshCard, withLeadUp } from '../logic/mistakeCards'
+import { moveLabel, refreshCard, withLeadUp } from '../logic/mistakeCards'
 import { getArchivedGame, loadCards, saveCard } from '../storage/db'
 import '../components/ratings.css'
 import './ReviewScreen.css'
@@ -137,7 +137,7 @@ export function MistakesDeckScreen({ onBack, warmup = false, onDone }: Props) {
         </p>
       </header>
       <h1 className="deck-title">
-        {card.moveLabel}{' '}
+        {moveLabel({ fenBefore: card.fenBefore, uci: card.played, ply: card.ply, rating: card.rating })}{' '}
         <span className={`review-pill rating-${card.rating}`}>
           {card.kind === 'missed' ? 'Missed chance' : RATING_LABELS[card.rating]}
         </span>

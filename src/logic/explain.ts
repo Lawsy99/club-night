@@ -22,6 +22,7 @@ import {
   type Tactic,
 } from './lineFacts'
 import { joinIdeas, moveIdeas } from './moveIdeas'
+import { continueWith, moveName, moveStep, nameOf, notationStyle, pieceOf, startWith } from './notation'
 import { positionalHarm, type PositionalKind } from './positional'
 
 /** Engine scores beyond this (in centipawns) mean a forced mate. */
@@ -143,7 +144,7 @@ export function explainMistake(f: MistakeFacts): string {
 }
 
 function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
-  const bestSan = f.bestMove ? sanOf(f.fenBefore, f.bestMove) : null
+  const bestSan = f.bestMove ? nameOf(f.fenBefore, f.bestMove) : null
   const afterFen = fenAfter(f.fenBefore, f.played)
   const replyLine = f.replyLine?.length ? f.replyLine : f.reply ? [f.reply] : null
   // (Long enough to see a mate or a pawn run through.)
@@ -195,7 +196,11 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
   // (only if that's really the size of it: not the story of a much bigger blunder).
   const retaken = f.bestMove ? recaptured(f.prev, f.bestMove) : null
   const couldRetake = !!f.bestMove && !!bestSan && !!retaken && f.played.slice(2, 4) !== f.bestMove.slice(2, 4)
-  const needed = couldRetake ? `You needed to take back on ${f.bestMove!.slice(2, 4)} with ${bestSan}.` : ''
+  const needed = couldRetake
+    ? notationStyle() === 'words'
+      ? `You needed to take back on ${f.bestMove!.slice(2, 4)} with your ${pieceOf(f.fenBefore, f.bestMove!)}.`
+      : `You needed to take back on ${f.bestMove!.slice(2, 4)} with ${bestSan}.`
+    : ''
   if (couldRetake && accounts(VALUES[retaken!], RETAKE_SHARE)) return { kind: 'missed-win', text: needed }
 
   // Material: what the move and their best line cost, against what the best line keeps.
@@ -206,10 +211,10 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
   if (theirs?.promotes === 'us' && (!bestOutcome || bestOutcome.promotes !== 'them')) {
     const real = f.actual?.length && afterFen ? followLine(afterFen, f.actual, 12) : null
     const text = !real
-      ? `It allows ${theirs.moves[0].san}, and then nothing stops their pawn from queening.`
+      ? `It allows ${moveName(theirs.moves[0])}, and then nothing stops their pawn from queening.`
       : real.promotes === 'us'
-        ? `After ${theirs.moves[0].san}, nothing could stop their pawn from queening.`
-        : `It allowed ${theirs.moves[0].san}, and a pawn of theirs that couldn’t be stopped. In the game it went another way.`
+        ? `After ${moveName(theirs.moves[0])}, nothing could stop their pawn from queening.`
+        : `It allowed ${moveName(theirs.moves[0])}, and a pawn of theirs that couldn’t be stopped. In the game it went another way.`
     return { kind: 'lost-material', text }
   }
   // A missed win comes first when it's the bigger part of the story (Sep 2026:
@@ -233,7 +238,7 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
   // Took on the right square with the wrong piece: nothing was "missed".
   if (sameSquare && bestSan) {
     const harm = drop < POSITIONAL_MAX_CP ? positionalHarm(f.fenBefore, f.played, f.cpBefore) : null
-    return { kind: harm?.kind ?? 'positional', text: `Right square, wrong piece: ${bestSan} was the better way to take.${harm ? ` ${harm.text}` : ''}` }
+    return { kind: harm?.kind ?? 'positional', text: `Right square, wrong piece: ${notationStyle() === 'words' ? `taking with the ${pieceOf(f.fenBefore, f.bestMove!)} was better` : `${bestSan} was the better way to take`}.${harm ? ` ${harm.text}` : ''}` }
   }
 
   // What the player could have won instead.
@@ -257,7 +262,7 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
       /^(threatens mate|pins their|(attacks|uncovers an attack on) their (queen|rook|bishop|knight))/.test(i),
     )
     if (threat.length) {
-      const text = `It allowed ${reply.san}, which ${joinIdeas(threat.map(fromTheirSide))}.`
+      const text = `It allowed ${moveName(reply)}, which ${joinIdeas(threat.map(fromTheirSide))}.`
       return { kind: 'positional', text: needed ? `${needed} Instead, ${lower(text)}` : text }
     }
   }
@@ -273,11 +278,11 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
             ? 'your advantage is gone'
             : 'the position swings their way'
           : 'your position gets much harder'
-    const text = `It allowed ${reply.san}, and from there ${where}.`
+    const text = `It allowed ${moveName(reply)}, and from there ${where}.`
     return { kind: 'positional', text: needed ? `${needed} Instead, ${lower(text)}` : text }
   }
   if (needed) return { kind: 'missed-win', text: needed }
-  return { kind: 'positional', text: bestSan ? `${bestSan} was stronger.` : 'There was a stronger move here.' }
+  return { kind: 'positional', text: bestSan ? `${startWith(bestSan)} was stronger.` : 'There was a stronger move here.' }
 }
 
 /** Turns one of their ideas round to your side ("attacks their knight" → "attacks your knight"). */
@@ -304,12 +309,12 @@ function lossSentence(f: MistakeFacts, played: LineOutcome, theirs: LineOutcome,
   if (playedMove?.captured && reply.to === moved) {
     const text =
       tense === 'happened'
-        ? `Taking on ${moved} cost you ${loss}: ${takenBy(f, moved) ?? reply.san} took back.`
+        ? `Taking on ${moved} cost you ${loss}: ${takenBy(f, moved) ?? taker(reply)} took back.`
         : tense === 'missed'
-          ? `Taking on ${moved} could have cost you ${loss}: ${reply.san} takes back. They didn’t.`
+          ? `Taking on ${moved} could have cost you ${loss}: ${taker(reply)} takes back. They didn’t.`
           : tense === 'avoided'
-            ? `Taking on ${moved} could have cost you ${loss} after ${reply.san}. In the game it went another way.`
-            : `Taking on ${moved} would cost you ${loss}: ${reply.san} takes back.`
+            ? `Taking on ${moved} could have cost you ${loss} after ${moveName(reply)}. In the game it went another way.`
+            : `Taking on ${moved} would cost you ${loss}: ${taker(reply)} takes back.`
     return { kind: 'lost-material', text }
   }
   const found = findTactic(theirs)
@@ -318,25 +323,25 @@ function lossSentence(f: MistakeFacts, played: LineOutcome, theirs: LineOutcome,
     const where = square === moved ? `Your ${NAMES[piece]} on ${moved} was left undefended` : `This left your ${NAMES[piece]} on ${square} undefended`
     const then =
       tense === 'happened'
-        ? `, and ${takenBy(f, square) ?? reply.san} took it.`
+        ? `, and ${takenBy(f, square) ?? taker(reply)} took it.`
         : tense === 'missed'
-          ? `: ${reply.san} would have taken it, but they missed it.`
+          ? `: ${taker(reply)} would have taken it, but they missed it.`
           : tense === 'avoided'
-            ? `: ${reply.san} could take it. In the game it went another way.`
-            : `: ${reply.san} just takes it.`
+            ? `: ${taker(reply)} could take it. In the game it went another way.`
+            : `: ${taker(reply)} just takes it.`
     return { kind: 'undefended', text: `${where}${then}` }
   }
   if (found) {
     const kind: ErrorKind = found.tactic.kind === 'fork' ? 'fork' : 'lost-material'
-    if (found.index === 0) return { kind, text: `This allowed ${reply.san}, ${tacticNoun(found.tactic, 'your')}. ${costs(tense, loss)}` }
+    if (found.index === 0) return { kind, text: `This allowed ${moveName(reply)}, ${tacticNoun(found.tactic, 'your')}. ${costs(tense, loss)}` }
     return {
       kind,
-      text: `It allowed ${lineSan(theirs, 0, found.index)}, and then ${found.move.san} ${tacticVerb(found.tactic, 'your')}. ${costs(tense, loss)}`,
+      text: `It allowed ${lineSan(theirs, 0, found.index)}, and then ${moveName(found.move)} ${tacticVerb(found.tactic, 'your')}. ${costs(tense, loss)}`,
     }
   }
   const key = theirs.keyCapture
-  if (key && key !== reply) return { kind: 'lost-material', text: `It allowed ${reply.san}, and then ${key.san}. ${costs(tense, loss)}` }
-  return { kind: 'lost-material', text: `It allowed ${reply.san}${reply.captured ? ' and the exchanges after it' : ''}. ${costs(tense, loss)}` }
+  if (key && key !== reply) return { kind: 'lost-material', text: `It allowed ${moveName(reply)}, and then ${moveName(key)}. ${costs(tense, loss)}` }
+  return { kind: 'lost-material', text: `It allowed ${moveName(reply)}${reply.captured ? ' and the exchanges after it' : ''}. ${costs(tense, loss)}` }
 }
 
 /**
@@ -361,7 +366,7 @@ export function explainBestMove(
   const after = new Chess(fenBefore)
   const move = applyUci(after, best)
   if (!move) return ''
-  const san = move.san
+  const san = startWith(moveName(move))
 
   if (after.isCheckmate()) return `${san} is checkmate.`
   const line = bestLine?.[0] === best ? bestLine : [best]
@@ -375,7 +380,7 @@ export function explainBestMove(
 
   // A pawn that gets through to queen, whatever it costs on the way.
   if (long.promotes === 'us') {
-    if (isSacrifice(long, 0)) return `${san} is a sacrifice: after ${long.moves[1].san}, nothing stops a pawn from queening.`
+    if (isSacrifice(long, 0)) return `${san} is a sacrifice: after ${moveStep(long.moves[1])}, nothing stops a pawn from queening.`
     if (long.traded && !move.promotion) return `${san} forces a trade, and then nothing stops your pawn from queening.`
     return `${san}: now nothing stops the pawn from queening.`
   }
@@ -390,17 +395,17 @@ export function explainBestMove(
     const found = findTactic(out)
     if (found?.tactic.kind === 'undefended' && found.index === 0) return `${san} wins their ${NAMES[found.tactic.piece]}: nothing can take it back.`
     if (found?.index === 0) return `${san} ${tacticVerb(found.tactic, 'their')}, and wins ${gain}.`
-    if (found) return `${san} wins ${gain}: after ${lineSan(out, 1, found.index)}, ${found.move.san} ${tacticVerb(found.tactic, 'their')}.`
-    if (isSacrifice(out, 0) && out.moves[2]) return `${san} is a sacrifice that wins ${gain}: after ${out.moves[1].san}, ${out.moves[2].san}.`
+    if (found) return `${san} wins ${gain}: after ${lineSan(out, 1, found.index)}, ${moveName(found.move)} ${tacticVerb(found.tactic, 'their')}.`
+    if (isSacrifice(out, 0) && out.moves[2]) return `${san} is a sacrifice that wins ${gain}: after ${moveStep(out.moves[1])}, ${moveStep(out.moves[2])}.`
     if (move.captured) return `${san} wins ${gain}.`
     const key = out.keyCapture
-    if (key && key !== out.moves[0]) return `${san} sets up ${key.san}, and wins ${gain}.`
+    if (key && key !== out.moves[0]) return `${san} sets up ${moveName(key)}, and wins ${gain}.`
     return `${san} wins ${gain}.`
   }
 
   // A sacrifice for an attack: taken at once, and the attack goes on with check.
   if (isSacrifice(out, 0) && bestCp >= WINNING_CP && out.moves[2]?.san.includes('+')) {
-    return `${san} is a sacrifice to open up their king: after ${out.moves[1].san}, ${out.moves[2].san}.`
+    return `${san} is a sacrifice to open up their king: after ${moveStep(out.moves[1])}, ${moveStep(out.moves[2])}.`
   }
 
   // Swapping into an ending that's won: a forcing move (capture or check),
@@ -449,7 +454,7 @@ export function coachComment(f: MistakeFacts): string {
   const why = explainMistake(f)
   if (!f.bestMove || /^You (missed|had|needed)/.test(why)) return why
   const instead = explainBestMove(f.fenBefore, f.bestMove, f.cpBefore, f.played, f.bestLine, f.prev, f.cpAfter)
-  return why.endsWith('was stronger.') ? instead : `${why} Instead, ${instead}`
+  return why.endsWith('was stronger.') ? instead : `${why} Instead, ${continueWith(instead)}`
 }
 
 /**
@@ -463,31 +468,33 @@ export function explainGoodMove(fenBefore: string, uci: string, punished: boolea
   const chess = new Chess(fenBefore)
   const move = applyUci(chess, uci)
   if (!move) return ''
-  if (chess.isCheckmate()) return `${move.san}: checkmate.`
+  const name = moveName(move)
+  const Name = startWith(name)
+  if (chess.isCheckmate()) return `${Name}: checkmate.`
 
   // What really happened in the game. "Punished" is only said when the move
   // really took advantage (Joseph, Sep 2026: it was said about castling).
   const real = actual?.[0] === uci ? creditFor(fenBefore, actual) : null
-  if (real?.mates) return punished ? `You punished their mistake with ${move.san}, and it led to checkmate.` : `${move.san} led to checkmate.`
+  if (real?.mates) return punished ? `You punished their mistake with ${name}, and it led to checkmate.` : `${Name} led to checkmate.`
   const realGain = real && real.net >= MATERIAL ? describeGain(real.won, real.lost, real.mixedMinors) : null
   if (realGain) {
     const found = findTactic(real!)
-    if (punished) return `You punished their mistake with ${move.san}, and won ${realGain}.`
-    if (found?.tactic.kind === 'undefended' && found.index === 0) return `${move.san} won their ${NAMES[found.tactic.piece]}.`
-    return found?.index === 0 ? `${move.san} ${tacticVerb(found.tactic, 'their')}, and won ${realGain}.` : `${move.san} won ${realGain}.`
+    if (punished) return `You punished their mistake with ${name}, and won ${realGain}.`
+    if (found?.tactic.kind === 'undefended' && found.index === 0) return `${Name} won their ${NAMES[found.tactic.piece]}.`
+    return found?.index === 0 ? `${Name} ${tacticVerb(found.tactic, 'their')}, and won ${realGain}.` : `${Name} won ${realGain}.`
   }
 
   // What the engine saw it could win, if the game didn't (or wasn't known).
   const out = followLine(fenBefore, line?.[0] === uci ? line : [uci])
   const gain = out.net >= MATERIAL ? describeGain(out.won, out.lost, out.mixedMinors) : null
   if (gain) {
-    const key = out.keyCapture && out.keyCapture !== out.moves[0] ? ` The follow-up was ${out.keyCapture.san}.` : ''
+    const key = out.keyCapture && out.keyCapture !== out.moves[0] ? ` The follow-up was ${moveName(out.keyCapture)}.` : ''
     const could = real ? `Followed up properly, it wins ${gain}.${key}` : `It wins ${gain}.${key}`
-    return `${move.san} was the strongest move on the board. ${could}`
+    return `${Name} was the strongest move on the board. ${could}`
   }
   const ideas = moveIdeas(fenBefore, uci)
-  if (ideas.length) return `${move.san} ${joinIdeas(ideas)}. The strongest move on the board.`
-  return `${move.san} was the strongest move in the position.`
+  if (ideas.length) return `${Name} ${joinIdeas(ideas)}. The strongest move on the board.`
+  return `${Name} was the strongest move in the position.`
 }
 
 // --- Wording --------------------------------------------------------------------
@@ -497,7 +504,7 @@ function winsWith(out: LineOutcome, found: FoundTactic | null, gain: string, who
   if (!found) return `It wins ${gain}.`
   if (found.tactic.kind === 'undefended') return `It wins their ${NAMES[found.tactic.piece]}, which nothing defends.`
   if (found.index === 0) return `It ${tacticVerb(found.tactic, whose)}, and wins ${gain}.`
-  return `It wins ${gain}: after ${lineSan(out, 1, found.index)}, ${found.move.san} ${tacticVerb(found.tactic, whose)}.`
+  return `It wins ${gain}: after ${lineSan(out, 1, found.index)}, ${moveName(found.move)} ${tacticVerb(found.tactic, whose)}.`
 }
 
 /** The tactic as a phrase after the move ("forks their king and rook"). */
@@ -555,9 +562,14 @@ function takenBy(f: MistakeFacts, square: string): string | null {
   for (const uci of f.actual.slice(0, 6)) {
     const m = applyUci(chess, uci)
     if (!m) return null
-    if (m.color === them && m.captured && m.to === square) return m.san
+    if (m.color === them && m.captured && m.to === square) return taker(m)
   }
   return null
+}
+
+/** Who took (back): "Qxd6" in notation, "their queen" in words. */
+function taker(m: { san: string; piece: PieceSymbol }): string {
+  return notationStyle() === 'words' ? `their ${NAMES[m.piece]}` : m.san
 }
 
 /** "It allowed…" → "it allowed…", for joining sentences. */
@@ -580,10 +592,6 @@ function listOf(items: readonly PieceSymbol[]): string {
   if (items.length === 2 && items[0] === items[1]) return `two ${NAMES[items[0]]}s`
   const names = items.map((i) => NAMES[i])
   return names.length <= 2 ? names.join(' and ') : `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`
-}
-
-function sanOf(fen: string, uci: string): string | null {
-  return applyUci(new Chess(fen), uci)?.san ?? null
 }
 
 function fenAfter(fen: string, uci: string): string | null {

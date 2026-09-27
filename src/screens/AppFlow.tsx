@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import { characterOpponentId } from '../data/opponents'
 import { rateGame } from '../logic/glicko2'
+import { setNotationStyle, styleForRating } from '../logic/notation'
 import {
   newGameRecord,
   nextPlayerColour,
@@ -132,6 +133,9 @@ export function AppFlow() {
 function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSettings: (s: Settings) => void }) {
   const [loaded, setLoaded] = useState(false)
   const [progress, setProgress] = useState<Progress>(NEW_PROGRESS)
+  // How moves are written: in words below 1500, notation from there (Joseph,
+  // Sep 2026). Set while rendering, so every screen below already agrees.
+  setNotationStyle(styleForRating(progress.rating?.rating ?? progress.baseline))
   // The current (or most recently finished) game
   const [game, setGame] = useState<GameRecord | null>(null)
   const [view, setView] = useState<View>('home')
