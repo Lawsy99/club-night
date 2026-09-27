@@ -242,22 +242,44 @@ export function opponentRating(p: Progress, id: string): number {
  */
 export const EARLY_MATCH_CAP = [-150, -150, -125, -125, -100, -100, -60]
 /**
- * After that, Saturday is a fair test: never more than this far below you,
- * so the people fixed at trial night don't become walkovers once you've
- * climbed past them. Anyone the story puts above you stays above.
+ * Every game you must win to move on (Saturday, the cup, the ladder, the
+ * final) is played close to your level, a little above or below, and moves
+ * with your rating week by week (Joseph, Sep 2026: never a far stronger
+ * opponent standing in the way; fixed strengths are for practice night only).
+ * What mixes it up is the style, not the number.
  */
-export const MATCH_FLOOR = -50
+export const MATCH_BELOW = -50
+export const MATCH_ABOVE = 60
+
+/** `rating` kept between you + lo and you + hi. */
+function nearYou(p: Progress, rating: number, lo: number, hi: number): number {
+  const you = p.rating ? p.rating.rating : p.baseline
+  return Math.min(rounded(you + hi), Math.max(rounded(you + lo), rating))
+}
 
 /**
  * The week's person's strength, on Thursday and Saturday alike (one number
- * all week): their usual rating, eased early on and kept close to you later.
+ * all week): their usual distance from you, eased early on (never more than
+ * 50 further below than the cap either), then within the match band.
  */
 export function weekOpponentRating(p: Progress, id: string): number {
   const base = opponentRating(p, id)
-  const you = p.rating ? p.rating.rating : p.baseline
   const cap = actNumber(p) === 1 ? EARLY_MATCH_CAP[p.chapter] : undefined
-  if (cap !== undefined) return Math.min(base, rounded(you + cap))
-  return Math.max(base, rounded(you + MATCH_FLOOR))
+  if (cap !== undefined) return nearYou(p, base, cap + MATCH_BELOW, cap)
+  return nearYou(p, base, MATCH_BELOW, MATCH_ABOVE)
+}
+
+/**
+ * A knockout round: in the band, and a little harder each round (the first at
+ * least 50 below you, then 25 below, then level), so the draw still builds.
+ */
+export function roundRating(p: Progress, id: string, round: number): number {
+  return nearYou(p, opponentRating(p, id), MATCH_BELOW + 25 * round, MATCH_ABOVE)
+}
+
+/** The final: at your level or a little above, following your rating. */
+export function finalRating(p: Progress, id: string): number {
+  return nearYou(p, opponentRating(p, id), 0, MATCH_ABOVE)
 }
 
 const nameOf = (id: string) => findCharacter(id)?.name ?? id
@@ -394,8 +416,8 @@ export function nextStep(p: Progress): NextStep {
       game: {
         kind: 'cup-round',
         opponent: round.opponent,
-        // At their club rating, as on the ladder (the draw is ordered so it gets harder).
-        rating: opponentRating(p, round.opponent),
+        // Close to your level, a little harder each round (roundRating).
+        rating: roundRating(p, round.opponent, cup.round),
         stage: 'real',
         label: round.label,
         location: g.location,
@@ -404,11 +426,12 @@ export function nextStep(p: Progress): NextStep {
       note: null,
     }
   }
-  // The boss stays ahead of the player however they've improved, and never
-  // gets easier after a loss (design: "Boss strengths ... never drop").
-  const bossRating = Math.max(cup.bossRating, opponentRating(p, g.boss.opponent))
+  // The boss is level with you or a little ahead, and follows your rating
+  // (Joseph, Sep 2026: every must-win game is close to your level). What
+  // grows after a loss is the support, below.
+  const bossRating = finalRating(p, g.boss.opponent)
   const boss: PathGame = { kind: 'boss', opponent: g.boss.opponent, rating: bossRating, stage: 'real', label: g.boss.label, location: g.location }
-  // Support grows after boss losses; the boss never gets easier (design: "Support after boss losses").
+  // Support grows after boss losses (design: "Support after boss losses").
   const studyFriendly: PathGame | null =
     cup.bossAttempts >= 2 ? { ...boss, kind: 'friendly', stage: 'assisted', label: `Practice game vs ${nameOf(g.boss.opponent)}, with full help` } : null
   const targetedPuzzles =
@@ -467,7 +490,7 @@ function bossNote(attempts: number): string | null {
   return 'Pemberton has put together puzzles from his openings. The practice game is still there too.'
 }
 
-/** The boss plays at their club rating when the cup starts, then stays fixed (never drops after a loss). */
+/** The cup's starting state (the boss's strength itself comes from finalRating). */
 function startCup(p: Progress): Progress {
   const boss = actPlan(p).gauntlet.boss.opponent
   return { ...p, cup: p.cup ?? { round: 0, bossRating: rounded(opponentRating(p, boss)), bossAttempts: 0 } }
@@ -590,8 +613,8 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
     return { ...next, cup: won ? { ...cup, round: cup.round + 1 } : cup }
   }
   // Boss: win the act, or straight to a rematch (Joseph, Sep 2026: no replaying
-  // the earlier rounds; he's stronger than you, so the rematch is the challenge).
-  // His strength never drops.
+  // the earlier rounds). His strength follows yours (finalRating); bossRating
+  // is only kept as a record of the strongest version you've faced.
   return won
     ? { ...next, stage: 'act-complete', pendingStory: [...(next.pendingStory ?? []), ...storyAfterFinal(actNumber(p))] }
     : { ...next, cup: { ...cup, bossAttempts: cup.bossAttempts + 1, bossRating: Math.max(cup.bossRating, game.rating) } }

@@ -141,8 +141,13 @@ Fixed characters (Marjorie, Clive, Graham) and the background members keep the r
 **The week's person (Joseph, Sep 2026: nobody should get stuck early and stop seeing the story).** The person you play on Saturday is adjusted for their week, on Thursday and Saturday alike, so their number is the same all week (`weekOpponentRating` in logic/path.ts):
 
 - Act 1, weeks 1 to 7: at least 150 below the player in weeks 1 and 2, then 125, 125, 100, 100 and 60 below. At 150 below, the player wins about four best-of-threes in five. Anyone already further below stays as they are.
-- From week 8, and in later acts: never more than 50 below the player, so the fixed characters don't become walkovers on Saturday once the player has climbed past them. Anyone the story puts above the player (Toby, Priya before she's beaten) stays above.
-- The rest of the week stays demanding: Thursday's stronger practice game, Toby's visits and Pemberton at the player's level are unchanged. Cup rounds and the final keep their own rules.
+- From week 8, and in later acts: between 50 below and 60 above the player, following the player's rating week by week.
+- The rest of the week stays demanding: Thursday's stronger practice game, Toby's visits and Pemberton at the player's level are unchanged.
+
+**Every must-win game is close to the player's level (Joseph, Sep 2026).** Saturday matches, cup rounds, ladder challenges and the final are never against a far stronger (or far weaker) opponent: they sit a little above or below the player and move with the player's rating. Fixed strengths (Marjorie, Clive, Graham, Malcolm, the background members) apply on practice night and the club ladder display only. What makes one must-win game different from the next is the opponent's style, not their number.
+
+- Knockout rounds: between 50 below and 60 above, the floor rising 25 each round (the first round at least 50 below, then 25 below, then level), so the draw still builds.
+- The final: level with the player up to 60 above, following the player's rating. This replaces "boss strengths never drop": after a loss what grows is the support (the study game, the targeted puzzles), not the number.
 
 ### The club ladder
 
@@ -373,7 +378,7 @@ Most losses cost nothing but a replay. Real stakes are saved for the end of each
 
 Every format is a real chess format.
 
-**Losing to the boss (Joseph, Sep 2026):** straight to a rematch, with no replaying the earlier rounds. The boss is stronger than you and never gets easier, so the rematch is the challenge. The story never branches: you play on until you win.
+**Losing to the boss (Joseph, Sep 2026):** straight to a rematch, with no replaying the earlier rounds. The boss is level with you or a little ahead, following your rating, so the rematch is a fair challenge. The story never branches: you play on until you win.
 
 | Act | Gauntlet (3 matches) | Boss | If you lose to the boss |
 | --- | --- | --- | --- |
@@ -384,7 +389,7 @@ Every format is a real chess format.
 
 ### Strength settings
 
-**Revised Sep 2026:** cup opponents play at their club ratings (as shown on the ladder), so the Act 1 draw is ordered to get harder: Clive (settled, well below by then), Oscar (player −90), Priya (player −20), then Toby (player +50). The boss never gets easier after a loss, and never drops behind the player. Win chance against Toby is about 43%: a little over 2 attempts on average.
+**Revised Sep 2026:** cup opponents play at their club ratings (as shown on the ladder), so the Act 1 draw is ordered to get harder: Clive (settled, well below by then), Oscar (player −90), Priya (player −20), then Toby (player +50). The boss never drops behind the player. Win chance against Toby is about 43%: a little over 2 attempts on average. (Superseded later in Sep 2026: rounds and final now sit near the player's level; see "Every must-win game is close to the player's level" under Strength offsets.)
 
 | Opponent | Strength |
 | --- | --- |
@@ -394,7 +399,7 @@ Every format is a real chess format.
 | Toby as boss | Toby's club rating (player +50), never lower than at the last attempt |
 | Vera as boss (Act 3) | Baseline +50 |
 
-Boss strengths are fixed once the gauntlet starts and never drop after a loss.
+Boss strengths follow the player's rating, level with them up to 60 above (Sep 2026; they used to be fixed once the gauntlet started).
 
 ### The maths behind these numbers
 
@@ -422,7 +427,7 @@ By the end of an act, a typical player has improved about 50 points above the ba
 
 ### Support after boss losses
 
-The boss never gets easier. The support around the player grows instead:
+The boss stays just ahead of the player. The support around the player grows instead:
 
 | After | What unlocks |
 | --- | --- |

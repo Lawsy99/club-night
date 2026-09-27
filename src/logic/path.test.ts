@@ -229,8 +229,12 @@ describe('the path', () => {
     // Later, a fixed player you've climbed past is brought up to within 50.
     const later = { ...p, chapter: 11, fixedRatings: { ...p.fixedRatings, marjorie: 900 } }
     expect(weekOpponentRating(later, 'marjorie')).toBe(1150)
-    // Anyone the story puts above you stays above.
+    // Anyone the story puts above you stays above, but never far above.
     expect(weekOpponentRating({ ...p, chapter: 12 }, 'toby')).toBe(1250)
+    const strongFixed = { ...p, chapter: 9, fixedRatings: { ...p.fixedRatings, graham: 1600 } }
+    expect(weekOpponentRating(strongFixed, 'graham')).toBe(1260)
+    // Practice night keeps fixed players at their own number.
+    expect(opponentRating(strongFixed, 'graham')).toBe(1600)
   })
 
   it('keeps the week’s person at one strength all week, and the other practice games as they were', () => {
@@ -263,19 +267,22 @@ describe('the path', () => {
       ratings.push(round.rating)
       p = recordGame(p, round, true, null)
     }
-    // At club ratings, harder each round (Clive, Oscar, Priya), then Toby ahead of you.
+    // Close to your level, a little harder each round, then Toby just ahead of you.
+    expect(ratings[0]).toBeLessThanOrEqual(ratings[1])
     expect(ratings[1]).toBeLessThan(ratings[2])
     const boss = nextGame(p).game
     expect(boss).toMatchObject({ kind: 'boss', opponent: 'toby' })
     expect(boss.rating).toBeGreaterThan(p.rating!.rating)
+    expect(boss.rating).toBeLessThanOrEqual(p.rating!.rating + 60)
     expect(boss.rating).toBeGreaterThan(ratings[2])
     expect(baseline).toBeGreaterThan(0)
 
     p = recordGame(p, boss, false, null)
-    // Straight to a rematch; the boss is never easier than before.
+    // Straight to a rematch, still just ahead of you (following your rating).
     expect(nextGame(p).game.kind).toBe('boss')
     expect(p.cup?.bossAttempts).toBe(1)
-    expect(nextGame(p).game.rating).toBeGreaterThanOrEqual(boss.rating)
+    expect(nextGame(p).game.rating).toBeGreaterThanOrEqual(p.rating!.rating)
+    expect(nextGame(p).game.rating).toBeLessThanOrEqual(p.rating!.rating + 60)
     p = recordGame(p, nextGame(p).game, true, null)
     expect(nextStep(p).kind).toBe('act-complete')
   })

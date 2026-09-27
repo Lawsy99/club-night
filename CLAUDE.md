@@ -92,8 +92,10 @@ Coach explanations (Sep 2026 rework): every claim comes from the engine's own li
 the piece falls and stays won. Analysed positions store a short `pv`. Scouting: two board
 demos per colour per opponent + three style lines, never repeated (Progress.scoutingSeen).
 Losing a final = straight rematch. Saturday difficulty (Sep 2026): the week's person is
-eased in Act 1 weeks 1-7 (150 below you, tapering to 60), then kept within 50 of you
-(logic/path.ts weekOpponentRating). Moves are written in words below 1500 (logic/notation.ts). Review ends with the step-through, then Home.
+eased in Act 1 weeks 1-7 (150 below you, tapering to 60), then 50 below to 60 above.
+Every must-win game (Saturday, cup rounds, ladder, final) follows your rating in that
+band; fixed strengths are for practice night only; style is what varies (logic/path.ts
+weekOpponentRating, roundRating, finalRating). Moves are written in words below 1500 (logic/notation.ts). Review ends with the step-through, then Home.
 Testers: friends and family now play the live link; feedback comes via Settings >
 Feedback through the phone's share sheet (no address built into the app).
 Next: Joseph's answers on those questions, tester feedback, the rest of
