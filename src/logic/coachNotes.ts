@@ -88,6 +88,38 @@ const KIND_NOTES: Record<ErrorKind, { what: (times: string) => string; single: s
     what: (t) => `${cap(t)} the position slipped without anything being taken. That’s about plans: ask what the position needs.`,
     single: 'the position slipped',
   },
+  'king-weakened': {
+    what: (t) => `${cap(t)} you pushed a pawn in front of your own castled king. Those pawns are its roof: leave them be unless you must.`,
+    single: 'you weakened your king',
+  },
+  'doubled-pawns': {
+    what: (t) => `${cap(t)} a capture left you with doubled pawns. Think about which way to take back.`,
+    single: 'you took back the wrong way and doubled your pawns',
+  },
+  'isolated-pawn': {
+    what: (t) => `${cap(t)} a capture left one of your pawns on its own. Isolated pawns are targets for the rest of the game.`,
+    single: 'you left a pawn isolated',
+  },
+  'bishop-pair': {
+    what: () => 'You gave up the bishop pair for a knight. Keep both bishops unless the swap wins something.',
+    single: 'you gave up the bishop pair',
+  },
+  'traded-behind': {
+    what: (t) => `${cap(t)} you swapped pieces while behind. When you have less, keep pieces on and make the game complicated.`,
+    single: 'you swapped pieces while behind',
+  },
+  'early-queen': {
+    what: () => 'Your queen came out early and got chased about. Knights and bishops first, the queen later.',
+    single: 'your queen came out too early',
+  },
+  'lost-castling': {
+    what: () => 'You moved your king and lost the right to castle. A king in the middle is a target all game.',
+    single: 'you gave up castling',
+  },
+  'same-piece-twice': {
+    what: (t) => `${cap(t)} you moved the same piece again while others were still at home. In the opening, every move should bring out something new.`,
+    single: 'you moved a piece twice in the opening',
+  },
 }
 
 const KIND_PATTERNS: Record<ErrorKind, string> = {
@@ -98,6 +130,14 @@ const KIND_PATTERNS: Record<ErrorKind, string> = {
   'missed-mate': 'a mate missed',
   'missed-win': 'material there for the taking and not taken',
   positional: 'a position that slipped',
+  'king-weakened': 'your king’s pawns pushed',
+  'doubled-pawns': 'doubled pawns',
+  'isolated-pawn': 'an isolated pawn',
+  'bishop-pair': 'the bishop pair given away',
+  'traded-behind': 'pieces swapped while behind',
+  'early-queen': 'the queen out too early',
+  'lost-castling': 'castling given up',
+  'same-piece-twice': 'a piece moved twice in the opening',
 }
 
 /** Pemberton's notes: at most three short observations, most useful first. */

@@ -5,6 +5,7 @@
 import { Chess, type PieceSymbol, type Square } from 'chess.js'
 import { applyUci, type Colour } from './game'
 import { joinIdeas, moveIdeas } from './moveIdeas'
+import { positionalHarm, type PositionalKind } from './positional'
 
 const NAMES: Record<PieceSymbol, string> = {
   p: 'pawn',
@@ -34,7 +35,15 @@ export type MistakeFacts = {
  * What kind of error a move was, for counting across a game and across games
  * (Pemberton's notes). Uses the same board checks as explainMistake.
  */
-export type ErrorKind = 'allowed-mate' | 'missed-mate' | 'fork' | 'undefended' | 'lost-material' | 'missed-win' | 'positional'
+export type ErrorKind =
+  | 'allowed-mate'
+  | 'missed-mate'
+  | 'fork'
+  | 'undefended'
+  | 'lost-material'
+  | 'missed-win'
+  | PositionalKind
+  | 'positional'
 
 export function errorKind(f: MistakeFacts): ErrorKind {
   if (f.cpAfter <= -MATE_THRESHOLD && f.cpBefore > -MATE_THRESHOLD) return 'allowed-mate'
@@ -56,7 +65,7 @@ export function errorKind(f: MistakeFacts): ErrorKind {
     const target = before.get(f.bestMove.slice(2, 4) as Square)
     if (target && target.color === opponent) return 'missed-win'
   }
-  return 'positional'
+  return positionalHarm(f.fenBefore, f.played, f.cpBefore)?.kind ?? 'positional'
 }
 
 export function explainMistake(f: MistakeFacts): string {
@@ -105,8 +114,11 @@ export function explainMistake(f: MistakeFacts): string {
         ? `You missed ${bestSan}, which wins their ${NAMES[target.type]}.`
         : `You missed the chance to take on ${f.bestMove.slice(2, 4)} with ${bestSan}.`
     }
-    return `${bestSan} was stronger.`
   }
+  // Nothing tactical: what the move did to the position, if it's something to name.
+  const harm = positionalHarm(f.fenBefore, f.played, f.cpBefore)
+  if (harm) return harm.text
+  if (bestSan) return `${bestSan} was stronger.`
   return 'There was a stronger move here.'
 }
 
