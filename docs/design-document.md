@@ -138,6 +138,12 @@ Nobody goes below 200.
 
 Fixed characters (Marjorie, Clive, Graham) and the background members keep the rating set after trial night, so the player climbs past them for good. A character's rating is always the strength they play at, everywhere, including in the cup. (The baseline now only matters for the fixed ratings set after trial night.)
 
+**The week's person (Joseph, Sep 2026: nobody should get stuck early and stop seeing the story).** The person you play on Saturday is adjusted for their week, on Thursday and Saturday alike, so their number is the same all week (`weekOpponentRating` in logic/path.ts):
+
+- Act 1, weeks 1 to 7: at least 150 below the player in weeks 1 and 2, then 125, 125, 100, 100 and 60 below. At 150 below, the player wins about four best-of-threes in five. Anyone already further below stays as they are.
+- From week 8, and in later acts: never more than 50 below the player, so the fixed characters don't become walkovers on Saturday once the player has climbed past them. Anyone the story puts above the player (Toby, Priya before she's beaten) stays above.
+- The rest of the week stays demanding: Thursday's stronger practice game, Toby's visits and Pemberton at the player's level are unchanged. Cup rounds and the final keep their own rules.
+
 ### The club ladder
 
 Everyone at the club by rating, with the player among them, including four background members who don't play (yet): Malcolm (+320) and Ray (+190) above, Sheila (−240) and Bill (−330) below, all fixed after trial night. Shown as: a compact card on Home (the player in gold, the people either side, and a bar showing how close the next person is, e.g. "12 to pass Priya"), and the full ladder behind it. Faces, not a table. After each game, a line says who the player moved above ("You moved above Priya on the club ladder"), or who moved above them. Fixed members stay put, so the player passes them for good; growing members can come back past. It is also the natural lead-in to Act 2's club ladder.

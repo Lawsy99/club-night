@@ -232,6 +232,34 @@ export function opponentRating(p: Progress, id: string): number {
   return rounded(you + storyOffset(character, actNumber(p) === 1 ? storyWeeksBefore(p.chapter) : 99))
 }
 
+/**
+ * Early Saturdays are gentler (Joseph, Sep 2026: nobody should get stuck in
+ * the first few weeks and stop seeing the story). In Act 1's first seven
+ * weeks the week's person is at least this far below you: about four
+ * best-of-threes in five won at −150, easing off by week 7. The rest of the
+ * week stays hard: the stronger practice game, Toby turning up, and
+ * Pemberton at your level.
+ */
+export const EARLY_MATCH_CAP = [-150, -150, -125, -125, -100, -100, -60]
+/**
+ * After that, Saturday is a fair test: never more than this far below you,
+ * so the people fixed at trial night don't become walkovers once you've
+ * climbed past them. Anyone the story puts above you stays above.
+ */
+export const MATCH_FLOOR = -50
+
+/**
+ * The week's person's strength, on Thursday and Saturday alike (one number
+ * all week): their usual rating, eased early on and kept close to you later.
+ */
+export function weekOpponentRating(p: Progress, id: string): number {
+  const base = opponentRating(p, id)
+  const you = p.rating ? p.rating.rating : p.baseline
+  const cap = actNumber(p) === 1 ? EARLY_MATCH_CAP[p.chapter] : undefined
+  if (cap !== undefined) return Math.min(base, rounded(you + cap))
+  return Math.max(base, rounded(you + MATCH_FLOOR))
+}
+
 const nameOf = (id: string) => findCharacter(id)?.name ?? id
 const rounded = (r: number) => Math.max(200, Math.round(r / 5) * 5)
 
@@ -303,7 +331,7 @@ export function nextStep(p: Progress): NextStep {
         note: 'He plays at your level, and tells you what he thinks.',
       }
     }
-    const rating = opponentRating(p, ch.opponent)
+    const rating = weekOpponentRating(p, ch.opponent)
     // Thursday, practice night: the week's person first, then whoever else is
     // in, one stronger and one weaker, as at a real club. Move feedback, the
     // analysis bar and three takebacks, but no advice on what to play.
@@ -312,7 +340,7 @@ export function nextStep(p: Progress): NextStep {
       return {
         kind: 'friendly',
         opponent,
-        rating: opponentRating(p, opponent),
+        rating: opponent === ch.opponent ? rating : opponentRating(p, opponent),
         stage: 'guided',
         label: k < PRACTICE_GAMES ? `Practice game ${k + 1} of ${PRACTICE_GAMES} vs ${nameOf(opponent)}` : `Practice game vs ${nameOf(opponent)}`,
         location: sessionLabel('practice'),

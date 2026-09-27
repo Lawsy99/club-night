@@ -11,6 +11,7 @@ import {
   recordGame,
   upgradeProgress,
   wantsWarmup,
+  weekOpponentRating,
   type Progress,
 } from './path'
 
@@ -213,6 +214,29 @@ describe('the path', () => {
     // Priya is just above until the player has beaten her (her story week is week 8), then just below.
     expect(opponentRating({ ...p, chapter: 7 }, 'priya')).toBe(1220)
     expect(opponentRating({ ...p, chapter: 8 }, 'priya')).toBe(1180)
+  })
+
+  it('makes early Saturdays gentler, then keeps Saturday close to your level', () => {
+    const p = { ...readyForPractice(), rating: { rating: 1200, deviation: 100, volatility: 0.06 }, friendlies: { played: 3, wonGuided: false } } as Progress
+    // Week 2, Dex: usually 75 below; this early, at least 150 below.
+    const week2 = { ...p, chapter: 1 }
+    expect(weekOpponentRating(week2, 'dex')).toBe(1050)
+    expect(nextGame(week2).game).toMatchObject({ kind: 'match', opponent: 'dex', rating: 1050 })
+    // Week 7: at least 60 below (Priya, usually just above you, is brought down;
+    // Oscar is already further below, so he stays as he is).
+    expect(weekOpponentRating({ ...p, chapter: 6 }, 'priya')).toBe(1140)
+    expect(weekOpponentRating({ ...p, chapter: 6 }, 'oscar')).toBe(opponentRating({ ...p, chapter: 6 }, 'oscar'))
+    // Later, a fixed player you've climbed past is brought up to within 50.
+    const later = { ...p, chapter: 11, fixedRatings: { ...p.fixedRatings, marjorie: 900 } }
+    expect(weekOpponentRating(later, 'marjorie')).toBe(1150)
+    // Anyone the story puts above you stays above.
+    expect(weekOpponentRating({ ...p, chapter: 12 }, 'toby')).toBe(1250)
+  })
+
+  it('keeps the week’s person at one strength all week, and the other practice games as they were', () => {
+    const p = { ...readyForPractice(), chapter: 1, rating: { rating: 1200, deviation: 100, volatility: 0.06 } } as Progress
+    expect(nextGame(p).game).toMatchObject({ opponent: 'dex', rating: 1050 })
+    expect(nextGame({ ...p, friendlies: { played: 1, wonGuided: false } }).game.rating).toBeGreaterThan(1200)
   })
 
   it('brings older saves up to date with the fixed characters’ new ratings, once', () => {
