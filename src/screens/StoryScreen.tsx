@@ -84,7 +84,10 @@ export function StoryScreen({ id, playerName, onDone }: Props) {
           ))}
         </div>
       )}
-      <p className="story-tap">{done ? 'Tap to carry on' : 'Tap to continue'}</p>
+      <div className="story-foot">
+        {done && story.next && <p className="story-next">Next: {story.next}</p>}
+        <p className="story-tap">{done ? 'Tap to carry on' : 'Tap to continue'}</p>
+      </div>
     </main>
   )
 }

@@ -43,6 +43,12 @@ describe('the story through the week', () => {
     expect(storyAfterFinal(1)).toEqual(['scene:cup-won', 'scene:cup'])
   })
 
+  it('says what comes next at the end of each week', () => {
+    expect(storyFor('wayout:c1')?.next).toBe('Week 2 · The streamer')
+    expect(storyFor('wayout:w15')?.next).toBe('Week 16 · Cup week')
+    expect(storyFor('wayout:a2-1')?.next).toBe('Week 18 · Captain')
+  })
+
   it('opens Toby’s study straight after his message', () => {
     expect(storyAfterWin('a2-9')).toEqual(['wayout:a2-9', 'study:prep'])
     expect(storyFor('study:prep')?.study).toBe(true)

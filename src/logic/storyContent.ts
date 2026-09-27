@@ -12,6 +12,8 @@ export type Story = {
   lines: StoryLine[]
   /** The Act 2 study: its pages are built from your games when it opens. */
   study?: boolean
+  /** What comes next, like the next episode ("Week 5 · Off camera"), shown once the lines are done. */
+  next?: string
 }
 
 /** "wayout:c1", "scene:month-1" or "study:prep"; null if it no longer exists. */
@@ -24,10 +26,12 @@ export function storyFor(id: string): Story | null {
     if (!week || !found) return null
     // Week numbers carry on across seasons, as in the calendar.
     const before = ACTS.slice(0, found.act.act - 1).reduce((sum, a) => sum + a.chapters.length + 1, 0)
+    const following = found.act.chapters[found.index + 1]
     return {
       kicker: 'On the way out',
       title: `Week ${before + found.index + 1} · ${found.act.chapters[found.index].title}`,
       lines: week.wayOut,
+      next: `Week ${before + found.index + 2} · ${following ? following.title : found.act.gauntlet.weekTitle}`,
     }
   }
   const scene = kind === 'scene' ? findCutscene(key) : undefined
