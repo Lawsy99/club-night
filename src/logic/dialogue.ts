@@ -20,6 +20,15 @@ export type Trigger =
   | 'promotion'
   | 'clearly_winning'
   | 'clearly_losing'
+  /** Character moments (Sep 2026): the queens come off; an endgame is reached; */
+  | 'queens_off'
+  | 'endgame_reached'
+  /** the opponent has just left their opening book; */
+  | 'out_of_book'
+  /** they've put a piece where it can be taken (Dex calls it a sacrifice); */
+  | 'sacrifice'
+  /** their king goes for a walk up the board (Terry). */
+  | 'king_walk'
   /**
    * The character says what they're planning. Not used in games since Sep
    * 2026 (fixed text often wasn't true on the board); kept for the file format.
@@ -168,6 +177,12 @@ const PRIORITY: Trigger[] = [
   'clearly_losing',
   'clearly_winning',
   'strong_move',
+  // Character moments come next: they're what makes each person themselves.
+  'sacrifice',
+  'out_of_book',
+  'queens_off',
+  'endgame_reached',
+  'king_walk',
   'check_given',
   'check_received',
   'capture_rook',
@@ -178,8 +193,19 @@ const PRIORITY: Trigger[] = [
 ]
 
 export function mostImportant(triggers: readonly Trigger[]): Trigger | null {
-  for (const t of PRIORITY) if (triggers.includes(t)) return t
-  return triggers[0] ?? null
+  return byImportance(triggers)[0] ?? null
+}
+
+/** Triggers, most important first (so if a character has nothing for one, the next can be tried). */
+export function byImportance(triggers: readonly Trigger[]): Trigger[] {
+  const rank = (t: Trigger) => (PRIORITY.includes(t) ? PRIORITY.indexOf(t) : PRIORITY.length)
+  return [...triggers].sort((a, b) => rank(a) - rank(b))
+}
+
+/** Character moments: said more often than routine events, when the character has a line for it. */
+export const CHARACTER_MOMENT_CHANCE = 0.6
+export function isCharacterMoment(trigger: Trigger): boolean {
+  return ['sacrifice', 'out_of_book', 'queens_off', 'endgame_reached', 'king_walk'].includes(trigger)
 }
 
 /**

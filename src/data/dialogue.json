@@ -6648,5 +6648,703 @@
   "conditions": {},
   "weight": 1,
   "once": false
+ },
+ {
+  "id": "cm-marjorie-qo-01",
+  "character": "marjorie",
+  "trigger": "queens_off",
+  "text": "Queens off. Now we can have a proper game.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-marjorie-qo-02",
+  "character": "marjorie",
+  "trigger": "queens_off",
+  "text": "That’s better. I never trusted queens.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-marjorie-qo-03",
+  "character": "marjorie",
+  "trigger": "queens_off",
+  "text": "Queens gone. This is where I like it, love.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-marjorie-eg-01",
+  "character": "marjorie",
+  "trigger": "endgame_reached",
+  "text": "An endgame. Lovely. I’ve been waiting all evening.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-marjorie-eg-02",
+  "character": "marjorie",
+  "trigger": "endgame_reached",
+  "text": "Now then. Kings out.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-marjorie-eg-03",
+  "character": "marjorie",
+  "trigger": "endgame_reached",
+  "text": "This is my bit, dear.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-marjorie-ob-01",
+  "character": "marjorie",
+  "trigger": "out_of_book",
+  "text": "Oh, we’ve come off the London. Never mind, I’ll manage.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-marjorie-qo-m1",
+  "character": "marjorie",
+  "trigger": "queens_off",
+  "text": "(Marjorie allows herself a small smile as the queens come off.)",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-marjorie-eg-m1",
+  "character": "marjorie",
+  "trigger": "endgame_reached",
+  "text": "(Marjorie moves her tea to one side.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-clive-qo-01",
+  "character": "clive",
+  "trigger": "queens_off",
+  "text": "Queens off. Much more civilised.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-clive-qo-02",
+  "character": "clive",
+  "trigger": "queens_off",
+  "text": "Good. Fewer things to go wrong.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-clive-qo-03",
+  "character": "clive",
+  "trigger": "queens_off",
+  "text": "Swap them off, I always say. Well. I always do.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-clive-eg-01",
+  "character": "clive",
+  "trigger": "endgame_reached",
+  "text": "Now it’s my sort of game.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-clive-eg-02",
+  "character": "clive",
+  "trigger": "endgame_reached",
+  "text": "Rooks and pawns. Nice and quiet.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-clive-qo-m1",
+  "character": "clive",
+  "trigger": "queens_off",
+  "text": "(Clive nods, as if something has been agreed.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-clive-eg-m1",
+  "character": "clive",
+  "trigger": "endgame_reached",
+  "text": "(Clive settles back. He’s been waiting for this.)",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-priya-ob-01",
+  "character": "priya",
+  "trigger": "out_of_book",
+  "text": "That’s not in the book. Why isn’t that in the book?",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-priya-ob-02",
+  "character": "priya",
+  "trigger": "out_of_book",
+  "text": "We’ve left theory. I’m going to need a minute.",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-priya-ob-03",
+  "character": "priya",
+  "trigger": "out_of_book",
+  "text": "Oh. You’ve gone off chapter four.",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-priya-ob-04",
+  "character": "priya",
+  "trigger": "out_of_book",
+  "text": "Right. Thinking for myself, then.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-priya-eg-01",
+  "character": "priya",
+  "trigger": "endgame_reached",
+  "text": "Endgames. I haven’t done the endgame book yet.",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-priya-eg-02",
+  "character": "priya",
+  "trigger": "endgame_reached",
+  "text": "I’ve only read the first half of this bit.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-priya-ob-m1",
+  "character": "priya",
+  "trigger": "out_of_book",
+  "text": "(Priya closes her notebook. She’s on her own now.)",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-graham-ob-01",
+  "character": "graham",
+  "trigger": "out_of_book",
+  "text": "We are now outside established theory. I’ll make a note.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-graham-ob-02",
+  "character": "graham",
+  "trigger": "out_of_book",
+  "text": "Deviation noted. On the scoresheet.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-graham-qo-01",
+  "character": "graham",
+  "trigger": "queens_off",
+  "text": "Queens exchanged. For the record.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-graham-ob-m1",
+  "character": "graham",
+  "trigger": "out_of_book",
+  "text": "(Graham writes something in the margin.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-dex-sac-01",
+  "character": "dex",
+  "trigger": "sacrifice",
+  "text": "It’s a sacrifice. Probably.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-dex-sac-02",
+  "character": "dex",
+  "trigger": "sacrifice",
+  "text": "Take it. I dare you.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-dex-sac-03",
+  "character": "dex",
+  "trigger": "sacrifice",
+  "text": "That’s a gift. Or a trap. I’ll tell you later.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-dex-sac-04",
+  "character": "dex",
+  "trigger": "sacrifice",
+  "text": "Chat would love this.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-dex-qo-01",
+  "character": "dex",
+  "trigger": "queens_off",
+  "text": "Queens off? Boring. Fine.",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-dex-qo-02",
+  "character": "dex",
+  "trigger": "queens_off",
+  "text": "No queens. This is basically a different game now.",
+  "expression": "annoyed",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-dex-ob-01",
+  "character": "dex",
+  "trigger": "out_of_book",
+  "text": "Book? Never read it.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-dex-sac-m1",
+  "character": "dex",
+  "trigger": "sacrifice",
+  "text": "(Dex leaves the piece where it is and looks at the ceiling.)",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-oscar-sac-01",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "sacrifice",
+  "text": "He does that. He’ll have seen something.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-oscar-sac-02",
+  "character": "oscar",
+  "trigger": "sacrifice",
+  "text": "(Oscar leaves the piece where it is and sits on his hands.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-oscar-eg-01",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "endgame_reached",
+  "text": "He’s good at endings. Better than me.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-oscar-sac-m1",
+  "character": "oscar",
+  "trigger": "sacrifice",
+  "text": "(Oscar doesn’t look up.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-toby-ob-01",
+  "character": "toby",
+  "trigger": "out_of_book",
+  "text": "Ooh, off my prep. Fun.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-toby-ob-02",
+  "character": "toby",
+  "trigger": "out_of_book",
+  "text": "Interesting. Not what the database says, but interesting.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-toby-qo-01",
+  "character": "toby",
+  "trigger": "queens_off",
+  "text": "Queens off. Suits me, honestly.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-toby-eg-01",
+  "character": "toby",
+  "trigger": "endgame_reached",
+  "text": "Endgame. I’ve been doing a course, actually.",
+  "expression": "smug",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-toby-eg-m1",
+  "character": "toby",
+  "trigger": "endgame_reached",
+  "text": "(Toby rolls up his sleeves.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-terry-kw-01",
+  "character": "terry",
+  "trigger": "king_walk",
+  "text": "He’s going for a walk.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-terry-kw-02",
+  "character": "terry",
+  "trigger": "king_walk",
+  "text": "The king likes a bit of air.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-terry-kw-03",
+  "character": "terry",
+  "trigger": "king_walk",
+  "text": "Don’t mind him. He’s exploring.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-terry-kw-04",
+  "character": "terry",
+  "trigger": "king_walk",
+  "text": "Kings are strong pieces. I read that somewhere.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-terry-ob-01",
+  "character": "terry",
+  "trigger": "out_of_book",
+  "text": "And now we’re both on our own.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-terry-ob-02",
+  "character": "terry",
+  "trigger": "out_of_book",
+  "text": "That’s the end of what I prepared. Which was mostly move one.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-terry-sac-01",
+  "character": "terry",
+  "trigger": "sacrifice",
+  "text": "That’s not a blunder. That’s a statement.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-terry-sac-02",
+  "character": "terry",
+  "trigger": "sacrifice",
+  "text": "I’ve given you that. Think about why. I’m still thinking about why.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-terry-qo-01",
+  "character": "terry",
+  "trigger": "queens_off",
+  "text": "Queens off. Now my king can really get going.",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-terry-kw-m1",
+  "character": "terry",
+  "trigger": "king_walk",
+  "text": "(Terry’s king sets off up the board. Terry looks pleased.)",
+  "expression": "pleased",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-sheila-eg-01",
+  "character": "sheila",
+  "trigger": "endgame_reached",
+  "text": "Oh, is this the endgame? I’m usually gone by now.",
+  "expression": "surprised",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-bill-eg-01",
+  "character": "bill",
+  "trigger": "endgame_reached",
+  "text": "Endgames. We used to play these out for hours.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-ray-ob-01",
+  "character": "ray",
+  "trigger": "out_of_book",
+  "text": "Off the book. This is where I tell the juniors to start thinking.",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "friendly"
+  },
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "cm-malcolm-eg-m1",
+  "character": "malcolm",
+  "trigger": "endgame_reached",
+  "text": "(Malcolm straightens in his chair.)",
+  "expression": "neutral",
+  "conditions": {
+   "gameType": "match"
+  },
+  "weight": 1,
+  "once": false
  }
 ]

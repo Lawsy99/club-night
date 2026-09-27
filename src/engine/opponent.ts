@@ -20,6 +20,8 @@ export type OpponentChoice = {
   move: string | null
   /** How long Maia's model took, when Maia played (for checking phone speed). */
   maiaMs?: number
+  /** The move came from the character's opening book (so leaving it can be noticed). */
+  fromBook?: boolean
 }
 
 export async function chooseOpponentMove(
@@ -39,7 +41,7 @@ export async function chooseOpponentMove(
   let choice: OpponentChoice
   let kind: MoveKind
   if (book) {
-    choice = { move: book }
+    choice = { move: book, fromBook: true }
     kind = 'book'
   } else if (opponent.engine === 'maia') {
     try {

@@ -50,10 +50,12 @@ import {
 } from '../logic/gameRecord'
 import { acceptsDraw, piecesLeft, shouldOfferDraw, shouldResign } from '../logic/opponentDecisions'
 import {
+  byImportance,
+  CHARACTER_MOMENT_CHANCE,
   chatterAllowed,
   isBigMoment,
+  isCharacterMoment,
   matchLineAllowed,
-  mostImportant,
   ROUTINE_REMARK_CHANCE,
   TENSION_MOVES,
 } from '../logic/dialogue'
@@ -86,6 +88,9 @@ type Props = {
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
 type PendingMove = { uci: string; fenAfter: string; warning: string | null }
+
+/** In matches, how often a character moment gets its silent stage direction. */
+const MATCH_MOMENT_CHANCE = 0.4
 
 /** How long the finished game stays on screen before the review opens. */
 const REVIEW_DELAY_MS = 3500
@@ -219,6 +224,8 @@ export function GameScreen({
   ]
   const ratedRef = useRef(ratedMove?.rating ?? null)
   ratedRef.current = ratedMove?.rating ?? null
+  // Whether the opponent's last move came from their opening book (to notice leaving it).
+  const lastFromBook = useRef(false)
 
   // Pemberton's announced trap, if tonight has one (logic/coachScenario.ts).
   const trap = game.scenario ? (findScenario(game.scenario.id) ?? null) : null
@@ -317,7 +324,7 @@ export function GameScreen({
         setGame((g) => (g ? withResignation(g, opponentColour) : g))
         return
       }
-      const { move, maiaMs: ms } = await chooseOpponentMove(
+      const { move, maiaMs: ms, fromBook = false } = await chooseOpponentMove(
         fen,
         game.moves,
         opponent,
@@ -351,14 +358,40 @@ export function GameScreen({
       if (quietGame || coachVoice) {
         // Nothing said during trial-night games; the coach speaks for himself.
       } else if (!offer && gameType === 'friendly' && chatterAllowed({ gameType, ...lineState })) {
-        let trigger = mostImportant(triggersFor({ botMove, playerRating: ratedRef.current, botEvalCp: cp }))
-        // Everyday things (a check, a swap, castling) happen every game; only
-        // now and then are they worth a remark (Joseph, Sep 2026: far fewer lines).
-        if (trigger && !isBigMoment(trigger) && Math.random() > ROUTINE_REMARK_CHANCE) trigger = null
-        spoke = trigger ? dialogue.speak(trigger, false, flags, { piece: capturedName(botMove) }) : false
+        const triggers = triggersFor({
+          botMove,
+          playerRating: ratedRef.current,
+          botEvalCp: cp,
+          fenBefore: fen,
+          leftBook: lastFromBook.current && !fromBook,
+        })
+        // Most important first; if this character has nothing to say about it,
+        // the next thing gets a chance. Everyday events (a check, a swap,
+        // castling) only now and then; character moments more often; big
+        // moments always (Joseph, Sep 2026: rare lines, and in character).
+        for (const trigger of byImportance(triggers)) {
+          const chance = isBigMoment(trigger) ? 1 : isCharacterMoment(trigger) ? CHARACTER_MOMENT_CHANCE : ROUTINE_REMARK_CHANCE
+          if (Math.random() > chance) continue
+          if (dialogue.speak(trigger, false, flags, { piece: capturedName(botMove) })) {
+            spoke = true
+            break
+          }
+        }
       } else if (!offer && gameType === 'match' && matchLineAllowed(lineState)) {
         if (TENSION_MOVES.includes(moveNumber) && Math.abs(cp) <= 100) spoke = dialogue.speak('tension', false, flags)
+        // A character's own moment, as a silent stage direction (matches have
+        // no chatter; these lines are all marked for matches).
+        if (!spoke) {
+          const moments = triggersFor({ botMove, playerRating: null, botEvalCp: cp, fenBefore: fen, leftBook: lastFromBook.current && !fromBook })
+          for (const trigger of byImportance(moments).filter(isCharacterMoment)) {
+            if (Math.random() < MATCH_MOMENT_CHANCE && dialogue.speak(trigger, false, flags)) {
+              spoke = true
+              break
+            }
+          }
+        }
       }
+      lastFromBook.current = fromBook
       const talkAfter = spoke ? { ...talk, lines: talk.lines + 1, lastLineMove: moveNumber } : talk
       setGame((g) => {
         if (!g) return g
