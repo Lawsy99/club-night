@@ -183,6 +183,8 @@ A former county champion who left the club years ago after the coach put her on 
 
 **She would never:** Chat, explain herself, show she's rattled, or mention the falling-out directly.
 
+**The facts, fixed in the Sep 2026 story pass** (see the story outline, "The threads"): Pemberton won the knockout cup six years running (1994 to 1999). Vera beat him in the 2000 final (the scoresheet in the cupboard) and they married that year. She won the cup ten years running. In 2009, as captain, he put her on board two for the county final against Kingsbridge; Wexley lost, she never came back, and the cup wasn't held again until the player's first season. She wears a green coat. Toby is a former county junior Pemberton coached; he did join the club the same night as you, which is the only sense in which he's new.
+
 **Revised Sep 2026 (Joseph), for Acts 3 and 4; see the story outline.** Vera no longer plays for Kingsbridge: Toby and Pemberton go there at the end of Act 2. She arrives at Wexley at the start of Act 3 and becomes the coach. She was Pemberton's wife, which is revealed sideways, and never by her. The falling-out with the club was really a falling-out with him.
 
 - **As coach**, she's the opposite of Pemberton: warm but spare, and interested in *why* you chose a move. For example, "Good. Now tell me why." and "You saw it. Trust that." Her "are you sure?" is gentler and rarer. She lets you find things.
