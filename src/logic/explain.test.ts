@@ -36,7 +36,13 @@ describe('explainBestMove', () => {
     // White has just taken on d5: Qxd5 takes back.
     const prevFen = replay(['e2e4', 'd7d5']).fen()
     const fen = replay(['e2e4', 'd7d5', 'e4d5']).fen()
-    expect(explainBestMove(fen, 'd8d5', 0, undefined, ['d8d5'], { fen: prevFen, move: 'e4d5' })).toBe('Qxd5 takes back, so you’re not a pawn down.')
+    expect(explainBestMove(fen, 'd8d5', 0, undefined, ['d8d5'], { fen: prevFen, move: 'e4d5' })).toBe('Qxd5 takes back on d5.')
+  })
+
+  it('calls a capture that is simply a trade a trade', () => {
+    // Nxc6 dxc6: knight for knight.
+    const fen = replay(['e2e4', 'e7e5', 'g1f3', 'b8c6', 'd2d4', 'e5d4', 'f3d4', 'g8f6']).fen()
+    expect(explainBestMove(fen, 'd4c6', 20, undefined, ['d4c6', 'd7c6'])).toBe('Nxc6 swaps off their knight.')
   })
 
   it('names saving a piece the move played left hanging', () => {
@@ -120,7 +126,7 @@ describe('explainMistake', () => {
     const fen = replay(['e2e4', 'd7d5', 'e4d5']).fen()
     expect(
       explainMistake({ fenBefore: fen, played: 'a7a6', bestMove: 'd8d5', reply: 'b1c3', cpBefore: 0, cpAfter: -120, prev: { fen: prevFen, move: 'e4d5' } }),
-    ).toBe('You needed to take back with Qxd5. As it is, you’re a pawn down.')
+    ).toBe('You needed to take back on d5 with Qxd5.')
   })
 
   it('falls back to naming the stronger move', () => {

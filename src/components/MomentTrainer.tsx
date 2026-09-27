@@ -184,7 +184,12 @@ export function MomentTrainer({ moment, onFinished }: Props) {
                 ? moment.kind === 'missed'
                   ? 'It let their mistake go.'
                   : 'It let the chance go.'
-                : moment.explanation}
+                : /was stronger\.$|stronger move here\.$/.test(moment.explanation)
+                  ? // (Just "X was stronger" would repeat what's above.)
+                    moment.bestCp > 0
+                    ? 'Nothing terrible, but it let some of your advantage go.'
+                    : 'Nothing terrible, but it made things harder.'
+                  : moment.explanation}
             </p>
           </div>
         </div>

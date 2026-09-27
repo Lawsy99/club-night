@@ -93,8 +93,16 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
         })
         // Tactics: the easiest one is the worked example; the rest are for the player.
         const sorted = [...picked].sort((a, b) => a.rating - b.rating)
-        setExample(kind === 'tactics' ? (sorted[0] ?? null) : null)
+        const worked = kind === 'tactics' ? (sorted[0] ?? null) : null
+        setExample(worked)
         setPuzzles(kind === 'tactics' ? sorted.slice(1) : sorted)
+        // The worked example counts as seen, so no later lesson shows it again
+        // (Joseph, Sep 2026: nothing repeated across weeks).
+        if (worked && !start.seen.includes(worked.id)) {
+          const next = { ...start, seen: [...start.seen, worked.id] }
+          setProgress(next)
+          savePuzzleProgress(next).catch(() => undefined)
+        }
       })
       .catch(() => setLoadError(true))
   }, [lesson, playerRating, wantsPuzzles, kind])

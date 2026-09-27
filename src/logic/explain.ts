@@ -33,6 +33,8 @@ const MATERIAL = 1
 const WINNING_CP = 250
 /** No more pieces than this (rooks, bishops, knights, queens, both sides) and it's an ending. */
 const ENDING_PIECES = 4
+/** A drop this big (centipawns) is never "nothing terrible". */
+const BIG_DROP = 150
 
 export type MistakeFacts = {
   /** Position before the player's move. */
@@ -99,6 +101,10 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
     return { kind: 'missed-mate', text }
   }
 
+  // They had just taken something, and the move played didn't take back.
+  const retake = f.bestMove && bestSan && recaptured(f.prev, f.bestMove) && f.played.slice(2, 4) !== f.bestMove.slice(2, 4)
+  if (retake) return { kind: 'missed-win', text: `You needed to take back on ${f.bestMove!.slice(2, 4)} with ${bestSan}.` }
+
   // Material: what the move and their best line cost, against what the best line keeps.
   const bestOutcome = f.bestMove ? followLine(f.fenBefore, f.bestLine?.[0] === f.bestMove ? f.bestLine : [f.bestMove]) : null
   const keeps = bestOutcome ? bestOutcome.net : 0
@@ -115,10 +121,6 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
   if (bestOutcome && bestSan && f.bestMove) {
     const playedNet = played ? played.net : 0
     if (bestOutcome.net >= MATERIAL && bestOutcome.net > playedNet + 0.9) {
-      const recapture = recaptured(f.prev, f.bestMove)
-      if (recapture && bestOutcome.net <= VALUES[recapture] + 0.5) {
-        return { kind: 'missed-win', text: `You needed to take back with ${bestSan}. As it is, you’re a ${NAMES[recapture]} down.` }
-      }
       const gain = describeGain(bestOutcome.won, bestOutcome.lost, bestOutcome.mixedMinors) ?? 'material'
       const found = findTactic(bestOutcome)
       return { kind: 'missed-win', text: `You missed ${bestSan}. ${winsWith(bestOutcome, found, gain, 'their')}` }
@@ -131,9 +133,17 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
   // Otherwise, what their best reply does to you (Sep 2026: "Nxd4 was
   // stronger" said nothing; "It allowed Qg5, which attacks your knight" does).
   const reply = theirs?.moves[0]
-  if (reply && afterFen) {
+  // (Not when their reply is simply a trade: "Qxd1+ attacks your bishop"
+  // would miss that it's the queens coming off.)
+  const trade = reply?.captured && theirs?.moves[1]?.captured && theirs.moves[1].to === reply.to
+  if (reply && afterFen && !trade) {
     const threat = moveIdeas(afterFen, reply.lan).filter((i) => /^(threatens mate|attacks their|pins their)/.test(i))
     if (threat.length) return { kind: 'positional', text: `It allowed ${reply.san}, which ${joinIdeas(threat.map(fromTheirSide))}.` }
+  }
+  // A big swing with nothing to point at in the first few moves: name their
+  // best reply, so the player can see it in the step-through.
+  if (reply && f.cpBefore - f.cpAfter >= BIG_DROP) {
+    return { kind: 'positional', text: `That gave them ${reply.san}, and from there your position gets much harder.` }
   }
   return { kind: 'positional', text: bestSan ? `${bestSan} was stronger.` : 'There was a stronger move here.' }
 }
@@ -209,7 +219,7 @@ export function explainBestMove(
 
   const out = followLine(fenBefore, line)
   const recapture = recaptured(prev, best)
-  if (recapture && out.net <= VALUES[recapture] + 0.5) return `${san} takes back, so you’re not a ${NAMES[recapture]} down.`
+  if (recapture && out.net <= VALUES[recapture] + 0.5) return `${san} takes back on ${best.slice(2, 4)}.`
 
   // A pawn that gets through to queen, whatever it costs on the way.
   if (long.promotes === 'us') {
@@ -249,6 +259,13 @@ export function explainBestMove(
     const defended = before.attackers(from, mover).length > 0
     const cheaperAttacker = threatened.some((sq) => VALUES[before.get(sq)!.type] < VALUES[move.piece])
     if (!defended || cheaperAttacker) return `${san} gets your ${NAMES[move.piece]} out of danger.`
+  }
+
+  // A capture that's simply a trade: say so, rather than listing what the
+  // piece "attacks" for the one move before it's taken back.
+  const reply = out.moves[1]
+  if (move.captured && reply?.captured && reply.to === move.to && Math.abs(VALUES[move.captured] - VALUES[move.piece]) <= 0) {
+    return `${san} swaps off their ${NAMES[move.captured]}.`
   }
 
   // What the move actually does: stops a threat, pins, opens a file… A check
