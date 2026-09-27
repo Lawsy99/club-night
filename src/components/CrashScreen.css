@@ -1,0 +1,43 @@
+.crash-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 48px 16px 32px;
+}
+
+.crash-screen h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.crash-screen p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.crash-screen button {
+  min-height: 48px;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.crash-primary {
+  border: none;
+  background: var(--brass);
+  color: var(--ink);
+}
+
+.crash-secondary {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.crash-screen .crash-detail {
+  font-size: 13px;
+  color: var(--muted-dim);
+  overflow-wrap: anywhere;
+}
