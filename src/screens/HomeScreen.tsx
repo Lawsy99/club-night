@@ -497,10 +497,30 @@ function PlayCard({
           Your record against {character?.name ?? 'them'}: {record.wins} won, {record.losses} lost
         </p>
       )}
-      {note && <p className="next-note">{note}</p>}
-      <button type="button" className="next-play" onClick={() => onPlay(game)}>
-        Play
-      </button>
+      {next.helpOffer ? (
+        // Pemberton's offer, after two lost best-of-threes this week: take it or leave it.
+        <>
+          <p className="next-opponent next-offer">
+            <Portrait who="pemberton" size={36} />
+            <span>
+              <strong>Coach Pemberton</strong> <span className="next-rating">“{note}”</span>
+            </span>
+          </p>
+          <button type="button" className="next-play" onClick={() => onPlay(next.helpOffer!)}>
+            With your help, please
+          </button>
+          <button type="button" className="next-secondary" onClick={() => onPlay(game)}>
+            On my own
+          </button>
+        </>
+      ) : (
+        <>
+          {note && <p className="next-note">{note}</p>}
+          <button type="button" className="next-play" onClick={() => onPlay(game)}>
+            Play
+          </button>
+        </>
+      )}
       {optionalFriendly && (
         <button type="button" className="next-secondary" onClick={() => onPlay(optionalFriendly)}>
           {optionalFriendly.stage === 'assisted'

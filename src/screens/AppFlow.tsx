@@ -100,7 +100,7 @@ type View = (typeof VIEWS)[number]
  * and not Toby's trial-night game (it doesn't count).
  */
 const isRated = (g: PathGame | undefined) =>
-  !!g && g.kind !== 'friendly' && g.kind !== 'coaching' && g.kind !== 'trial' && g.kind !== 'exhibition'
+  !!g && !g.helped && g.kind !== 'friendly' && g.kind !== 'coaching' && g.kind !== 'trial' && g.kind !== 'exhibition'
 
 /**
  * The settings live above everything else, so every board follows the

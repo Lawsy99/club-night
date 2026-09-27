@@ -180,6 +180,28 @@ describe('the path', () => {
     expect(nextStep(p).kind).toBe('lesson')
   })
 
+  it('offers Pemberton’s help after two lost best-of-threes, counting for the week but not the rating', () => {
+    let p = readyForPractice()
+    for (let i = 0; i < 3; i++) p = recordGame(p, nextGame(p).game, false, null)
+    // Lose the best of three twice.
+    for (let series = 0; series < 2; series++) {
+      expect(nextGame(p).helpOffer).toBeNull()
+      p = recordGame(p, nextGame(p).game, false, null)
+      p = recordGame(p, nextGame(p).game, false, null)
+    }
+    const offer = nextGame(p).helpOffer
+    expect(offer).toMatchObject({ kind: 'match', stage: 'guided', helped: true })
+    expect(nextGame(p).note).toMatch(/three takebacks/)
+    // Taking it: the games count for the week, and the rating stays put.
+    const rating = p.rating!.rating
+    p = recordGame(p, offer!, true, null)
+    p = recordGame(p, nextGame(p).helpOffer!, true, null)
+    expect(p.rating!.rating).toBe(rating)
+    expect(p.chapter).toBe(1)
+    // A new week starts afresh: no offer until it's needed again.
+    expect(p.seriesLost).toBe(0)
+  })
+
   it('scaling characters keep the story’s distance from the player; fixed ones never move', () => {
     const p = { ...throughTrial(), rating: { rating: 1200, deviation: 100, volatility: 0.06 } }
     const improved = { ...p, rating: { ...p.rating, rating: 1500 } }

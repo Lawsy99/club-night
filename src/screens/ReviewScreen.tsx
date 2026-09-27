@@ -49,6 +49,8 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
   const [step, setStep] = useState(0)
   const [momentDone, setMomentDone] = useState(false)
   const [fullGame, setFullGame] = useState(false)
+  // The step-through comes first; opened again from the end, it leads on to Home.
+  const [fullGameAtEnd, setFullGameAtEnd] = useState(false)
 
   // Use saved analysis if this game was reviewed before; otherwise run it.
   useEffect(() => {
@@ -137,6 +139,9 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
         : 'You lost.'
     : ''
   const finalLabel = fromHistory ? 'Back to past games' : outcome?.winner === null ? 'Replay' : 'Continue'
+  const momentsLabel =
+    moments.length > 0 ? `Your biggest moment${moments.length === 1 ? '' : 's'} (${moments.length})` : 'Best move of the game'
+  const lower = (s: string) => s.charAt(0).toLowerCase() + s.slice(1)
 
   function goTo(next: number) {
     setStep(next)
@@ -157,17 +162,17 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
           setFullGame(false)
           window.scrollTo({ top: 0 })
         }}
-        onDone={onContinue}
-        doneLabel={finalLabel}
+        // First the whole game, then your biggest moments (Joseph, Sep 2026);
+        // opened again from the end of the review, it leads on to Home.
+        onDone={() => {
+          if (fullGameAtEnd) return onContinue()
+          setFullGame(false)
+          goTo(1)
+        }}
+        doneLabel={fullGameAtEnd ? finalLabel : momentsLabel}
       />
     )
   }
-
-  const fullGameLink = (
-    <button type="button" className="review-secondary" onClick={() => setFullGame(true)}>
-      Step through the whole game
-    </button>
-  )
 
   // The review is optional (Joseph's decision, Sep 2026): skip straight on.
   const skipButton = (
@@ -234,19 +239,19 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
         ) : (
           <p className="review-note">No standout move this time. Next game.</p>
         )}
-        {/* Then the whole game, move by move, and Home from there (Joseph, Sep 2026). */}
+        <button type="button" className="review-continue" onClick={onContinue}>
+          {finalLabel}
+        </button>
         <button
           type="button"
-          className="review-continue"
+          className="review-secondary"
           onClick={() => {
+            setFullGameAtEnd(true)
             setFullGame(true)
             window.scrollTo({ top: 0 })
           }}
         >
-          Step through the game
-        </button>
-        <button type="button" className="review-secondary" onClick={onContinue}>
-          {fromHistory ? finalLabel : finalLabel === 'Replay' ? 'Skip to the replay' : 'Skip to Home'}
+          See the whole game again
         </button>
       </main>
     )
@@ -362,12 +367,21 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
 
       {reviewed ? (
         <>
-          <button type="button" className="review-continue" onClick={() => goTo(1)}>
-            {moments.length > 0
-              ? `Your biggest moment${moments.length === 1 ? '' : 's'} (${moments.length})`
-              : 'Best move of the game'}
+          {/* The whole game first, then the moments (Joseph, Sep 2026). */}
+          <button
+            type="button"
+            className="review-continue"
+            onClick={() => {
+              setFullGameAtEnd(false)
+              setFullGame(true)
+              window.scrollTo({ top: 0 })
+            }}
+          >
+            Step through the game
           </button>
-          {fullGameLink}
+          <button type="button" className="review-secondary" onClick={() => goTo(1)}>
+            Skip to {lower(momentsLabel)}
+          </button>
         </>
       ) : (
         failed && (

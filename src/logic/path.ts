@@ -72,6 +72,8 @@ export type Progress = {
   monthlyTests?: MonthlyTest[]
   /** Scouting demos and style lines already seen ("marjorie:w:0", "dex:style:1"), so none repeats. */
   scoutingSeen?: string[]
+  /** Best-of-threes lost this week (Pemberton offers help after HELP_AFTER_SERIES_LOST). */
+  seriesLost?: number
 }
 
 /**
@@ -174,7 +176,16 @@ export type PathGame = {
   chapter?: string
   /** An extra game chosen from Home (e.g. another coached game), not the week's own. */
   extra?: boolean
+  /**
+   * A Saturday match played with Pemberton's help (three takebacks and the
+   * live evaluation), offered after two lost best-of-threes in a week
+   * (Joseph, Sep 2026: so nobody gets stuck). Counts for the week, not the rating.
+   */
+  helped?: boolean
 }
+
+/** Best-of-threes lost in a week before Pemberton offers his help on Saturday. */
+export const HELP_AFTER_SERIES_LOST = 2
 
 export type NextStep =
   | { kind: 'welcome' }
@@ -189,6 +200,8 @@ export type NextStep =
        */
       extraCoaching?: PathGame | null
       note: string | null
+      /** The same Saturday game with Pemberton's help, to take or leave (see PathGame.helped). */
+      helpOffer?: PathGame | null
       /** After a third boss loss: puzzles from the boss's openings. */
       targetedPuzzles?: { title: string; openings: string[] } | null
     }
@@ -323,17 +336,23 @@ export function nextStep(p: Progress): NextStep {
       location: sessionLabel('match'),
       chapter: ch.id,
     }
+    // Two best-of-threes lost this week: Pemberton offers to sit in, to take
+    // or leave, game by game (Joseph, Sep 2026: so nobody gets stuck on Saturday).
+    const stuck = (p.seriesLost ?? 0) >= HELP_AFTER_SERIES_LOST
     return {
       kind: 'play',
       game: match,
       // One more practice game first, if wanted (against someone else who's in).
       optionalFriendly: gameNo === 1 ? friendly(Math.max(PRACTICE_GAMES, p.friendlies.played)) : null,
       extraCoaching: { ...coaching, label: 'Another game with Coach Pemberton', extra: true },
-      note: p.matchLost
-        ? 'Best of three again. Warm up with a practice game first, if you like.'
-        : gameNo === 1
-          ? `Best of three against ${nameOf(ch.opponent)}.`
-          : null,
+      helpOffer: stuck ? { ...match, stage: 'guided', helped: true } : null,
+      note: stuck
+        ? `${nameOf(ch.opponent)} has had the better of you twice this week. If you like, I’ll sit in on this one: three takebacks, and you can see how the position stands. It won’t count towards your rating. Your call.`
+        : p.matchLost
+          ? 'Best of three again. Warm up with a practice game first, if you like.'
+          : gameNo === 1
+            ? `Best of three against ${nameOf(ch.opponent)}.`
+            : null,
     }
   }
 
@@ -507,8 +526,8 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
     }
   }
 
-  // Real games: rating, then the safety valve (never during the cup).
-  let next = rateReal(p, game.rating, won)
+  // Real games change the rating; a match played with Pemberton's help doesn't.
+  let next = game.helped ? p : rateReal(p, game.rating, won)
   if (game.kind === 'match') {
     // Best of three: each game is rated; first to two takes the week.
     const before = next.series ?? { wins: 0, losses: 0 }
@@ -527,11 +546,12 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
         friendlies: { played: 0, wonGuided: false },
         matchLost: false,
         series: { wins: 0, losses: 0 },
+        seriesLost: 0,
       }
       if (next.chapter >= actPlan(p).chapters.length) next = startCup(next)
     } else if (series.losses >= SERIES_TO_WIN) {
-      // Lost the series: it's played again from 0–0.
-      next = { ...next, matchLost: true, series: { wins: 0, losses: 0 } }
+      // Lost the series: it's played again from 0–0 (and counted, for Pemberton's offer).
+      next = { ...next, matchLost: true, series: { wins: 0, losses: 0 }, seriesLost: (next.seriesLost ?? 0) + 1 }
     } else {
       next = { ...next, series }
     }
