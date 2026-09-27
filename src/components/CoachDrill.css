@@ -20,6 +20,29 @@
   line-height: 1.45;
 }
 
+/* The rules walkthrough's buttons */
+.rules-next,
+.rules-skip {
+  min-height: 48px;
+  margin: 0 16px;
+  border-radius: 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.rules-next {
+  border: none;
+  background: var(--brass);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.rules-skip {
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--muted);
+}
+
 .coach-drill-progress {
   margin: 0 16px;
   font-size: 13px;

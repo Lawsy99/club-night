@@ -1,7 +1,9 @@
 // First launch only: your name, one question, then trial night (design
-// document, "Trial night: Before the games").
+// document, "Trial night: Before the games"). Anyone who has never played
+// is shown the moves first, hands on, by Marjorie (Sep 2026).
 import { useState } from 'react'
 import { NameField } from '../components/NameField'
+import { RulesTutorial } from '../components/RulesTutorial'
 import { cleanName } from '../logic/playerName'
 import type { Experience } from '../logic/trialNight'
 import './WelcomeScreen.css'
@@ -9,7 +11,7 @@ import './WelcomeScreen.css'
 type Props = { onStart: (experience: Experience, statedRating: number | undefined, name: string) => void }
 
 const OPTIONS: { value: Experience; label: string; detail: string }[] = [
-  { value: 'never', label: "I've never played", detail: "We'll go over the rules first." },
+  { value: 'never', label: "I've never played", detail: 'Marjorie will show you the moves first.' },
   { value: 'rules', label: 'I know the rules', detail: 'But not much more.' },
   { value: 'casual', label: 'I play casually', detail: 'Friends, family, the odd online game.' },
   { value: 'rated', label: 'I have an online rating', detail: 'Lichess or chess.com.' },
@@ -19,8 +21,23 @@ export function WelcomeScreen({ onStart }: Props) {
   const [choice, setChoice] = useState<Experience | null>(null)
   const [rating, setRating] = useState('')
   const [name, setName] = useState('')
+  const [learning, setLearning] = useState(false)
   const ratingNumber = Number(rating)
   const ratingValid = rating !== '' && ratingNumber >= 100 && ratingNumber <= 3000
+  const start = () => choice && onStart(choice, choice === 'rated' ? ratingNumber : undefined, cleanName(name))
+
+  // The moves, hands on, before trial night.
+  if (learning) {
+    return (
+      <main className="welcome-screen">
+        <header>
+          <p className="welcome-kicker">Before the games</p>
+          <h1>The moves</h1>
+        </header>
+        <RulesTutorial onDone={start} onSkip={start} />
+      </main>
+    )
+  }
 
   return (
     <main className="welcome-screen">
@@ -65,36 +82,17 @@ export function WelcomeScreen({ onStart }: Props) {
             />
           </label>
         )}
-
-        {choice === 'never' && <RulesCard />}
       </section>
 
       <button
         type="button"
         className="welcome-start"
         disabled={!choice || (choice === 'rated' && !ratingValid) || !cleanName(name)}
-        onClick={() => choice && onStart(choice, choice === 'rated' ? ratingNumber : undefined, cleanName(name))}
+        onClick={() => (choice === 'never' ? setLearning(true) : start())}
       >
-        Start trial night
+        {choice === 'never' ? 'Learn the moves' : 'Start trial night'}
       </button>
       <p className="welcome-note">Five games, no help, no clock. The first four set your starting rating.</p>
     </main>
-  )
-}
-
-/** A very short rules walkthrough for complete beginners (fuller version later). */
-function RulesCard() {
-  return (
-    <div className="rules-card">
-      <h3>The rules in one minute</h3>
-      <ul>
-        <li>White moves first; then you take turns, one move each.</li>
-        <li>Win by checkmate: attack the enemy king so it has no escape.</li>
-        <li>Pawns move forward one square (two on their first move) and capture diagonally.</li>
-        <li>Knights jump in an L. Bishops go diagonally, rooks straight, the queen both ways.</li>
-        <li>The king moves one square. Never leave your own king in check.</li>
-        <li>Tap a piece to see where it can go; the app won't allow an illegal move.</li>
-      </ul>
-    </div>
   )
 }
