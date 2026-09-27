@@ -79,4 +79,11 @@ Act 2 "The club ladder" is built (Sep 2026): src/data/act2.ts (weeks a2-1..a2-15
 per-week offsets), acts.ts (actPlan/actNumber/weeksBefore), weekStory + cutscenes
 entries, Malcolm (LEAGUE_ONLY) and Ray as opponents, Black opening drills, 'hold' drills.
 docs/story-outline.md is draft 4 with open questions for Joseph at the end.
-Next: Joseph's answers on those questions, the rest of docs/learning-plan.md, Act 3.
+Honing (Sep 2026, all done): Pemberton's post-game notes (logic/coachNotes.ts),
+character traits in play (style.ts), positional explanations (logic/positional.ts),
+own-game lesson examples, scouting from past meetings, a rules walkthrough for
+beginners, "How you're improving" in Stats and the monthly test (logic/monthlyTest.ts).
+Testers: friends and family now play the live link; feedback comes via Settings >
+Feedback through the phone's share sheet (no address built into the app).
+Next: Joseph's answers on those questions, tester feedback, the rest of
+docs/learning-plan.md, Act 3.
