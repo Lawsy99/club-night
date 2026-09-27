@@ -151,11 +151,14 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
 
   if ((f.cpAfter <= -MATE_THRESHOLD && f.cpBefore > -MATE_THRESHOLD) || (theirs?.mates && f.cpBefore > -MATE_THRESHOLD)) {
     const tense = tenseOf(f, 0, true)
+    // If it happened, the mate shown is the one in the game (it may not be the engine's).
+    const real = tense === 'happened' && afterFen && f.actual ? followLine(afterFen, f.actual, 12) : null
+    const shown = real?.mates ? real : theirs
     const text =
-      theirs?.mates && theirs.moves.length <= SHORT_MATE_PLIES
-        ? theirs.moves.length === 1
-          ? `This allowed ${lineSan(theirs)}, checkmate.`
-          : `This allowed a forced checkmate: ${lineSan(theirs)}.`
+      shown?.mates && shown.moves.length <= SHORT_MATE_PLIES
+        ? shown.moves.length === 1
+          ? `This allowed ${lineSan(shown)}, checkmate.`
+          : `This allowed a forced checkmate: ${lineSan(shown)}.`
         : 'This allowed a forced checkmate.'
     const after = tense === 'missed' ? ' They missed it.' : tense === 'avoided' ? ' In the game it went another way.' : ''
     return { kind: 'allowed-mate', text: `${text}${after}` }
@@ -219,7 +222,7 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
     return { kind: 'missed-win', text: `You missed ${bestSan}. ${winsWith(bestOutcome, findTactic(bestOutcome), gain, 'their')}` }
   }
   const lossBig = played ? -played.net : 0
-  if (bestOutcome && bestOutcome.net > lossBig) {
+  if (bestOutcome && bestOutcome.net > lossBig && !sameSquare) {
     const first = missedWin()
     if (first) return first
   }
@@ -234,7 +237,7 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
   }
 
   // What the player could have won instead.
-  const missed = missedWin()
+  const missed = sameSquare ? null : missedWin()
   if (missed) return missed
 
   // Nothing tactical: what the move did to the position, if it's something to
@@ -301,7 +304,7 @@ function lossSentence(f: MistakeFacts, played: LineOutcome, theirs: LineOutcome,
   if (playedMove?.captured && reply.to === moved) {
     const text =
       tense === 'happened'
-        ? `Taking on ${moved} cost you ${loss}: ${reply.san} took back.`
+        ? `Taking on ${moved} cost you ${loss}: ${takenBy(f, moved) ?? reply.san} took back.`
         : tense === 'missed'
           ? `Taking on ${moved} could have cost you ${loss}: ${reply.san} takes back. They didn’t.`
           : tense === 'avoided'
@@ -315,7 +318,7 @@ function lossSentence(f: MistakeFacts, played: LineOutcome, theirs: LineOutcome,
     const where = square === moved ? `Your ${NAMES[piece]} on ${moved} was left undefended` : `This left your ${NAMES[piece]} on ${square} undefended`
     const then =
       tense === 'happened'
-        ? `, and ${reply.san} took it.`
+        ? `, and ${takenBy(f, square) ?? reply.san} took it.`
         : tense === 'missed'
           ? `: ${reply.san} would have taken it, but they missed it.`
           : tense === 'avoided'
@@ -537,6 +540,24 @@ function tacticNoun(t: Tactic, whose: 'your' | 'their'): string {
 function recaptured(prev: { fen: string; move: string } | undefined, uci: string): PieceSymbol | null {
   if (!prev || prev.move.slice(2, 4) !== uci.slice(2, 4)) return null
   return applyUci(new Chess(prev.fen), prev.move)?.captured ?? null
+}
+
+/**
+ * The move in the game that really took on `square` (their move, in notation),
+ * so "took back" names what happened, not the engine's choice (Sep 2026:
+ * "exd6 took back" when the queen had).
+ */
+function takenBy(f: MistakeFacts, square: string): string | null {
+  if (!f.actual?.length) return null
+  const chess = new Chess(f.fenBefore)
+  if (!applyUci(chess, f.played)) return null
+  const them = chess.turn()
+  for (const uci of f.actual.slice(0, 6)) {
+    const m = applyUci(chess, uci)
+    if (!m) return null
+    if (m.color === them && m.captured && m.to === square) return m.san
+  }
+  return null
 }
 
 /** "It allowed…" → "it allowed…", for joining sentences. */
