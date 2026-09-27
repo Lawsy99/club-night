@@ -74,6 +74,15 @@ export const RULES_STEPS: RulesStep[] = [
     done: 'A new queen. It happens more often than you’d think.',
   },
   {
+    // Joseph, Sep 2026: new players should know what the pieces are worth.
+    title: 'What pieces are worth',
+    say: 'Pieces aren’t equal. Roughly: a pawn is 1, a knight 3, a bishop 3, a rook 5, the queen 9. Your rook can take the knight or the queen. Take the one worth more.',
+    fen: '7k/3q4/8/8/8/8/8/1n1RK3 w - - 0 1',
+    target: 'd7',
+    nudge: 'The knight’s worth three. The queen’s worth nine. Go for her.',
+    done: 'Nine for nothing. Before you swap pieces, add them up: never give a rook for a knight if you can help it.',
+  },
+  {
     title: 'Checkmate',
     say: 'When the king is attacked, that’s check, and it must get out. If it can’t, that’s checkmate, and the game is won. Their king is stuck behind its pawns. Finish it with your rook.',
     fen: '6k1/5ppp/8/8/8/8/8/R5K1 w - - 0 1',

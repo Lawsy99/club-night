@@ -15,4 +15,11 @@ describe('the rules walkthrough', () => {
       expect(ways.length, step.title).toBeGreaterThan(0)
     }
   })
+
+  it('takes the queen for nothing in the piece-values step (nothing can take back)', () => {
+    const step = RULES_STEPS.find((s) => s.title === 'What pieces are worth')!
+    const chess = new Chess(step.fen)
+    chess.move({ from: 'd1', to: step.target })
+    expect(chess.moves({ verbose: true }).some((m) => m.to === step.target)).toBe(false)
+  })
 })
