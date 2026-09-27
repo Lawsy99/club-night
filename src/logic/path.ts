@@ -11,6 +11,7 @@ import { WEEK_STORY } from '../data/weekStory'
 import { actNumber, actPlan, hasNextAct } from '../data/acts'
 import { storyAfterFinal, storyAfterWin } from './storyQueue'
 import { rateGame, type PlayerRating } from './glicko2'
+import type { MonthlyTest } from './monthlyTest'
 import {
   firstOpponentRating,
   FULL_STRENGTH_RATING,
@@ -67,6 +68,8 @@ export type Progress = {
   scenariosUsed?: string[]
   /** Which act (season) the player is in; older saves are in Act 1. */
   act?: number
+  /** Pemberton's monthly tests, oldest first (logic/monthlyTest.ts). */
+  monthlyTests?: MonthlyTest[]
 }
 
 /**

@@ -363,6 +363,39 @@
   cursor: pointer;
 }
 
+/* Pemberton's monthly test: a quiet row, not a second "Next" card. */
+.monthly-test-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 10px 14px;
+  border: 1px solid var(--brass);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.monthly-test-card > span:nth-child(2) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.monthly-test-card > span:nth-child(2) span {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.monthly-test-card > span:last-child {
+  color: var(--muted);
+  font-size: 22px;
+}
+
 .home-links {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

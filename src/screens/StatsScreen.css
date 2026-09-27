@@ -77,6 +77,16 @@
   font-weight: 600;
 }
 
+.stats-records strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* A habit that has improved: brass, the colour of a win elsewhere in the app. */
+.stats-records strong.stats-better {
+  color: var(--brass);
+}
+
 .stats-bars {
   display: flex;
   flex-direction: column;

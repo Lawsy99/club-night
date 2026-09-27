@@ -7,11 +7,13 @@ import { CHARACTERS, COACH, findCharacter, PRACTICE_REGULARS } from '../data/cha
 import { OPENING_NAMES } from '../data/scouting'
 import { replay } from '../logic/game'
 import { outcomeOf, upgradeGameRecord } from '../logic/gameRecord'
+import type { MonthlyTest } from '../logic/monthlyTest'
 import type { Progress } from '../logic/path'
 import { reviewMoves } from '../logic/review'
 import {
   accuracyByPhase,
   accuracyTrend,
+  improvement,
   openingScores,
   recordByCharacter,
   type OpeningScore,
@@ -53,12 +55,75 @@ export function StatsScreen({ progress, onBack }: { progress: Progress; onBack: 
         <p className="stats-note">Reading your games…</p>
       ) : (
         <>
+          <ImprovementSection games={games} />
+          <MonthlyTestsSection tests={progress.monthlyTests ?? []} />
           <RecordSection games={games} />
           <AccuracySection games={games} />
           <OpeningsSection games={games} />
         </>
       )}
     </main>
+  )
+}
+
+/** Your last ten reviewed games against the ten before, on the habits that matter. */
+function ImprovementSection({ games }: { games: StatsGame[] }) {
+  const rows = improvement(games)
+  return (
+    <section>
+      <h2>How you’re improving</h2>
+      {!rows ? (
+        <p className="stats-note">Review a few more games and this shows how your habits are changing.</p>
+      ) : (
+        <>
+          <p className="stats-note">Your last ten reviewed games, against the ten before.</p>
+          <ul className="stats-records">
+            {rows.map((r) => {
+              const better = r.lowerIsBetter ? r.recent < r.earlier : r.recent > r.earlier
+              const same = r.recent === r.earlier
+              return (
+                <li key={r.label}>
+                  <span className="stats-name">{r.label}</span>
+                  <span>
+                    <strong className={better && !same ? 'stats-better' : undefined}>
+                      {r.recent}
+                      {r.unit}
+                    </strong>{' '}
+                    (was {r.earlier}
+                    {r.unit})
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        </>
+      )}
+    </section>
+  )
+}
+
+/** Pemberton's monthly tests: the same standard each time, so the scores compare. */
+function MonthlyTestsSection({ tests }: { tests: readonly MonthlyTest[] }) {
+  return (
+    <section>
+      <h2>Monthly tests</h2>
+      {tests.length === 0 ? (
+        <p className="stats-note">Pemberton sets one every four weeks. Six positions at the same standard each time.</p>
+      ) : (
+        <ul className="stats-records">
+          {tests.map((t, i) => (
+            <li key={t.month}>
+              <span className="stats-name">Month {t.month}</span>
+              <span>
+                <strong className={i > 0 && t.score > tests[i - 1].score ? 'stats-better' : undefined}>
+                  {t.score} of {t.out}
+                </strong>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   )
 }
 

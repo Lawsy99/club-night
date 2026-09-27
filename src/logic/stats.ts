@@ -36,6 +36,70 @@ export function recordByCharacter(games: readonly StatsGame[], order: readonly s
     .filter((r) => r.record.wins + r.record.losses + r.record.draws > 0)
 }
 
+/**
+ * How you're improving (Joseph, Sep 2026: a sense of progress in the
+ * learning, like the ladder gives for results). Your last ten reviewed games
+ * against the ten before, on the habits the coaching works on.
+ */
+export type ImprovementRow = {
+  label: string
+  recent: number
+  earlier: number
+  /** Lower is better for blunders; higher for the rest. */
+  lowerIsBetter: boolean
+  unit: '' | '%'
+}
+
+export const IMPROVEMENT_WINDOW = 10
+/** Fewer reviewed games than this in either half and it isn't shown. */
+export const IMPROVEMENT_MIN = 3
+
+export function improvement(games: readonly StatsGame[]): ImprovementRow[] | null {
+  const reviewed = games.filter((g) => g.reviewed && g.reviewed.length >= 16).sort((a, b) => b.finishedAt - a.finishedAt)
+  const recent = reviewed.slice(0, IMPROVEMENT_WINDOW)
+  const earlier = reviewed.slice(IMPROVEMENT_WINDOW, IMPROVEMENT_WINDOW * 2)
+  if (recent.length < IMPROVEMENT_MIN || earlier.length < IMPROVEMENT_MIN) return null
+
+  const perGame = (set: readonly StatsGame[], count: (g: StatsGame) => number) =>
+    Math.round((set.reduce((sum, g) => sum + count(g), 0) / set.length) * 10) / 10
+  const blunders = (g: StatsGame) => g.reviewed!.filter((m) => m.mover === g.playerColour && m.rating === 'blunder').length
+  // Punishing their mistakes: after an error of theirs, a good or best reply of yours.
+  const punishRate = (set: readonly StatsGame[]) => {
+    let chances = 0
+    let taken = 0
+    for (const g of set) {
+      const moves = g.reviewed!
+      for (let i = 0; i + 1 < moves.length; i++) {
+        const theirs = moves[i]
+        if (theirs.mover === g.playerColour || (theirs.rating !== 'mistake' && theirs.rating !== 'blunder')) continue
+        chances++
+        if (moves[i + 1].rating === 'best' || moves[i + 1].rating === 'good') taken++
+      }
+    }
+    return chances ? Math.round((taken / chances) * 100) : null
+  }
+  const phaseAcc = (set: readonly StatsGame[], phase: Phase) => {
+    const accs = set.flatMap((g) => g.reviewed!.filter((m) => m.mover === g.playerColour && phaseOf(m) === phase).map((m) => m.accuracy))
+    return accs.length >= MIN_PHASE_MOVES ? Math.round(accs.reduce((a, b) => a + b, 0) / accs.length) : null
+  }
+
+  const rows: ImprovementRow[] = [
+    { label: 'Blunders a game', recent: perGame(recent, blunders), earlier: perGame(earlier, blunders), lowerIsBetter: true, unit: '' },
+  ]
+  const pr = punishRate(recent)
+  const pe = punishRate(earlier)
+  if (pr !== null && pe !== null) rows.push({ label: 'Mistakes of theirs punished', recent: pr, earlier: pe, lowerIsBetter: false, unit: '%' })
+  for (const [phase, label] of [
+    ['opening', 'Opening accuracy'],
+    ['endgame', 'Endgame accuracy'],
+  ] as const) {
+    const r = phaseAcc(recent, phase)
+    const e = phaseAcc(earlier, phase)
+    if (r !== null && e !== null) rows.push({ label, recent: r, earlier: e, lowerIsBetter: false, unit: '%' })
+  }
+  return rows
+}
+
 /** Accuracy of each reviewed game, oldest first. */
 export function accuracyTrend(games: readonly StatsGame[]): { at: number; accuracy: number }[] {
   return games

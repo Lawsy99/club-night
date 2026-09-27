@@ -18,11 +18,13 @@ type Props = {
   onFinished: (solvedCleanly: boolean) => void
   /** The lesson's themes, listed first (so a forks lesson says "fork" first). */
   focus?: readonly string[]
+  /** The monthly test: no hint, a miss shows the move and ends the puzzle, and the themes stay hidden till then. */
+  oneTry?: boolean
 }
 
 const PAUSE_MS = 600
 
-export function PuzzleTrainer({ puzzle, onFinished, focus = [] }: Props) {
+export function PuzzleTrainer({ puzzle, onFinished, focus = [], oneTry = false }: Props) {
   const [fen, setFen] = useState(puzzle.fen)
   const [step, setStep] = useState(0) // index into puzzle.moves of the next move to play
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null)
@@ -80,6 +82,15 @@ export function PuzzleTrainer({ puzzle, onFinished, focus = [] }: Props) {
       return
     }
     setClean(false)
+    if (oneTry) {
+      // No second go: show the move and stop there.
+      const answer = puzzle.moves[step]
+      setReveal(answer)
+      setDone(true)
+      setMessage('Not this time. The arrow shows the move.')
+      onFinished(false)
+      return
+    }
     if (misses === 0) {
       setMisses(1)
       setMessage(`Not that one. Hint: look at your piece on ${puzzle.moves[step].slice(0, 2)}.`)
@@ -132,6 +143,7 @@ export function PuzzleTrainer({ puzzle, onFinished, focus = [] }: Props) {
       <p className="puzzle-meta">
         Puzzle rated {puzzle.rating}
         {puzzle.themes.length > 0 &&
+          (done || !oneTry) &&
           ` · ${[...puzzle.themes]
             .filter((t) => !['advantage', 'crushing', 'equality', 'middlegame', 'endgame', 'opening', 'short', 'long'].includes(t))
             .sort((a, b) => Number(focus.includes(b)) - Number(focus.includes(a)))

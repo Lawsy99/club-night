@@ -586,6 +586,12 @@ Improvement is rewarded quietly and never made the point of the app.
 - Record against each character.
 - Accuracy trend, and accuracy by game phase.
 - Current strongest and weakest openings.
+- How you're improving (Sep 2026): the last ten reviewed games against the ten before, on blunders a game, their mistakes punished, and opening and endgame accuracy.
+- Monthly test scores.
+
+### Pemberton's monthly test (Sep 2026)
+
+Every four weeks, an optional card on Home: six mixed puzzles, one try each, no hints. A miss shows the answer and his explanation. The difficulty is pinned to the first test (six steps from 150 below to 350 above the puzzle rating at the time), so the scores compare fairly from month to month. Only the latest month is offered; a missed month isn't owed. Pemberton gives a one-line verdict against last month's score.
 
 ### Milestones
 

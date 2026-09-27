@@ -69,6 +69,8 @@ import { LessonScreen } from './LessonScreen'
 import { MistakesDeckScreen } from './MistakesDeckScreen'
 import { PastGamesScreen } from './PastGamesScreen'
 import { PuzzleSetScreen } from './PuzzleSetScreen'
+import { MonthlyTestScreen } from './MonthlyTestScreen'
+import { monthlyTestDue, recordTest } from '../logic/monthlyTest'
 import { ReviewScreen } from './ReviewScreen'
 import { SettingsScreen } from './SettingsScreen'
 import { StatsScreen } from './StatsScreen'
@@ -87,6 +89,7 @@ const VIEWS = [
   'settings',
   'ladder',
   'calendar',
+  'monthly-test',
 ] as const
 type View = (typeof VIEWS)[number]
 
@@ -356,6 +359,22 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
     )
   }
 
+  const testMonth = monthlyTestDue(progress)
+  if (view === 'monthly-test' && testMonth) {
+    return (
+      <MonthlyTestScreen
+        progress={progress}
+        month={testMonth}
+        playerRating={progress.rating?.rating ?? progress.baseline}
+        onBack={() => setView('home')}
+        onFinished={(test) => {
+          updateProgress(recordTest(progress, test))
+          setView('home')
+        }}
+      />
+    )
+  }
+
   if (view === 'lesson' && next.kind === 'lesson') {
     return (
       <LessonScreen
@@ -453,6 +472,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       onTargetedPuzzles={() => setView('puzzles')}
       onOpenHistory={() => setView('history')}
       onOpenStats={() => setView('stats')}
+      testMonth={testMonth}
+      onStartTest={() => setView('monthly-test')}
       onOpenSettings={() => setView('settings')}
       onSetName={(playerName) => updateProgress({ ...progress, playerName })}
       onStartWarmup={() => setView('warmup')}

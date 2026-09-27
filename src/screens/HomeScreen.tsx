@@ -57,6 +57,9 @@ type Props = {
   onResume: () => void
   /** The season's final is won: start the next one. */
   onStartNextAct: () => void
+  /** Pemberton's monthly test, when one is waiting (logic/monthlyTest.ts). */
+  testMonth: number | null
+  onStartTest: () => void
 }
 
 const KIND_LABELS: Record<PathGame['kind'], string> = {
@@ -92,6 +95,8 @@ export function HomeScreen(props: Props) {
     pausedGame,
     onResume,
     onStartNextAct,
+    testMonth,
+    onStartTest,
   } = props
   // Past errors waiting to be put right (the coach's warm-ups on Tuesday).
   const [waiting, setWaiting] = useState(0)
@@ -169,8 +174,19 @@ export function HomeScreen(props: Props) {
         />
       )}
 
-      {ladder && progress.stage !== 'trial' && <LadderCard ladder={ladder} news={ladderNews} onOpen={onOpenLadder} />}
+      {/* Optional, and never in the way: the week carries on either way. */}
+      {testMonth && !pausedGame && (
+        <button type="button" className="monthly-test-card" onClick={onStartTest}>
+          <Portrait who="pemberton" size={36} />
+          <span>
+            <strong>Month {testMonth}: the monthly test</strong>
+            <span>Six positions, one try each. A few minutes.</span>
+          </span>
+          <span aria-hidden="true">›</span>
+        </button>
+      )}
 
+      {ladder && progress.stage !== 'trial' && <LadderCard ladder={ladder} news={ladderNews} onOpen={onOpenLadder} />}
 
       <nav className="home-links">
         <button type="button" onClick={onOpenHistory}>
