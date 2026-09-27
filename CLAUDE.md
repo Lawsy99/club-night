@@ -79,8 +79,8 @@ Act 2 "The club ladder" is built (Sep 2026): src/data/act2.ts (weeks a2-1..a2-15
 per-week offsets), acts.ts (actPlan/actNumber/weeksBefore), weekStory + cutscenes
 entries, Malcolm (LEAGUE_ONLY) and Ray as opponents, Black opening drills, 'hold' drills.
 docs/story-outline.md is draft 5 (Sep 2026 story pass): "The threads" table maps every
-mystery's plants and payoffs; Act 3 is drafted week by week; decisions for Joseph to
-check are listed at the end. Built in that pass: trial-night and cup-won cutscenes,
+mystery's plants and payoffs; Act 3 is drafted week by week; the draft 5 decisions
+(cup history, 2009 board two, Toby's past, the green coat, the study) are agreed. Built in that pass: trial-night and cup-won cutscenes,
 Toby's study from the player's real games (logic/prepStudy.ts, "study:prep"), a
 "Last time" line on Home after 2+ days away, "Next: Week N" after each way out.
 Honing (Sep 2026, all done): Pemberton's post-game notes (logic/coachNotes.ts),

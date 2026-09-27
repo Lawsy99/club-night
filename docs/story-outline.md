@@ -189,7 +189,7 @@ New to the cast as opponents: **Ray**, who teaches the juniors, is tired by nine
 
 Each act is a season of sixteen weeks, and each week is seven or eight games plus a lesson. That's about 120 games an act: 20 to 30 hours of chess. Four acts is 80 to 120 hours, so no extra act is needed. Act 4's tour can run as long as it's fun, since stops are easy to add.
 
-## Decisions made in draft 5, for Joseph to check
+## Decisions made in draft 5 (agreed with Joseph, 27 Sep 2026)
 
 1. **The study's contents** are built from your real games (it was open question 1).
 2. **Vera is glimpsed** once in Act 2, at Castlebury, as a woman in a green coat, and Act 2 ends as she walks in. The act ends on a cliffhanger, which also carries players over while Act 3 is being built (it was open question 4).
