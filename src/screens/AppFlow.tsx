@@ -71,6 +71,7 @@ import { PastGamesScreen } from './PastGamesScreen'
 import { PuzzleSetScreen } from './PuzzleSetScreen'
 import { MonthlyTestScreen } from './MonthlyTestScreen'
 import { monthlyTestDue, recordTest } from '../logic/monthlyTest'
+import { AWAY_FOR_RECAP_MS, lastStoryLine, timeAway } from '../logic/lastTime'
 import { ReviewScreen } from './ReviewScreen'
 import { SettingsScreen } from './SettingsScreen'
 import { StatsScreen } from './StatsScreen'
@@ -141,6 +142,8 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
   const [ladderNews, setLadderNews] = useState<LadderNews[]>([])
   // A story moment being watched again from the calendar.
   const [replayStory, setReplayStory] = useState<string | null>(null)
+  // Back after a few days: Home reminds you where the story was, until you play.
+  const [recapOn, setRecapOn] = useState(() => timeAway() >= AWAY_FOR_RECAP_MS)
 
   useEffect(() => {
     requestPersistentStorage()
@@ -184,6 +187,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
   }
 
   const startPathGame = async (pathGame: PathGame) => {
+    setRecapOn(false)
     setLastChange(null)
     setMilestoneBanner([])
     setLadderNews([])
@@ -473,6 +477,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       onOpenHistory={() => setView('history')}
       onOpenStats={() => setView('stats')}
       testMonth={testMonth}
+      recap={recapOn ? lastStoryLine(progress.storySeen) : null}
       onStartTest={() => setView('monthly-test')}
       onOpenSettings={() => setView('settings')}
       onSetName={(playerName) => updateProgress({ ...progress, playerName })}

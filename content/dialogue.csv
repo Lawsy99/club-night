@@ -134,6 +134,13 @@ story-final-start,toby,,game_start,(Marjorie has got the good set out.),neutral,
 story-final-won,toby,,game_loss,"(Pemberton shakes your hand, then goes to find Toby.)",annoyed,1,,,,,kind:boss,1,yes
 story-a2-final-start,toby,,game_start,"Top of the ladder, then. Did the study help? I think I sent you the wrong one. Silly me.",smug,2,,,,,kind:boss,1,yes
 story-a2-final-won,toby,,game_loss,(Toby shakes your hand. He doesn’t stay for a drink. Pemberton leaves with him.),annoyed,2,,,,,kind:boss,1,yes
+story-cup-clive,clive,,game_start,"First round. I said I'd enter. I didn't say I'd win.",neutral,1,,,,,kind:cup-round,1,yes
+story-cup-oscar,oscar,neil,game_start,"He's been looking forward to this all week. He won't say so.",pleased,1,,,,,kind:cup-round,1,yes
+story-cup-priya,priya,,game_start,"Semi-final. I've been through everything you've played since the summer.",neutral,1,,,,,kind:cup-round,1,yes
+story-final-lost,toby,,game_win,"(Pemberton is already on his feet, shaking Toby's hand.)",pleased,1,,,,,kind:boss,1,yes
+story-a2-final-lost,toby,,game_win,(Toby's name stays at the top. Graham doesn't need to retype it.),pleased,2,,,,,kind:boss,1,yes
+story-a2-cup-priya,priya,,game_start,I've got a notebook just for this game.,neutral,2,,,,,kind:cup-round,1,yes
+story-a2-cup-malcolm,malcolm,,game_start,Second from the top. I've been here eleven years. Shall we?,neutral,2,,,,,kind:cup-round,1,yes
 story-a2-1-graham,graham,,game_start,"Rule seven, part (b): the player below may challenge the player above. You are, technically, above me.",neutral,2,,,,,kind:match chapter:a2-1,1,yes
 story-a2-6-dex,dex,,game_start,"If Graham asks, I’m not streaming this.",smug,2,,,,,kind:match chapter:a2-6,1,yes
 story-a2-10-malcolm,malcolm,,game_start,Evening. I hear you’ve been reading about yourself.,neutral,2,,,,,kind:match chapter:a2-10,1,yes

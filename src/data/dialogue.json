@@ -1525,6 +1525,126 @@
   "once": true
  },
  {
+  "id": "story-cup-clive",
+  "character": "clive",
+  "trigger": "game_start",
+  "text": "First round. I said I'd enter. I didn't say I'd win.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:cup-round"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-cup-oscar",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "game_start",
+  "text": "He's been looking forward to this all week. He won't say so.",
+  "expression": "pleased",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:cup-round"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-cup-priya",
+  "character": "priya",
+  "trigger": "game_start",
+  "text": "Semi-final. I've been through everything you've played since the summer.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:cup-round"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-final-lost",
+  "character": "toby",
+  "trigger": "game_win",
+  "text": "(Pemberton is already on his feet, shaking Toby's hand.)",
+  "expression": "pleased",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:boss"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-final-lost",
+  "character": "toby",
+  "trigger": "game_win",
+  "text": "(Toby's name stays at the top. Graham doesn't need to retype it.)",
+  "expression": "pleased",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:boss"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-cup-priya",
+  "character": "priya",
+  "trigger": "game_start",
+  "text": "I've got a notebook just for this game.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:cup-round"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-cup-malcolm",
+  "character": "malcolm",
+  "trigger": "game_start",
+  "text": "Second from the top. I've been here eleven years. Shall we?",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:cup-round"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
   "id": "story-a2-1-graham",
   "character": "graham",
   "trigger": "game_start",

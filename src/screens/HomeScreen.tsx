@@ -60,6 +60,8 @@ type Props = {
   /** Pemberton's monthly test, when one is waiting (logic/monthlyTest.ts). */
   testMonth: number | null
   onStartTest: () => void
+  /** Back after a few days: the last line of the story, to pick the thread up (logic/lastTime.ts). */
+  recap: string | null
 }
 
 const KIND_LABELS: Record<PathGame['kind'], string> = {
@@ -97,6 +99,7 @@ export function HomeScreen(props: Props) {
     onStartNextAct,
     testMonth,
     onStartTest,
+    recap,
   } = props
   // Past errors waiting to be put right (the coach's warm-ups on Tuesday).
   const [waiting, setWaiting] = useState(0)
@@ -153,6 +156,12 @@ export function HomeScreen(props: Props) {
       {!progress.playerName && <MissingName onSave={onSetName} />}
 
       <InstallHint />
+
+      {recap && (
+        <p className="last-time">
+          <span>Last time</span> {fillName(recap, progress.playerName)}
+        </p>
+      )}
 
       <button type="button" className="act-progress-button" onClick={onOpenCalendar} aria-label="Club calendar">
         <ActProgress progress={progress} />

@@ -363,6 +363,26 @@
   cursor: pointer;
 }
 
+/* Back after a few days: where the story was left. */
+.last-time {
+  margin: 0;
+  padding: 10px 14px;
+  border-left: 3px solid var(--brass);
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.last-time span {
+  display: block;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brass);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
 /* Pemberton's monthly test: a quiet row, not a second "Next" card. */
 .monthly-test-card {
   display: flex;
