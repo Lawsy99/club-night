@@ -38,3 +38,25 @@ describe('style nudges', () => {
     expect(styleWeight('adaptive', start, 'e2e4')).toBe(1)
   })
 })
+
+describe('personal traits', () => {
+  it('queen traders take the even queen swap', () => {
+    const fen = replay(['d2d4', 'd7d5', 'c2c4', 'd5c4', 'd1a4', 'd8d7', 'a4d7', 'b8d7']).fen()
+    // (Queens already gone there; use a position with the swap on offer instead.)
+    const offer = replay(['d2d4', 'd7d5', 'c2c4', 'd5c4', 'd1a4', 'd8d7']).fen()
+    expect(styleWeight('solid', offer, 'a4d7', ['queen-trader'])).toBeGreaterThan(styleWeight('solid', offer, 'a4d7'))
+    expect(styleWeight('solid', fen, 'e2e4', ['queen-trader'])).toBe(1)
+  })
+
+  it('pawn stormers push the pawns in front of the king', () => {
+    // Black has castled short; White's g- and h-pawns are the storm.
+    const fen = replay(['e2e4', 'e7e5', 'g1f3', 'g8f6', 'f1c4', 'f8c5', 'd2d3', 'e8g8']).fen()
+    expect(styleWeight('solid', fen, 'h2h4', ['pawn-storm'])).toBeGreaterThan(1)
+    expect(styleWeight('solid', fen, 'a2a3', ['pawn-storm'])).toBe(1)
+  })
+
+  it("Terry's king likes a walk", () => {
+    const fen = replay(['e2e4', 'e7e5']).fen()
+    expect(styleWeight('aggressive', fen, 'e1e2', ['king-walker'])).toBeGreaterThan(1)
+  })
+})

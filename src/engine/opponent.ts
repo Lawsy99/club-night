@@ -73,8 +73,9 @@ async function maiaMove(fen: string, opponent: Opponent, moves: readonly string[
   // Until player ratings exist (phase 4), assume an evenly matched opponent.
   const { policy, ms } = await getMaia().predict(fen, opponent.rating, opponent.rating)
   const style = opponent.character?.style
+  const traits = opponent.character?.traits ?? []
   const nudged = style
-    ? policy.map((m) => (m.p >= MIN_LIKELIHOOD ? { ...m, p: m.p * styleWeight(style, fen, m.move) } : m))
+    ? policy.map((m) => (m.p >= MIN_LIKELIHOOD ? { ...m, p: m.p * styleWeight(style, fen, m.move, traits) } : m))
     : policy
   const kind = classifyMove(policy[0]?.p ?? 1, isRecaptureAvailable(fen, moves, policy[0]?.move))
   return { choice: { move: sampleMove(nudged), maiaMs: ms }, kind }
@@ -85,7 +86,8 @@ async function botMove(fen: string, opponent: Opponent, moves: readonly string[]
   const candidates = lines.map((l) => ({ move: l.pv[0], cp: toCentipawns(l.score) }))
   const legal = new Chess(fen).moves({ verbose: true }).map((m) => m.from + m.to + (m.promotion ?? ''))
   const style = opponent.character?.style
-  const weights = style ? candidates.map((c) => styleWeight(style, fen, c.move)) : undefined
+  const traits = opponent.character?.traits ?? []
+  const weights = style ? candidates.map((c) => styleWeight(style, fen, c.move, traits)) : undefined
   const move = pickBotMove(candidates, legal, opponent.rating, Math.random, weights)
   // Without Maia's likelihoods, judge "obvious" by how far the best move stands out.
   const gap = candidates.length > 1 ? candidates[0].cp - candidates[1].cp : 1000

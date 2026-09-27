@@ -4,6 +4,9 @@
 
 export type Style = 'aggressive' | 'solid' | 'simplifying' | 'grinding' | 'theoretical' | 'adaptive'
 
+/** Personal habits on top of the style (logic/style.ts), so no two players play alike. */
+export type Trait = 'queen-trader' | 'pawn-storm' | 'king-walker' | 'centre-pawns'
+
 export type Character = {
   id: string
   name: string
@@ -12,6 +15,8 @@ export type Character = {
   /** Act 1 offset from the baseline, in rating points. */
   offset: number
   style: Style
+  /** Personal habits: Marjorie swaps queens, Dex storms with pawns, Terry walks his king. */
+  traits?: Trait[]
   /** Thinking speed: 1 = normal, below 1 quicker (Oscar), above 1 slower (Priya). */
   thinkSpeed: number
   /** How they resign when hopelessly lost. */
@@ -40,6 +45,8 @@ export const CHARACTERS: Character[] = [
     // the player pulls away from her over the weeks (Joseph, Sep 2026).
     offset: -60,
     style: 'solid',
+    // Heads for the endgame: swaps queens whenever it's even.
+    traits: ['queen-trader'],
     thinkSpeed: 1,
     resigns: 'plays-to-mate',
     offersDraw: 'rarely',
@@ -51,6 +58,8 @@ export const CHARACTERS: Character[] = [
     strength: 'scaling',
     offset: -100,
     style: 'aggressive',
+    // Throws the pawns at your king.
+    traits: ['pawn-storm'],
     // "I play bullet."
     thinkSpeed: 0.5,
     resigns: 'normal',
@@ -80,6 +89,7 @@ export const CHARACTERS: Character[] = [
     strength: 'fixed',
     offset: -30,
     style: 'simplifying',
+    traits: ['queen-trader'],
     thinkSpeed: 0.9,
     resigns: 'normal',
     offersDraw: 'move-12-when-level',
@@ -104,6 +114,8 @@ export const CHARACTERS: Character[] = [
     strength: 'fixed',
     offset: 50,
     style: 'solid',
+    // Classical: the centre pawns first.
+    traits: ['centre-pawns'],
     // Checks everything twice, and writes it down.
     thinkSpeed: 1.2,
     resigns: 'normal',
@@ -191,6 +203,8 @@ export const PRACTICE_REGULARS: Character[] = [
     strength: 'scaling',
     offset: -40,
     style: 'aggressive',
+    // The king goes for walks, out of book too (when it isn't simply losing).
+    traits: ['king-walker'],
     thinkSpeed: 0.6,
     resigns: 'plays-to-mate',
     offersDraw: 'rarely',
