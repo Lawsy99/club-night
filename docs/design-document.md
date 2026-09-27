@@ -367,10 +367,12 @@ Most losses cost nothing but a replay. Real stakes are saved for the end of each
 
 Every format is a real chess format.
 
+**Losing to the boss (Joseph, Sep 2026):** straight to a rematch, with no replaying the earlier rounds. The boss is stronger than you and never gets easier, so the rematch is the challenge. The story never branches: you play on until you win.
+
 | Act | Gauntlet (3 matches) | Boss | If you lose to the boss |
 | --- | --- | --- | --- |
-| 1 | Club knockout cup: three rounds against club members | Toby, in the final | Qualify again for next month's knockout |
-| 2 | Three ladder challenges in a row | Toby, top of the ladder | You drop down the ladder and climb again |
+| 1 | Club knockout cup: three rounds against club members | Toby, in the final | A rematch |
+| 2 | Ladder challenges in a row | Toby, top of the ladder | A rematch |
 | 3 | County cup: three rounds, including Derek's and Felix's clubs | Kingsbridge in the final: Toby, then Vera | Next season's cup run. Losing to Vera after beating Toby means replaying Toby then Vera, not the three rounds |
 | 4 | A congress: win rounds 1 to 3 against locals | Toby in round 4, since winners are paired against winners | Next city, next congress, with new locals |
 

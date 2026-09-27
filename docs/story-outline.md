@@ -197,7 +197,5 @@ Each act is a season of sixteen weeks, and each week is seven or eight games plu
 4. **Toby is a former county junior Pemberton coached.** Revealed in week 27 by Dex, with a photo.
 5. **The team place** (first reserve all of Act 2) is left unresolved on purpose: in Act 3, Vera picks you for board one.
 
-## Still open
-
-1. **Losing at the top.** Losing the Act 2 final to Toby sends you back two rungs to climb again, as the cup did. Is that right for a ladder, or should you simply get another go the following week?
-2. **Where Act 2's Saturdays sit.** They are currently all ladder challenges. Should a few be league matches against other clubs, which would bring new faces before Act 3?
+6. **Losing a final** leads straight to a rematch with Toby, in every act. The story is a fixed path: you play on until you win. Trial night is the only loss the story needs.
+7. **No other clubs before Act 3.** Act 1 is the original cast; Act 2 adds new members who found the club through Dex's stream (characters to be agreed); Act 3 brings in the other clubs.

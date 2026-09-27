@@ -226,10 +226,9 @@ describe('the path', () => {
     expect(baseline).toBeGreaterThan(0)
 
     p = recordGame(p, boss, false, null)
-    expect(nextGame(p).game.kind).toBe('cup-round') // back to round 1
+    // Straight to a rematch; the boss is never easier than before.
+    expect(nextGame(p).game.kind).toBe('boss')
     expect(p.cup?.bossAttempts).toBe(1)
-    // Win through again; the boss is never easier than before.
-    for (let r = 0; r < 3; r++) p = recordGame(p, nextGame(p).game, true, null)
     expect(nextGame(p).game.rating).toBeGreaterThanOrEqual(boss.rating)
     p = recordGame(p, nextGame(p).game, true, null)
     expect(nextStep(p).kind).toBe('act-complete')
@@ -237,16 +236,12 @@ describe('the path', () => {
 
   it('offers a study friendly against the boss after two losses', () => {
     let p: Progress = { ...throughTrial(), chapter: ACT_1.chapters.length, lessonDone: true }
-    for (let attempt = 0; attempt < 2; attempt++) {
-      for (let r = 0; r < 3; r++) p = recordGame(p, nextGame(p).game, true, null)
-      p = recordGame(p, nextGame(p).game, false, null)
-    }
     for (let r = 0; r < 3; r++) p = recordGame(p, nextGame(p).game, true, null)
+    for (let attempt = 0; attempt < 2; attempt++) p = recordGame(p, nextGame(p).game, false, null)
     expect(nextGame(p).optionalFriendly).toMatchObject({ kind: 'friendly', stage: 'assisted', opponent: 'toby' })
     expect(nextGame(p).targetedPuzzles).toBeNull()
     // A third loss adds the targeted puzzle set on his openings.
     p = recordGame(p, nextGame(p).game, false, null)
-    for (let r = 0; r < 3; r++) p = recordGame(p, nextGame(p).game, true, null)
     expect(nextGame(p).targetedPuzzles?.openings).toContain('najdorf')
   })
 })

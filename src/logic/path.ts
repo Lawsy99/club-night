@@ -352,12 +352,7 @@ export function nextStep(p: Progress): NextStep {
         location: g.location,
       },
       optionalFriendly: null,
-      note:
-        cup.bossAttempts > 0
-          ? actNumber(p) === 1
-            ? `Qualifying again for the final (attempt ${cup.bossAttempts + 1}).`
-            : `Back down a rung. Climbing again for the top (attempt ${cup.bossAttempts + 1}).`
-          : null,
+      note: null,
     }
   }
   // The boss stays ahead of the player however they've improved, and never
@@ -544,10 +539,12 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
   if (game.kind === 'cup-round') {
     return { ...next, cup: won ? { ...cup, round: cup.round + 1 } : cup }
   }
-  // Boss: win the act, or back to qualifying (boss strength stays fixed).
+  // Boss: win the act, or straight to a rematch (Joseph, Sep 2026: no replaying
+  // the earlier rounds; he's stronger than you, so the rematch is the challenge).
+  // His strength never drops.
   return won
     ? { ...next, stage: 'act-complete', pendingStory: [...(next.pendingStory ?? []), ...storyAfterFinal(actNumber(p))] }
-    : { ...next, cup: { ...cup, round: 0, bossAttempts: cup.bossAttempts + 1, bossRating: Math.max(cup.bossRating, game.rating) } }
+    : { ...next, cup: { ...cup, bossAttempts: cup.bossAttempts + 1, bossRating: Math.max(cup.bossRating, game.rating) } }
 }
 
 function recordTrialGame(p: Progress, game: PathGame, won: boolean, accuracyStrength: number | null): Progress {
