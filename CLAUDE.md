@@ -87,6 +87,11 @@ Honing (Sep 2026, all done): Pemberton's post-game notes (logic/coachNotes.ts),
 character traits in play (style.ts), positional explanations (logic/positional.ts),
 own-game lesson examples, scouting from past meetings, a rules walkthrough for
 beginners, "How you're improving" in Stats and the monthly test (logic/monthlyTest.ts).
+Coach explanations (Sep 2026 rework): every claim comes from the engine's own line
+(logic/lineFacts.ts: followLine, findTactic). Tactics are only named when the line proves
+the piece falls and stays won. Analysed positions store a short `pv`. Scouting: two board
+demos per colour per opponent + three style lines, never repeated (Progress.scoutingSeen).
+Losing a final = straight rematch. Review ends with the step-through, then Home.
 Testers: friends and family now play the live link; feedback comes via Settings >
 Feedback through the phone's share sheet (no address built into the app).
 Next: Joseph's answers on those questions, tester feedback, the rest of
