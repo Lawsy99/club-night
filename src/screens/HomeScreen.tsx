@@ -3,6 +3,7 @@
 // There is deliberately no free-play mode: the path decides what's next.
 import { useEffect, useRef, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
+import { InstallHint } from '../components/InstallHint'
 import { NameField } from '../components/NameField'
 import { Portrait } from '../components/Portrait'
 import { LadderCard } from '../components/ClubLadder'
@@ -145,6 +146,8 @@ export function HomeScreen(props: Props) {
       )}
 
       {!progress.playerName && <MissingName onSave={onSetName} />}
+
+      <InstallHint />
 
       <button type="button" className="act-progress-button" onClick={onOpenCalendar} aria-label="Club calendar">
         <ActProgress progress={progress} />

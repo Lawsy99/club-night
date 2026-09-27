@@ -2,6 +2,7 @@
 // document, "Trial night: Before the games"). Anyone who has never played
 // is shown the moves first, hands on, by Marjorie (Sep 2026).
 import { useState } from 'react'
+import { InstallHint } from '../components/InstallHint'
 import { NameField } from '../components/NameField'
 import { RulesTutorial } from '../components/RulesTutorial'
 import { cleanName } from '../logic/playerName'
@@ -49,6 +50,8 @@ export function WelcomeScreen({ onStart }: Props) {
           to see where you fit.
         </p>
       </header>
+
+      <InstallHint beforeStarting />
 
       <NameField value={name} onChange={setName} prompt="Name, please. For the membership list. Spelt properly." />
 

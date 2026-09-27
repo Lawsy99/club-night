@@ -112,6 +112,31 @@
   font-weight: 600;
 }
 
+.settings-action:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* 16 px text stops iOS Safari zooming in on focus */
+.settings-feedback {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.settings-feedback:focus {
+  outline: none;
+  border-color: var(--brass);
+}
+
 .settings-message {
   margin: 4px 0 0;
   font-size: 14px;

@@ -5,6 +5,7 @@ import { useRef, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
 import { BOARD_THEMES, type BoardThemeId } from '../components/boardTheme'
 import { backupFileName, parseBackup, summarise } from '../logic/backup'
+import { composeFeedback, describeDevice } from '../logic/feedback'
 import { CHATTER_OPTIONS, type Settings } from '../logic/settings'
 import { exportAll, importAll } from '../storage/db'
 import './SettingsScreen.css'
@@ -13,11 +14,39 @@ type Props = {
   settings: Settings
   onChange: (s: Settings) => void
   onBack: () => void
+  /** Where the player is ("Week 3, rating 1180"), for feedback. */
+  whereTheyAre: string
 }
 
-export function SettingsScreen({ settings, onChange, onBack }: Props) {
+export function SettingsScreen({ settings, onChange, onBack, whereTheyAre }: Props) {
   const [message, setMessage] = useState<string | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
+  const [feedback, setFeedback] = useState('')
+  const [feedbackNote, setFeedbackNote] = useState<string | null>(null)
+
+  /** Sends the feedback through the phone's share sheet (or copies it, where there isn't one). */
+  async function sendFeedback() {
+    setFeedbackNote(null)
+    const standalone =
+      window.matchMedia?.('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true
+    const text = composeFeedback(feedback, {
+      version: BUILD_LABEL,
+      whereTheyAre,
+      device: describeDevice(navigator.userAgent, standalone),
+    })
+    try {
+      if (navigator.share) {
+        await navigator.share({ text })
+        setFeedback('')
+        setFeedbackNote('Thank you.')
+      } else {
+        await navigator.clipboard.writeText(text)
+        setFeedbackNote('Copied. Paste it into a message to whoever sent you the app.')
+      }
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') setFeedbackNote('Couldn’t open the share options. Try again?')
+    }
+  }
 
   async function exportBackup() {
     setMessage(null)
@@ -160,6 +189,35 @@ export function SettingsScreen({ settings, onChange, onBack }: Props) {
         {message && (
           <p className="settings-message" role="status">
             {message}
+          </p>
+        )}
+      </section>
+
+      <section>
+        <h2>Feedback</h2>
+        <p className="settings-note">
+          This is a test version, so thank you for trying it. Anything that confused you, annoyed you, broke, or that you
+          liked: write it here and send it however you like. Your progress stays on this phone, and very occasionally a
+          test version may ask you to start again.
+        </p>
+        <textarea
+          className="settings-feedback"
+          rows={4}
+          placeholder="What happened, or what did you think?"
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+        />
+        <button
+          type="button"
+          className="settings-action primary"
+          disabled={!feedback.trim()}
+          onClick={() => void sendFeedback()}
+        >
+          Send feedback
+        </button>
+        {feedbackNote && (
+          <p className="settings-message" role="status">
+            {feedbackNote}
           </p>
         )}
       </section>

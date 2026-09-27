@@ -38,7 +38,7 @@ import { storyFor } from '../logic/storyContent'
 import { collectMistakes } from '../engine/collectMistakes'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
 import { ACT_1 } from '../data/act1'
-import { actNumber } from '../data/acts'
+import { actNumber, weeksBefore } from '../data/acts'
 import { CHARACTERS } from '../data/characters'
 import { rivalTarget } from '../logic/rival'
 import { scoutingReport, type LastMeeting } from '../logic/scouting'
@@ -322,7 +322,18 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
   }
   if (view === 'settings') {
     return (
-      <SettingsScreen settings={settings} onChange={onChangeSettings} onBack={() => setView('home')} />
+      <SettingsScreen
+        settings={settings}
+        onChange={onChangeSettings}
+        onBack={() => setView('home')}
+        whereTheyAre={
+          progress.stage === 'act' || progress.stage === 'act-complete'
+            ? `Week ${weeksBefore(progress) + progress.chapter + 1}, rating ${progress.rating ? Math.round(progress.rating.rating) : 'none'}`
+            : progress.stage === 'trial'
+              ? `Trial night, game ${(progress.trial?.games.length ?? 0) + 1}`
+              : 'Not started'
+        }
+      />
     )
   }
 
