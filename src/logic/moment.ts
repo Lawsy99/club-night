@@ -25,4 +25,6 @@ export type Moment = {
    * 'mistake' (or missing): the player's own error.
    */
   kind?: 'mistake' | 'missed'
+  /** The engine's line from the position, starting with bestMove (Sep 2026; missing on older positions). */
+  bestLine?: string[]
 }

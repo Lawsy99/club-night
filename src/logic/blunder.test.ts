@@ -42,12 +42,14 @@ describe('blunder warnings', () => {
     expect(assessMove({ bestBefore: mate(2), after: cp(0) }, pieceOnly)).toBe('loses-material')
   })
 
-  it('names the piece the reply would take', () => {
-    // White's knight has just gone to d4, where Black's e5 pawn can take it.
-    const fen = 'rnbqkbnr/ppp2ppp/3p4/4p3/3NP3/8/PPPP1PPP/RNBQKB1R b KQkq - 1 3'
-    expect(describeBlunder('loses-material', fen, 'e5d4')).toBe('That lets them take your knight.')
-    expect(describeBlunder('loses-material', fen, 'a7a6')).toBe('That gives away a lot.')
-    expect(describeBlunder('allows-mate', fen, null)).toBe('That allows a forced checkmate.')
+  it('names what the line really loses, once the exchanges are done', () => {
+    // White's knight goes to d4, where Black's e5 pawn can take it for nothing.
+    const fen = 'rnbqkbnr/ppp2ppp/3p4/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3'
+    expect(describeBlunder('loses-material', fen, 'f3d4', ['e5d4'])).toBe('That loses a knight.')
+    // Taking a defended pawn: a knight for a pawn, not "they take your knight".
+    expect(describeBlunder('loses-material', fen, 'f3e5', ['d6e5'])).toBe('That loses a knight for a pawn.')
+    expect(describeBlunder('loses-material', fen, 'f3d4', ['a7a6'])).toBe('That gives away a lot.')
+    expect(describeBlunder('allows-mate', fen, 'f3d4', [])).toBe('That allows a forced checkmate.')
   })
 })
 

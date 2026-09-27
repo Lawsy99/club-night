@@ -52,6 +52,8 @@ function playerErrors(reviewed: readonly ReviewedMove[], evals: readonly Positio
           reply: evals[m.ply + 1].bestMove,
           cpBefore,
           cpAfter,
+          replyLine: evals[m.ply + 1].pv,
+          bestLine: evals[m.ply].pv,
         }),
         missedChance: isMissedChance(cpEarlier, cpBefore),
       }

@@ -20,24 +20,35 @@ export function moveIdeas(fenBefore: string, uci: string, cpForMover = 0): strin
   const ideas: { rank: number; text: string }[] = []
   const add = (rank: number, text: string) => ideas.push({ rank, text })
 
-  // Their threats before (as if it were their move) and after.
+  // Their threats before (as if it were their move) and after. Not after a
+  // check: they have to answer it, so their threats only look "stopped".
   const threatsBefore = threats(passTurn(fenBefore), them)
   const threatsAfter = threats(after.fen(), them)
-  if (threatsBefore.mate && !threatsAfter.mate) add(1, 'stops their mate threat')
+  if (after.inCheck()) {
+    // (nothing: see above)
+  } else if (threatsBefore.mate && !threatsAfter.mate) add(1, 'stops their mate threat')
   else {
     const stopped = threatsBefore.targets.filter((sq) => !threatsAfter.targets.includes(sq) && sq !== move.from)
+    // A defended piece matters more than a defended pawn (which is rarely the point).
     const target = stopped[0] ? before.get(stopped[0] as Square) : null
-    if (target) add(1, `defends your ${NAMES[target.type]} on ${stopped[0]}`)
+    if (target) add(target.type === 'p' ? 5 : 1, `defends your ${NAMES[target.type]} on ${stopped[0]}`)
   }
 
   // Our threats now (as if it were our move again).
   const ours = threats(passTurn(after.fen()), me)
   const oursBefore = threats(fenBefore, me)
   if (ours.mate && !after.inCheck()) add(2, 'threatens mate')
-  const newTargets = ours.targets.filter((sq) => !oursBefore.targets.includes(sq))
-  if (newTargets[0]) {
-    const piece = after.get(newTargets[0] as Square)
-    if (piece) add(3, `attacks their ${NAMES[piece.type]} on ${newTargets[0]}`)
+  // What it newly attacks: both, if it's a double attack (the bigger first).
+  const newTargets = ours.targets
+    .filter((sq) => !oursBefore.targets.includes(sq))
+    .map((sq) => ({ sq, piece: after.get(sq as Square) }))
+    .filter((t): t is { sq: string; piece: NonNullable<typeof t.piece> } => !!t.piece)
+    .sort((a, b) => VALUES[b.piece.type] - VALUES[a.piece.type])
+  if (newTargets.length >= 2) {
+    const [a, b] = newTargets
+    add(3, `attacks their ${NAMES[a.piece.type]} on ${a.sq} and ${NAMES[b.piece.type]} on ${b.sq} at once`)
+  } else if (newTargets[0]) {
+    add(3, `attacks their ${NAMES[newTargets[0].piece.type]} on ${newTargets[0].sq}`)
   }
 
   const pin = pinCreated(after, move, them)
@@ -82,11 +93,8 @@ export function moveIdeas(fenBefore: string, uci: string, cpForMover = 0): strin
     add(6, `brings your ${NAMES[move.piece]} closer to their king`)
   }
 
-  if (move.piece !== 'p' && move.piece !== 'k' && ideas.length === 0) {
-    const gain = mobility(after, move.to as Square, me) - mobility(before, move.from as Square, me)
-    if (gain >= 3) add(7, `gives your ${NAMES[move.piece]} more room`)
-  }
-
+  // (No "gives your rook more room": Joseph, Sep 2026, it read as filler
+  // when the real point was something else.)
   return ideas.sort((a, b) => a.rank - b.rank).map((i) => i.text)
 }
 
@@ -196,13 +204,3 @@ const distance = (a: string, b: string) =>
   Math.max(Math.abs(FILES.indexOf(a[0]) - FILES.indexOf(b[0])), Math.abs(Number(a[1]) - Number(b[1])))
 const distanceToCentre = (sq: string) =>
   Math.max(Math.abs(FILES.indexOf(sq[0]) - 3.5), Math.abs(Number(sq[1]) - 4.5))
-
-/** How many squares the piece on `square` could move to, if it were its side's turn. */
-function mobility(chess: Chess, square: Square, me: Colour): number {
-  const fen = chess.turn() === me ? chess.fen() : passTurn(chess.fen())
-  try {
-    return new Chess(fen).moves({ square, verbose: true }).length
-  } catch {
-    return 0
-  }
-}

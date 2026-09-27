@@ -15,7 +15,16 @@ export type PositionEval = {
   cp: number
   /** The engine's choice in this position (UCI), or null if the game is over. */
   bestMove: string | null
+  /**
+   * The engine's expected line from here, starting with bestMove (a few
+   * moves; Sep 2026, so the coach's explanations follow the real line).
+   * Missing on games analysed by older versions.
+   */
+  pv?: string[]
 }
+
+/** How many moves of the engine's line are kept with each position. */
+export const PV_KEPT = 10
 
 export type ReviewedMove = {
   ply: number // 0 = White's first move

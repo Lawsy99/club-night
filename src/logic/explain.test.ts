@@ -3,35 +3,44 @@ import { coachComment, explainBestMove, explainGoodMove, explainMistake } from '
 import { replay } from './game'
 
 const afterNc6 = replay(['e2e4', 'e7e5', 'g1f3', 'b8c6']).fen()
+const scholar = replay(['e2e4', 'e7e5', 'f1c4', 'b8c6', 'd1h5', 'g8f6']).fen()
+const knightHangs = replay(['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f3g5']).fen()
 
 describe('explainBestMove', () => {
-  it('names a checkmate', () => {
-    const fen = replay(['e2e4', 'e7e5', 'f1c4', 'b8c6', 'd1h5', 'g8f6']).fen()
-    expect(explainBestMove(fen, 'h5f7', 9999)).toBe('Qxf7# is checkmate.')
+  it('names a checkmate, and spells out a short forced one', () => {
+    expect(explainBestMove(scholar, 'h5f7', 9999)).toBe('Qxf7# is checkmate.')
+    // Back-rank mate in two with doubled rooks: Rd8+ Rxd8 Rxd8#.
+    expect(explainBestMove('2r3k1/5ppp/8/8/8/8/3R1PPP/3R2K1 w - - 0 1', 'd2d8', 9998, undefined, ['d2d8', 'c8d8', 'd1d8'])).toBe(
+      'Rd8+ starts a forced checkmate: Rd8+ Rxd8 Rxd8#.',
+    )
   })
 
   it('names a free piece', () => {
-    const fen = replay(['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f3g5']).fen()
-    expect(explainBestMove(fen, 'd8g5', 300)).toBe('Qxg5 wins their knight outright: nothing can take back.')
+    expect(explainBestMove(knightHangs, 'd8g5', 300)).toBe('Qxg5 wins their knight: nothing can take it back.')
   })
 
-  it('names a fork', () => {
-    expect(explainBestMove('r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1', 'b5c7', 500)).toBe(
-      'Nc7+ is a fork: your knight attacks their king and rook at once.',
-    )
+  it('names a fork only when the line proves a forked piece falls', () => {
+    const fen = 'r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1'
+    expect(explainBestMove(fen, 'b5c7', 500, undefined, ['b5c7', 'e8d7', 'c7a8'])).toBe('Nc7+ forks their king and rook, and wins a rook.')
+    expect(explainBestMove(fen, 'b5c7', 500)).not.toContain('fork')
   })
 
-  it('names a skewer', () => {
+  it('names a skewer from the line', () => {
     // Rh4+: the king on e4 has to move, and the rook on a4 behind it falls.
-    expect(explainBestMove('8/8/8/8/r3k3/8/8/1K5R w - - 0 1', 'h1h4', 500)).toBe(
-      'Rh4+ is a skewer: their king has to move, and the rook behind it falls.',
+    expect(explainBestMove('8/8/8/8/r3k3/8/8/1K5R w - - 0 1', 'h1h4', 500, undefined, ['h1h4', 'e4d5', 'h4a4'])).toBe(
+      'Rh4+ skewers their king against the rook behind it, and wins a rook.',
     )
+  })
+
+  it('calls a recapture a recapture, not a win', () => {
+    // White has just taken on d5: Qxd5 takes back.
+    const prevFen = replay(['e2e4', 'd7d5']).fen()
+    const fen = replay(['e2e4', 'd7d5', 'e4d5']).fen()
+    expect(explainBestMove(fen, 'd8d5', 0, undefined, ['d8d5'], { fen: prevFen, move: 'e4d5' })).toBe('Qxd5 takes back, so you’re not a pawn down.')
   })
 
   it('names saving a piece the move played left hanging', () => {
-    expect(explainBestMove('4k3/8/8/8/4p3/5N2/8/4K3 w - - 0 1', 'f3d4', 200, 'e1d2')).toBe(
-      'Nd4 gets your knight out of danger.',
-    )
+    expect(explainBestMove('4k3/8/8/8/4p3/5N2/8/4K3 w - - 0 1', 'f3d4', 200, 'e1d2')).toBe('Nd4 gets your knight out of danger.')
   })
 
   it('otherwise says what the move keeps', () => {
@@ -46,52 +55,72 @@ describe('coachComment', () => {
   it('says what went wrong, then what was better', () => {
     expect(
       coachComment({ fenBefore: afterNc6, played: 'f3g5', bestMove: 'd2d4', reply: 'd8g5', cpBefore: 30, cpAfter: -300 }),
-    ).toBe('Your knight on g5 was left undefended. Instead, d4 takes space in the centre.')
+    ).toBe('Your knight on g5 was left undefended: Qxg5 just takes it. Instead, d4 takes space in the centre.')
   })
 
   it("doesn't repeat itself when the point was a missed chance", () => {
-    const fen = replay(['e2e4', 'e7e5', 'f1c4', 'b8c6', 'd1h5', 'g8f6']).fen()
     expect(
-      coachComment({ fenBefore: fen, played: 'h5h3', bestMove: 'h5f7', reply: null, cpBefore: 9999, cpAfter: 50 }),
+      coachComment({ fenBefore: scholar, played: 'h5h3', bestMove: 'h5f7', reply: null, cpBefore: 9999, cpAfter: 50 }),
     ).toBe('You had a forced checkmate, starting with Qxf7#.')
   })
 })
 
 describe('explainMistake', () => {
-  it('spots walking into mate', () => {
+  it('spots walking into mate, and names it', () => {
     const fen = replay(['f2f3', 'e7e5']).fen()
     expect(
       explainMistake({ fenBefore: fen, played: 'g2g4', bestMove: 'e2e4', reply: 'd8h4', cpBefore: -50, cpAfter: -10000 }),
-    ).toBe('This allowed a forced checkmate.')
+    ).toBe('This allowed Qh4#, checkmate.')
   })
 
   it('spots a missed mate', () => {
-    // Scholar's mate set up: Qxf7 is mate, but White plays something else.
-    const fen = replay(['e2e4', 'e7e5', 'f1c4', 'b8c6', 'd1h5', 'g8f6']).fen()
     expect(
-      explainMistake({ fenBefore: fen, played: 'h5h3', bestMove: 'h5f7', reply: null, cpBefore: 9999, cpAfter: 50 }),
+      explainMistake({ fenBefore: scholar, played: 'h5h3', bestMove: 'h5f7', reply: null, cpBefore: 9999, cpAfter: 50 }),
     ).toBe('You had a forced checkmate, starting with Qxf7#.')
   })
 
   it('spots a piece left undefended', () => {
     expect(
       explainMistake({ fenBefore: afterNc6, played: 'f3g5', bestMove: 'd2d4', reply: 'd8g5', cpBefore: 30, cpAfter: -300 }),
-    ).toBe('Your knight on g5 was left undefended.')
+    ).toBe('Your knight on g5 was left undefended: Qxg5 just takes it.')
   })
 
-  it('spots a fork', () => {
+  it('spots a fork, when the line shows the piece falling', () => {
     // White's rook steps onto c1, where the knight can fork it with the king.
     const fen = '6k1/8/8/8/3n4/8/2R5/6K1 w - - 0 1'
     expect(
-      explainMistake({ fenBefore: fen, played: 'c2c1', bestMove: 'c2c4', reply: 'd4e2', cpBefore: 0, cpAfter: -500 }),
-    ).toBe('This allowed a fork: their knight on e2 attacks your king and rook.')
+      explainMistake({
+        fenBefore: fen,
+        played: 'c2c1',
+        bestMove: 'c2c4',
+        reply: 'd4e2',
+        replyLine: ['d4e2', 'g1f1', 'e2c1'],
+        cpBefore: 0,
+        cpAfter: -500,
+      }),
+    ).toBe('This allowed Ne2+, a fork of your king and rook. You lose a rook.')
+  })
+
+  it("doesn't call a fair trade a loss", () => {
+    // Nxe5 Nxe5: a knight for a knight, then the pawn. Not "your knight was undefended".
+    const fen = replay(['e2e4', 'e7e5', 'g1f3', 'g8f6', 'b1c3', 'b8c6']).fen()
+    const text = explainMistake({ fenBefore: fen, played: 'f3e5', bestMove: 'f1b5', reply: 'c6e5', replyLine: ['c6e5', 'd2d4'], cpBefore: 30, cpAfter: -200 })
+    expect(text).toContain('knight for a pawn')
+    expect(text).not.toContain('undefended')
   })
 
   it('spots a missed free piece', () => {
-    const fen = replay(['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f3g5']).fen()
     expect(
-      explainMistake({ fenBefore: fen, played: 'a7a6', bestMove: 'd8g5', reply: null, cpBefore: 300, cpAfter: 0 }),
-    ).toBe('You missed Qxg5, which wins their knight.')
+      explainMistake({ fenBefore: knightHangs, played: 'a7a6', bestMove: 'd8g5', reply: null, cpBefore: 300, cpAfter: 0 }),
+    ).toBe('You missed Qxg5. It wins their knight, which nothing defends.')
+  })
+
+  it('says a missed recapture plainly', () => {
+    const prevFen = replay(['e2e4', 'd7d5']).fen()
+    const fen = replay(['e2e4', 'd7d5', 'e4d5']).fen()
+    expect(
+      explainMistake({ fenBefore: fen, played: 'a7a6', bestMove: 'd8d5', reply: 'b1c3', cpBefore: 0, cpAfter: -120, prev: { fen: prevFen, move: 'e4d5' } }),
+    ).toBe('You needed to take back with Qxd5. As it is, you’re a pawn down.')
   })
 
   it('falls back to naming the stronger move', () => {
@@ -103,10 +132,8 @@ describe('explainMistake', () => {
 
 describe('explainGoodMove', () => {
   it('names mates, punishments and wins', () => {
-    const scholar = replay(['e2e4', 'e7e5', 'f1c4', 'b8c6', 'd1h5', 'g8f6']).fen()
     expect(explainGoodMove(scholar, 'h5f7', false)).toBe('Qxf7#: checkmate.')
-    const hanging = replay(['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f3g5']).fen()
-    expect(explainGoodMove(hanging, 'd8g5', true)).toBe('You punished their mistake with Qxg5.')
-    expect(explainGoodMove(hanging, 'd8g5', false)).toBe('Qxg5 won their knight.')
+    expect(explainGoodMove(knightHangs, 'd8g5', true)).toBe('You punished their mistake with Qxg5, winning a knight.')
+    expect(explainGoodMove(knightHangs, 'd8g5', false)).toBe('Qxg5 won their knight.')
   })
 })

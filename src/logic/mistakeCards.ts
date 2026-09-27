@@ -14,7 +14,7 @@ export type ReviewMoment = Moment & { ply: number; rating: MoveRating; moveLabel
 /** The player's biggest moments in a game, ready to retry. */
 export function gameMoments(moves: readonly string[], evals: readonly PositionEval[], player: Colour): ReviewMoment[] {
   const reviewed = reviewMoves(moves, evals)
-  return biggestMoments(reviewed, player).map((m) => withLeadUp(toMoment(m, evals, player), moves, m.ply))
+  return biggestMoments(reviewed, player).map((m) => withLeadUp(toMoment(m, evals, player, moves), moves, m.ply))
 }
 
 /** Adds the opponent's move just before (and the position before that), for context. */
@@ -36,12 +36,13 @@ export function cardsFromMoments(game: Pick<GameRecord, 'id'>, moments: readonly
 /** The card id for a game's moment (so a moment retried in the review can be retired). */
 export const cardId = (gameId: string, ply: number) => `${gameId}:${ply}`
 
-function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colour): ReviewMoment {
+function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colour, moves: readonly string[]): ReviewMoment {
   const forPlayer = (cp: number) => (player === 'w' ? cp : -cp)
   const cpBefore = forPlayer(evals[m.ply].cp)
   const cpAfter = forPlayer(evals[m.ply + 1].cp)
   // Before the opponent's last move, from the player's side.
   const cpEarlier = m.ply > 0 ? forPlayer(evals[m.ply - 1].cp) : 0
+  const bestLine = evals[m.ply].pv
   return {
     kind: isMissedChance(cpEarlier, cpBefore) ? 'missed' : 'mistake',
     fenBefore: m.fenBefore,
@@ -50,6 +51,7 @@ function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colou
     playedSan: m.san,
     bestMove: m.bestMove ?? m.uci,
     bestCp: cpBefore,
+    ...(bestLine ? { bestLine } : {}),
     explanation: explainMistake({
       fenBefore: m.fenBefore,
       played: m.uci,
@@ -57,6 +59,9 @@ function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colou
       reply: evals[m.ply + 1].bestMove,
       cpBefore,
       cpAfter,
+      replyLine: evals[m.ply + 1].pv,
+      bestLine,
+      prev: m.ply > 0 ? { fen: replay(moves.slice(0, m.ply - 1)).fen(), move: moves[m.ply - 1] } : undefined,
     }),
     ply: m.ply,
     rating: m.rating,

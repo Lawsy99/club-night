@@ -7,12 +7,15 @@ import type { PositionEval } from './review'
 const moves = ['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f1c4', 'g8f6', 'f3g5', 'd7d5', 'e4d5', 'f6d5', 'd2d4']
 const evals: PositionEval[] = moves.map(() => ({ cp: 30, bestMove: null as string | null }))
 evals.push({ cp: 20, bestMove: null })
-evals[10] = { cp: 150, bestMove: 'g5f7' }
+// (A made-up line for the test: the queen steps aside and the rook falls.)
+const forkLine = ['g5f7', 'd8e7', 'f7h8']
+evals[10] = { cp: 150, bestMove: 'g5f7', pv: forkLine }
 evals[11] = { cp: 20, bestMove: 'c8e6' }
 
 describe('lessons from your own games', () => {
-  it('recognises a fork in a position you had', () => {
-    expect(showsTheme(replay(moves.slice(0, 10)).fen(), 'g5f7', 150, ['fork'])).toBe(true)
+  it('recognises a fork in a position you had, when the line proves it', () => {
+    expect(showsTheme(replay(moves.slice(0, 10)).fen(), 'g5f7', 150, ['fork'], forkLine)).toBe(true)
+    expect(showsTheme(replay(moves.slice(0, 10)).fen(), 'g5f7', 150, ['fork'])).toBe(false)
     expect(showsTheme(replay(moves.slice(0, 10)).fen(), 'd2d4', 150, ['fork'])).toBe(false)
   })
 
@@ -38,11 +41,11 @@ describe('puzzle explanations', () => {
     const puzzle = {
       id: 'p1',
       fen: replay(moves.slice(0, 9)).fen(),
-      moves: ['f6d5', 'g5f7'],
+      moves: ['f6d5', ...forkLine],
       rating: 1200,
       themes: ['fork'],
       opening: 'italian',
     }
-    expect(puzzleExplanation(puzzle)).toBe('Nxf7 is a fork: your knight attacks their queen and rook at once.')
+    expect(puzzleExplanation(puzzle)).toBe('Nxf7 forks their queen and rook, and wins a rook and a pawn.')
   })
 })

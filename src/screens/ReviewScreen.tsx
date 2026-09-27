@@ -53,7 +53,10 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
     let cancelled = false
     ;(async () => {
       const saved = await getArchivedGame(game.id)
-      if (saved?.evals?.length === game.moves.length + 1) {
+      // Analysed before Sep 2026 (no engine lines saved): analyse again, once,
+      // so the coach's explanations can follow the real lines.
+      const hasLines = saved?.evals?.some((e) => e.pv?.length)
+      if (saved?.evals?.length === game.moves.length + 1 && hasLines) {
         if (!cancelled) setEvals(saved.evals)
         return
       }
@@ -223,7 +226,7 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
             <MoveReplay moves={game.moves} ply={best.move.ply} orientation={player === 'w' ? 'white' : 'black'} />
             <p className="review-explanation">
               {best.move.ply > 0 && <>They played {replay(game.moves.slice(0, best.move.ply)).history().at(-1)}. </>}
-              {explainGoodMove(best.move.fenBefore, best.move.uci, best.punished)}
+              {explainGoodMove(best.move.fenBefore, best.move.uci, best.punished, evals?.[best.move.ply]?.pv)}
             </p>
           </>
         ) : (

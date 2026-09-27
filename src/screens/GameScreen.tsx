@@ -496,7 +496,7 @@ export function GameScreen({
           lastQuery.current = query
           return finish(query)
         }
-        finish(describeBlunder(kind, fenAfter, after.bestMove))
+        finish(describeBlunder(kind, fen, uci, after.pv))
       })
       // If the engine fails, never block the player's move.
       .catch(() => finish(null))
@@ -518,7 +518,7 @@ export function GameScreen({
     if (!a?.bestMove || hintsLeft <= 0) return
     const cp = toCentipawns(scoreFor(game.playerColour, a.sideToMove, a.score))
     const opener = coachVoice ? pickLine(coachVoice.hintOpeners, null) + ' ' : ''
-    dialogue.say(opener + coachHint(fen, a.bestMove, cp))
+    dialogue.say(opener + coachHint(fen, a.bestMove, cp, a.pv))
     setGame((g) => (g ? { ...g, hintsUsed: (g.hintsUsed ?? 0) + 1 } : g))
   }
 
@@ -543,6 +543,9 @@ export function GameScreen({
     if (!ratedMove || stage.id !== 'assisted' || !coachVoice || outcome) return
     if (ratedMove.rating !== 'mistake' && ratedMove.rating !== 'blunder') return
     if (ratedMove.cpBefore === null || ratedMove.cpAfter === null) return
+    // Their move just before, so a missed recapture reads as one.
+    const at = game.moves.length - (game.moves.at(-1) === ratedMove.played ? 1 : 2)
+    const prev = at > 0 ? { fen: replay(game.moves.slice(0, at - 1)).fen(), move: game.moves[at - 1] } : undefined
     const comment = coachComment({
       fenBefore: ratedMove.fenBefore,
       played: ratedMove.played,
@@ -550,6 +553,9 @@ export function GameScreen({
       reply: ratedMove.reply,
       cpBefore: ratedMove.cpBefore,
       cpAfter: ratedMove.cpAfter,
+      bestLine: ratedMove.bestLine ?? undefined,
+      replyLine: ratedMove.replyLine ?? undefined,
+      prev,
     })
     dialogue.say(`${pickLine(coachVoice.afterMistake, null)} ${comment}`, 'annoyed')
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per rated move

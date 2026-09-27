@@ -23,6 +23,9 @@ export type RatedMove = {
   reply: string | null
   cpBefore: number | null
   cpAfter: number | null
+  /** The engine's lines: from before the move (the best line) and after it (their best reply onwards). */
+  bestLine: string[] | null
+  replyLine: string[] | null
 }
 
 export function useMoveRating(moves: readonly string[], playerColour: Colour): RatedMove | null {
@@ -50,10 +53,12 @@ export function useMoveRating(moves: readonly string[], playerColour: Colour): R
       rating: MoveRating | null,
       betterMove: string | null = null,
       winAfter: number | null = null,
-      extra: { reply: string | null; cpBefore: number | null; cpAfter: number | null } = {
+      extra: Pick<RatedMove, 'reply' | 'cpBefore' | 'cpAfter' | 'bestLine' | 'replyLine'> = {
         reply: null,
         cpBefore: null,
         cpAfter: null,
+        bestLine: null,
+        replyLine: null,
       },
     ) => {
       if (cancelled || !rating) return
@@ -76,6 +81,8 @@ export function useMoveRating(moves: readonly string[], playerColour: Colour): R
             reply: a.bestMove,
             cpBefore: toCentipawns(b.score),
             cpAfter: toCentipawns(mine),
+            bestLine: b.pv,
+            replyLine: a.pv,
           })
         })
         .catch(() => finish(null))

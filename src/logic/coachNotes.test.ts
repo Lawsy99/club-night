@@ -11,11 +11,17 @@ const evals: PositionEval[] = cps.map((cp, i) => ({ cp, bestMove: best[i] ?? nul
 
 describe("Pemberton's notes after a game", () => {
   it('sorts mistakes into kinds', () => {
-    expect(gameErrorKinds(moves, evals, 'w')).toEqual(['undefended', 'undefended'])
+    // Ng5 hangs the knight; Bxf7+ is a bad capture (a bishop for a pawn), not a piece left for nothing.
+    expect(gameErrorKinds(moves, evals, 'w')).toEqual(['undefended', 'lost-material'])
   })
 
   it('names the kind of mistake when it happens more than once', () => {
-    const notes = coachNotes({ moves, evals, player: 'w', won: false })
+    // 3.Ng5?? and 4.Qh5?? (instead of 4.Bc4): two pieces left for nothing.
+    const hung = parseLine('1. e4 e5 2. Nf3 Nc6 3. Ng5 Qxg5 4. Qh5 Qxh5 5. a3 Nf6 6. a4 Bc5 7. a5 d6 8. b3 Be6')
+    const hungCps = [30, 30, 30, 30, 30, -300, -300, -1200, -1200, -1200, -1200, -1200, -1200, -1200, -1200, -1200, -1200]
+    const hungBest: Record<number, string> = { 4: 'd2d4', 5: 'd8g5', 6: 'd2d3', 7: 'g5h5' }
+    const hungEvals: PositionEval[] = hungCps.map((cp, i) => ({ cp, bestMove: hungBest[i] ?? null }))
+    const notes = coachNotes({ moves: hung, evals: hungEvals, player: 'w', won: false })
     expect(notes).toContain('Twice you left a piece where it could be taken for nothing. Before every move: what’s defended?')
   })
 

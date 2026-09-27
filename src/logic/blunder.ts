@@ -1,8 +1,8 @@
 // Deciding whether a move deserves a blunder warning, and what to say.
-import { Chess, type PieceSymbol } from 'chess.js'
 import type { BlunderWarningRule } from '../data/helpStages'
 import type { Score } from '../engine/uci'
 import { toCentipawns } from './evaluation'
+import { describeGain, followLine } from './lineFacts'
 
 /**
  * Advantages are capped here before comparing, so going from +15 to +12
@@ -33,27 +33,19 @@ export function assessMove(check: MoveCheck, rule: BlunderWarningRule | null): B
   return loss >= rule.minLossCp ? 'loses-material' : null
 }
 
-const PIECE_NAMES: Record<PieceSymbol, string> = {
-  p: 'pawn',
-  n: 'knight',
-  b: 'bishop',
-  r: 'rook',
-  q: 'queen',
-  k: 'king',
-}
 
 /**
- * The warning text. `fenAfter` is the position after the player's move and
- * `reply` the engine's best answer to it (UCI), used to name what's at stake.
+ * The warning text. `fenBefore` is the position before the player's move,
+ * `uci` the move, and `replyLine` the engine's best answer to it and what
+ * follows (UCI). What's at stake is named only if the line really loses it
+ * once the exchanges are done (Sep 2026: a trade isn't "letting them take" a piece).
  */
-export function describeBlunder(kind: BlunderKind, fenAfter: string, reply: string | null): string {
+export function describeBlunder(kind: BlunderKind, fenBefore: string, uci: string, replyLine: readonly string[]): string {
   if (kind === 'allows-mate') return 'That allows a forced checkmate.'
-  if (reply) {
-    const chess = new Chess(fenAfter)
-    const captured = chess.get(reply.slice(2, 4) as never)
-    if (captured && captured.type !== 'k') {
-      return `That lets them take your ${PIECE_NAMES[captured.type]}.`
-    }
+  if (replyLine.length) {
+    const line = followLine(fenBefore, [uci, ...replyLine])
+    const loss = line.net <= -1 ? describeGain(line.lost, line.won, line.mixedMinors) : null
+    if (loss) return `That loses ${loss}.`
   }
   return 'That gives away a lot.'
 }

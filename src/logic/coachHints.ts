@@ -4,6 +4,7 @@
 // order of what matters most.
 import { Chess, type PieceSymbol, type Square } from 'chess.js'
 import { applyUci, type Colour } from './game'
+import { findTactic, followLine } from './lineFacts'
 import { moveIdeas } from './moveIdeas'
 
 const NAMES: Record<PieceSymbol, string> = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' }
@@ -15,7 +16,7 @@ const MATE = 9000
  * A nudge towards `best` in the position `fen` (the player to move).
  * `cp` is the player's score with the best move, in centipawns.
  */
-export function coachHint(fen: string, best: string, cp: number): string {
+export function coachHint(fen: string, best: string, cp: number, line?: readonly string[]): string {
   const before = new Chess(fen)
   const me = before.turn()
   const them: Colour = me === 'w' ? 'b' : 'w'
@@ -33,14 +34,29 @@ export function coachHint(fen: string, best: string, cp: number): string {
     return `Your ${NAMES[move.piece]} is in trouble.`
   }
 
-  if (move.captured) {
-    const safe = after.attackers(move.to, them).length === 0
-    if (safe) return 'Something of theirs isn’t defended.'
-    if (VALUES[move.captured] > VALUES[move.piece]) return 'There’s a capture that wins material.'
-  }
-  const targets = attackedBy(after, move.to, them, me)
-  if (targets.length >= 2 && targets.some((t) => t === 'k' || t === 'q' || t === 'r')) {
-    return `Could your ${NAMES[move.piece]} attack two things at once?`
+  // With the engine's line: nudge towards the tactic it proves (Sep 2026:
+  // only point at a fork if a forked piece really falls).
+  const out = followLine(fen, line?.[0] === best ? line : [best])
+  if (out.net >= 1) {
+    const found = findTactic(out)
+    if (found?.index === 0) {
+      switch (found.tactic.kind) {
+        case 'undefended':
+          return 'Something of theirs isn’t defended.'
+        case 'fork':
+          return `Could your ${NAMES[move.piece]} attack two things at once?`
+        case 'pin':
+          return 'Can you pin one of their pieces?'
+        case 'skewer':
+          return 'Look along the lines through their king and queen.'
+        case 'discovered':
+          return 'What happens if one of your pieces gets out of the way of another?'
+        case 'defender':
+          return 'Which of their pieces is doing an important job? Can you take it?'
+      }
+    }
+    if (move.captured || move.san.includes('+')) return 'There’s a way to win material. Start with a forcing move.'
+    return 'There’s material to be won, but it takes a quiet move first.'
   }
   if (move.san.includes('+')) return 'Look at your checks.'
   if (move.isKingsideCastle() || move.isQueensideCastle()) return 'Your king would be happier tucked away.'
@@ -85,15 +101,3 @@ function inTrouble(chess: Chess, square: Square, me: Colour, them: Colour): bool
   return attackers.some((sq) => VALUES[chess.get(sq)!.type] < VALUES[piece.type])
 }
 
-/** Their pieces (not pawns) attacked by the piece on `from`. */
-function attackedBy(chess: Chess, from: Square, victim: Colour, attacker: Colour): PieceSymbol[] {
-  const hits: PieceSymbol[] = []
-  for (const row of chess.board()) {
-    for (const cell of row) {
-      if (cell && cell.color === victim && cell.type !== 'p' && chess.attackers(cell.square, attacker).includes(from)) {
-        hits.push(cell.type)
-      }
-    }
-  }
-  return hits
-}

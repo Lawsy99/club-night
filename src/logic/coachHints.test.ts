@@ -19,8 +19,11 @@ describe("the coach's hints", () => {
     expect(coachHint(fen, 'd8g5', 300)).toBe('Something of theirs isn’t defended.')
   })
 
-  it('suggests a fork without naming the square', () => {
-    expect(coachHint('r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1', 'b5c7', 500)).toBe('Could your knight attack two things at once?')
+  it('suggests a fork without naming the square, when the line proves it', () => {
+    const fen = 'r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1'
+    expect(coachHint(fen, 'b5c7', 500, ['b5c7', 'e8d7', 'c7a8'])).toBe('Could your knight attack two things at once?')
+    // Without the line there's no proof it's a fork, so no fork hint.
+    expect(coachHint(fen, 'b5c7', 500)).not.toContain('two things')
   })
 
   it('says which piece of yours is in trouble', () => {

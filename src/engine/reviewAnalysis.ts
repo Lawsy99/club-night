@@ -4,7 +4,7 @@
 import { Chess } from 'chess.js'
 import { toCentipawns } from '../logic/evaluation'
 import { applyUci, getOutcome } from '../logic/game'
-import type { PositionEval } from '../logic/review'
+import { PV_KEPT, type PositionEval } from '../logic/review'
 import { getEngine } from './stockfish'
 
 const REVIEW_LIMITS = { depth: 14, movetime: 350 }
@@ -44,5 +44,6 @@ async function evaluate(fen: string): Promise<PositionEval> {
   const { bestMove, lines } = await getEngine().search(fen, REVIEW_LIMITS)
   const top = lines[0]
   const cpForMover = top ? toCentipawns(top.score) : 0
-  return { cp: position.turn() === 'w' ? cpForMover : -cpForMover, bestMove }
+  const pv = top?.pv.slice(0, PV_KEPT)
+  return { cp: position.turn() === 'w' ? cpForMover : -cpForMover, bestMove, ...(pv?.length ? { pv } : {}) }
 }

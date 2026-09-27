@@ -103,11 +103,13 @@ export function MomentTrainer({ moment, onFinished }: Props) {
       if (bestChance - attemptChance <= ACCEPT_DROP) return finish('solved', after.fen(), uci)
       if (bestChance - attemptChance <= CLOSE_DROP) whyNot = 'close'
       else if (analysis) {
+        // (No best move passed: the reason must never give the answer away.)
         const reason = explainMistake({
           fenBefore: moment.fenBefore,
           played: uci,
           bestMove: null,
           reply: analysis.bestMove,
+          replyLine: analysis.pv,
           cpBefore: moment.bestCp,
           cpAfter: toCentipawns(flipScore(analysis.score)),
         })
@@ -166,12 +168,19 @@ export function MomentTrainer({ moment, onFinished }: Props) {
           <div>
             <p className="moment-coach-name">Coach Pemberton</p>
             <p className="moment-explanation">
-              {explainBestMove(moment.fenBefore, moment.bestMove, moment.bestCp, moment.played)}
+              {explainBestMove(
+                moment.fenBefore,
+                moment.bestMove,
+                moment.bestCp,
+                moment.played,
+                moment.bestLine,
+                leadUp ? { fen: leadUp.fen, move: leadUp.move } : undefined,
+              )}
             </p>
             <p className="moment-explanation">
               And {moment.playedSan} in the game?{' '}
               {/* If the explanation is only about the move missed, don't say it twice. */}
-              {/^You (missed|had)/.test(moment.explanation)
+              {/^You (missed|had|needed)/.test(moment.explanation)
                 ? moment.kind === 'missed'
                   ? 'It let their mistake go.'
                   : 'It let the chance go.'
