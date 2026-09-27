@@ -4,7 +4,13 @@ import { CUTSCENES } from '../data/cutscenes'
 import { WEEK_STORY } from '../data/weekStory'
 import { storyFor } from './storyContent'
 import { storyAfterFinal, storyAfterWin } from './storyQueue'
-import { NEW_PROGRESS, recordGame, storyPlayed, weekBeat, type PathGame, type Progress } from './path'
+import { beginTrial, NEW_PROGRESS, nextStep, recordGame, storyPlayed, weekBeat, type PathGame, type Progress } from './path'
+
+const nextGame = (p: Progress) => {
+  const step = nextStep(p)
+  if (step.kind !== 'play') throw new Error(`expected a game, got ${step.kind}`)
+  return step
+}
 
 const inWeek = (chapter: number, over: Partial<Progress> = {}): Progress => ({
   ...NEW_PROGRESS,
@@ -33,7 +39,21 @@ describe('the story through the week', () => {
   it('plays the way out, then the month’s cutscene, after winning the best of three', () => {
     expect(storyAfterWin('c1')).toEqual(['wayout:c1'])
     expect(storyAfterWin('c3')).toEqual(['wayout:c3', 'scene:month-1'])
-    expect(storyAfterFinal(1)).toEqual(['scene:cup'])
+    // The cup: the honours board starts again, then the ladder goes up.
+    expect(storyAfterFinal(1)).toEqual(['scene:cup-won', 'scene:cup'])
+  })
+
+  it('opens Toby’s study straight after his message', () => {
+    expect(storyAfterWin('a2-9')).toEqual(['wayout:a2-9', 'study:prep'])
+    expect(storyFor('study:prep')?.study).toBe(true)
+  })
+
+  it('ends trial night with a scene, whatever happened against Toby', () => {
+    let p = beginTrial(NEW_PROGRESS, 'casual')
+    for (const won of [true, false, true, false]) p = recordGame(p, nextGame(p).game, won, 1100)
+    for (const won of [true, false]) {
+      expect(recordGame(p, nextGame(p).game, won, 300).pendingStory).toEqual(['scene:trial-night'])
+    }
   })
 
   it('queues them when the series is won, and clears them once played', () => {
@@ -46,10 +66,11 @@ describe('the story through the week', () => {
     expect(p.storySeen).toEqual(['wayout:c3'])
   })
 
-  it('every cutscene plays after a real week (or an act’s final) and can be shown', () => {
+  it('every cutscene plays after trial night, a real week or an act’s final, and can be shown', () => {
     for (const c of CUTSCENES) {
       const final = /^final:(\d)$/.exec(c.after)
-      expect(final ? Number(final[1]) <= ACTS.length : ACTS.some((a) => a.chapters.some((ch) => ch.id === c.after)), c.id).toBe(true)
+      const known = c.after === 'trial' || (final ? Number(final[1]) <= ACTS.length : ACTS.some((a) => a.chapters.some((ch) => ch.id === c.after)))
+      expect(known, c.id).toBe(true)
       expect(storyFor(`scene:${c.id}`)?.lines.length).toBeGreaterThan(0)
     }
   })

@@ -132,7 +132,7 @@ story-c6-graham,graham,,game_loss,"A fair result. I shall be recording it in ful
 story-c7-toby,toby,,game_start,"No pressure, mate. Did you get a chance to look at the study?",pleased,,,,,,kind:match chapter:c7,1,yes
 story-final-start,toby,,game_start,(Marjorie has got the good set out.),neutral,1,,,,,kind:boss,1,yes
 story-final-won,toby,,game_loss,"(Pemberton shakes your hand, then goes to find Toby.)",annoyed,1,,,,,kind:boss,1,yes
-story-a2-final-start,toby,,game_start,"Top of the ladder, then. No pressure, mate. It’s only a ladder.",smug,2,,,,,kind:boss,1,yes
+story-a2-final-start,toby,,game_start,"Top of the ladder, then. Did the study help? I think I sent you the wrong one. Silly me.",smug,2,,,,,kind:boss,1,yes
 story-a2-final-won,toby,,game_loss,(Toby shakes your hand. He doesn’t stay for a drink. Pemberton leaves with him.),annoyed,2,,,,,kind:boss,1,yes
 story-a2-1-graham,graham,,game_start,"Rule seven, part (b): the player below may challenge the player above. You are, technically, above me.",neutral,2,,,,,kind:match chapter:a2-1,1,yes
 story-a2-6-dex,dex,,game_start,"If Graham asks, I’m not streaming this.",smug,2,,,,,kind:match chapter:a2-6,1,yes

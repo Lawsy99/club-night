@@ -19,7 +19,9 @@ export function CalendarScreen({ progress, onBack, onReplayStory }: Props) {
   // Story moments already seen, in the order they happened.
   const moments = (progress.storySeen ?? []).flatMap((id) => {
     const s = storyFor(id)
-    return s ? [{ id, label: s.title || s.kicker, scene: !!s.art }] : []
+    if (!s) return []
+    const kind = s.art ? 'Scene' : s.study ? 'Study' : 'On the way out'
+    return [{ id, label: s.study ? 'Toby’s study' : s.title || s.kicker, kind }]
   })
   return (
     <main className="calendar-screen">
@@ -64,14 +66,14 @@ export function CalendarScreen({ progress, onBack, onReplayStory }: Props) {
               <li key={m.id}>
                 <button type="button" onClick={() => onReplayStory(m.id)}>
                   <span>{m.label}</span>
-                  <span className="calendar-moment-kind">{m.scene ? 'Scene' : 'On the way out'} ›</span>
+                  <span className="calendar-moment-kind">{m.kind} ›</span>
                 </button>
               </li>
             ))}
           </ul>
         </section>
       )}
-      <p className="calendar-note">More to come after the cup.</p>
+      <p className="calendar-note">More to come.</p>
     </main>
   )
 }

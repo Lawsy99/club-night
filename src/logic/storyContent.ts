@@ -1,13 +1,23 @@
 // What a story id plays: the week's "On the way out" or a cutscene.
 import { ACTS, findWeek } from '../data/acts'
 import { findCutscene, type SceneArt } from '../data/cutscenes'
+import { STUDY_TEXT } from '../data/prepStudy'
 import { WEEK_STORY, type StoryLine } from '../data/weekStory'
+import { STUDY_ID } from './storyQueue'
 
-export type Story = { kicker: string; title: string; art?: SceneArt; lines: StoryLine[] }
+export type Story = {
+  kicker: string
+  title: string
+  art?: SceneArt
+  lines: StoryLine[]
+  /** The Act 2 study: its pages are built from your games when it opens. */
+  study?: boolean
+}
 
-/** "wayout:c1" or "scene:month-1"; null if it no longer exists. */
+/** "wayout:c1", "scene:month-1" or "study:prep"; null if it no longer exists. */
 export function storyFor(id: string): Story | null {
   const [kind, key] = id.split(':')
+  if (id === STUDY_ID) return { kicker: STUDY_TEXT.kicker, title: 'Prep: {name}', lines: [], study: true }
   if (kind === 'wayout') {
     const week = WEEK_STORY[key]
     const found = findWeek(key)

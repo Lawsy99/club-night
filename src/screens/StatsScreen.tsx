@@ -5,11 +5,9 @@ import { useEffect, useState } from 'react'
 import { RatingGraph } from '../components/RatingGraph'
 import { CHARACTERS, COACH, findCharacter, PRACTICE_REGULARS } from '../data/characters'
 import { OPENING_NAMES } from '../data/scouting'
-import { replay } from '../logic/game'
-import { outcomeOf, upgradeGameRecord } from '../logic/gameRecord'
+import { toStatsGame } from '../logic/archiveStats'
 import type { MonthlyTest } from '../logic/monthlyTest'
 import type { Progress } from '../logic/path'
-import { reviewMoves } from '../logic/review'
 import {
   accuracyByPhase,
   accuracyTrend,
@@ -19,10 +17,8 @@ import {
   type OpeningScore,
   type StatsGame,
 } from '../logic/stats'
-import { listArchivedGames, type ArchivedGame } from '../storage/db'
+import { listArchivedGames } from '../storage/db'
 import './StatsScreen.css'
-
-const CHARACTER_PREFIX = 'char:'
 
 export function StatsScreen({ progress, onBack }: { progress: Progress; onBack: () => void }) {
   const [games, setGames] = useState<StatsGame[] | null>(null)
@@ -223,27 +219,4 @@ function describeOpening(s: OpeningScore): string {
   const name = OPENING_NAMES[s.opening] ?? s.opening
   const colour = s.colour === 'w' ? 'White' : 'Black'
   return `${name[0].toUpperCase()}${name.slice(1)} as ${colour}: ${Math.round(s.score * 100)}% from ${s.played} games`
-}
-
-/** One archived game in the shape the stats need (unfinished or unreadable games are skipped). */
-function toStatsGame(saved: ArchivedGame): StatsGame[] {
-  try {
-    const g = upgradeGameRecord(saved)
-    const outcome = outcomeOf(g)
-    if (!outcome) return []
-    const result = outcome.winner === null ? 'draw' : outcome.winner === g.playerColour ? 'win' : 'loss'
-    const analysed = saved.evals && saved.evals.length === g.moves.length + 1
-    return [
-      {
-        finishedAt: saved.finishedAt,
-        character: g.levelId.startsWith(CHARACTER_PREFIX) ? g.levelId.slice(CHARACTER_PREFIX.length) : null,
-        playerColour: g.playerColour,
-        result,
-        sans: replay(g.moves.slice(0, 20)).history(),
-        reviewed: analysed ? reviewMoves(g.moves, saved.evals!) : undefined,
-      },
-    ]
-  } catch {
-    return []
-  }
 }

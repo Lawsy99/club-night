@@ -9,7 +9,7 @@ import { sessionLabel } from '../data/clubWeek'
 import { findLesson } from '../data/lessons'
 import { WEEK_STORY } from '../data/weekStory'
 import { actNumber, actPlan, hasNextAct } from '../data/acts'
-import { storyAfterFinal, storyAfterWin } from './storyQueue'
+import { storyAfterFinal, storyAfterTrial, storyAfterWin } from './storyQueue'
 import { rateGame, type PlayerRating } from './glicko2'
 import type { MonthlyTest } from './monthlyTest'
 import {
@@ -492,7 +492,7 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
     if (p.stage !== 'trial' || !p.trial) return p
     // (Saved by an older version mid-trial: four games but no rating yet.)
     const placed = p.rating ? p : settleTrial(p, p.trial.games)
-    return { ...placed, stage: 'act' }
+    return { ...placed, stage: 'act', pendingStory: [...(placed.pendingStory ?? []), ...storyAfterTrial()] }
   }
 
   // The coached game: a lesson, never rated. Win or lose, Tuesday is done.

@@ -27,6 +27,19 @@ export type Cutscene = {
 
 export const CUTSCENES: Cutscene[] = [
   {
+    // The first hook: who the coach is, and who he's watching.
+    id: 'trial-night',
+    after: 'trial',
+    art: 'club-room',
+    place: 'The Red Lion, closing time',
+    lines: [
+      { text: 'Toby is helping to stack the chairs. Everyone seems to like him already.' },
+      { text: 'A man in a tweed jacket watched your game with Toby from behind Toby’s chair. He hasn’t said a word to you.' },
+      { who: 'marjorie', text: 'That’s our coach. Tuesdays. Don’t call him Coach, he likes it too much.' },
+      { text: 'At the door, he shakes Toby’s hand. “Tuesday, then.”' },
+    ],
+  },
+  {
     id: 'month-1',
     after: 'c3',
     art: 'club-room',
@@ -54,10 +67,23 @@ export const CUTSCENES: Cutscene[] = [
     art: 'honours-board',
     place: 'The Red Lion, Saturday morning',
     lines: [
-      { text: 'Bill is working along the honours board with a duster.' },
-      { text: 'He stops at one name, the same one ten years running.' },
-      { who: 'bill', text: 'Ten years. Then nothing.' },
-      { text: 'He moves on to the next name.' },
+      { text: 'The photo is back in its rectangle. Bill steps back to check it’s straight.' },
+      { text: 'Then he goes along the honours board with a duster. Pemberton, six years running. Then V. Hart, ten. Then it stops.' },
+      { who: 'bill', text: 'She beat everyone. That was the trouble.' },
+      { text: 'He doesn’t say whose trouble.' },
+    ],
+  },
+  {
+    // The cup's payoff, before the ladder goes up: the honours board starts again.
+    id: 'cup-won',
+    after: 'final:1',
+    art: 'honours-board',
+    place: 'The back room, after the final',
+    lines: [
+      { text: 'Bill has a tin of gold paint and a very small brush.' },
+      { text: 'Under V. Hart, where the board stopped, he starts a new line. Your name.' },
+      { text: 'Oscar asks if he can have your scoresheet.' },
+      { text: 'On his way out, Pemberton stops at the board. Only for a moment.' },
     ],
   },
   {
@@ -93,6 +119,7 @@ export const CUTSCENES: Cutscene[] = [
       { text: 'Castlebury’s hall has proper lights, and a clock on every board.' },
       { text: 'Wexley’s team sit in a row. Oscar’s feet don’t reach the floor.' },
       { text: 'Toby shakes every hand in the room. Pemberton watches board two all night.' },
+      { text: 'A woman at the back, in a green coat, watches Pemberton. She leaves before the end.' },
     ],
   },
   {
@@ -113,9 +140,9 @@ export const CUTSCENES: Cutscene[] = [
     place: 'A week later. Tuesday.',
     lines: [
       { text: 'Pemberton’s chair isn’t there. Toby’s name is off the ladder.' },
-      { text: 'There’s a Kingsbridge card on the noticeboard. Nobody has taken it down.' },
       { who: 'marjorie', text: 'Kingsbridge. Both of them. Lovely hall, apparently.' },
-      { text: 'Nobody sets up the second room.' },
+      { text: 'Nobody sets up the second room. Oscar sets up a board in this one, and waits for you.' },
+      { text: 'At ten to eight, the door goes. Someone in a green coat.' },
     ],
   },
 ]

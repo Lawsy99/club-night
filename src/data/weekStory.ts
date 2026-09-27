@@ -25,7 +25,7 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     wayOut: [
       { who: 'marjorie', text: 'You’ll be here Tuesdays, then. Here.' },
       { text: 'She gives you the key to the cupboard with the good sets.' },
-      { text: 'Inside, a box of old scoresheets. The top one is signed V. Hart.' },
+      { text: 'Inside, a box of old scoresheets. The top one is Hart against Pemberton. Hart won.' },
     ],
   },
   c2: {
@@ -73,7 +73,7 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     thursday: 'The second room is full of juniors. First time in years.',
     wayOut: [
       { who: 'neil', text: 'Would you help out at junior night? He’d never ask. I’m asking.' },
-      { text: 'On the rota, Pemberton is down for juniors now. Neil says it was Toby’s idea.' },
+      { text: 'On the junior night rota, there’s already a name next to Oscar’s. Toby.' },
     ],
   },
   c5: {
@@ -85,7 +85,7 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     ],
   },
   w9: {
-    tuesday: 'Graham announces the knockout cup. Entries by the end of the month.',
+    tuesday: 'Graham announces the knockout cup. The first since 2009.',
     thursday: 'Clive puts his name down. “Haven’t in years.”',
     wayOut: [
       { who: 'clive', text: 'That photo. The 1998 team. We won the county.' },
@@ -101,8 +101,8 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     ],
   },
   w11: {
-    tuesday: 'Priya has changed her openings.',
-    thursday: 'It’s you she’s preparing for. Your name is at the top of her notes.',
+    tuesday: 'Oscar has started coming to Tuesday coaching. He sits next to you, not at the front.',
+    thursday: 'Priya has changed her openings. Your name is at the top of her notes.',
     wayOut: [
       { who: 'priya', text: 'Next time I’ll have something for that.' },
       { text: 'At the door, Toby asks if he could have your games. For the study.' },
@@ -112,8 +112,9 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     tuesday: 'The general meeting. Graham reads the accounts. Nobody asks a question.',
     thursday: 'Bill is talking about 1998 to anyone near the urn.',
     wayOut: [
-      { who: 'marjorie', text: 'Vera? She just stopped coming. One week she was here, and then she wasn’t.' },
-      { who: 'marjorie', text: 'Ask Bill. He was there.' },
+      { text: 'Behind the box of scoresheets in the cupboard, a frame, face down. The 1998 team.' },
+      { text: 'Clive, with hair. On top board, holding the county trophy and not smiling: V. Hart.' },
+      { who: 'marjorie', text: 'That’s Vera. She just stopped coming. Ask Bill.' },
     ],
   },
   c7: {
@@ -125,8 +126,8 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     ],
   },
   w14: {
-    tuesday: 'Graham explains the cup rules. It takes most of the evening.',
-    thursday: 'Terry has entered the cup. So has everyone else.',
+    tuesday: 'Graham explains the cup rules. It takes most of the evening. Terry enters during rule six.',
+    thursday: 'The county arbiter comes to oversee the draw. He and Toby seem to go back a long way.',
     wayOut: [
       { who: 'graham', text: 'The draw will be made in the proper manner.' },
       { text: 'You’re in the top half of the draw. Toby is in the bottom.' },
@@ -212,8 +213,8 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     ],
   },
   'a2-10': {
-    tuesday: 'The study is called “Prep: {name}”. The notes are in Pemberton’s words.',
-    thursday: 'It’s all there: your openings, your habits, what to play against you. It’s also right.',
+    tuesday: 'Pemberton’s coaching is very good tonight. You recognise some of the phrases.',
+    thursday: 'You try the study’s advice against yourself, in your head. It works.',
     wayOut: [
       { who: 'malcolm', text: 'Whoever wrote that knows your game. Use it.' },
       { text: 'Toby hasn’t mentioned the study. Neither has Pemberton.' },
@@ -223,12 +224,13 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     tuesday: 'Pemberton keeps your coached game short tonight. He has a lift to catch.',
     thursday: 'Dex has stopped streaming Wexley games. “Doesn’t feel right. For now.”',
     wayOut: [
-      { who: 'dex', text: 'You’re better than the study says.' },
-      { text: 'A letter from the brewery on the noticeboard. The room hire is going up again.' },
+      { who: 'dex', text: 'Found something. Don’t make it a thing.' },
+      { text: 'A county junior prize-giving, years ago. A boy with a trophy nearly as big as he is. Pemberton’s hand on his shoulder.' },
+      { who: 'dex', text: 'He’s never been new.' },
     ],
   },
   'a2-12': {
-    tuesday: 'Graham calls an extraordinary general meeting. Laminated.',
+    tuesday: 'The room hire is going up again. Graham calls an extraordinary general meeting. Laminated.',
     thursday: 'Nine people come to the meeting. The motion is carried. Nobody is sure what it was.',
     wayOut: [
       { who: 'graham', text: 'The club is solvent. Until March.' },
