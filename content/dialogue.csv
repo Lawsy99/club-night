@@ -134,6 +134,25 @@ story-final-start,toby,,game_start,(Marjorie has got the good set out.),neutral,
 story-final-won,toby,,game_loss,"(Pemberton shakes your hand, then goes to find Toby.)",annoyed,1,,,,,kind:boss,1,yes
 story-a2-final-start,toby,,game_start,"Top of the ladder, then. Did the study help? I think I sent you the wrong one. Silly me.",smug,2,,,,,kind:boss,1,yes
 story-a2-final-won,toby,,game_loss,(Toby shakes your hand. He doesn’t stay for a drink. Pemberton leaves with him.),annoyed,2,,,,,kind:boss,1,yes
+story-w3-marjorie,marjorie,,game_start,"Sheila says you're a natural. She says it to everyone, mind. Best of three?",pleased,1,,,,,kind:match chapter:w3,1,yes
+story-w5-dex,dex,,game_start,Graham's put a notice up about filming. It doesn't say I can't.,smug,1,,,,,kind:match chapter:w5,1,yes
+story-w7-neil,oscar,neil,game_start,He's been practising on the landing. I can hear the pieces through the floor.,pleased,1,,,,,kind:match chapter:w7,1,yes
+story-w9-clive,clive,,game_start,"Bill's watching. He used to watch Vera play, you know. Don't let that put you off.",neutral,1,,,,,kind:match chapter:w9,1,yes
+story-w11-priya,priya,,game_start,I've prepared something for you specifically. That's allowed.,neutral,1,,,,,kind:match chapter:w11,1,yes
+story-w12-marjorie,marjorie,,game_start,"You've still got the cupboard key? Good. Keep it.",neutral,1,,,,,kind:match chapter:w12,1,yes
+story-w14-graham,graham,,game_start,"I've written to the county arbiter about the draw. In the proper manner.",neutral,1,,,,,kind:match chapter:w14,1,yes
+story-w15-dex,dex,,game_start,"Forty people for the final. If you get there. No pressure. That's Toby's line, isn't it.",smug,1,,,,,kind:match chapter:w15,1,yes
+story-a2-2-priya,priya,,game_start,I've started keeping notes on you. Don't read anything into it.,neutral,2,,,,,kind:match chapter:a2-2,1,yes
+story-a2-3-clive,clive,,game_start,Rule nine says I have to challenge someone. So.,neutral,2,,,,,kind:match chapter:a2-3,1,yes
+story-a2-4-ray,ray,,game_start,Junior night overran. I'll be fine for the first game. Possibly the second.,neutral,2,,,,,kind:match chapter:a2-4,1,yes
+story-a2-5-terry,terry,,game_start,I've been working on something. You'll know it when you see it.,pleased,2,,,,,kind:match chapter:a2-5,1,yes
+story-a2-7-marjorie,marjorie,,game_start,"One of the new ones asked if we have a website. I said ask Graham. He's still talking.",pleased,2,,,,,kind:match chapter:a2-7,1,yes
+story-a2-8-neil,oscar,neil,game_start,I've told him not to think about the team. He's thought about nothing else.,neutral,2,,,,,kind:match chapter:a2-8,1,yes
+story-a2-9-priya,priya,,game_start,New notebook. The old one's full. Of you, mostly.,neutral,2,,,,,kind:match chapter:a2-9,1,yes
+story-a2-11-dex,dex,,game_start,No stream tonight. Don't ask.,neutral,2,,,,,kind:match chapter:a2-11,1,yes
+story-a2-12-graham,graham,,game_start,"The motion, for the avoidance of doubt, was carried. Your move. Well, mine.",neutral,2,,,,,kind:match chapter:a2-12,1,yes
+story-a2-14-clive,clive,,game_start,St Anne's has a boiler that works on Tuesdays. I asked.,neutral,2,,,,,kind:match chapter:a2-14,1,yes
+story-a2-15-terry,terry,,game_start,"I entered you as moral support. Turns out you still have to play me.",pleased,2,,,,,kind:match chapter:a2-15,1,yes
 story-cup-clive,clive,,game_start,"First round. I said I'd enter. I didn't say I'd win.",neutral,1,,,,,kind:cup-round,1,yes
 story-cup-oscar,oscar,neil,game_start,"He's been looking forward to this all week. He won't say so.",pleased,1,,,,,kind:cup-round,1,yes
 story-cup-priya,priya,,game_start,"Semi-final. I've been through everything you've played since the summer.",neutral,1,,,,,kind:cup-round,1,yes

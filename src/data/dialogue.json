@@ -1525,6 +1525,347 @@
   "once": true
  },
  {
+  "id": "story-w3-marjorie",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "Sheila says you're a natural. She says it to everyone, mind. Best of three?",
+  "expression": "pleased",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:w3"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-w5-dex",
+  "character": "dex",
+  "trigger": "game_start",
+  "text": "Graham's put a notice up about filming. It doesn't say I can't.",
+  "expression": "smug",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:w5"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-w7-neil",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "game_start",
+  "text": "He's been practising on the landing. I can hear the pieces through the floor.",
+  "expression": "pleased",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:w7"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-w9-clive",
+  "character": "clive",
+  "trigger": "game_start",
+  "text": "Bill's watching. He used to watch Vera play, you know. Don't let that put you off.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:w9"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-w11-priya",
+  "character": "priya",
+  "trigger": "game_start",
+  "text": "I've prepared something for you specifically. That's allowed.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:w11"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-w12-marjorie",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "You've still got the cupboard key? Good. Keep it.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:w12"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-w14-graham",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "I've written to the county arbiter about the draw. In the proper manner.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:w14"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-w15-dex",
+  "character": "dex",
+  "trigger": "game_start",
+  "text": "Forty people for the final. If you get there. No pressure. That's Toby's line, isn't it.",
+  "expression": "smug",
+  "conditions": {
+   "acts": [
+    1
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:w15"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-2-priya",
+  "character": "priya",
+  "trigger": "game_start",
+  "text": "I've started keeping notes on you. Don't read anything into it.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-2"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-3-clive",
+  "character": "clive",
+  "trigger": "game_start",
+  "text": "Rule nine says I have to challenge someone. So.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-3"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-4-ray",
+  "character": "ray",
+  "trigger": "game_start",
+  "text": "Junior night overran. I'll be fine for the first game. Possibly the second.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-4"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-5-terry",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "I've been working on something. You'll know it when you see it.",
+  "expression": "pleased",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-5"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-7-marjorie",
+  "character": "marjorie",
+  "trigger": "game_start",
+  "text": "One of the new ones asked if we have a website. I said ask Graham. He's still talking.",
+  "expression": "pleased",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-7"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-8-neil",
+  "character": "oscar",
+  "speaker": "neil",
+  "trigger": "game_start",
+  "text": "I've told him not to think about the team. He's thought about nothing else.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-8"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-9-priya",
+  "character": "priya",
+  "trigger": "game_start",
+  "text": "New notebook. The old one's full. Of you",
+  "expression": "mostly.",
+  "conditions": {
+   "acts": [
+    null
+   ],
+   "gameType": "2"
+  },
+  "weight": null,
+  "once": false
+ },
+ {
+  "id": "story-a2-11-dex",
+  "character": "dex",
+  "trigger": "game_start",
+  "text": "No stream tonight. Don't ask.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-11"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-12-graham",
+  "character": "graham",
+  "trigger": "game_start",
+  "text": "The motion, for the avoidance of doubt, was carried. Your move. Well, mine.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-12"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-14-clive",
+  "character": "clive",
+  "trigger": "game_start",
+  "text": "St Anne's has a boiler that works on Tuesdays. I asked.",
+  "expression": "neutral",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-14"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
+  "id": "story-a2-15-terry",
+  "character": "terry",
+  "trigger": "game_start",
+  "text": "I entered you as moral support. Turns out you still have to play me.",
+  "expression": "pleased",
+  "conditions": {
+   "acts": [
+    2
+   ],
+   "flags": [
+    "kind:match",
+    "chapter:a2-15"
+   ]
+  },
+  "weight": 1,
+  "once": true
+ },
+ {
   "id": "story-cup-clive",
   "character": "clive",
   "trigger": "game_start",
