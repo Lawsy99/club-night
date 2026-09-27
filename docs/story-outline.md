@@ -136,10 +136,47 @@ New to the cast as opponents: **Ray**, who teaches the juniors, is tired by nine
 
 - **She arrives** on a Tuesday, the week after the split, and sits in Pemberton's chair without comment. V. Hart from the honours board.
 - **She becomes the coach.** Warm but spare, exacting about the right things: "Good. Now tell me why." Her "are you sure?" is gentler and rarer. The coach's lines are kept per coach in the code, so she slots in.
-- **The twist:** she was Pemberton's wife. It's revealed sideways, for example by Bill: "She beat him in the club final, the year they got married. He didn't come for a month." Nobody says "divorce".
+- **The twist:** she was Pemberton's wife. It's revealed sideways, for example by Bill: "She beat him in the cup final, the year they got married. He didn't come for a month." Nobody says "divorce".
 - **The club moves** to St Anne's (damp, free on Tuesdays).
 - **The league season:** Wexley against other clubs, each with its own character and way of playing. Kingsbridge beats everyone by a lot. Somewhere in the season you play Pemberton himself, for Kingsbridge, at full strength. He doesn't coach you. That's the point.
 - **The end:** the county championship final, Wexley against Kingsbridge. You play Toby. Vera sits on your side of the room, mirroring Pemberton at the Act 1 cup final.
+
+### Act 3 week by week *(new, draft for Joseph)*
+
+**The backstory, as the player pieces it together.** Pemberton won the cup six years running. In 2000 Vera beat him in the final (the scoresheet in the cupboard), and they married that year. She won the cup for ten years. In 2009, as captain, he put her on board two for the county final against Kingsbridge. Wexley lost, she never came back, and nobody held the cup again. Nobody tells the player this in one go; Bill gives the first half, Clive the second.
+
+**Saturdays become league matches** against other clubs, each with one new character on your board, and a few club weeks in between. That brings new faces, which was open question 2.
+
+**The other clubs:**
+
+- **Castlebury**: Hugh, a retired solicitor. Queen's Gambit, courteous, relentless.
+- **Denholme Miners' Welfare**: Shaz. Plays fast, plays blitz after, "Clock's running, love."
+- **St Barnabas**: the Reverend Lowe. King's Indian, surprisingly vicious.
+- **The University**: Kasia. A PhD student, all theory and no small talk. She plays the Najdorf, like Toby.
+- **Kingsbridge**: Pemberton, Toby, and a junior squad in matching jumpers.
+
+| Week | Title | Who | Tuesday / Thursday | Saturday's way out, and the hook |
+| --- | --- | --- | --- | --- |
+| 33 | Green coat | Marjorie | Vera sits in Pemberton's chair and watches your warm-ups. "Good. Now tell me why." / She asks Graham for the fixture list | She stops at the honours board, at your name under hers. "Hm." |
+| 34 | Last night at the Red Lion | Clive | Vera lets you find things / Clive unscrews the honours board. "It's ours. I checked." | Marjorie turns the lights off. Graham's last notice, laminated: "Moved." *Cutscene: the empty back room* |
+| 35 | St Anne's | Graham | Damp; the urn works on Tuesdays / Dex streams "new venue content" | Vera pins up the team. Board one: Malcolm. Board two: you. "Board two. Don't let anyone tell you it's a demotion." |
+| 36 | Castlebury | Hugh | Vera scouts Hugh in one sentence / Priya copies it into her notebook | Hugh, at St Anne's: "Charming. Is that damp?" Wexley win. First league win in years |
+| 37 | Why | Priya | "Now tell me why." Priya loves it / Priya's notebook is now mostly Vera | Bill: "She beat him in the cup final, the year they got married. He didn't come for a month." *Cutscene: Bill and the photo* |
+| 38 | Denholme | Shaz | A cash bar and a jukebox / Dex streams it; three hundred watch | Shaz: "Come back when you're quicker." A Kingsbridge result in the paper: four nil, again |
+| 39 | Oscar | Oscar | Kingsbridge ask about Oscar again / Neil says it's Oscar's decision | Oscar, first thing he's ever said to you unprompted: "I said no." |
+| 40 | St Barnabas | the Reverend | The tea is better than ours / The Reverend's King's Indian | "I'll pray for you. After the ending." Kingsbridge have asked to host the county final |
+| 41 | Board two | Malcolm | Vera and Malcolm talk quietly about 2009 / Clive, to nobody: "County final, 2009. He put her on board two. She never came back." | Vera hangs the honours board at St Anne's. "It's crooked." It isn't. *Cutscene* |
+| 42 | The University | Kasia | Kasia sends her team list with opening preferences / Vera: "Take her out of book early. She hates it." | "You're out of book at move nine. So am I, apparently." Semi-final booked |
+| 43 | Kingsbridge | Pemberton | Away at Kingsbridge: lovely hall / Pemberton is on your board. He doesn't coach | He shakes your hand. "You've been taught well." He looks across the room at Vera. She's looking at your board. *Cutscene: the Kingsbridge hall* |
+| 44 | Juniors | Oscar | Kingsbridge juniors, matching jumpers / Oscar wins board one | Neil hangs Oscar's scoresheet on the fridge. He tells you so twice |
+| 45 | The draw | Graham | The final draw "in the proper manner" / Kingsbridge in the final. Of course | Vera's team sheet. Board one: you. Malcolm: "Past time." |
+| 46 | Board one | Toby | Toby sends a card. "Can't wait, mate!" / Vera: "He'll do. Board three." | Toby is board one for Kingsbridge. |
+| 47 | The night before | Terry | Terry has prepared something for the final. For moral support / Vera: "Is the urn still broken?" | Marjorie gets the good set out. "For luck. It's never been lucky." |
+| 48 | The county final | Hugh, Kasia, then Toby | | Vera sits on your side of the room, as Pemberton sat on Toby's. *Cutscene, after: the county trophy on the table at St Anne's. The last time it came to Wexley, she was holding it. Someone fetches a camera. Then a letter from the Bermuda Chess Association.* |
+
+**The thread payoffs in Act 3:** Vera (arrives, coaches, the marriage, 2009, the county trophy); the team place (board two, then board one); Oscar ("I said no."); the honours board (moved to St Anne's, rehung "crooked"); Pemberton (a full-strength game, then "You've been taught well."); Toby (board one for Kingsbridge, then the final); the new team photo, in the same rectangle.
+
+**Characters to build for Act 3:** Vera as coach (her lessons, warm-ups, coached game and "are you sure?"), Hugh, Shaz, the Reverend Lowe and Kasia as opponents (portraits, styles, opening books, dialogue), and Pemberton as an opponent at full strength.
 
 ## Act 4: The tour (outline, for later)
 
