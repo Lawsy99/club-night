@@ -43,6 +43,8 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
   const [evals, setEvals] = useState<PositionEval[] | null>(null)
   const [progress, setProgress] = useState({ done: 0, total: game.moves.length + 1 })
   const [failed, setFailed] = useState(false)
+  // Bumped by "Try again" to run the analysis afresh.
+  const [attempt, setAttempt] = useState(0)
   // 0 = summary, 1…n = the moments, n + 1 = best move of the game
   const [step, setStep] = useState(0)
   const [momentDone, setMomentDone] = useState(false)
@@ -72,7 +74,7 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
     return () => {
       cancelled = true
     }
-  }, [game.id, game.moves])
+  }, [game.id, game.moves, attempt])
 
   const player = game.playerColour
   const opponent: Colour = player === 'w' ? 'b' : 'w'
@@ -292,7 +294,20 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
       </header>
 
       {failed ? (
-        <p className="review-note">The analysis couldn't run this time. Your game is still saved.</p>
+        <section className="review-progress">
+          <p className="review-note">The analysis stopped part way (phones sometimes pause it). Your game is still saved.</p>
+          <button
+            type="button"
+            className="review-secondary"
+            onClick={() => {
+              setFailed(false)
+              setProgress({ done: 0, total: game.moves.length + 1 })
+              setAttempt((a) => a + 1)
+            }}
+          >
+            Try again
+          </button>
+        </section>
       ) : !reviewed ? (
         <section className="review-progress" aria-live="polite">
           <p>Checking every move…</p>

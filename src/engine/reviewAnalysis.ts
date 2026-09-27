@@ -25,10 +25,33 @@ export async function analyseGame(
   const evals: PositionEval[] = []
   for (const fen of fens) {
     if (isCancelled()) return null
-    evals.push(await evaluate(fen))
+    evals.push(await evaluateWithRetries(fen))
     onProgress(evals.length, fens.length)
   }
   return evals
+}
+
+/** Tries each position a few times before giving up. */
+const ATTEMPTS = 3
+
+/**
+ * An iPhone can pause the engine (screen locked, app in the background), and
+ * the engine is then treated as broken. Rather than failing the whole review,
+ * try that position again: getEngine() starts a fresh engine, and the review
+ * carries on from where it got to (Joseph, Sep 2026: "the analysis couldn't run").
+ */
+async function evaluateWithRetries(fen: string): Promise<PositionEval> {
+  let lastError: unknown = null
+  for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
+    try {
+      return await evaluate(fen)
+    } catch (err) {
+      lastError = err
+      // A moment's pause lets the phone settle before a fresh engine starts.
+      await new Promise((r) => setTimeout(r, 400 * (attempt + 1)))
+    }
+  }
+  throw lastError
 }
 
 async function evaluate(fen: string): Promise<PositionEval> {

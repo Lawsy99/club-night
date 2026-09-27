@@ -10,7 +10,7 @@ import { HINT_ARROW_COLOUR } from '../components/lineArrows'
 import { COACH_VOICES, pickLine } from '../data/coachLines'
 import { coachHint } from '../logic/coachHints'
 import { findScenario, scenarioMove, scenarioState, scenarioVerdict } from '../logic/coachScenario'
-import { coachComment } from '../logic/explain'
+import { coachComment, explainBestMove } from '../logic/explain'
 import { MoveStrip } from '../components/MoveStrip'
 import { DemoBoard } from '../components/DemoBoard'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
@@ -513,14 +513,26 @@ export function GameScreen({
   // The coach's hints: a nudge in words about the engine's move, three a game.
   const hintMove = playersTurn ? analysis.current?.bestMove ?? null : null
   const hintsLeft = Math.max(0, stage.hints - (game.hintsUsed ?? 0))
+  // A second hint on the same move shows the move itself, with an arrow and
+  // the reason (Joseph, Sep 2026: asking again just repeated the nudge).
+  const [hinted, setHinted] = useState<{ fen: string; shown: boolean } | null>(null)
+  const hintedHere = hinted?.fen === fen ? hinted : null
   function askForHint() {
     const a = analysis.current
-    if (!a?.bestMove || hintsLeft <= 0) return
+    if (!a?.bestMove || hintsLeft <= 0 || hintedHere?.shown) return
     const cp = toCentipawns(scoreFor(game.playerColour, a.sideToMove, a.score))
-    const opener = coachVoice ? pickLine(coachVoice.hintOpeners, null) + ' ' : ''
-    dialogue.say(opener + coachHint(fen, a.bestMove, cp, a.pv))
+    if (hintedHere) {
+      dialogue.say(`All right, here it is. ${explainBestMove(fen, a.bestMove, cp, undefined, a.pv)}`)
+      setHinted({ fen, shown: true })
+    } else {
+      const opener = coachVoice ? pickLine(coachVoice.hintOpeners, null) + ' ' : ''
+      dialogue.say(opener + coachHint(fen, a.bestMove, cp, a.pv))
+      setHinted({ fen, shown: false })
+    }
     setGame((g) => (g ? { ...g, hintsUsed: (g.hintsUsed ?? 0) + 1 } : g))
   }
+  const hintArrow: BoardArrow[] =
+    hintedHere?.shown && hintMove ? [{ from: hintMove.slice(0, 2), to: hintMove.slice(2, 4), colour: HINT_ARROW_COLOUR }] : []
 
   // Assisted: after a weaker move, the player can look back at what was better.
   const canPeek =
@@ -535,7 +547,7 @@ export function GameScreen({
         { from: ratedMove.played.slice(0, 2), to: ratedMove.played.slice(2, 4), colour: PLAYED_ARROW_COLOUR },
         { from: ratedMove.betterMove!.slice(0, 2), to: ratedMove.betterMove!.slice(2, 4), colour: HINT_ARROW_COLOUR },
       ]
-    : []
+    : hintArrow
 
   // After a mistake he let you make, the coach says what went wrong and what
   // was better (Joseph, Sep 2026). Coached game only; practice games don't advise.
@@ -796,10 +808,10 @@ export function GameScreen({
           {stage.hints > 0 && (
             <button
               type="button"
-              disabled={!hintMove || hintsLeft === 0 || pending !== null || peeking}
+              disabled={!hintMove || hintsLeft === 0 || pending !== null || peeking || !!hintedHere?.shown}
               onClick={askForHint}
             >
-              Hint ({hintsLeft} left)
+              {hintedHere && !hintedHere.shown ? `Show me the move (${hintsLeft} left)` : `Hint (${hintsLeft} left)`}
             </button>
           )}
           {stage.takebacks > 0 && (
