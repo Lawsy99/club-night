@@ -17,6 +17,20 @@ export function gameMoments(moves: readonly string[], evals: readonly PositionEv
   return biggestMoments(reviewed, player).map((m) => withLeadUp(toMoment(m, evals, player, moves), moves, m.ply))
 }
 
+/**
+ * A saved warm-up card, brought up to date from its game: the explanation is
+ * written again with today's coach (Sep 2026: older cards said things like "it
+ * costs you a rook" even when the opponent never took it), and the engine's
+ * line is added. Unchanged if the game or its analysis isn't there.
+ */
+export function refreshCard<C extends Moment & { ply: number }>(card: C, moves: readonly string[], evals: readonly PositionEval[] | undefined, player: Colour): C {
+  if (!evals || evals.length !== moves.length + 1) return card
+  const reviewed = reviewMoves(moves, evals)[card.ply]
+  if (!reviewed || reviewed.uci !== card.played) return card
+  const fresh = toMoment(reviewed, evals, player, moves)
+  return { ...card, explanation: fresh.explanation, ...(fresh.bestLine ? { bestLine: fresh.bestLine } : {}) }
+}
+
 /** Adds the opponent's move just before (and the position before that), for context. */
 export function withLeadUp<M extends Moment>(moment: M, moves: readonly string[], ply: number): M {
   if (ply < 1 || moment.prevMove) return moment
