@@ -11,7 +11,12 @@ import { PuzzleTrainer } from '../components/PuzzleTrainer'
 import { endgameFor } from '../data/endgameDrills'
 import { findLesson } from '../data/lessons'
 import { OPENING_DRILLS } from '../data/openingLessons'
-import { themeCaption } from '../data/themes'
+import { themeCaption, themeTip } from '../data/themes'
+import { resolveOpponent } from '../data/opponents'
+import { MomentTrainer } from '../components/MomentTrainer'
+import { Portrait } from '../components/Portrait'
+import { findOwnExample, type OwnExample } from '../logic/lessonExtras'
+import { listArchivedGames } from '../storage/db'
 import { loadPuzzleBank } from '../engine/puzzleBank'
 import { buildDemo, puzzleDemo } from '../logic/demo'
 import { pickPuzzles, ratePuzzle, solverColour, type Puzzle } from '../logic/puzzles'
@@ -26,7 +31,7 @@ type Props = {
   onBack: () => void
 }
 
-type Phase = 'demo' | 'drill' | 'puzzles' | 'done'
+type Phase = 'demo' | 'drill' | 'puzzles' | 'own' | 'done'
 
 /** From this rating, the opening basics are offered as optional. */
 const STRONG_PLAYER = 1600
@@ -41,6 +46,32 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
   const [puzzleDone, setPuzzleDone] = useState(false)
   const [progress, setProgress] = useState<PuzzleProgress | null>(null)
   const [loadError, setLoadError] = useState(false)
+  // Puzzles solved without help, for the wrap-up.
+  const [cleanCount, setCleanCount] = useState(0)
+  // An example of the theme from your own games, if there is one (Sep 2026).
+  const [own, setOwn] = useState<OwnExample | null>(null)
+  const [ownDone, setOwnDone] = useState(false)
+  useEffect(() => {
+    if (!lesson || lesson.themes.length === 0) return
+    let cancelled = false
+    listArchivedGames()
+      .then((games) => {
+        const mine = games.slice(0, 30).map((g) => ({
+          id: g.id,
+          moves: g.moves,
+          evals: g.evals,
+          playerColour: g.playerColour,
+          opponentName: resolveOpponent(g.levelId, g.opponentRating).name,
+          finishedAt: g.finishedAt,
+        }))
+        const example = findOwnExample(mine, lesson.themes)
+        if (!cancelled) setOwn(example)
+      })
+      .catch(() => undefined)
+    return () => {
+      cancelled = true
+    }
+  }, [lesson])
 
   const opening = kind === 'opening' && lesson?.drill ? OPENING_DRILLS[lesson.drill] : undefined
   const ending = kind === 'endgame' && lesson?.drill ? endgameFor(lesson.drill, playerRating) : undefined
@@ -88,7 +119,10 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
       </button>
     </header>
   )
-  const afterDrill = () => setPhase(wantsPuzzles ? 'puzzles' : 'done')
+  const afterDrill = () => setPhase(wantsPuzzles ? 'puzzles' : own ? 'own' : 'done')
+  // After the puzzles: your own example, if there is one, then the wrap-up.
+  const afterPuzzles: Phase = own ? 'own' : 'done'
+  const tip = lesson ? themeTip(lesson.themes) : null
 
   if (!lesson || (loadError && kind === 'tactics')) {
     return (
@@ -138,13 +172,15 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
   if (puzzle && puzzles) {
     return (
       <main className="review-screen with-board">
-        {header(`${lesson.title} · ${index + 1} of ${puzzles.length}`, { text: 'Skip', onClick: () => setPhase('done') })}
+        {header(`${lesson.title} · ${index + 1} of ${puzzles.length}`, { text: 'Skip', onClick: () => setPhase(afterPuzzles) })}
+        {index === 0 && tip && <p className="review-note lesson-tip">Pemberton’s tip: {tip}</p>}
         <PuzzleTrainer
           key={puzzle.id}
           puzzle={puzzle}
           focus={lesson.themes}
           onFinished={(clean) => {
             setPuzzleDone(true)
+            if (clean) setCleanCount((n) => n + 1)
             if (!progress) return
             const next = { rating: ratePuzzle(progress.rating, puzzle.rating, clean), seen: [...progress.seen, puzzle.id] }
             setProgress(next)
@@ -156,7 +192,7 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
           className="review-continue"
           disabled={!puzzleDone}
           onClick={() => {
-            if (index + 1 >= puzzles.length) setPhase('done')
+            if (index + 1 >= puzzles.length) setPhase(afterPuzzles)
             else {
               setIndex((i) => i + 1)
               setPuzzleDone(false)
@@ -170,12 +206,48 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
     )
   }
 
+  // Your own game: the theme, in a position you actually had.
+  if (phase === 'own' && own) {
+    const date = new Date(own.finishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+    return (
+      <main className="review-screen with-board">
+        {header('From your own games', { text: 'Skip', onClick: () => setPhase('done') })}
+        <div className="moment-coach lesson-own">
+          <Portrait who="pemberton" size={36} />
+          <p className="moment-explanation">
+            You had one of these against {own.opponentName} on {date}.{' '}
+            {own.missed ? 'You didn’t see it then. Find it now.' : 'You found it then. Find it again.'}
+          </p>
+        </div>
+        <MomentTrainer moment={own.moment} onFinished={() => setOwnDone(true)} />
+        <button type="button" className="review-continue" disabled={!ownDone} onClick={() => setPhase('done')}>
+          Finish
+        </button>
+      </main>
+    )
+  }
+
+  // The wrap-up: how it went, and the one thing to take away.
+  const solvedAll = puzzles !== null && puzzles.length > 0 && cleanCount === puzzles.length
   return (
     <main className="review-screen">
       <header>
         <p className="review-kicker">Lesson complete</p>
         <h1>{lesson.title}</h1>
       </header>
+      {puzzles && puzzles.length > 0 && (
+        <div className="moment-coach lesson-wrap">
+          <Portrait who="pemberton" size={36} expression={solvedAll ? 'pleased' : 'neutral'} />
+          <div>
+            <p className="moment-coach-name">Coach Pemberton</p>
+            <p className="moment-explanation">
+              {solvedAll
+                ? `All ${puzzles.length} without help. Good. Now look for them in your games.`
+                : `You found ${cleanCount} of ${puzzles.length} without help.${tip ? ` The one thing to remember this week: ${tip.charAt(0).toLowerCase()}${tip.slice(1)}` : ''}`}
+            </p>
+          </div>
+        </div>
+      )}
       {progress && <p className="review-note">Puzzle rating: {Math.round(progress.rating.rating)}</p>}
       <button type="button" className="review-continue" onClick={onDone}>
         Continue

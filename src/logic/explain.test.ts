@@ -21,6 +21,13 @@ describe('explainBestMove', () => {
     )
   })
 
+  it('names a skewer', () => {
+    // Rh4+: the king on e4 has to move, and the rook on a4 behind it falls.
+    expect(explainBestMove('8/8/8/8/r3k3/8/8/1K5R w - - 0 1', 'h1h4', 500)).toBe(
+      'Rh4+ is a skewer: their king has to move, and the rook behind it falls.',
+    )
+  })
+
   it('names saving a piece the move played left hanging', () => {
     expect(explainBestMove('4k3/8/8/8/4p3/5N2/8/4K3 w - - 0 1', 'f3d4', 200, 'e1d2')).toBe(
       'Nd4 gets your knight out of danger.',

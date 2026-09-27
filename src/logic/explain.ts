@@ -156,6 +156,18 @@ export function explainBestMove(fenBefore: string, best: string, bestCp: number,
     return `${san} is a fork: your ${NAMES[move.piece]} attacks their ${listOf(targets)} at once.`
   }
 
+  // A skewer: the piece in front (king or queen) has to move, and the one behind falls.
+  const skewer = skewerBehind(after, move, opponent)
+  if (skewer) {
+    return skewer.front === 'king'
+      ? `${san} is a skewer: their king has to move, and the ${skewer.behind} behind it falls.`
+      : `${san} is a skewer: their ${skewer.front} has to move, and the ${skewer.behind} behind it falls.`
+  }
+
+  // A discovered attack: the move opens a line for a piece behind it.
+  const discovered = discoveredTarget(before, after, move, mover, opponent)
+  if (discovered) return `${san} is a discovered attack: moving it opens the line to their ${discovered}.`
+
   // Saving a piece that was in trouble (and the move played didn't).
   const from = best.slice(0, 2) as Square
   const threatened = before.attackers(from, opponent)
@@ -200,6 +212,53 @@ export function explainGoodMove(fenBefore: string, uci: string, punished: boolea
   const ideas = moveIdeas(fenBefore, uci)
   if (ideas.length) return `${move.san} ${joinIdeas(ideas)}. The strongest move on the board.`
   return `${move.san} was the strongest move in the position.`
+}
+
+const FILES = 'abcdefgh'
+const LINES: Record<string, number[][]> = {
+  b: [[1, 1], [1, -1], [-1, 1], [-1, -1]],
+  r: [[1, 0], [-1, 0], [0, 1], [0, -1]],
+  q: [[1, 1], [1, -1], [-1, 1], [-1, -1], [1, 0], [-1, 0], [0, 1], [0, -1]],
+}
+
+/** The first two pieces along a line from a square. */
+function alongLine(chess: Chess, from: string, [df, dr]: number[]): { type: PieceSymbol; color: string; square: string }[] {
+  const hits: { type: PieceSymbol; color: string; square: string }[] = []
+  for (let f = FILES.indexOf(from[0]) + df, r = Number(from[1]) + dr; f >= 0 && f < 8 && r >= 1 && r <= 8; f += df, r += dr) {
+    const sq = `${FILES[f]}${r}`
+    const p = chess.get(sq as Square)
+    if (p) {
+      hits.push({ type: p.type, color: p.color, square: sq })
+      if (hits.length === 2) break
+    }
+  }
+  return hits
+}
+
+/** A skewer by the moved slider: a king or queen in front, something worth taking behind. */
+function skewerBehind(after: Chess, move: { piece: PieceSymbol; to: string }, them: Colour): { front: string; behind: string } | null {
+  const dirs = LINES[move.piece]
+  if (!dirs) return null
+  for (const dir of dirs) {
+    const [front, back] = alongLine(after, move.to, dir)
+    if (!front || !back || front.color !== them || back.color !== them) continue
+    const bigFront = front.type === 'k' || (front.type === 'q' && VALUES[back.type] < 9)
+    if (bigFront && back.type !== 'p' && VALUES[back.type] >= 3) return { front: NAMES[front.type], behind: NAMES[back.type] }
+  }
+  return null
+}
+
+/** A piece of theirs newly attacked by one of yours that didn't move (the line was opened). */
+function discoveredTarget(before: Chess, after: Chess, move: { from: string; to: string }, me: Colour, them: Colour): string | null {
+  for (const row of after.board()) {
+    for (const cell of row) {
+      if (!cell || cell.color !== them || (cell.type !== 'k' && VALUES[cell.type] < 5)) continue
+      const nowBy = after.attackers(cell.square, me).filter((sq) => sq !== move.to)
+      const wasBy = before.attackers(cell.square, me)
+      if (nowBy.some((sq) => !wasBy.includes(sq))) return NAMES[cell.type]
+    }
+  }
+  return null
 }
 
 /** The mover's valuable pieces (not pawns) attacked by the piece on `from`. */

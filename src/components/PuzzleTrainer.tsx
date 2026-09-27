@@ -5,8 +5,11 @@ import { Chess } from 'chess.js'
 import { useEffect, useState } from 'react'
 import { applyUci } from '../logic/game'
 import { isCorrect, solverColour, type Puzzle } from '../logic/puzzles'
+import { puzzleExplanation } from '../logic/lessonExtras'
 import { Board } from './Board'
 import { HINT_ARROW_COLOUR } from './lineArrows'
+import { Portrait } from './Portrait'
+import './MomentTrainer.css'
 import './PuzzleTrainer.css'
 
 type Props = {
@@ -95,6 +98,7 @@ export function PuzzleTrainer({ puzzle, onFinished, focus = [] }: Props) {
   }
 
   const hintSquare = misses > 0 && step >= 1 ? puzzle.moves[step].slice(0, 2) : null
+  const explanation = done ? puzzleExplanation(puzzle) : ''
   const prompt = done
     ? message
     : step === 0
@@ -115,6 +119,16 @@ export function PuzzleTrainer({ puzzle, onFinished, focus = [] }: Props) {
         arrows={reveal ? [{ from: reveal.slice(0, 2), to: reveal.slice(2, 4), colour: HINT_ARROW_COLOUR }] : []}
       />
       <p className={`puzzle-prompt${done ? (clean ? ' solved' : ' helped') : ''}`}>{prompt}</p>
+      {/* Why the answer works (Joseph, Sep 2026: explain, don't just mark). */}
+      {done && explanation && (
+        <div className="moment-coach">
+          <Portrait who="pemberton" size={36} />
+          <div>
+            <p className="moment-coach-name">Coach Pemberton</p>
+            <p className="moment-explanation">{explanation}</p>
+          </div>
+        </div>
+      )}
       <p className="puzzle-meta">
         Puzzle rated {puzzle.rating}
         {puzzle.themes.length > 0 &&

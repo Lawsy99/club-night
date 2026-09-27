@@ -223,3 +223,15 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+/* Lessons: Pemberton's tip before the puzzles, and his lines around your own example and the wrap-up */
+.lesson-tip {
+  margin: 0 16px;
+  font-style: italic;
+}
+
+.moment-coach.lesson-own,
+.moment-coach.lesson-wrap {
+  margin: 0;
+}
+

@@ -32,6 +32,45 @@ export const THEME_CAPTIONS: Record<string, string> = {
   smotheredMate: 'Watch: the king is boxed in by its own pieces, and a knight finishes it.',
 }
 
+/**
+ * How to spot each theme at the board: Pemberton's rule of thumb, shown
+ * before the puzzles and at the end of the lesson (Sep 2026).
+ */
+export const THEME_TIPS: Record<string, string> = {
+  fork: 'Look for a square where one of your pieces would attack two of theirs. Knights first.',
+  pin: 'Find their king or queen, then look along the lines to it. Anything in the way can be pinned.',
+  skewer: 'Check the lines through their king and queen. Is something standing behind them?',
+  discoveredAttack: 'Where are your pieces lined up behind one another? Moving the front one can unleash the back one.',
+  mateIn1: 'Checks first. For each check, count the king’s escape squares.',
+  mateIn2: 'Look at every check, and the reply to it. The quiet move is often the second one.',
+  mateIn3: 'Checks, captures, threats, in that order, three moves deep.',
+  kingsideAttack: 'Count attackers against defenders around the king. When you have more, it’s time.',
+  quietMove: 'If no check or capture works, ask what their pieces are guarding, and take the guard away quietly.',
+  hangingPiece: 'Before every move: what of theirs is undefended? What of yours?',
+  sacrifice: 'Count what you get back: a mate, their queen, or a winning pawn. Not just an attack.',
+  backRankMate: 'A king behind three unmoved pawns has no escape. Check the back rank, for them and for you.',
+  capturingDefender: 'Find the piece doing the defending. Take it, and what it guarded falls.',
+  pawnEndgame: 'Count the moves: yours to queen, theirs to catch you. The king goes in front.',
+  deflection: 'If one piece guards two things, pull it away from one of them.',
+  trappedPiece: 'Look for a piece with no safe squares, then attack it.',
+  rookEndgame: 'Active rook, behind the passed pawn, and bring the king.',
+  defensiveMove: 'Ask what they’re threatening before you think about your own plan.',
+  intermezzo: 'Before the obvious recapture: is there a check or a threat that comes first?',
+  attraction: 'Can you lure their king or queen onto a square where it can be hit?',
+  zugzwang: 'Sometimes the best move is one that changes nothing, so they have to move.',
+  xRayAttack: 'Look along the whole line, through the pieces on it.',
+  advancedPawn: 'A pawn on the sixth or seventh is worth a lot. Push it, and back it up.',
+  promotion: 'Clear the square in front of the pawn, then push.',
+  exposedKing: 'A king without pawns in front: checks from a distance, then bring more pieces.',
+  clearance: 'Is one of your pieces in the way of another? Move it with a threat.',
+  smotheredMate: 'The king surrounded by its own pieces: a knight check can be mate.',
+}
+
+export function themeTip(themes: readonly string[]): string | null {
+  for (const t of themes) if (THEME_TIPS[t]) return THEME_TIPS[t]
+  return null
+}
+
 export function themeCaption(themes: readonly string[]): string {
   for (const t of themes) if (THEME_CAPTIONS[t]) return THEME_CAPTIONS[t]
   return 'Watch how it works.'
