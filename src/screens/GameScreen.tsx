@@ -496,7 +496,7 @@ export function GameScreen({
           lastQuery.current = query
           return finish(query)
         }
-        finish(describeBlunder(kind, fen, uci, after.pv))
+        finish(describeBlunder(kind, fen, uci, after.pv, toCentipawns(before.score) - toCentipawns(flipScore(after.score))))
       })
       // If the engine fails, never block the player's move.
       .catch(() => finish(null))

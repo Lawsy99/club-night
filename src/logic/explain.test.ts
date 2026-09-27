@@ -169,7 +169,8 @@ describe('explainGoodMove', () => {
     const fen = 'r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1'
     const line = ['b5c7', 'e8d7', 'c7a8']
     expect(explainGoodMove(fen, 'b5c7', true, line, ['b5c7', 'e8d7', 'c7b5'])).toBe(
-      'You punished their mistake with Nc7+. Followed up properly, it wins a rook. The follow-up was Nxa8.',
+      // (Not "punished": in the game it didn't win anything.)
+      'Nc7+ was the strongest move on the board. Followed up properly, it wins a rook. The follow-up was Nxa8.',
     )
     expect(explainGoodMove(fen, 'b5c7', true, line, line)).toBe('You punished their mistake with Nc7+, and won a rook.')
   })

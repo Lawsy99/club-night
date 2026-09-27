@@ -3,6 +3,7 @@
 // src/engine/reviewAnalysis.ts.
 import { Chess } from 'chess.js'
 import { winChance } from './evaluation'
+import { followLine } from './lineFacts'
 import { applyUci, type Colour } from './game'
 import { rateMove, type MoveRating } from './moveRating'
 
@@ -117,10 +118,15 @@ export function biggestMoments(moves: readonly ReviewedMove[], side: Colour, cou
 /** Opening moves (the first 5 each) are usually routine, not highlights. */
 const OPENING_PLIES = 10
 
+/** Their error has to be at least this big (in winning chances) to be "punished". */
+const PUNISHABLE = 0.15
+
 /**
- * The player's best moment: a top-rated move, preferring the one that
- * punished the opponent's biggest error just before it. Routine opening
- * moves don't count unless they punished something.
+ * The player's best moment: a top-rated move that did something. Joseph,
+ * Sep 2026: "you punished their mistake" was being said about castling after
+ * they castled. So: never castling, no routine opening moves, and "punished"
+ * only when the move really took advantage in the game (it won material, or
+ * led to mate), not just because their move before was graded a mistake.
  */
 export function bestMoveOfGame(
   moves: readonly ReviewedMove[],
@@ -129,12 +135,18 @@ export function bestMoveOfGame(
   let best: { move: ReviewedMove; punished: boolean; score: number } | null = null
   for (const m of moves) {
     if (m.mover !== side || m.rating !== 'best') continue
+    if (m.san.startsWith('O-O')) continue
+    // What really happened from this move on, in the game.
+    const real = followLine(m.fenBefore, moves.slice(m.ply).map((x) => x.uci))
+    const won = real.net >= 1 || real.mates
+    const forcing = /[x+#]/.test(m.san)
+    if (m.ply < OPENING_PLIES && !won) continue
     const previous = moves[m.ply - 1]
     const theirError = previous ? dropOf(previous) : 0
-    const punished = theirError >= 0.1
-    if (m.ply < OPENING_PLIES && !punished) continue
-    // Punishing an error counts most; otherwise prefer moves that leave you better off.
-    const score = theirError * 2 + m.winAfter
+    const punished = theirError >= PUNISHABLE && won
+    // Something won counts most, then punishing an error, then forcing moves,
+    // then simply leaving you better off.
+    const score = (won ? 2 + Math.min(real.net, 9) / 9 : 0) + (punished ? theirError : 0) + (forcing ? 0.3 : 0) + m.winAfter * 0.5
     if (!best || score > best.score) best = { move: m, punished, score }
   }
   return best && { move: best.move, punished: best.punished }

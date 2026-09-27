@@ -35,6 +35,22 @@ const WINNING_CP = 250
 const ENDING_PIECES = 4
 /** A drop this big (centipawns) is never "nothing terrible". */
 const BIG_DROP = 150
+/**
+ * How far a material claim may run ahead of the engine's own verdict before
+ * it isn't believed (centipawns): two pawns, for positions where the material
+ * comes back or there's compensation the short line doesn't show.
+ */
+const TRUST_MARGIN_CP = 200
+/** And how far it may fall short: beyond this, it isn't why the move was bad. */
+const UNDER_MARGIN_CP = 250
+/** Positional reasons ("you gave up castling") only for slips smaller than this. */
+const POSITIONAL_MAX_CP = 200
+/**
+ * A best move's material win is believed if the engine's score after it is
+ * no more than this far below the win (centipawns): four pawns, since you may
+ * have been behind before it.
+ */
+const BEST_TRUST_CP = 400
 
 export type MistakeFacts = {
   /** Position before the player's move. */
@@ -72,14 +88,21 @@ type Tense = 'happened' | 'missed' | 'avoided' | 'live'
  * 'missed': they didn't play the key reply. 'avoided': they did, but the game
  * then went another way (you found a defence the engine's line didn't).
  */
-function tenseOf(f: MistakeFacts, predictedNet: number, isMate: boolean): Tense {
+function tenseOf(f: MistakeFacts, predictedNet: number, isMate: boolean, predictedLost: readonly PieceSymbol[] = []): Tense {
   if (!f.actual || f.actual.length === 0) return 'live'
   const real = followLine(f.fenBefore, [f.played, ...f.actual], 12)
   const sameReply = f.replyLine?.length ? f.actual[0] === f.replyLine[0] : f.actual[0] === f.reply
-  const didnt: Tense = sameReply ? 'avoided' : 'missed'
-  if (isMate) return real.mated ? 'happened' : didnt
-  // It happened if the game really cost about as much as the engine's line.
-  return real.net <= -MATERIAL && real.net <= predictedNet + 0.9 ? 'happened' : didnt
+  if (isMate) return real.mated ? 'happened' : sameReply ? 'avoided' : 'missed'
+  // It happened if the game really cost about as much as the engine's line,
+  // and the same way: their reply, or the same piece (a rook taken two moves
+  // later still counts; a pawn lost somewhere else doesn't).
+  const piece = predictedLost.find((p) => p !== 'p')
+  const sameHarm = sameReply || (!!piece && real.lost.includes(piece))
+  if (real.net <= -MATERIAL && real.net <= predictedNet + 0.9 && sameHarm) return 'happened'
+  // They took it later but it cost less (you won something back), or the
+  // game went elsewhere after their reply: "another way". Only "missed" when
+  // they never played the move at all.
+  return sameReply || (!!piece && real.lost.includes(piece)) ? 'avoided' : 'missed'
 }
 
 /** "It cost you a rook." / "…would have cost you a rook, but they missed it." / "It would cost you a rook." */
@@ -139,8 +162,19 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
     return { kind: 'missed-mate', text }
   }
 
+  // The engine's verdict is the judge (Joseph, Sep 2026: a "fork" that didn't
+  // work, because taking would have run into the queen behind; "punished their
+  // mistake" for castling). A material story must roughly match how much the
+  // move actually cost by the evaluation: not much bigger (the short line
+  // isn't the real story; there's a catch it doesn't show), and not much
+  // smaller (then it isn't why the move was bad, even if it's true).
+  const drop = Math.max(0, f.cpBefore - f.cpAfter)
+  const matesAround = f.cpAfter <= -MATE_THRESHOLD || f.cpBefore >= MATE_THRESHOLD
+  const accounts = (pawns: number) => matesAround || (pawns * 100 <= drop + TRUST_MARGIN_CP && pawns * 100 + UNDER_MARGIN_CP >= drop)
+
   // They had just taken something, and the move played didn't take back.
-  const retake = f.bestMove && bestSan && recaptured(f.prev, f.bestMove) && f.played.slice(2, 4) !== f.bestMove.slice(2, 4)
+  const retaken = f.bestMove ? recaptured(f.prev, f.bestMove) : null
+  const retake = f.bestMove && bestSan && retaken && f.played.slice(2, 4) !== f.bestMove.slice(2, 4) && VALUES[retaken] * 100 <= drop + TRUST_MARGIN_CP
   if (retake) return { kind: 'missed-win', text: `You needed to take back on ${f.bestMove!.slice(2, 4)} with ${bestSan}.` }
 
   // Material: what the move and their best line cost, against what the best line keeps.
@@ -157,22 +191,23 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
         : `It allowed ${theirs.moves[0].san}, and a pawn of theirs that couldn’t be stopped. In the game it went another way.`
     return { kind: 'lost-material', text }
   }
-  if (played && replyLine && afterFen && played.net <= -MATERIAL && played.net < keeps - 0.9) {
+  if (played && replyLine && afterFen && played.net <= -MATERIAL && played.net < keeps - 0.9 && accounts(keeps - played.net)) {
     return lossSentence(f, played, followLine(afterFen, replyLine))
   }
 
   // What the player could have won instead.
   if (bestOutcome && bestSan && f.bestMove) {
     const playedNet = played ? played.net : 0
-    if (bestOutcome.net >= MATERIAL && bestOutcome.net > playedNet + 0.9) {
+    if (bestOutcome.net >= MATERIAL && bestOutcome.net > playedNet + 0.9 && accounts(bestOutcome.net - playedNet)) {
       const gain = describeGain(bestOutcome.won, bestOutcome.lost, bestOutcome.mixedMinors) ?? 'material'
       const found = findTactic(bestOutcome)
       return { kind: 'missed-win', text: `You missed ${bestSan}. ${winsWith(bestOutcome, found, gain, 'their')}` }
     }
   }
 
-  // Nothing tactical: what the move did to the position, if it's something to name.
-  const harm = positionalHarm(f.fenBefore, f.played, f.cpBefore)
+  // Nothing tactical: what the move did to the position, if it's something to
+  // name. Only for smaller slips: a big swing is never "you gave up castling".
+  const harm = drop < POSITIONAL_MAX_CP ? positionalHarm(f.fenBefore, f.played, f.cpBefore) : null
   if (harm) return { kind: harm.kind, text: harm.text }
   // Otherwise, what their best reply does to you (Sep 2026: "Nxd4 was
   // stronger" said nothing; "It allowed Qg5, which attacks your knight" does).
@@ -203,7 +238,7 @@ function lossSentence(f: MistakeFacts, played: LineOutcome, theirs: LineOutcome)
   const reply = theirs.moves[0]
   // Only say it happened if it did (Joseph, Sep 2026). And worded "cost you",
   // never "you lose": a beginner who'd won read "you lost material" as "you lost".
-  const tense = tenseOf(f, played.net, false)
+  const tense = tenseOf(f, played.net, false, played.lost)
   if (!reply) return { kind: 'lost-material', text: costs(tense, loss) }
   const moved = f.played.slice(2, 4)
   // Taking something that turns out to be poisoned: say what the capture cost.
@@ -285,7 +320,9 @@ export function explainBestMove(
     return `${san}: now nothing stops the pawn from queening.`
   }
 
-  if (out.net >= MATERIAL) {
+  // (Only if the engine's score for the position backs it up: a line that
+  // "wins a rook" when the engine says you're barely better has a catch.)
+  if (out.net >= MATERIAL && out.net * 100 <= bestCp + BEST_TRUST_CP) {
     const gain = describeGain(out.won, out.lost, out.mixedMinors) ?? 'material'
     const found = findTactic(out)
     if (found?.tactic.kind === 'undefended' && found.index === 0) return `${san} wins their ${NAMES[found.tactic.piece]}: nothing can take it back.`
@@ -364,15 +401,15 @@ export function explainGoodMove(fenBefore: string, uci: string, punished: boolea
   const move = applyUci(chess, uci)
   if (!move) return ''
   if (chess.isCheckmate()) return `${move.san}: checkmate.`
-  const start = punished ? `You punished their mistake with ${move.san}` : move.san
 
-  // What really happened in the game.
+  // What really happened in the game. "Punished" is only said when the move
+  // really took advantage (Joseph, Sep 2026: it was said about castling).
   const real = actual?.[0] === uci ? followLine(fenBefore, actual) : null
-  if (real?.mates) return `${start}${punished ? ',' : ''} and it led to checkmate.`
+  if (real?.mates) return punished ? `You punished their mistake with ${move.san}, and it led to checkmate.` : `${move.san} led to checkmate.`
   const realGain = real && real.net >= MATERIAL ? describeGain(real.won, real.lost, real.mixedMinors) : null
   if (realGain) {
     const found = findTactic(real!)
-    if (punished) return `${start}, and won ${realGain}.`
+    if (punished) return `You punished their mistake with ${move.san}, and won ${realGain}.`
     if (found?.tactic.kind === 'undefended' && found.index === 0) return `${move.san} won their ${NAMES[found.tactic.piece]}.`
     return found?.index === 0 ? `${move.san} ${tacticVerb(found.tactic, 'their')}, and won ${realGain}.` : `${move.san} won ${realGain}.`
   }
@@ -383,9 +420,8 @@ export function explainGoodMove(fenBefore: string, uci: string, punished: boolea
   if (gain) {
     const key = out.keyCapture && out.keyCapture !== out.moves[0] ? ` The follow-up was ${out.keyCapture.san}.` : ''
     const could = real ? `Followed up properly, it wins ${gain}.${key}` : `It wins ${gain}.${key}`
-    return punished ? `${start}. ${could}` : `${move.san} was the strongest move on the board. ${could}`
+    return `${move.san} was the strongest move on the board. ${could}`
   }
-  if (punished) return `${start}.`
   const ideas = moveIdeas(fenBefore, uci)
   if (ideas.length) return `${move.san} ${joinIdeas(ideas)}. The strongest move on the board.`
   return `${move.san} was the strongest move in the position.`

@@ -37,7 +37,8 @@ export function coachHint(fen: string, best: string, cp: number, line?: readonly
   // With the engine's line: nudge towards the tactic it proves (Sep 2026:
   // only point at a fork if a forked piece really falls).
   const out = followLine(fen, line?.[0] === best ? line : [best])
-  if (out.net >= 1) {
+  // (Only if the engine's score backs the win up; see explain.ts.)
+  if (out.net >= 1 && out.net * 100 <= cp + 400) {
     const found = findTactic(out)
     if (found?.index === 0) {
       switch (found.tactic.kind) {

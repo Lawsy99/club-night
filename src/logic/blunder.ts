@@ -40,11 +40,13 @@ export function assessMove(check: MoveCheck, rule: BlunderWarningRule | null): B
  * follows (UCI). What's at stake is named only if the line really loses it
  * once the exchanges are done (Sep 2026: a trade isn't "letting them take" a piece).
  */
-export function describeBlunder(kind: BlunderKind, fenBefore: string, uci: string, replyLine: readonly string[]): string {
+export function describeBlunder(kind: BlunderKind, fenBefore: string, uci: string, replyLine: readonly string[], lossCp?: number): string {
   if (kind === 'allows-mate') return 'That allows a forced checkmate.'
   if (replyLine.length) {
     const line = followLine(fenBefore, [uci, ...replyLine])
-    const loss = line.net <= -1 ? describeGain(line.lost, line.won, line.mixedMinors) : null
+    // Named only if the engine's score agrees it's about that much (see explain.ts).
+    const agrees = lossCp === undefined || (-line.net * 100 <= lossCp + 200 && -line.net * 100 + 250 >= lossCp)
+    const loss = line.net <= -1 && agrees ? describeGain(line.lost, line.won, line.mixedMinors) : null
     if (loss) return `That gives away ${loss}.`
   }
   return 'That gives away a lot.'

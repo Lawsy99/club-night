@@ -214,7 +214,9 @@ function tacticAt(outcome: LineOutcome, i: number): Tactic | null {
   const targets = attackedFrom(after, move.to as Square, them, me).filter(
     (t) => t.type === 'k' || PIECE_VALUES[t.type] > PIECE_VALUES[move.piece] || after.attackers(t.square as Square, them).length === 0,
   )
-  if (targets.length >= 2) {
+  // (Not if the forking piece is simply taken on the next move: then it wasn't a fork that worked.)
+  const forkerTaken = outcome.moves[i + 1]?.captured && outcome.moves[i + 1].to === move.to
+  if (targets.length >= 2 && !forkerTaken) {
     const fallen = targets.find((t) => t.type !== 'k' && falls(t.square))
     if (fallen) return { kind: 'fork', attacker: move.piece, targets: order(targets.map((t) => t.type)), falls: fallen.type }
   }
