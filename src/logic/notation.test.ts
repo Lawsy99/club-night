@@ -48,6 +48,12 @@ describe('the coach in words', () => {
     expect(explainBestMove(knightHangs, 'd8g5', 300)).toBe('The queen capture on g5 wins their knight: nothing can take it back.')
   })
 
+  it('doesn’t say check twice', () => {
+    setNotationStyle('words')
+    const text = explainBestMove('4k3/8/8/8/8/8/8/R3K3 w - - 0 1', 'a1a8', 0)
+    expect(text.match(/check/g)).toHaveLength(1)
+  })
+
   it('never leaves notation in a mistake explanation', () => {
     setNotationStyle('words')
     // Black ignores the threat to f7; the knight takes there with a fork.

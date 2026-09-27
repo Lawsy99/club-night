@@ -6,6 +6,7 @@ import {
   newGameRecord,
   nextPlayerColour,
   outcomeOf,
+  ratingAt,
   takebacksLeft,
   withDrawAgreed,
   withMove,
@@ -94,5 +95,27 @@ describe('colours', () => {
     expect(nextPlayerColour(null)).toBe('w')
     expect(nextPlayerColour(newGameRecord('w', 'casual', 'real'))).toBe('b')
     expect(nextPlayerColour(newGameRecord('b', 'casual', 'real'))).toBe('w')
+  })
+})
+
+describe('looking back at move ratings', () => {
+  const game = {
+    playerColour: 'w' as Colour,
+    moves: ['e2e4', 'e7e5', 'g1f3', 'b8c6'],
+    moveRatings: {
+      0: { uci: 'e2e4', rating: 'best' as const, better: null },
+      2: { uci: 'g1f3', rating: 'good' as const, better: 'd2d4' },
+    },
+  }
+
+  it('shows your move at that point, or the one just before their reply', () => {
+    expect(ratingAt(game, 1)).toMatchObject({ ply: 0, rating: 'best' })
+    expect(ratingAt(game, 3)).toMatchObject({ ply: 2, rating: 'good', better: 'd2d4' })
+    expect(ratingAt(game, 4)).toMatchObject({ ply: 2 })
+    expect(ratingAt(game, 0)).toBeNull()
+  })
+
+  it('ignores a rating for a move that was taken back and replaced', () => {
+    expect(ratingAt({ ...game, moves: ['e2e4', 'e7e5', 'f1c4'] }, 3)).toBeNull()
   })
 })

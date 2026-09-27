@@ -46,6 +46,7 @@ import {
   withDrawAgreed,
   withMove,
   withOpponentEval,
+  ratingAt,
   withResignation,
   withTakeback,
   type GameRecord,
@@ -128,6 +129,8 @@ export function GameScreen({
   const lastQuery = useRef<string | null>(null)
   const coachVoice = opponent.character ? COACH_VOICES[opponent.character.id] : undefined
   const [peekKey, setPeekKey] = useState<string | null>(null)
+  // Looking back: the move whose better alternative is being shown, if any.
+  const [viewPeekPly, setViewPeekPly] = useState<number | null>(null)
   const [maiaStatus, setMaiaStatus] = useState<MaiaStatus>({ state: 'idle' })
   const [maiaMs, setMaiaMs] = useState<number | null>(null)
   // The opponent's speech bubble: a draw offer, or their answer to the player's.
@@ -196,6 +199,16 @@ export function GameScreen({
   const [reaction, setReaction] = useState<Expression | null>(null)
   const previousWin = useRef<number | null>(null)
   const ratedKey = ratedMove ? `${ratedMove.fenBefore} ${ratedMove.played}` : null
+  // Keep each move's rating with the game, so looking back shows it too
+  // (tester feedback, Sep 2026: "would be nice if I could scroll back and check").
+  useEffect(() => {
+    if (!ratedMove || competitive) return
+    const ply = game.moves.length - (game.moves.at(-1) === ratedMove.played ? 1 : 2)
+    if (ply < 0 || game.moves[ply] !== ratedMove.played) return
+    const saved = { uci: ratedMove.played, rating: ratedMove.rating, better: ratedMove.betterMove }
+    setGame((g) => (g ? { ...g, moveRatings: { ...g.moveRatings, [ply]: saved } } : g))
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per rated move
+  }, [ratedKey])
   useEffect(() => {
     if (!ratedMove || !competitive || outcome) return
     const moment = matchMoment(ratedMove.rating, ratedMove.winAfter, previousWin.current)
@@ -579,10 +592,21 @@ export function GameScreen({
 
   const downloading = maiaStatus.state === 'downloading' && opponentToMove
 
+  // Looking back: how your move at that point rated (not in matches, which
+  // have no ratings). In the coached game, what was better, as for the latest move.
+  const viewedRating = viewing && !competitive && viewPly! > 0 ? ratingAt(game, viewPly!) : null
+  const viewedBefore = viewedRating ? replay(game.moves.slice(0, viewedRating.ply)).fen() : null
+  const canViewPeek =
+    stage.id === 'assisted' && !!viewedRating?.better && ['inaccuracy', 'mistake', 'blunder'].includes(viewedRating.rating)
+  const viewPeeking = canViewPeek && viewPeekPly === viewedRating!.ply
+  const viewedSan = (uci: string | null | undefined) => (viewedBefore && uci ? (applyUci(new Chess(viewedBefore), uci)?.san ?? null) : null)
+
   // (Long-think stage directions, e.g. "Marjorie stirs her tea", were removed
   // in Sep 2026: idle and unrelated to the game. The thinking dots show a
   // think instead, and opponents are quicker now anyway.)
-  const status = viewing
+  const status = viewPeeking
+    ? peekLine(viewedBefore!, viewedRating!.better, viewedSan(viewedRating!.uci) ?? '', viewedSan(viewedRating!.better))
+    : viewing
     ? `Looking back: ${viewPly === 0 ? 'the start' : `after move ${Math.ceil(viewPly! / 2)}`}`
     : engineError && opponentToMove
     ? engineError
@@ -627,7 +651,7 @@ export function GameScreen({
   // (Joseph, Sep 2026), not the live position.
   const viewedAnalysis = useAnalysis(viewed ? viewed.fen() : fen, viewing && stage.evalBar)
   const barAnalysis = viewing ? viewedAnalysis.latest : analysis.latest
-  const boardFen = viewed ? viewed.fen() : peeking ? ratedMove.fenBefore : pending ? pending.fenAfter : fen
+  const boardFen = viewed ? (viewPeeking ? viewedBefore! : viewed.fen()) : peeking ? ratedMove.fenBefore : pending ? pending.fenAfter : fen
 
   // The scouting report plays out on the board before the game (YouTube-teacher style).
   if (showScouting && opponent.character) {
@@ -741,7 +765,7 @@ export function GameScreen({
             movableColour={outcome || pending || peeking || showScouting || viewing ? null : game.playerColour}
             lastMove={
               viewing
-                ? viewedLast
+                ? viewedLast && !viewPeeking
                   ? { from: viewedLast.from, to: viewedLast.to }
                   : null
                 : peeking
@@ -749,7 +773,16 @@ export function GameScreen({
                   : (pendingLast ?? (last ? { from: last.from, to: last.to } : null))
             }
             onMove={handlePlayerMove}
-            arrows={viewing ? [] : arrows}
+            arrows={
+              viewPeeking
+                ? [
+                    { from: viewedRating!.uci.slice(0, 2), to: viewedRating!.uci.slice(2, 4), colour: PLAYED_ARROW_COLOUR },
+                    { from: viewedRating!.better!.slice(0, 2), to: viewedRating!.better!.slice(2, 4), colour: HINT_ARROW_COLOUR },
+                  ]
+                : viewing
+                  ? []
+                  : arrows
+            }
           />
           {pending?.warning && (
             <BlunderWarning
@@ -787,6 +820,20 @@ export function GameScreen({
           </button>
         </div>
       </div>
+      {/* Looking back: how your move there rated, next to the moves. */}
+      {viewedRating && viewedBefore && (
+        <div className="move-info">
+          <span className={`move-rating rating-${viewedRating.rating}`}>
+            Move {Math.floor(viewedRating.ply / 2) + 1}: {shortName(viewedBefore, viewedRating.uci, viewedSan(viewedRating.uci) ?? '')}
+            {RATING_GLYPHS[viewedRating.rating]} · {RATING_LABELS[viewedRating.rating]}
+          </span>
+          {canViewPeek && (
+            <button type="button" className="peek-button" onClick={() => setViewPeekPly(viewPeeking ? null : viewedRating.ply)}>
+              {viewPeeking ? 'Hide better move' : 'See better move'}
+            </button>
+          )}
+        </div>
+      )}
       {viewing && (
         <button type="button" className="back-to-game" onClick={() => setViewPly(null)}>
           Back to the game

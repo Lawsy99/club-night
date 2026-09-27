@@ -2,6 +2,7 @@
 // exactly. Pure functions only; saving itself lives in src/storage.
 import { HELP_STAGES, type HelpStageId } from '../data/helpStages'
 import { applyUci, getOutcome, replay, type Colour, type GameOutcome } from './game'
+import type { MoveRating } from './moveRating'
 import type { PathGame } from './path'
 import type { Repertoire } from '../data/repertoire'
 
@@ -18,6 +19,12 @@ export type GameRecord = {
   takebacksUsed: number
   /** The coach's hints asked for in this game (the coached game allows three). */
   hintsUsed?: number
+  /**
+   * How each of the player's moves rated, by move index, so looking back
+   * through the game shows them too (tester feedback, Sep 2026). `uci` checks
+   * it's still the move there after a takeback.
+   */
+  moveRatings?: Record<number, { uci: string; rating: MoveRating; better: string | null }>
   /** The act (season) the game was played in; older games are Act 1. */
   act?: number
   /** A trap Pemberton announced for this coached game, and how it went once known. */
@@ -145,6 +152,23 @@ export function outcomeOf(game: GameRecord): GameOutcome | null {
   }
   if (game.drawAgreed) return { winner: null, reason: 'agreement' }
   return getOutcome(replay(game.moves))
+}
+
+/**
+ * Looking back to the position after `viewPly` moves: the player's move there
+ * (or the one just before, if the last move shown is the opponent's), with
+ * how it rated. Null if it wasn't rated (or was taken back since).
+ */
+export function ratingAt(
+  game: Pick<GameRecord, 'moves' | 'playerColour' | 'moveRatings'>,
+  viewPly: number,
+): { ply: number; uci: string; rating: MoveRating; better: string | null } | null {
+  for (const ply of [viewPly - 1, viewPly - 2]) {
+    if (ply < 0 || (ply % 2 === 0 ? 'w' : 'b') !== game.playerColour) continue
+    const saved = game.moveRatings?.[ply]
+    return saved && game.moves[ply] === saved.uci ? { ply, ...saved } : null
+  }
+  return null
 }
 
 /**

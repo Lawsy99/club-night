@@ -434,10 +434,10 @@ export function explainBestMove(
   // comes before the minor ideas ("develops", "closer to their king").
   const ideas = moveIdeas(fenBefore, best, bestCp)
   const strong = ideas.filter((i) => /^(stops|defends your (knight|bishop|rook|queen)|threatens mate|attacks their (queen|rook|knight|bishop)|pins)/.test(i))
-  if (after.inCheck() && strong.length === 0) return `${san} comes with check, so they have to deal with that first.`
+  if (after.inCheck() && strong.length === 0) return checkFirst(san)
   if (ideas.length) return `${san} ${joinIdeas(ideas)}.`
 
-  if (after.inCheck()) return `${san} comes with check, so they have to deal with that first.`
+  if (after.inCheck()) return checkFirst(san)
 
   if (bestCp >= 300) return `${san} keeps you well on top.`
   if (bestCp >= 80) return `${san} keeps your advantage.`
@@ -565,6 +565,15 @@ function takenBy(f: MistakeFacts, square: string): string | null {
     if (m.color === them && m.captured && m.to === square) return taker(m)
   }
   return null
+}
+
+/**
+ * "Bxf7+ comes with check, so they have to deal with that first." In words the
+ * name already says "check" ("the bishop capture on f7, with check"), so it
+ * isn't said twice.
+ */
+function checkFirst(name: string): string {
+  return /check/.test(name) ? `${name}: they have to deal with that first.` : `${name} comes with check, so they have to deal with that first.`
 }
 
 /** Who took (back): "Qxd6" in notation, "their queen" in words. */
