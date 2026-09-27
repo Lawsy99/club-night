@@ -282,6 +282,23 @@ export function finalRating(p: Progress, id: string): number {
   return nearYou(p, opponentRating(p, id), 0, MATCH_ABOVE)
 }
 
+/**
+ * The strength someone plays at against you right now, which is also their
+ * number on the club ladder (Joseph, Sep 2026: one number everywhere; the
+ * ladder shifting a little week to week is natural). The week's person and
+ * the cup opponents are brought near your level; everyone else is as usual.
+ */
+export function clubRating(p: Progress, id: string): number {
+  if (p.stage !== 'act') return opponentRating(p, id)
+  const plan = actPlan(p)
+  const ch = plan.chapters[p.chapter]
+  if (ch) return id === ch.opponent ? weekOpponentRating(p, id) : opponentRating(p, id)
+  const round = p.cup?.round ?? 0
+  if (round < plan.gauntlet.rounds.length && plan.gauntlet.rounds[round].opponent === id) return roundRating(p, id, round)
+  if (round >= plan.gauntlet.rounds.length && plan.gauntlet.boss.opponent === id) return finalRating(p, id)
+  return opponentRating(p, id)
+}
+
 const nameOf = (id: string) => findCharacter(id)?.name ?? id
 const rounded = (r: number) => Math.max(200, Math.round(r / 5) * 5)
 
@@ -362,7 +379,7 @@ export function nextStep(p: Progress): NextStep {
       return {
         kind: 'friendly',
         opponent,
-        rating: opponent === ch.opponent ? rating : opponentRating(p, opponent),
+        rating: clubRating(p, opponent),
         stage: 'guided',
         label: k < PRACTICE_GAMES ? `Practice game ${k + 1} of ${PRACTICE_GAMES} vs ${nameOf(opponent)}` : `Practice game vs ${nameOf(opponent)}`,
         location: sessionLabel('practice'),
@@ -473,8 +490,8 @@ export function practiceOpponent(p: Progress, k: number): string {
     (id) => id !== ch.opponent && id !== 'toby' && !LEAGUE_ONLY.some((c) => c.id === id),
   )
   // One stronger than you, one weaker, as at a real club (if there are any).
-  const stronger = pool.filter((id) => opponentRating(p, id) > you)
-  const weaker = pool.filter((id) => opponentRating(p, id) <= you)
+  const stronger = pool.filter((id) => clubRating(p, id) > you)
+  const weaker = pool.filter((id) => clubRating(p, id) <= you)
   const from = k === 1 ? (stronger.length ? stronger : pool) : weaker.length ? weaker : pool
   // A different starting point each week, then the next along.
   return from[(p.chapter * 5 + k) % from.length]

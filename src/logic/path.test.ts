@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { ACT_1 } from '../data/act1'
+import { clubLadder } from './ladder'
 import {
   beginTrial,
   completeLesson,
@@ -235,6 +236,19 @@ describe('the path', () => {
     expect(weekOpponentRating(strongFixed, 'graham')).toBe(1260)
     // Practice night keeps fixed players at their own number.
     expect(opponentRating(strongFixed, 'graham')).toBe(1600)
+  })
+
+  it('shows on the club ladder the same number they play at', () => {
+    const p = { ...readyForPractice(), chapter: 1, rating: { rating: 1200, deviation: 100, volatility: 0.06 }, friendlies: { played: 3, wonGuided: false } } as Progress
+    const match = nextGame(p).game
+    expect(clubLadder(p)!.find((r) => r.id === match.opponent)!.rating).toBe(match.rating)
+    // In cup week too: the round's opponent, then the final.
+    const cup = { ...p, chapter: ACT_1.chapters.length, lessonDone: true } as Progress
+    const round = nextGame(cup).game
+    expect(clubLadder(cup)!.find((r) => r.id === round.opponent)!.rating).toBe(round.rating)
+    const final = { ...cup, cup: { round: 3, bossRating: 0, bossAttempts: 0 } }
+    const boss = nextGame(final).game
+    expect(clubLadder(final)!.find((r) => r.id === boss.opponent)!.rating).toBe(boss.rating)
   })
 
   it('keeps the week’s person at one strength all week, and the other practice games as they were', () => {

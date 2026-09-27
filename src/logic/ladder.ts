@@ -2,10 +2,12 @@
 // the player among them. Fixed members (and the background members) stay
 // put, so the player climbs past them for good. The main cast who scale sit
 // a set distance from the player, chosen by the story, so they're overtaken
-// only at story moments (and Toby never is). Ratings are the ones they play at.
+// only at story moments (and Toby never is). Ratings are the ones they play at
+// right now: the week's person and cup opponents are near your level that week
+// (clubRating), so the ladder shifts a little week to week, as a real one does.
 import { CHARACTERS, PRACTICE_REGULARS } from '../data/characters'
 import { MEMBERS } from '../data/members'
-import { opponentRating, type Progress } from './path'
+import { clubRating, type Progress } from './path'
 
 export const YOU = 'you'
 
@@ -14,14 +16,14 @@ export type Rung = { id: string; name: string; rating: number }
 /** Everyone, highest first. On a tie the player sits below: you have to get past, not level. */
 export function clubLadder(p: Progress, playerName = 'You'): Rung[] | null {
   if (!p.rating) return null
-  const cast = CHARACTERS.map((c) => ({ id: c.id, name: c.name, rating: opponentRating(p, c.id) }))
-  const background = MEMBERS.map((m) => ({ id: m.id, name: m.name, rating: opponentRating(p, m.id) }))
+  const cast = CHARACTERS.map((c) => ({ id: c.id, name: c.name, rating: clubRating(p, c.id) }))
+  const background = MEMBERS.map((m) => ({ id: m.id, name: m.name, rating: clubRating(p, m.id) }))
   // Practice-night regulars who aren't background members (Terry) are club
   // members too, so they're on the ladder from the start.
   const regulars = PRACTICE_REGULARS.filter((c) => !MEMBERS.some((m) => m.id === c.id)).map((c) => ({
     id: c.id,
     name: c.name,
-    rating: opponentRating(p, c.id),
+    rating: clubRating(p, c.id),
   }))
   const you = { id: YOU, name: playerName, rating: Math.round(p.rating.rating) }
   return [...cast, ...background, ...regulars, you].sort((a, b) => b.rating - a.rating || (a.id === YOU ? 1 : b.id === YOU ? -1 : 0))
