@@ -36,7 +36,8 @@ export const LESSONS: Lesson[] = [
     title: 'How to start a game',
     kind: 'opening',
     drill: 'italian',
-    intro: 'Before anything else: how to begin. Three ideas, and one simple opening to play as White.',
+    // His first words to you (Sep 2026 story pass): already talking to Toby.
+    intro: 'Pemberton. I take Tuesdays. Toby tells me you’re keen. Before anything else: how to begin. Three ideas, and one simple opening to play as White.',
     themes: [],
     count: 0,
   },
