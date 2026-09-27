@@ -157,12 +157,14 @@ function fromTheirSide(idea: string): string {
 function lossSentence(f: MistakeFacts, played: LineOutcome, theirs: LineOutcome): { kind: ErrorKind; text: string } {
   const loss = describeGain(played.lost, played.won, played.mixedMinors) ?? 'material'
   const reply = theirs.moves[0]
-  if (!reply) return { kind: 'lost-material', text: `This loses ${loss}.` }
+  // (Worded "costs you" and "gives away", never "you lose": Joseph, Sep 2026,
+  // a beginner who'd won read "you lost material" as "you lost".)
+  if (!reply) return { kind: 'lost-material', text: `That gives away ${loss}.` }
   const moved = f.played.slice(2, 4)
   // Taking something that turns out to be poisoned: say what the capture cost.
   const playedMove = played.moves[0]
   if (playedMove?.captured && reply.to === moved) {
-    return { kind: 'lost-material', text: `Taking on ${moved} loses ${loss}: ${reply.san} takes back.` }
+    return { kind: 'lost-material', text: `Taking on ${moved} costs you ${loss}: ${reply.san} takes back.` }
   }
   const found = findTactic(theirs)
   if (found?.tactic.kind === 'undefended') {
@@ -175,17 +177,17 @@ function lossSentence(f: MistakeFacts, played: LineOutcome, theirs: LineOutcome)
   }
   if (found) {
     const kind: ErrorKind = found.tactic.kind === 'fork' ? 'fork' : 'lost-material'
-    if (found.index === 0) return { kind, text: `This allowed ${reply.san}, ${tacticNoun(found.tactic, 'your')}. You lose ${loss}.` }
+    if (found.index === 0) return { kind, text: `This allowed ${reply.san}, ${tacticNoun(found.tactic, 'your')}. It costs you ${loss}.` }
     return {
       kind,
-      text: `After ${lineSan(theirs, 0, found.index)}, ${found.move.san} ${tacticVerb(found.tactic, 'your')}. You lose ${loss}.`,
+      text: `After ${lineSan(theirs, 0, found.index)}, ${found.move.san} ${tacticVerb(found.tactic, 'your')}. It costs you ${loss}.`,
     }
   }
   const key = theirs.keyCapture
-  if (key && key !== reply) return { kind: 'lost-material', text: `After ${reply.san}, ${key.san} is coming, and you lose ${loss}.` }
+  if (key && key !== reply) return { kind: 'lost-material', text: `After ${reply.san}, ${key.san} is coming, and it costs you ${loss}.` }
   return {
     kind: 'lost-material',
-    text: reply.captured ? `After ${reply.san} and the exchanges that follow, you lose ${loss}.` : `After ${reply.san}, you lose ${loss}.`,
+    text: reply.captured ? `After ${reply.san} and the exchanges that follow, it costs you ${loss}.` : `After ${reply.san}, it costs you ${loss}.`,
   }
 }
 

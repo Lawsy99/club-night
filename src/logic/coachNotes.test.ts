@@ -33,7 +33,7 @@ describe("Pemberton's notes after a game", () => {
   it('points out a win thrown away', () => {
     // The same game from Black's side, but Black didn't win it.
     const notes = coachNotes({ moves, evals, player: 'b', won: null })
-    expect(notes[0]).toMatch(/^You were winning by move 3\. A won position still has to be won/)
+    expect(notes[0]).toMatch(/^By move 3 you were well ahead on the board\. Being ahead still has to be turned into a win/)
   })
 
   it('stays quiet about games too short to say anything', () => {

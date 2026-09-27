@@ -45,7 +45,7 @@ export function describeBlunder(kind: BlunderKind, fenBefore: string, uci: strin
   if (replyLine.length) {
     const line = followLine(fenBefore, [uci, ...replyLine])
     const loss = line.net <= -1 ? describeGain(line.lost, line.won, line.mixedMinors) : null
-    if (loss) return `That loses ${loss}.`
+    if (loss) return `That gives away ${loss}.`
   }
   return 'That gives away a lot.'
 }

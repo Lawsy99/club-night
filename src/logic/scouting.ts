@@ -97,9 +97,9 @@ export function lastMeetingNote(last: LastMeeting, pronoun: 'him' | 'her'): stri
       if (losingAt === null && cp <= -300) losingAt = Math.floor(ply / 2) + 1
     }
     if (last.won === false && winningAt !== null) {
-      return `Last time you were winning by move ${winningAt}, and ${they} still beat you. Finish the job this time.`
+      return `Last time you were well ahead by move ${winningAt}, and ${they} still beat you. Finish the job this time.`
     }
-    if (last.won === true && losingAt !== null) return `Last time you were losing by move ${losingAt} and came back. Don’t count on that twice.`
+    if (last.won === true && losingAt !== null) return `Last time you were well behind by move ${losingAt} and came back. Don’t count on that twice.`
     if (last.won === false && losingAt !== null) return `Last time it went wrong by move ${losingAt}. Be careful early on.`
   }
   if (last.won === true) return `You beat ${pronoun} last time, in ${moveCount} moves. ${cap(they)}’ll remember.`

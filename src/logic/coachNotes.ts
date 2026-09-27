@@ -71,8 +71,8 @@ const KIND_NOTES: Record<ErrorKind, { what: (times: string) => string; single: s
     single: 'you allowed a fork',
   },
   'lost-material': {
-    what: (t) => `${cap(t)} you lost material in an exchange. Count attackers and defenders before you start one.`,
-    single: 'you lost material in an exchange',
+    what: (t) => `${cap(t)} an exchange cost you material. Count attackers and defenders before you start one.`,
+    single: 'an exchange cost you material',
   },
   'allowed-mate': {
     what: () => 'You walked into mate. Once the queens are on, check your king’s escape squares every move.',
@@ -115,7 +115,7 @@ const KIND_NOTES: Record<ErrorKind, { what: (times: string) => string; single: s
     single: 'your queen came out too early',
   },
   'lost-castling': {
-    what: () => 'You moved your king and lost the right to castle. A king in the middle is a target all game.',
+    what: () => 'You moved your king and gave up the right to castle. A king in the middle is a target all game.',
     single: 'you gave up castling',
   },
   'same-piece-twice': {
@@ -127,7 +127,7 @@ const KIND_NOTES: Record<ErrorKind, { what: (times: string) => string; single: s
 const KIND_PATTERNS: Record<ErrorKind, string> = {
   undefended: 'a piece left undefended',
   fork: 'a fork',
-  'lost-material': 'material lost in an exchange',
+  'lost-material': 'an exchange that cost you material',
   'allowed-mate': 'a mate walked into',
   'missed-mate': 'a mate missed',
   'missed-win': 'material there for the taking and not taken',
@@ -178,9 +178,10 @@ export function coachNotes(input: NotesInput): string[] {
 
   // 2. A win thrown away, or a comeback.
   if (firstWinning && won !== true) {
-    add(1, `You were winning by move ${moveNo(firstWinning.ply)}. A won position still has to be won: slow down and check their threats.`)
+    // ("Well ahead on the board", not "winning": a beginner reads that as the result.)
+    add(1, `By move ${moveNo(firstWinning.ply)} you were well ahead on the board. Being ahead still has to be turned into a win: slow down and check their threats.`)
   } else if (firstLosing && won === true) {
-    add(1, `You were losing by move ${moveNo(firstLosing.ply)} and kept going. That’s worth more than it sounds.`)
+    add(1, `By move ${moveNo(firstLosing.ply)} you were well behind on the board, and you kept going. That’s worth more than it sounds.`)
   }
 
   // 3. The kind of mistake, if one kind stands out; otherwise the turning point.

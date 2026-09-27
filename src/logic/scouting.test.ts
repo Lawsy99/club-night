@@ -10,14 +10,14 @@ describe('scouting reports remember last time', () => {
   it('a win you let slip', () => {
     const evals = evalsWith((i) => (i >= 12 && i < 20 ? 400 : 0))
     expect(lastMeetingNote({ moves, playerColour: 'w', won: false, evals }, 'her')).toBe(
-      'Last time you were winning by move 7, and she still beat you. Finish the job this time.',
+      'Last time you were well ahead by move 7, and she still beat you. Finish the job this time.',
     )
   })
 
   it('a comeback', () => {
     const evals = evalsWith((i) => (i >= 8 && i < 16 ? -400 : 100))
     expect(lastMeetingNote({ moves, playerColour: 'w', won: true, evals }, 'him')).toBe(
-      'Last time you were losing by move 5 and came back. Don’t count on that twice.',
+      'Last time you were well behind by move 5 and came back. Don’t count on that twice.',
     )
   })
 

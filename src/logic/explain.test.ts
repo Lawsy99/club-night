@@ -104,7 +104,7 @@ describe('explainMistake', () => {
         cpBefore: 0,
         cpAfter: -500,
       }),
-    ).toBe('This allowed Ne2+, a fork of your king and rook. You lose a rook.')
+    ).toBe('This allowed Ne2+, a fork of your king and rook. It costs you a rook.')
   })
 
   it("doesn't call a fair trade a loss", () => {

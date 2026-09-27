@@ -21,9 +21,9 @@ export const STUDY_HABITS: Record<ErrorKind, string> = {
   'doubled-pawns': 'Takes back the wrong way. Offer swaps that leave them the choice.',
   'isolated-pawn': 'Ends up with isolated pawns. Blockade the pawn and win it in the ending.',
   'bishop-pair': 'Gives up bishops for knights. Keep the position open and use the pair.',
-  'traded-behind': 'Swaps pieces when behind. Win a pawn and they’ll trade into a lost ending for you.',
+  'traded-behind': 'Swaps pieces when behind. Win a pawn and they’ll trade down into an ending you can win.',
   'early-queen': 'Brings the queen out early. Develop with gain of time against it.',
-  'lost-castling': 'Loses the right to castle. Open the centre.',
+  'lost-castling': 'Gives up the right to castle. Open the centre.',
   'same-piece-twice': 'Wastes time in the opening. Develop quickly and open the centre.',
 }
 
