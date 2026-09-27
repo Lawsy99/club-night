@@ -20,7 +20,7 @@ import { listArchivedGames } from '../storage/db'
 import { loadPuzzleBank } from '../engine/puzzleBank'
 import { buildDemo, puzzleDemo } from '../logic/demo'
 import { pickPuzzles, ratePuzzle, solverColour, type Puzzle } from '../logic/puzzles'
-import { loadPuzzleProgress, savePuzzleProgress, type PuzzleProgress } from '../storage/db'
+import { loadPuzzleProgress, updatePuzzleProgress, type PuzzleProgress } from '../storage/db'
 import './ReviewScreen.css'
 
 type Props = {
@@ -54,8 +54,8 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
   useEffect(() => {
     if (!lesson || lesson.themes.length === 0) return
     let cancelled = false
-    listArchivedGames()
-      .then((games) => {
+    Promise.all([listArchivedGames(), loadPuzzleProgress()])
+      .then(([games, saved]) => {
         const mine = games.slice(0, 30).map((g) => ({
           id: g.id,
           moves: g.moves,
@@ -64,8 +64,14 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
           opponentName: resolveOpponent(g.levelId, g.opponentRating).name,
           finishedAt: g.finishedAt,
         }))
-        const example = findOwnExample(mine, lesson.themes)
-        if (!cancelled) setOwn(example)
+        // Never the same position of yours in two lessons (Joseph, Sep 2026).
+        const used = new Set(saved?.ownSeen ?? [])
+        const example = findOwnExample(mine, lesson.themes, used)
+        if (cancelled) return
+        setOwn(example)
+        if (example) {
+          updatePuzzleProgress((latest) => (latest ? { ...latest, ownSeen: [...(latest.ownSeen ?? []), example.key] } : null)).catch(() => undefined)
+        }
       })
       .catch(() => undefined)
     return () => {
@@ -99,9 +105,8 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
         // The worked example counts as seen, so no later lesson shows it again
         // (Joseph, Sep 2026: nothing repeated across weeks).
         if (worked && !start.seen.includes(worked.id)) {
-          const next = { ...start, seen: [...start.seen, worked.id] }
-          setProgress(next)
-          savePuzzleProgress(next).catch(() => undefined)
+          setProgress({ ...start, seen: [...start.seen, worked.id] })
+          updatePuzzleProgress((latest) => ({ ...(latest ?? start), seen: [...(latest ?? start).seen, worked.id] })).catch(() => undefined)
         }
       })
       .catch(() => setLoadError(true))
@@ -190,9 +195,12 @@ export function LessonScreen({ chapterId, playerRating, onDone, onBack }: Props)
             setPuzzleDone(true)
             if (clean) setCleanCount((n) => n + 1)
             if (!progress) return
-            const next = { rating: ratePuzzle(progress.rating, puzzle.rating, clean), seen: [...progress.seen, puzzle.id] }
+            const next = { ...progress, rating: ratePuzzle(progress.rating, puzzle.rating, clean), seen: [...progress.seen, puzzle.id] }
             setProgress(next)
-            savePuzzleProgress(next).catch((err) => console.error('Save failed', err))
+            // (Merged with what's saved, so the own-game examples list is kept.)
+            updatePuzzleProgress((latest) => ({ ...latest, ...next, seen: [...new Set([...(latest?.seen ?? []), ...next.seen])] })).catch((err) =>
+              console.error('Save failed', err),
+            )
           }}
         />
         <button

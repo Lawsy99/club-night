@@ -133,7 +133,7 @@ export function MonthlyTestScreen({ progress, month, playerRating, onFinished, o
           setDone(true)
           if (clean) setScore((s) => s + 1)
           if (!puzzleProgress) return
-          const next = { rating: ratePuzzle(puzzleProgress.rating, puzzle.rating, clean), seen: [...puzzleProgress.seen, puzzle.id] }
+          const next = { ...puzzleProgress, rating: ratePuzzle(puzzleProgress.rating, puzzle.rating, clean), seen: [...puzzleProgress.seen, puzzle.id] }
           setPuzzleProgress(next)
           savePuzzleProgress(next).catch((err) => console.error('Save failed', err))
         }}

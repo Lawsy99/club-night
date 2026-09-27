@@ -79,7 +79,7 @@ export function PuzzleSetScreen({ title, themes, openings, count, playerRating, 
         onFinished={(clean) => {
           setDone(true)
           if (!progress) return
-          const next = { rating: ratePuzzle(progress.rating, puzzle.rating, clean), seen: [...progress.seen, puzzle.id] }
+          const next = { ...progress, rating: ratePuzzle(progress.rating, puzzle.rating, clean), seen: [...progress.seen, puzzle.id] }
           setProgress(next)
           savePuzzleProgress(next).catch((err) => console.error('Save failed', err))
         }}

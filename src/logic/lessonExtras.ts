@@ -50,13 +50,20 @@ export type OwnGame = {
   finishedAt: number
 }
 
-export type OwnExample = { moment: Moment; opponentName: string; finishedAt: number; missed: boolean }
+export type OwnExample = {
+  moment: Moment
+  opponentName: string
+  finishedAt: number
+  missed: boolean
+  /** "gameId:ply", so the same position is never used in two lessons. */
+  key: string
+}
 
 /**
  * A position from your own games where the best move was an example of the
  * theme, newest first, preferring ones you missed (those teach the most).
  */
-export function findOwnExample(games: readonly OwnGame[], themes: readonly string[]): OwnExample | null {
+export function findOwnExample(games: readonly OwnGame[], themes: readonly string[], used: ReadonlySet<string> = new Set()): OwnExample | null {
   let found: OwnExample | null = null
   for (const g of games) {
     if (!g.evals || g.evals.length !== g.moves.length + 1) continue
@@ -66,7 +73,7 @@ export function findOwnExample(games: readonly OwnGame[], themes: readonly strin
       const mover: Colour = ply % 2 === 0 ? 'w' : 'b'
       const fen = chess.fen()
       const best = g.evals[ply].bestMove
-      if (mover === g.playerColour && best) {
+      if (mover === g.playerColour && best && !used.has(`${g.id}:${ply}`)) {
         const cpBefore = forPlayer(g.evals[ply].cp)
         const cpAfter = forPlayer(g.evals[ply + 1].cp)
         const missed = g.moves[ply] !== best && cpBefore - cpAfter >= 100
@@ -97,7 +104,7 @@ export function findOwnExample(games: readonly OwnGame[], themes: readonly strin
             g.moves,
             ply,
           )
-          const example = { moment, opponentName: g.opponentName, finishedAt: g.finishedAt, missed }
+          const example = { moment, opponentName: g.opponentName, finishedAt: g.finishedAt, missed, key: `${g.id}:${ply}` }
           if (missed) return example
           found ??= example
         }

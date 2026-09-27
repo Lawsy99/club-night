@@ -77,7 +77,25 @@ export async function saveProgress(progress: Progress): Promise<void> {
 }
 
 /** Puzzle rating (tracked separately from the playing rating) and puzzles already seen. */
-export type PuzzleProgress = { rating: PlayerRating; seen: string[] }
+export type PuzzleProgress = {
+  rating: PlayerRating
+  seen: string[]
+  /** Positions from your own games already used as lesson examples ("gameId:ply"), so none is used twice. */
+  ownSeen?: string[]
+}
+
+/**
+ * Changes the saved puzzle progress in one step (read and write together),
+ * so two parts of a screen saving at once can't undo each other's changes.
+ */
+export async function updatePuzzleProgress(change: (saved: PuzzleProgress | null) => PuzzleProgress | null): Promise<void> {
+  const tx = (await db()).transaction('state', 'readwrite')
+  const value = await tx.store.get('puzzles')
+  const saved = value && typeof value === 'object' && 'seen' in value ? (value as PuzzleProgress) : null
+  const next = change(saved)
+  if (next) await tx.store.put(next, 'puzzles')
+  await tx.done
+}
 
 export async function loadPuzzleProgress(): Promise<PuzzleProgress | null> {
   const value = await (await db()).get('state', 'puzzles')
