@@ -41,7 +41,7 @@ import { ACT_1 } from '../data/act1'
 import { actNumber } from '../data/acts'
 import { CHARACTERS } from '../data/characters'
 import { rivalTarget } from '../logic/rival'
-import { scoutingReport } from '../logic/scouting'
+import { scoutingReport, type LastMeeting } from '../logic/scouting'
 import { strengthFromAccuracy } from '../logic/trialNight'
 import {
   type ArchivedGame,
@@ -212,12 +212,15 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       pathGame.kind === 'cup-round' ||
       pathGame.kind === 'boss' ||
       (pathGame.kind === 'friendly' && h2h.played === 0 && !!SCOUTING_DEMOS[pathGame.opponent])
+    // Your last game against them, for a line in the report (Sep 2026).
+    const last = scouted ? await lastGameAgainst(opponentId).catch(() => null) : null
     const scouting = scouted
       ? scoutingReport({
           character: pathGame.opponent,
           playerColour: record.playerColour,
           record: { wins: h2h.wins, losses: h2h.losses },
           target,
+          last,
         })
       : undefined
 
@@ -472,6 +475,26 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       }}
     />
   )
+}
+
+/** Your most recent finished game against this opponent (newest first in the archive). */
+async function lastGameAgainst(levelId: string): Promise<LastMeeting | null> {
+  const g = (await listArchivedGames()).find((x) => x.levelId === levelId)
+  if (!g) return null
+  const outcome = (() => {
+    try {
+      return outcomeOf(g)
+    } catch {
+      return null
+    }
+  })()
+  if (!outcome) return null
+  return {
+    moves: g.moves,
+    playerColour: g.playerColour,
+    won: outcome.winner === null ? null : outcome.winner === g.playerColour,
+    evals: g.evals,
+  }
 }
 
 /** The player's usual openings, from their last 30 finished games. */
