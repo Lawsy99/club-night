@@ -9,6 +9,7 @@ export type SceneArt =
   | 'club-room'
   | 'car-park'
   | 'honours-board'
+  | 'honours-new'
   | 'noticeboard'
   | 'team-sheet'
   | 'league-hall'
@@ -57,8 +58,9 @@ export const CUTSCENES: Cutscene[] = [
     place: 'The car park, Thursday',
     lines: [
       { text: 'Rain. Dex sits in his car with the phone lit up. Twelve watching.' },
-      { text: 'He waits for the number to go up.' },
-      { text: 'It doesn’t. He goes live anyway.' },
+      { text: 'He waits for the number to go up. It doesn’t.' },
+      { text: 'One comment, from the strong one again: “Knight to f5 was better.” It was.' },
+      { text: 'He goes live anyway.' },
     ],
   },
   {
@@ -77,7 +79,7 @@ export const CUTSCENES: Cutscene[] = [
     // The cup's payoff, before the ladder goes up: the honours board starts again.
     id: 'cup-won',
     after: 'final:1',
-    art: 'honours-board',
+    art: 'honours-new',
     place: 'The back room, after the final',
     lines: [
       { text: 'Bill has a tin of gold paint and a very small brush.' },

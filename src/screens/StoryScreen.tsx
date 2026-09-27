@@ -61,7 +61,7 @@ export function StoryScreen({ id, playerName, onDone }: Props) {
         </button>
       </header>
       {title && <h1 className="story-title">{title}</h1>}
-      {story.art && <SceneArt scene={story.art} />}
+      {story.art && <SceneArt scene={story.art} playerName={playerName} />}
       {story.study ? (
         <div className="story-study">
           {!pages && <p className="story-direction">Opening the study…</p>}

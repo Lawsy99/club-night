@@ -9,10 +9,10 @@ const BUFF = '#efe6c8'
 const BRASS = '#d0a847'
 const WOOD = '#6b4a2e'
 
-export function SceneArt({ scene }: { scene: SceneId }) {
+export function SceneArt({ scene, playerName }: { scene: SceneId; playerName?: string }) {
   return (
     <svg className="scene-art" viewBox="0 0 320 200" role="img" aria-label={LABELS[scene]}>
-      {SCENES[scene]()}
+      {SCENES[scene](playerName)}
     </svg>
   )
 }
@@ -21,6 +21,7 @@ const LABELS: Record<SceneId, string> = {
   'club-room': 'The club room at night, chairs up on the tables',
   'car-park': 'A car in the pub car park at night, in the rain',
   'honours-board': 'The club honours board',
+  'honours-new': 'The club honours board, with a new name freshly painted at the bottom',
   noticeboard: 'The club noticeboard',
   'team-sheet': 'A team sheet in pencil on the noticeboard',
   'league-hall': 'A bright hall full of chess tables',
@@ -99,27 +100,9 @@ const ACT_1_SCENES = {
     </>
   ),
 
-  'honours-board': () => (
-    <>
-      <rect width="320" height="200" fill="#1c3527" />
-      {/* Panelling */}
-      {[0, 80, 160, 240].map((x) => (
-        <rect key={x} x={x + 6} y="150" width="68" height="44" fill="none" stroke={BUFF} strokeOpacity="0.08" />
-      ))}
-      <rect x="70" y="12" width="180" height="176" fill="#4a2f1b" stroke={BRASS} strokeWidth="3" />
-      <text x="160" y="32" textAnchor="middle" fontSize="11" fill={BRASS} fontFamily="serif" letterSpacing="2">
-        CLUB CHAMPIONS
-      </text>
-      {HONOURS.map(([year, name], i) => (
-        <g key={year} fontFamily="serif" fontSize="8" fill={BRASS} opacity={name === 'V. HART' ? 1 : 0.65}>
-          <text x="96" y={50 + i * 10}>{year}</text>
-          <text x="226" y={50 + i * 10} textAnchor="end">{name}</text>
-        </g>
-      ))}
-      {/* A duster, left on the frame */}
-      <path d="M244 176 q10 -8 22 -2 q-4 10 -18 10 z" fill={BUFF} opacity="0.8" />
-    </>
-  ),
+  'honours-board': () => <HonoursBoard />,
+  // After the cup: a new line under hers, the paint still wet (a brush instead of the duster).
+  'honours-new': (playerName?: string) => <HonoursBoard newName={(playerName || 'You').toUpperCase()} />,
 
   noticeboard: () => (
     <>
@@ -257,24 +240,54 @@ const ACT_2_SCENES = {
   ),
 }
 
-const SCENES: Record<SceneId, () => ReactElement> = { ...ACT_1_SCENES, ...ACT_2_SCENES }
+const SCENES: Record<SceneId, (playerName?: string) => ReactElement> ={ ...ACT_1_SCENES, ...ACT_2_SCENES }
 
-/** Club champions, year after year: one name ten years running, then it stops. */
+/**
+ * The knockout cup's winners (story outline, "The cup's history"): Pemberton
+ * six years running, then V. Hart ten, then it stops. Not held since 2009.
+ */
 const HONOURS: [string, string][] = [
-  ['1996', 'V. HART'],
-  ['1997', 'V. HART'],
-  ['1998', 'V. HART'],
-  ['1999', 'V. HART'],
-  ['2000', 'V. HART'],
-  ['2001', 'V. HART'],
-  ['2002', 'V. HART'],
-  ['2003', 'V. HART'],
-  ['2004', 'V. HART'],
-  ['2005', 'V. HART'],
-  ['2006', 'M. FROST'],
-  ['2007', 'D. MOSS'],
-  ['2008', 'M. FROST'],
+  ...['1994', '1995', '1996', '1997', '1998', '1999'].map((y): [string, string] => [y, 'R. PEMBERTON']),
+  ...['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009'].map((y): [string, string] => [y, 'V. HART']),
 ]
+
+function HonoursBoard({ newName }: { newName?: string }) {
+  const rows = newName ? HONOURS.length + 1 : HONOURS.length
+  const gap = newName ? 8 : 8.5
+  return (
+    <>
+      <rect width="320" height="200" fill="#1c3527" />
+      {/* Panelling */}
+      {[0, 80, 160, 240].map((x) => (
+        <rect key={x} x={x + 6} y="150" width="68" height="44" fill="none" stroke={BUFF} strokeOpacity="0.08" />
+      ))}
+      <rect x="70" y="12" width="180" height="176" fill="#4a2f1b" stroke={BRASS} strokeWidth="3" />
+      <text x="160" y="32" textAnchor="middle" fontSize="11" fill={BRASS} fontFamily="serif" letterSpacing="2">
+        KNOCKOUT CUP
+      </text>
+      {HONOURS.map(([year, name], i) => (
+        <g key={year} fontFamily="serif" fontSize="7" fill={BRASS} opacity={name === 'V. HART' ? 1 : 0.65}>
+          <text x="96" y={46 + i * gap}>{year}</text>
+          <text x="226" y={46 + i * gap} textAnchor="end">{name}</text>
+        </g>
+      ))}
+      {newName ? (
+        <>
+          {/* The new line: no year yet, just the name, brighter than the rest. */}
+          <text x="226" y={47 + (rows - 1) * gap} textAnchor="end" fontFamily="serif" fontSize="8.5" fontWeight="bold" fill="#f3d27a">
+            {newName}
+          </text>
+          {/* The tin and a small brush, on the ledge beside the board */}
+          <rect x="262" y="174" width="16" height="12" rx="2" fill={BRASS} opacity="0.9" />
+          <line x1="266" y1="172" x2="290" y2="150" stroke={BUFF} strokeWidth="2" />
+        </>
+      ) : (
+        /* A duster, left on the frame */
+        <path d="M244 176 q10 -8 22 -2 q-4 10 -18 10 z" fill={BUFF} opacity="0.8" />
+      )}
+    </>
+  )
+}
 
 function Board({ x, y }: { x: number; y: number }) {
   return (

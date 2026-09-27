@@ -251,6 +251,7 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     wayOut: [
       { who: 'clive', text: 'St Anne’s. Damp, but free on Tuesdays.' },
       { text: 'Pemberton says Tuesdays at St Anne’s won’t suit him.' },
+      { text: 'On his way out, he straightens the 1998 photo.' },
     ],
   },
   'a2-15': {
