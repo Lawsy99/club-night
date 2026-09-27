@@ -152,6 +152,8 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
           setFullGame(false)
           window.scrollTo({ top: 0 })
         }}
+        onDone={onContinue}
+        doneLabel={finalLabel}
       />
     )
   }
@@ -227,10 +229,20 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
         ) : (
           <p className="review-note">No standout move this time. Next game.</p>
         )}
-        <button type="button" className="review-continue" onClick={onContinue}>
-          {finalLabel}
+        {/* Then the whole game, move by move, and Home from there (Joseph, Sep 2026). */}
+        <button
+          type="button"
+          className="review-continue"
+          onClick={() => {
+            setFullGame(true)
+            window.scrollTo({ top: 0 })
+          }}
+        >
+          Step through the game
         </button>
-        {fullGameLink}
+        <button type="button" className="review-secondary" onClick={onContinue}>
+          {fromHistory ? finalLabel : finalLabel === 'Replay' ? 'Skip to the replay' : 'Skip to Home'}
+        </button>
       </main>
     )
   }

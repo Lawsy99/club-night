@@ -18,11 +18,14 @@ type Props = {
   reviewed: readonly ReviewedMove[]
   playerColour: Colour
   onBack: () => void
+  /** The way on at the bottom (Joseph, Sep 2026: the review ends here, then Home). */
+  onDone?: () => void
+  doneLabel?: string
 }
 
 const isError = (m: ReviewedMove) => ['inaccuracy', 'mistake', 'blunder'].includes(m.rating)
 
-export function FullGameView({ moves, evals, reviewed, playerColour, onBack }: Props) {
+export function FullGameView({ moves, evals, reviewed, playerColour, onBack, onDone, doneLabel = 'Continue' }: Props) {
   // Position index: 0 = start, i = after the i-th move.
   const [index, setIndex] = useState(0)
   const last = moves.length
@@ -112,6 +115,12 @@ export function FullGameView({ moves, evals, reviewed, playerColour, onBack }: P
           )
         })}
       </ol>
+
+      {onDone && (
+        <button type="button" className="review-continue" onClick={onDone}>
+          {doneLabel}
+        </button>
+      )}
     </main>
   )
 }
