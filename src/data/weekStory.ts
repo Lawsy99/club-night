@@ -119,7 +119,7 @@ export const WEEK_STORY: Record<string, WeekStory> = {
   },
   c7: {
     tuesday: 'Pemberton is late for coaching. He was with Toby.',
-    thursday: 'Toby sends you his Lichess study. It’s very thorough.',
+    thursday: 'Toby lends you his book on the Caro-Kann. He’s written in the margins. He plays the Najdorf.',
     wayOut: [
       { who: 'toby', text: 'Good game! Want to go over it?' },
       { text: 'Pemberton’s scouting report on Toby is on the table. It’s two lines long.' },
@@ -153,7 +153,7 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     thursday: 'Priya brings two copies of her notes. One is for you.',
     wayOut: [
       { who: 'priya', text: 'I’ve started a notebook on you. It’s a compliment.' },
-      { text: 'Toby pins up the team’s first fixture: away at Castlebury.' },
+      { text: 'Toby pins up the team’s first fixture: Castlebury, at home.' },
     ],
   },
   'a2-3': {
@@ -161,7 +161,7 @@ export const WEEK_STORY: Record<string, WeekStory> = {
     thursday: 'Clive challenges you. “It’s in the rules, apparently.”',
     wayOut: [
       { who: 'clive', text: 'Castlebury. We used to beat Castlebury.' },
-      { text: 'Toby rings with the result from Castlebury. Lost, one to three.' },
+      { text: 'Castlebury win, three to one. On the way out, they say the room is charming.' },
     ],
   },
   'a2-4': {

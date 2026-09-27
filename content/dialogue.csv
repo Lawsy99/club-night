@@ -129,7 +129,7 @@ story-c3-neil,oscar,neil,game_loss,He doesn’t lose two in a row. Well. He does
 story-c4-clive,clive,,game_loss,"Good game. You made something out of nothing. Mild for October.",neutral,,,,,,kind:match chapter:c4,1,yes
 story-c5-priya,priya,,game_loss,That wasn’t in chapter nine. Or ten.,surprised,,,,,,kind:match chapter:c5,1,yes
 story-c6-graham,graham,,game_loss,"A fair result. I shall be recording it in full.",annoyed,,,,,,kind:match chapter:c6,1,yes
-story-c7-toby,toby,,game_start,"No pressure, mate. Did you get a chance to look at the study?",pleased,,,,,,kind:match chapter:c7,1,yes
+story-c7-toby,toby,,game_start,"No pressure, mate. Did you get a chance to look at that book?",pleased,,,,,,kind:match chapter:c7,1,yes
 story-final-start,toby,,game_start,(Marjorie has got the good set out.),neutral,1,,,,,kind:boss,1,yes
 story-final-won,toby,,game_loss,"(Pemberton shakes your hand, then goes to find Toby.)",annoyed,1,,,,,kind:boss,1,yes
 story-a2-final-start,toby,,game_start,"Top of the ladder, then. Did the study help? I think I sent you the wrong one. Silly me.",smug,2,,,,,kind:boss,1,yes

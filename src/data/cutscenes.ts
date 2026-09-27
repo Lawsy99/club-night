@@ -105,7 +105,7 @@ export const CUTSCENES: Cutscene[] = [
     art: 'team-sheet',
     place: 'The noticeboard, Friday',
     lines: [
-      { text: 'The team sheet for Castlebury, in pencil. Four boards, and a line for reserves.' },
+      { text: 'The team sheet for the return at Castlebury, in pencil. Four boards, and a line for reserves.' },
       { text: 'Someone has added your name under reserves, in different handwriting.' },
       { who: 'marjorie', text: 'Well. Somebody had to.' },
     ],

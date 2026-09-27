@@ -1445,7 +1445,7 @@
   "id": "story-c7-toby",
   "character": "toby",
   "trigger": "game_start",
-  "text": "No pressure, mate. Did you get a chance to look at the study?",
+  "text": "No pressure, mate. Did you get a chance to look at that book?",
   "expression": "pleased",
   "conditions": {
    "flags": [
