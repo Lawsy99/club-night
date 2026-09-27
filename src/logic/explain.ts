@@ -9,6 +9,7 @@
 import { Chess, type PieceSymbol, type Square } from 'chess.js'
 import { applyUci, type Colour } from './game'
 import {
+  creditFor,
   describeGain,
   findTactic,
   followLine,
@@ -41,8 +42,14 @@ const BIG_DROP = 150
  * comes back or there's compensation the short line doesn't show.
  */
 const TRUST_MARGIN_CP = 200
-/** And how far it may fall short: beyond this, it isn't why the move was bad. */
-const UNDER_MARGIN_CP = 250
+/**
+ * And how far it may fall short: the material must be at least this share of
+ * the swing, less a pawn. Below that, it isn't why the move was bad.
+ */
+const UNDER_SHARE = 0.6
+const UNDER_MARGIN_CP = 100
+/** Not taking back is a plainer story: it only has to be this share of the swing. */
+const RETAKE_SHARE = 0.45
 /** Positional reasons ("you gave up castling") only for slips smaller than this. */
 const POSITIONAL_MAX_CP = 200
 /**
@@ -93,16 +100,16 @@ function tenseOf(f: MistakeFacts, predictedNet: number, isMate: boolean, predict
   const real = followLine(f.fenBefore, [f.played, ...f.actual], 12)
   const sameReply = f.replyLine?.length ? f.actual[0] === f.replyLine[0] : f.actual[0] === f.reply
   if (isMate) return real.mated ? 'happened' : sameReply ? 'avoided' : 'missed'
-  // It happened if the game really cost about as much as the engine's line,
-  // and the same way: their reply, or the same piece (a rook taken two moves
-  // later still counts; a pawn lost somewhere else doesn't).
+  // A piece named as lost: did it really go? (Counted before trades cancel
+  // out: "Qxc5 took your bishop" is true even if you'd taken one first.)
   const piece = predictedLost.find((p) => p !== 'p')
-  const sameHarm = sameReply || (!!piece && real.lost.includes(piece))
-  if (real.net <= -MATERIAL && real.net <= predictedNet + 0.9 && sameHarm) return 'happened'
-  // They took it later but it cost less (you won something back), or the
-  // game went elsewhere after their reply: "another way". Only "missed" when
-  // they never played the move at all.
-  return sameReply || (!!piece && real.lost.includes(piece)) ? 'avoided' : 'missed'
+  if (piece) {
+    if (real.takenFromUs.includes(piece)) return 'happened'
+    return sameReply ? 'avoided' : 'missed'
+  }
+  // Only pawns: the same reply, and it really cost about that much.
+  if (sameReply && real.net <= -MATERIAL && real.net <= predictedNet + 0.9) return 'happened'
+  return sameReply ? 'avoided' : 'missed'
 }
 
 /** "It cost you a rook." / "…would have cost you a rook, but they missed it." / "It would cost you a rook." */
@@ -170,12 +177,23 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
   // smaller (then it isn't why the move was bad, even if it's true).
   const drop = Math.max(0, f.cpBefore - f.cpAfter)
   const matesAround = f.cpAfter <= -MATE_THRESHOLD || f.cpBefore >= MATE_THRESHOLD
-  const accounts = (pawns: number) => matesAround || (pawns * 100 <= drop + TRUST_MARGIN_CP && pawns * 100 + UNDER_MARGIN_CP >= drop)
+  // (Not much smaller: the material has to be a good part of the swing; a big
+  // swing also carries position, so this scales with it.)
+  const accounts = (pawns: number, share = UNDER_SHARE) =>
+    matesAround || (pawns * 100 <= drop + TRUST_MARGIN_CP && pawns * 100 >= drop * share - UNDER_MARGIN_CP)
 
-  // They had just taken something, and the move played didn't take back.
+  // Taking back, but with the wrong piece: both moves take on the same square,
+  // so neither "missed" anything (Sep 2026: "You missed Bxf6. It wins their
+  // bishop" when gxf6 had taken it too).
+  const playedMove = applyUci(new Chess(f.fenBefore), f.played)
+  const sameSquare = !!f.bestMove && !!playedMove?.captured && f.played.slice(2, 4) === f.bestMove.slice(2, 4) && f.played !== f.bestMove
+
+  // They had just taken something, and the move played didn't take back
+  // (only if that's really the size of it: not the story of a much bigger blunder).
   const retaken = f.bestMove ? recaptured(f.prev, f.bestMove) : null
-  const retake = f.bestMove && bestSan && retaken && f.played.slice(2, 4) !== f.bestMove.slice(2, 4) && VALUES[retaken] * 100 <= drop + TRUST_MARGIN_CP
-  if (retake) return { kind: 'missed-win', text: `You needed to take back on ${f.bestMove!.slice(2, 4)} with ${bestSan}.` }
+  const couldRetake = !!f.bestMove && !!bestSan && !!retaken && f.played.slice(2, 4) !== f.bestMove.slice(2, 4)
+  const needed = couldRetake ? `You needed to take back on ${f.bestMove!.slice(2, 4)} with ${bestSan}.` : ''
+  if (couldRetake && accounts(VALUES[retaken!], RETAKE_SHARE)) return { kind: 'missed-win', text: needed }
 
   // Material: what the move and their best line cost, against what the best line keeps.
   const bestOutcome = f.bestMove ? followLine(f.fenBefore, f.bestLine?.[0] === f.bestMove ? f.bestLine : [f.bestMove]) : null
@@ -191,19 +209,33 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
         : `It allowed ${theirs.moves[0].san}, and a pawn of theirs that couldn’t be stopped. In the game it went another way.`
     return { kind: 'lost-material', text }
   }
+  // A missed win comes first when it's the bigger part of the story (Sep 2026:
+  // "it would have cost you a pawn" when the real point was a rook there for the taking).
+  const missedWin = (): { kind: ErrorKind; text: string } | null => {
+    if (!bestOutcome || !bestSan || !f.bestMove) return null
+    const playedNet = played ? played.net : 0
+    if (bestOutcome.net < MATERIAL || bestOutcome.net <= playedNet + 0.9 || !accounts(bestOutcome.net - playedNet)) return null
+    const gain = describeGain(bestOutcome.won, bestOutcome.lost, bestOutcome.mixedMinors) ?? 'material'
+    return { kind: 'missed-win', text: `You missed ${bestSan}. ${winsWith(bestOutcome, findTactic(bestOutcome), gain, 'their')}` }
+  }
+  const lossBig = played ? -played.net : 0
+  if (bestOutcome && bestOutcome.net > lossBig) {
+    const first = missedWin()
+    if (first) return first
+  }
   if (played && replyLine && afterFen && played.net <= -MATERIAL && played.net < keeps - 0.9 && accounts(keeps - played.net)) {
-    return lossSentence(f, played, followLine(afterFen, replyLine))
+    return lossSentence(f, played, followLine(afterFen, replyLine), bestOutcome)
+  }
+
+  // Took on the right square with the wrong piece: nothing was "missed".
+  if (sameSquare && bestSan) {
+    const harm = drop < POSITIONAL_MAX_CP ? positionalHarm(f.fenBefore, f.played, f.cpBefore) : null
+    return { kind: harm?.kind ?? 'positional', text: `Right square, wrong piece: ${bestSan} was the better way to take.${harm ? ` ${harm.text}` : ''}` }
   }
 
   // What the player could have won instead.
-  if (bestOutcome && bestSan && f.bestMove) {
-    const playedNet = played ? played.net : 0
-    if (bestOutcome.net >= MATERIAL && bestOutcome.net > playedNet + 0.9 && accounts(bestOutcome.net - playedNet)) {
-      const gain = describeGain(bestOutcome.won, bestOutcome.lost, bestOutcome.mixedMinors) ?? 'material'
-      const found = findTactic(bestOutcome)
-      return { kind: 'missed-win', text: `You missed ${bestSan}. ${winsWith(bestOutcome, found, gain, 'their')}` }
-    }
-  }
+  const missed = missedWin()
+  if (missed) return missed
 
   // Nothing tactical: what the move did to the position, if it's something to
   // name. Only for smaller slips: a big swing is never "you gave up castling".
@@ -216,14 +248,32 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
   // would miss that it's the queens coming off.)
   const trade = reply?.captured && theirs?.moves[1]?.captured && theirs.moves[1].to === reply.to
   if (reply && afterFen && !trade) {
-    const threat = moveIdeas(afterFen, reply.lan).filter((i) => /^(threatens mate|attacks their|pins their)/.test(i))
-    if (threat.length) return { kind: 'positional', text: `It allowed ${reply.san}, which ${joinIdeas(threat.map(fromTheirSide))}.` }
+    // Threats worth naming: mate, a pin, or an attack on a piece (not just a pawn:
+    // "attacks your pawn on h7" was standing in for the real point).
+    const threat = moveIdeas(afterFen, reply.lan).filter((i) =>
+      /^(threatens mate|pins their|(attacks|uncovers an attack on) their (queen|rook|bishop|knight))/.test(i),
+    )
+    if (threat.length) {
+      const text = `It allowed ${reply.san}, which ${joinIdeas(threat.map(fromTheirSide))}.`
+      return { kind: 'positional', text: needed ? `${needed} Instead, ${lower(text)}` : text }
+    }
   }
   // A big swing with nothing to point at in the first few moves: name their
-  // best reply, so the player can see it in the step-through.
-  if (reply && f.cpBefore - f.cpAfter >= BIG_DROP) {
-    return { kind: 'positional', text: `That gave them ${reply.san}, and from there your position gets much harder.` }
+  // best reply (as a possibility: they may not have played it), and say what
+  // the swing did, in words that match the engine's verdict.
+  if (reply && drop >= BIG_DROP) {
+    const where =
+      f.cpAfter >= 100
+        ? 'you’re still better, but a lot of your advantage has gone'
+        : f.cpAfter > -100
+          ? f.cpBefore >= 100
+            ? 'your advantage is gone'
+            : 'the position swings their way'
+          : 'your position gets much harder'
+    const text = `It allowed ${reply.san}, and from there ${where}.`
+    return { kind: 'positional', text: needed ? `${needed} Instead, ${lower(text)}` : text }
   }
+  if (needed) return { kind: 'missed-win', text: needed }
   return { kind: 'positional', text: bestSan ? `${bestSan} was stronger.` : 'There was a stronger move here.' }
 }
 
@@ -233,8 +283,13 @@ function fromTheirSide(idea: string): string {
 }
 
 /** Why the move played lost material, naming the tactic when the line proves one. */
-function lossSentence(f: MistakeFacts, played: LineOutcome, theirs: LineOutcome): { kind: ErrorKind; text: string } {
-  const loss = describeGain(played.lost, played.won, played.mixedMinors) ?? 'material'
+function lossSentence(f: MistakeFacts, played: LineOutcome, theirs: LineOutcome, best: LineOutcome | null): { kind: ErrorKind; text: string } {
+  // What this move cost compared with the best one: material the best line
+  // would have given up too isn't blamed on this move (Sep 2026: "it cost you
+  // a rook and a knight" when the knight was going anyway).
+  const lost = without(played.lost, best?.lost ?? [])
+  const won = without(played.won, best?.won ?? [])
+  const loss = describeGain(lost, won, played.mixedMinors) ?? describeGain(played.lost, played.won, played.mixedMinors) ?? 'material'
   const reply = theirs.moves[0]
   // Only say it happened if it did (Joseph, Sep 2026). And worded "cost you",
   // never "you lose": a beginner who'd won read "you lost material" as "you lost".
@@ -294,6 +349,8 @@ export function explainBestMove(
   played?: string,
   bestLine?: readonly string[],
   prev?: { fen: string; move: string },
+  /** The score after the move actually played (mover's view), when known: the same judge as explainMistake. */
+  playedCp?: number,
 ): string {
   const before = new Chess(fenBefore)
   const mover = before.turn()
@@ -322,7 +379,10 @@ export function explainBestMove(
 
   // (Only if the engine's score for the position backs it up: a line that
   // "wins a rook" when the engine says you're barely better has a catch.)
-  if (out.net >= MATERIAL && out.net * 100 <= bestCp + BEST_TRUST_CP) {
+  // (When the move played is known, a win that matches what it cost is
+  // believed too: you may have been behind, and this wins it back.)
+  const trusted = out.net * 100 <= bestCp + BEST_TRUST_CP || (playedCp !== undefined && out.net * 100 <= bestCp - playedCp + TRUST_MARGIN_CP)
+  if (out.net >= MATERIAL && trusted) {
     const gain = describeGain(out.won, out.lost, out.mixedMinors) ?? 'material'
     const found = findTactic(out)
     if (found?.tactic.kind === 'undefended' && found.index === 0) return `${san} wins their ${NAMES[found.tactic.piece]}: nothing can take it back.`
@@ -385,7 +445,7 @@ export function explainBestMove(
 export function coachComment(f: MistakeFacts): string {
   const why = explainMistake(f)
   if (!f.bestMove || /^You (missed|had|needed)/.test(why)) return why
-  const instead = explainBestMove(f.fenBefore, f.bestMove, f.cpBefore, f.played, f.bestLine, f.prev)
+  const instead = explainBestMove(f.fenBefore, f.bestMove, f.cpBefore, f.played, f.bestLine, f.prev, f.cpAfter)
   return why.endsWith('was stronger.') ? instead : `${why} Instead, ${instead}`
 }
 
@@ -404,7 +464,7 @@ export function explainGoodMove(fenBefore: string, uci: string, punished: boolea
 
   // What really happened in the game. "Punished" is only said when the move
   // really took advantage (Joseph, Sep 2026: it was said about castling).
-  const real = actual?.[0] === uci ? followLine(fenBefore, actual) : null
+  const real = actual?.[0] === uci ? creditFor(fenBefore, actual) : null
   if (real?.mates) return punished ? `You punished their mistake with ${move.san}, and it led to checkmate.` : `${move.san} led to checkmate.`
   const realGain = real && real.net >= MATERIAL ? describeGain(real.won, real.lost, real.mixedMinors) : null
   if (realGain) {
@@ -479,7 +539,24 @@ function recaptured(prev: { fen: string; move: string } | undefined, uci: string
   return applyUci(new Chess(prev.fen), prev.move)?.captured ?? null
 }
 
+/** "It allowed…" → "it allowed…", for joining sentences. */
+function lower(s: string): string {
+  return s.charAt(0).toLowerCase() + s.slice(1)
+}
+
+/** `pieces` with each of `remove` taken out once (a multiset difference). */
+function without(pieces: readonly PieceSymbol[], remove: readonly PieceSymbol[]): PieceSymbol[] {
+  const left = [...pieces]
+  for (const p of remove) {
+    const i = left.indexOf(p)
+    if (i >= 0) left.splice(i, 1)
+  }
+  return left
+}
+
+/** "king and rook", "king, queen and rook", and "both rooks" rather than "rook and rook". */
 function listOf(items: readonly PieceSymbol[]): string {
+  if (items.length === 2 && items[0] === items[1]) return `two ${NAMES[items[0]]}s`
   const names = items.map((i) => NAMES[i])
   return names.length <= 2 ? names.join(' and ') : `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`
 }

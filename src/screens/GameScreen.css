@@ -332,6 +332,19 @@
   flex: 1;
 }
 
+/* "Watch his openings again", under a scouting report that's all words. */
+.scouting-rewatch {
+  min-height: 44px;
+  margin: 0 16px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
 /* Buttons meet the 44 px minimum touch target */
 .game-actions button {
   min-height: 44px;

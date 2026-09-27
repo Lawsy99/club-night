@@ -93,15 +93,21 @@ export function DemoBoard({
         </div>
       </div>
       <div className="demo-nav">
-        <button
-          type="button"
-          onClick={() => {
-            setPlayed(0)
-            setRun((r) => r + 1)
-          }}
-        >
-          Replay
-        </button>
+        {/* Replay this step's moves; on a step with none (a closing remark),
+            go back and watch the whole thing again (Joseph, Sep 2026: Replay
+            did nothing there). No moves anywhere: nothing to replay. */}
+        {steps.some((s) => s.moves.length > 0) && (
+          <button
+            type="button"
+            onClick={() => {
+              if (steps[step].moves.length === 0) setStep(0)
+              setPlayed(0)
+              setRun((r) => r + 1)
+            }}
+          >
+            Replay
+          </button>
+        )}
         <button
           type="button"
           className="primary"

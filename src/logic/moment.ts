@@ -27,4 +27,6 @@ export type Moment = {
   kind?: 'mistake' | 'missed'
   /** The engine's line from the position, starting with bestMove (Sep 2026; missing on older positions). */
   bestLine?: string[]
+  /** The score after the move actually played, player's view (so both explanations judge alike). */
+  playedCp?: number
 }

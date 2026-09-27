@@ -13,6 +13,7 @@ import { findScenario, scenarioMove, scenarioState, scenarioVerdict } from '../l
 import { coachComment, explainBestMove } from '../logic/explain'
 import { MoveStrip } from '../components/MoveStrip'
 import { DemoBoard } from '../components/DemoBoard'
+import { SCOUTING } from '../data/scouting'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
 import { buildDemo } from '../logic/demo'
 import { PlayerStrip } from '../components/PlayerStrip'
@@ -516,6 +517,8 @@ export function GameScreen({
   // A second hint on the same move shows the move itself, with an arrow and
   // the reason (Joseph, Sep 2026: asking again just repeated the nudge).
   const [hinted, setHinted] = useState<{ fen: string; shown: boolean } | null>(null)
+  // "You know his openings by now": asked to see them again anyway (Joseph, Sep 2026).
+  const [rewatch, setRewatch] = useState(false)
   const hintedHere = hinted?.fen === fen ? hinted : null
   function askForHint() {
     const a = analysis.current
@@ -628,13 +631,17 @@ export function GameScreen({
   // The scouting report plays out on the board before the game (YouTube-teacher style).
   if (showScouting && opponent.character) {
     // This game's demo (a new one each time, for the colour you have), if any are left unseen.
-    const written = game.scoutingDemo !== undefined ? (SCOUTING_DEMOS[opponent.character.id]?.[game.playerColour][game.scoutingDemo] ?? []) : []
+    // Once they've all been seen, the latest one comes back if you ask to watch it again.
+    const demos = SCOUTING_DEMOS[opponent.character.id]?.[game.playerColour] ?? []
+    const index = game.scoutingDemo ?? (rewatch && demos.length ? demos.length - 1 : undefined)
+    const written = index !== undefined ? (demos[index] ?? []) : []
     const steps = [
       ...buildDemo(written),
       // Last: their style, your record and (for Toby) his target, with no moves.
       // (Without a demo, the openings line comes first, in words.)
-      { caption: (game.scouting ?? []).slice(written.length ? 1 : 0).join(' '), moves: [] },
+      { caption: (game.scouting ?? []).slice(game.scoutingDemo !== undefined ? 1 : 0).join(' '), moves: [] },
     ]
+    const canRewatch = game.scoutingDemo === undefined && !rewatch && demos.length > 0
     return (
       <main className="game-screen">
         <header className="game-header">
@@ -648,11 +655,17 @@ export function GameScreen({
           </p>
         </header>
         <DemoBoard
+          key={rewatch ? 'again' : 'first'}
           steps={steps}
           orientation={game.playerColour === 'w' ? 'white' : 'black'}
           finishLabel="Let's play"
           onFinish={() => setGame((g) => (g ? { ...g, scoutingSeen: true } : g))}
         />
+        {canRewatch && (
+          <button type="button" className="scouting-rewatch" onClick={() => setRewatch(true)}>
+            Watch {SCOUTING[opponent.character.id]?.pronoun === 'her' ? 'her' : 'his'} openings again
+          </button>
+        )}
       </main>
     )
   }

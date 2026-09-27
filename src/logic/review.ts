@@ -3,7 +3,7 @@
 // src/engine/reviewAnalysis.ts.
 import { Chess } from 'chess.js'
 import { winChance } from './evaluation'
-import { followLine } from './lineFacts'
+import { creditFor } from './lineFacts'
 import { applyUci, type Colour } from './game'
 import { rateMove, type MoveRating } from './moveRating'
 
@@ -137,7 +137,7 @@ export function bestMoveOfGame(
     if (m.mover !== side || m.rating !== 'best') continue
     if (m.san.startsWith('O-O')) continue
     // What really happened from this move on, in the game.
-    const real = followLine(m.fenBefore, moves.slice(m.ply).map((x) => x.uci))
+    const real = creditFor(m.fenBefore, moves.slice(m.ply).map((x) => x.uci))
     const won = real.net >= 1 || real.mates
     const forcing = /[x+#]/.test(m.san)
     if (m.ply < OPENING_PLIES && !won) continue

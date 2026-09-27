@@ -175,6 +175,7 @@ export function MomentTrainer({ moment, onFinished }: Props) {
                 moment.played,
                 moment.bestLine,
                 leadUp ? { fen: leadUp.fen, move: leadUp.move } : undefined,
+                moment.playedCp,
               )}
             </p>
             <p className="moment-explanation">

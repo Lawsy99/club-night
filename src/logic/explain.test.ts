@@ -105,6 +105,24 @@ describe('explainMistake', () => {
     )
   })
 
+  it('calls taking back with the wrong piece just that, not a missed win', () => {
+    // Their bishop took on f6: gxf6 and Bxf6 both take it back.
+    const text = explainMistake({ fenBefore: '4k3/4b1p1/5B2/8/8/8/8/4K3 b - - 0 1', played: 'g7f6', bestMove: 'e7f6', reply: 'e1d2', cpBefore: 0, cpAfter: -60 })
+    expect(text).toMatch(/^Right square, wrong piece: Bxf6 was the better way to take\./)
+    expect(text).not.toContain('missed')
+  })
+
+  it('never claims more than the engine says the move cost', () => {
+    // The fork line says a rook, but the engine only rates the move a pawn worse:
+    // there's a catch the short line doesn't show, so no fork claim.
+    const fen = '6k1/8/8/8/3n4/8/2R5/6K1 w - - 0 1'
+    const text = explainMistake({ fenBefore: fen, played: 'c2c1', bestMove: 'c2c4', reply: 'd4e2', replyLine: ['d4e2', 'g1f1', 'e2c1'], cpBefore: 0, cpAfter: -100 })
+    expect(text).not.toContain('fork')
+    expect(text).not.toContain('cost')
+    // What it says instead is simply true: the knight does attack the rook.
+    expect(text).toBe('It allowed Ne2+, which attacks your rook on c1.')
+  })
+
   it('says so when they played the move but the game went another way', () => {
     // A real tester-style game: 5.Nxf7?? Qxg2 allowed Qxh1+, but White saved the rook with Rf1.
     const moves = 'e2e4 e7e5 g1f3 b8c6 f1c4 c6d4 f3e5 d8g5 e5f7 g5g2 h1f1 g2e4 c4e2 d4f3'.split(' ')

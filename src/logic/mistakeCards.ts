@@ -28,7 +28,7 @@ export function refreshCard<C extends Moment & { ply: number }>(card: C, moves: 
   const reviewed = reviewMoves(moves, evals)[card.ply]
   if (!reviewed || reviewed.uci !== card.played) return card
   const fresh = toMoment(reviewed, evals, player, moves)
-  return { ...card, explanation: fresh.explanation, ...(fresh.bestLine ? { bestLine: fresh.bestLine } : {}) }
+  return { ...card, explanation: fresh.explanation, playedCp: fresh.playedCp, ...(fresh.bestLine ? { bestLine: fresh.bestLine } : {}) }
 }
 
 /** Adds the opponent's move just before (and the position before that), for context. */
@@ -65,6 +65,7 @@ function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colou
     playedSan: m.san,
     bestMove: m.bestMove ?? m.uci,
     bestCp: cpBefore,
+    playedCp: cpAfter,
     ...(bestLine ? { bestLine } : {}),
     explanation: explainMistake({
       fenBefore: m.fenBefore,

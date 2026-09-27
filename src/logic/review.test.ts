@@ -57,6 +57,21 @@ describe('reviewMoves', () => {
     expect(bestMoveOfGame(reviewed, 'w')).toBeNull()
   })
 
+  it('never picks castling, and only says punished when the move won something in the game', () => {
+    // Black castles right after White castled, a move the engine calls best,
+    // after White's previous move was graded a mistake. Nothing was won.
+    const castled = ['e2e4', 'e7e5', 'g1f3', 'g8f6', 'f1c4', 'f8c5', 'e1g1', 'e8g8', 'd2d3', 'd7d6', 'c1g5', 'h7h6']
+    const castledEvals = castled.map(() => ev(20))
+    castledEvals.push(ev(20))
+    castledEvals[6] = ev(20, 'e1g1')
+    castledEvals[7] = ev(-60, 'e8g8') // White's O-O graded as a slip for the test
+    castledEvals[8] = ev(-60, 'd2d3')
+    const r = reviewMoves(castled, castledEvals)
+    const pick = bestMoveOfGame(r, 'b')
+    expect(pick?.move.san).not.toBe('O-O')
+    expect(pick?.punished ?? false).toBe(false)
+  })
+
   it('works out the average advantage given away, capped', () => {
     // White: f3 lost 90, g4 lost 950 (capped at the 10-pawn limit) → (90 + 950) / 2
     expect(averageCentipawnLoss(moves, evals, 'w')).toBe(520)

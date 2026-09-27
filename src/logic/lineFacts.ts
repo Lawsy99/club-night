@@ -33,6 +33,8 @@ export type LineOutcome = {
   lost: PieceSymbol[]
   /** Knights and bishops were swapped for each other along the way: call them "pieces". */
   mixedMinors: boolean
+  /** Every piece of the starting side that was taken, before any trades are cancelled out. */
+  takenFromUs: PieceSymbol[]
   /** The line ends in checkmate: by the side that starts (mates), or against it (mated). */
   mates: boolean
   mated: boolean
@@ -109,6 +111,7 @@ export function followLine(fen: string, line: readonly string[], maxPlies = LINE
     won,
     lost,
     mixedMinors: all.includes('n') && all.includes('b'),
+    takenFromUs: order(takenFromMe),
     mates: mateHappened && chess.turn() !== me,
     mated: mateHappened && chess.turn() === me,
     promotes,
@@ -116,6 +119,24 @@ export function followLine(fen: string, line: readonly string[], maxPlies = LINE
     traded: takenByMe.some((p) => p !== 'p' && takenFromMe.some((q) => PIECE_VALUES[q] === PIECE_VALUES[p])),
     piecesLeft: chess.board().flat().filter((c) => c && c.type !== 'k' && c.type !== 'p').length,
   }
+}
+
+/**
+ * What a move itself can be credited with winning, from how the game (or a
+ * line) went on (Sep 2026: "Ke1 won two pieces and a pawn" when later moves
+ * did the winning). A check or capture gets the next couple of moves; a quiet
+ * move only its own follow-up, unless it set up a tactic that paid off.
+ */
+export function creditFor(fen: string, line: readonly string[]): LineOutcome {
+  const probe = followLine(fen, line, 1)
+  const first = probe.moves[0]
+  const forcing = !!first && (!!first.captured || first.san.includes('+'))
+  const window = forcing ? 5 : 3
+  const out = followLine(fen, line, window)
+  if (forcing || out.net < 1) return out
+  // A quiet move: only if its own tactic won it.
+  const tactic = findTactic(followLine(fen, line))
+  return tactic?.index === 0 ? followLine(fen, line) : out
 }
 
 /** "a knight", "the exchange", "a rook for a bishop", "two pawns": what a line wins (null if nothing). */

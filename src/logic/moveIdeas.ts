@@ -44,11 +44,19 @@ export function moveIdeas(fenBefore: string, uci: string, cpForMover = 0): strin
     .map((sq) => ({ sq, piece: after.get(sq as Square) }))
     .filter((t): t is { sq: string; piece: NonNullable<typeof t.piece> } => !!t.piece)
     .sort((a, b) => VALUES[b.piece.type] - VALUES[a.piece.type])
-  if (newTargets.length >= 2) {
-    const [a, b] = newTargets
+  // (Only "attacks" if the moved piece is the attacker. Otherwise the move
+  // got out of the way of another piece: Sep 2026, "Kh2 attacks your bishop
+  // on a6" was a rook's attack, uncovered.)
+  const byMover = newTargets.filter((t) => after.attackers(t.sq as Square, me).includes(move.to as Square))
+  const uncovered = newTargets.filter((t) => !byMover.includes(t))
+  if (byMover.length >= 2) {
+    const [a, b] = byMover
     add(3, `attacks their ${NAMES[a.piece.type]} on ${a.sq} and ${NAMES[b.piece.type]} on ${b.sq} at once`)
-  } else if (newTargets[0]) {
-    add(3, `attacks their ${NAMES[newTargets[0].piece.type]} on ${newTargets[0].sq}`)
+  } else if (byMover[0]) {
+    add(3, `attacks their ${NAMES[byMover[0].piece.type]} on ${byMover[0].sq}`)
+  }
+  if (uncovered[0] && uncovered[0].piece.type !== 'p') {
+    add(3, `uncovers an attack on their ${NAMES[uncovered[0].piece.type]} on ${uncovered[0].sq}`)
   }
 
   const pin = pinCreated(after, move, them)

@@ -88,6 +88,7 @@ export function findOwnExample(games: readonly OwnGame[], themes: readonly strin
               playedSan,
               bestMove: best,
               bestCp: cpBefore,
+              playedCp: cpAfter,
               ...(g.evals[ply].pv ? { bestLine: g.evals[ply].pv } : {}),
               explanation: explainMistake({
                 fenBefore: fen,
