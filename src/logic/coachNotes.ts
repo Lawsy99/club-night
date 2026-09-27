@@ -66,17 +66,19 @@ const KIND_NOTES: Record<ErrorKind, { what: (times: string) => string; single: s
     what: (t) => `${cap(t)} you left a piece where it could be taken for nothing. Before every move: what’s defended?`,
     single: 'you left a piece undefended',
   },
+  // (Worded as what the move allowed, not what happened: they may have missed
+  // it. Joseph, Sep 2026: never say something happened that didn't.)
   fork: {
-    what: (t) => `${cap(t)} one of their pieces landed where it hit two of yours at once. Look where their knights can jump.`,
+    what: (t) => `${cap(t)} you allowed a fork: one of their pieces could hit two of yours at once. Look where their knights can jump.`,
     single: 'you allowed a fork',
   },
   'lost-material': {
-    what: (t) => `${cap(t)} an exchange cost you material. Count attackers and defenders before you start one.`,
-    single: 'an exchange cost you material',
+    what: (t) => `${cap(t)} you gave them a way to win material. Before every move, look at their captures and checks.`,
+    single: 'you gave them a way to win material',
   },
   'allowed-mate': {
-    what: () => 'You walked into mate. Once the queens are on, check your king’s escape squares every move.',
-    single: 'you walked into mate',
+    what: () => 'You allowed a forced mate. Once the queens are on, check your king’s escape squares every move.',
+    single: 'you allowed a forced mate',
   },
   'missed-mate': {
     what: () => 'There was a mate on the board you didn’t see. When their king is short of squares, look at every check.',
@@ -111,7 +113,7 @@ const KIND_NOTES: Record<ErrorKind, { what: (times: string) => string; single: s
     single: 'you swapped pieces while behind',
   },
   'early-queen': {
-    what: () => 'Your queen came out early and got chased about. Knights and bishops first, the queen later.',
+    what: () => 'Your queen came out early, where their pieces can chase it about. Knights and bishops first, the queen later.',
     single: 'your queen came out too early',
   },
   'lost-castling': {
@@ -126,9 +128,9 @@ const KIND_NOTES: Record<ErrorKind, { what: (times: string) => string; single: s
 
 const KIND_PATTERNS: Record<ErrorKind, string> = {
   undefended: 'a piece left undefended',
-  fork: 'a fork',
-  'lost-material': 'an exchange that cost you material',
-  'allowed-mate': 'a mate walked into',
+  fork: 'a fork allowed',
+  'lost-material': 'a way to win material handed to them',
+  'allowed-mate': 'a forced mate allowed',
   'missed-mate': 'a mate missed',
   'missed-win': 'material there for the taking and not taken',
   positional: 'a position that slipped',
@@ -193,7 +195,8 @@ export function coachNotes(input: NotesInput): string[] {
   } else if (errors.length > 0) {
     // The biggest single error is where the game turned.
     const worst = [...errors].sort((a, b) => b.move.winBefore - b.move.winAfter - (a.move.winBefore - a.move.winAfter))[0]
-    add(2, `The game turned on move ${moveNo(worst.move.ply)}, when ${KIND_NOTES[worst.kind].single}.`)
+    // ("Your biggest mistake", not "the game turned": they may not have taken advantage.)
+    add(2, `Your biggest mistake was on move ${moveNo(worst.move.ply)}, when ${KIND_NOTES[worst.kind].single}.`)
   }
 
   // 4. Chances they gave you that you let go (if not already the story).

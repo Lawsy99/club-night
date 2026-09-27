@@ -62,6 +62,8 @@ function toMoment(m: ReviewedMove, evals: readonly PositionEval[], player: Colou
       replyLine: evals[m.ply + 1].pv,
       bestLine,
       prev: m.ply > 0 ? { fen: replay(moves.slice(0, m.ply - 1)).fen(), move: moves[m.ply - 1] } : undefined,
+      // What really happened next, so it only says "it cost you" if it did.
+      actual: moves.slice(m.ply + 1),
     }),
     ply: m.ply,
     rating: m.rating,

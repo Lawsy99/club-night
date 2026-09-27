@@ -91,20 +91,41 @@ describe('explainMistake', () => {
     ).toBe('Your knight on g5 was left undefended: Qxg5 just takes it.')
   })
 
-  it('spots a fork, when the line shows the piece falling', () => {
+  it('spots a fork, and only says it cost you if it really did', () => {
     // White's rook steps onto c1, where the knight can fork it with the king.
     const fen = '6k1/8/8/8/3n4/8/2R5/6K1 w - - 0 1'
-    expect(
-      explainMistake({
-        fenBefore: fen,
-        played: 'c2c1',
-        bestMove: 'c2c4',
-        reply: 'd4e2',
-        replyLine: ['d4e2', 'g1f1', 'e2c1'],
-        cpBefore: 0,
-        cpAfter: -500,
-      }),
-    ).toBe('This allowed Ne2+, a fork of your king and rook. It costs you a rook.')
+    const facts = { fenBefore: fen, played: 'c2c1', bestMove: 'c2c4', reply: 'd4e2', replyLine: ['d4e2', 'g1f1', 'e2c1'], cpBefore: 0, cpAfter: -500 }
+    // During a game: nobody knows yet.
+    expect(explainMistake(facts)).toBe('This allowed Ne2+, a fork of your king and rook. It would cost you a rook.')
+    // The game went that way.
+    expect(explainMistake({ ...facts, actual: ['d4e2', 'g1f1', 'e2c1'] })).toBe('This allowed Ne2+, a fork of your king and rook. It cost you a rook.')
+    // They didn't play the fork (Joseph, Sep 2026: never say something happened that didn't).
+    expect(explainMistake({ ...facts, actual: ['g8f7', 'c1c4'] })).toBe(
+      'This allowed Ne2+, a fork of your king and rook. It would have cost you a rook, but they missed it.',
+    )
+  })
+
+  it('says so when they played the move but the game went another way', () => {
+    // A real tester-style game: 5.Nxf7?? Qxg2 allowed Qxh1+, but White saved the rook with Rf1.
+    const moves = 'e2e4 e7e5 g1f3 b8c6 f1c4 c6d4 f3e5 d8g5 e5f7 g5g2 h1f1 g2e4 c4e2 d4f3'.split(' ')
+    const text = explainMistake({
+      fenBefore: replay(moves.slice(0, 8)).fen(),
+      played: 'e5f7',
+      bestMove: 'c4f7',
+      reply: 'g5g2',
+      replyLine: ['g5g2', 'd2d3', 'g2h1', 'e1d2', 'h1d1', 'd2d1'],
+      cpBefore: -53,
+      cpAfter: -531,
+      actual: moves.slice(9),
+    })
+    expect(text).toContain('would have cost you a rook')
+    expect(text).toContain('In the game it went another way.')
+  })
+
+  it('says a piece left undefended was taken only if it was', () => {
+    const facts = { fenBefore: afterNc6, played: 'f3g5', bestMove: 'd2d4', reply: 'd8g5', cpBefore: 30, cpAfter: -300 }
+    expect(explainMistake({ ...facts, actual: ['d8g5'] })).toBe('Your knight on g5 was left undefended, and Qxg5 took it.')
+    expect(explainMistake({ ...facts, actual: ['a7a6'] })).toBe('Your knight on g5 was left undefended: Qxg5 would have taken it, but they missed it.')
   })
 
   it("doesn't call a fair trade a loss", () => {
@@ -137,9 +158,19 @@ describe('explainMistake', () => {
 })
 
 describe('explainGoodMove', () => {
-  it('names mates, punishments and wins', () => {
+  it('names mates, punishments and wins, from what really happened', () => {
     expect(explainGoodMove(scholar, 'h5f7', false)).toBe('Qxf7#: checkmate.')
-    expect(explainGoodMove(knightHangs, 'd8g5', true)).toBe('You punished their mistake with Qxg5, winning a knight.')
-    expect(explainGoodMove(knightHangs, 'd8g5', false)).toBe('Qxg5 won their knight.')
+    expect(explainGoodMove(knightHangs, 'd8g5', true, undefined, ['d8g5', 'd2d4'])).toBe('You punished their mistake with Qxg5, and won a knight.')
+    expect(explainGoodMove(knightHangs, 'd8g5', false, undefined, ['d8g5', 'd2d4'])).toBe('Qxg5 won their knight.')
+  })
+
+  it("never says it won something the game didn't", () => {
+    // The fork was there (Nc7+ then Nxa8), but in the game the knight went back instead.
+    const fen = 'r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1'
+    const line = ['b5c7', 'e8d7', 'c7a8']
+    expect(explainGoodMove(fen, 'b5c7', true, line, ['b5c7', 'e8d7', 'c7b5'])).toBe(
+      'You punished their mistake with Nc7+. Followed up properly, it wins a rook. The follow-up was Nxa8.',
+    )
+    expect(explainGoodMove(fen, 'b5c7', true, line, line)).toBe('You punished their mistake with Nc7+, and won a rook.')
   })
 })

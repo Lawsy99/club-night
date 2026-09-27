@@ -228,7 +228,7 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
             <MoveReplay moves={game.moves} ply={best.move.ply} orientation={player === 'w' ? 'white' : 'black'} />
             <p className="review-explanation">
               {best.move.ply > 0 && <>They played {replay(game.moves.slice(0, best.move.ply)).history().at(-1)}. </>}
-              {explainGoodMove(best.move.fenBefore, best.move.uci, best.punished, evals?.[best.move.ply]?.pv)}
+              {explainGoodMove(best.move.fenBefore, best.move.uci, best.punished, evals?.[best.move.ply]?.pv, game.moves.slice(best.move.ply))}
             </p>
           </>
         ) : (

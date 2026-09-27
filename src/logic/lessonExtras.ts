@@ -98,6 +98,7 @@ export function findOwnExample(games: readonly OwnGame[], themes: readonly strin
                 cpAfter,
                 replyLine: g.evals[ply + 1].pv,
                 bestLine: g.evals[ply].pv,
+                actual: g.moves.slice(ply + 1),
               }),
               kind: missed ? 'missed' : 'mistake',
             },

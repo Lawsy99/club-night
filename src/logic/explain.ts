@@ -52,6 +52,42 @@ export type MistakeFacts = {
   bestLine?: readonly string[]
   /** The opponent's move just before, and the position it was played in (to tell "take back" from "win"). */
   prev?: { fen: string; move: string }
+  /**
+   * What really happened next in the game, from the reply on (after the game;
+   * missing during a game, when nobody knows yet). Joseph, Sep 2026: the
+   * coach must never say something happened that didn't. With this, "it cost
+   * you a rook" is only said if it did; otherwise "it would have… they missed it".
+   */
+  actual?: readonly string[]
+}
+
+/**
+ * Whether the harm the engine saw really happened: 'happened' (the game went
+ * that way), 'missed' (they didn't take the chance), or 'live' (during a game,
+ * or the game stopped there: nobody knows yet).
+ */
+type Tense = 'happened' | 'missed' | 'avoided' | 'live'
+
+/**
+ * 'missed': they didn't play the key reply. 'avoided': they did, but the game
+ * then went another way (you found a defence the engine's line didn't).
+ */
+function tenseOf(f: MistakeFacts, predictedNet: number, isMate: boolean): Tense {
+  if (!f.actual || f.actual.length === 0) return 'live'
+  const real = followLine(f.fenBefore, [f.played, ...f.actual], 12)
+  const sameReply = f.replyLine?.length ? f.actual[0] === f.replyLine[0] : f.actual[0] === f.reply
+  const didnt: Tense = sameReply ? 'avoided' : 'missed'
+  if (isMate) return real.mated ? 'happened' : didnt
+  // It happened if the game really cost about as much as the engine's line.
+  return real.net <= -MATERIAL && real.net <= predictedNet + 0.9 ? 'happened' : didnt
+}
+
+/** "It cost you a rook." / "…would have cost you a rook, but they missed it." / "It would cost you a rook." */
+function costs(tense: Tense, loss: string): string {
+  if (tense === 'happened') return `It cost you ${loss}.`
+  if (tense === 'missed') return `It would have cost you ${loss}, but they missed it.`
+  if (tense === 'avoided') return `That line would have cost you ${loss}. In the game it went another way.`
+  return `It would cost you ${loss}.`
 }
 
 /**
@@ -84,13 +120,15 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
   const theirs = replyLine && afterFen ? followLine(afterFen, replyLine, 12) : null
 
   if ((f.cpAfter <= -MATE_THRESHOLD && f.cpBefore > -MATE_THRESHOLD) || (theirs?.mates && f.cpBefore > -MATE_THRESHOLD)) {
+    const tense = tenseOf(f, 0, true)
     const text =
       theirs?.mates && theirs.moves.length <= SHORT_MATE_PLIES
         ? theirs.moves.length === 1
           ? `This allowed ${lineSan(theirs)}, checkmate.`
           : `This allowed a forced checkmate: ${lineSan(theirs)}.`
         : 'This allowed a forced checkmate.'
-    return { kind: 'allowed-mate', text }
+    const after = tense === 'missed' ? ' They missed it.' : tense === 'avoided' ? ' In the game it went another way.' : ''
+    return { kind: 'allowed-mate', text: `${text}${after}` }
   }
   if (f.cpBefore >= MATE_THRESHOLD && f.cpAfter < MATE_THRESHOLD && bestSan) {
     const ours = f.bestLine ? followLine(f.fenBefore, f.bestLine, 12) : null
@@ -111,7 +149,13 @@ function analyseMistake(f: MistakeFacts): { kind: ErrorKind; text: string } {
   const played = replyLine ? followLine(f.fenBefore, [f.played, ...replyLine]) : null
   // (Their line is from their side: "us" there means them.)
   if (theirs?.promotes === 'us' && (!bestOutcome || bestOutcome.promotes !== 'them')) {
-    return { kind: 'lost-material', text: `After ${theirs.moves[0].san}, nothing stops their pawn from queening.` }
+    const real = f.actual?.length && afterFen ? followLine(afterFen, f.actual, 12) : null
+    const text = !real
+      ? `It allows ${theirs.moves[0].san}, and then nothing stops their pawn from queening.`
+      : real.promotes === 'us'
+        ? `After ${theirs.moves[0].san}, nothing could stop their pawn from queening.`
+        : `It allowed ${theirs.moves[0].san}, and a pawn of theirs that couldn’t be stopped. In the game it went another way.`
+    return { kind: 'lost-material', text }
   }
   if (played && replyLine && afterFen && played.net <= -MATERIAL && played.net < keeps - 0.9) {
     return lossSentence(f, played, followLine(afterFen, replyLine))
@@ -157,38 +201,49 @@ function fromTheirSide(idea: string): string {
 function lossSentence(f: MistakeFacts, played: LineOutcome, theirs: LineOutcome): { kind: ErrorKind; text: string } {
   const loss = describeGain(played.lost, played.won, played.mixedMinors) ?? 'material'
   const reply = theirs.moves[0]
-  // (Worded "costs you" and "gives away", never "you lose": Joseph, Sep 2026,
-  // a beginner who'd won read "you lost material" as "you lost".)
-  if (!reply) return { kind: 'lost-material', text: `That gives away ${loss}.` }
+  // Only say it happened if it did (Joseph, Sep 2026). And worded "cost you",
+  // never "you lose": a beginner who'd won read "you lost material" as "you lost".
+  const tense = tenseOf(f, played.net, false)
+  if (!reply) return { kind: 'lost-material', text: costs(tense, loss) }
   const moved = f.played.slice(2, 4)
   // Taking something that turns out to be poisoned: say what the capture cost.
   const playedMove = played.moves[0]
   if (playedMove?.captured && reply.to === moved) {
-    return { kind: 'lost-material', text: `Taking on ${moved} costs you ${loss}: ${reply.san} takes back.` }
+    const text =
+      tense === 'happened'
+        ? `Taking on ${moved} cost you ${loss}: ${reply.san} took back.`
+        : tense === 'missed'
+          ? `Taking on ${moved} could have cost you ${loss}: ${reply.san} takes back. They didn’t.`
+          : tense === 'avoided'
+            ? `Taking on ${moved} could have cost you ${loss} after ${reply.san}. In the game it went another way.`
+            : `Taking on ${moved} would cost you ${loss}: ${reply.san} takes back.`
+    return { kind: 'lost-material', text }
   }
   const found = findTactic(theirs)
   if (found?.tactic.kind === 'undefended') {
     const { piece, square } = found.tactic
-    const text =
-      square === moved
-        ? `Your ${NAMES[piece]} on ${moved} was left undefended: ${reply.san} just takes it.`
-        : `This left your ${NAMES[piece]} on ${square} undefended: ${reply.san} takes it.`
-    return { kind: 'undefended', text }
+    const where = square === moved ? `Your ${NAMES[piece]} on ${moved} was left undefended` : `This left your ${NAMES[piece]} on ${square} undefended`
+    const then =
+      tense === 'happened'
+        ? `, and ${reply.san} took it.`
+        : tense === 'missed'
+          ? `: ${reply.san} would have taken it, but they missed it.`
+          : tense === 'avoided'
+            ? `: ${reply.san} could take it. In the game it went another way.`
+            : `: ${reply.san} just takes it.`
+    return { kind: 'undefended', text: `${where}${then}` }
   }
   if (found) {
     const kind: ErrorKind = found.tactic.kind === 'fork' ? 'fork' : 'lost-material'
-    if (found.index === 0) return { kind, text: `This allowed ${reply.san}, ${tacticNoun(found.tactic, 'your')}. It costs you ${loss}.` }
+    if (found.index === 0) return { kind, text: `This allowed ${reply.san}, ${tacticNoun(found.tactic, 'your')}. ${costs(tense, loss)}` }
     return {
       kind,
-      text: `After ${lineSan(theirs, 0, found.index)}, ${found.move.san} ${tacticVerb(found.tactic, 'your')}. It costs you ${loss}.`,
+      text: `It allowed ${lineSan(theirs, 0, found.index)}, and then ${found.move.san} ${tacticVerb(found.tactic, 'your')}. ${costs(tense, loss)}`,
     }
   }
   const key = theirs.keyCapture
-  if (key && key !== reply) return { kind: 'lost-material', text: `After ${reply.san}, ${key.san} is coming, and it costs you ${loss}.` }
-  return {
-    kind: 'lost-material',
-    text: reply.captured ? `After ${reply.san} and the exchanges that follow, it costs you ${loss}.` : `After ${reply.san}, it costs you ${loss}.`,
-  }
+  if (key && key !== reply) return { kind: 'lost-material', text: `It allowed ${reply.san}, and then ${key.san}. ${costs(tense, loss)}` }
+  return { kind: 'lost-material', text: `It allowed ${reply.san}${reply.captured ? ' and the exchanges after it' : ''}. ${costs(tense, loss)}` }
 }
 
 /**
@@ -297,20 +352,40 @@ export function coachComment(f: MistakeFacts): string {
   return why.endsWith('was stronger.') ? instead : `${why} Instead, ${instead}`
 }
 
-/** Why the best move of the game was good, in one line. */
-export function explainGoodMove(fenBefore: string, uci: string, punished: boolean, line?: readonly string[]): string {
+/**
+ * Why the best move of the game was good, in one line. `actual` is what
+ * really happened from this move on, in the game. Joseph, Sep 2026: a
+ * tester's review said a move "won the queen and a bishop for a rook" when
+ * the game never went that way. So what it won is taken from the game
+ * itself; the engine's follow-up is only ever offered as "could have".
+ */
+export function explainGoodMove(fenBefore: string, uci: string, punished: boolean, line?: readonly string[], actual?: readonly string[]): string {
   const chess = new Chess(fenBefore)
   const move = applyUci(chess, uci)
   if (!move) return ''
   if (chess.isCheckmate()) return `${move.san}: checkmate.`
+  const start = punished ? `You punished their mistake with ${move.san}` : move.san
+
+  // What really happened in the game.
+  const real = actual?.[0] === uci ? followLine(fenBefore, actual) : null
+  if (real?.mates) return `${start}${punished ? ',' : ''} and it led to checkmate.`
+  const realGain = real && real.net >= MATERIAL ? describeGain(real.won, real.lost, real.mixedMinors) : null
+  if (realGain) {
+    const found = findTactic(real!)
+    if (punished) return `${start}, and won ${realGain}.`
+    if (found?.tactic.kind === 'undefended' && found.index === 0) return `${move.san} won their ${NAMES[found.tactic.piece]}.`
+    return found?.index === 0 ? `${move.san} ${tacticVerb(found.tactic, 'their')}, and won ${realGain}.` : `${move.san} won ${realGain}.`
+  }
+
+  // What the engine saw it could win, if the game didn't (or wasn't known).
   const out = followLine(fenBefore, line?.[0] === uci ? line : [uci])
   const gain = out.net >= MATERIAL ? describeGain(out.won, out.lost, out.mixedMinors) : null
-  if (punished) return gain ? `You punished their mistake with ${move.san}, winning ${gain}.` : `You punished their mistake with ${move.san}.`
   if (gain) {
-    const found = findTactic(out)
-    if (found?.tactic.kind === 'undefended' && found.index === 0) return `${move.san} won their ${NAMES[found.tactic.piece]}.`
-    return found?.index === 0 ? `${move.san} ${tacticVerb(found.tactic, 'their')}, and won ${gain}.` : `${move.san} won ${gain}.`
+    const key = out.keyCapture && out.keyCapture !== out.moves[0] ? ` The follow-up was ${out.keyCapture.san}.` : ''
+    const could = real ? `Followed up properly, it wins ${gain}.${key}` : `It wins ${gain}.${key}`
+    return punished ? `${start}. ${could}` : `${move.san} was the strongest move on the board. ${could}`
   }
+  if (punished) return `${start}.`
   const ideas = moveIdeas(fenBefore, uci)
   if (ideas.length) return `${move.san} ${joinIdeas(ideas)}. The strongest move on the board.`
   return `${move.san} was the strongest move in the position.`
