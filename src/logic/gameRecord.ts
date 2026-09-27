@@ -39,6 +39,8 @@ export type GameRecord = {
   planPauseDone?: boolean
   /** Coach Pemberton's scouting report for this game (shown before the first move). */
   scouting?: string[]
+  /** Which board demo goes with it (data/scoutingDemos.ts); none once they've all been seen. */
+  scoutingDemo?: number
   scoutingSeen?: boolean
   /** Toby's targeting: the opening family he steers towards (rival level 1). */
   rivalPrefer?: string

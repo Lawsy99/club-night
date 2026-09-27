@@ -70,6 +70,8 @@ export type Progress = {
   act?: number
   /** Pemberton's monthly tests, oldest first (logic/monthlyTest.ts). */
   monthlyTests?: MonthlyTest[]
+  /** Scouting demos and style lines already seen ("marjorie:w:0", "dex:style:1"), so none repeats. */
+  scoutingSeen?: string[]
 }
 
 /**

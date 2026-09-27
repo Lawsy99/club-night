@@ -22,12 +22,45 @@ export type ScoutingInput = {
   /** Toby only: the weakness he's targeting, if any. */
   target: Weakness | null
   last?: LastMeeting | null
+  /** Which style line to use (from pickScouting), or null once they've all been heard. */
+  style?: number | null
+  /** A board demo comes with it (pickScouting); without one, the openings are covered in words. */
+  demo?: boolean
 }
 
-export function scoutingReport({ character, playerColour, record, target, last }: ScoutingInput): string[] {
+export type ScoutingPick = {
+  /** Which board demo to show for this colour, or null once every one has been seen. */
+  demo: number | null
+  /** Which style line, or null once every one has been heard. */
+  style: number | null
+  /** What to remember as seen (Progress.scoutingSeen). */
+  used: string[]
+}
+
+/**
+ * The next report you haven't had (Joseph, Sep 2026: you meet everyone
+ * several times, so no report is repeated, in a week or across weeks). The
+ * demo for your colour, and a style line, each the first one not yet seen.
+ */
+export function pickScouting(character: string, playerColour: Colour, seen: readonly string[], demos: number): ScoutingPick {
+  const demoIds = Array.from({ length: demos }, (_, i) => `${character}:${playerColour}:${i}`)
+  const styleIds = (SCOUTING[character]?.styles ?? []).map((_, i) => `${character}:style:${i}`)
+  const demo = demoIds.findIndex((id) => !seen.includes(id))
+  const style = styleIds.findIndex((id) => !seen.includes(id))
+  return {
+    demo: demo >= 0 ? demo : null,
+    style: style >= 0 ? style : null,
+    used: [...(demo >= 0 ? [demoIds[demo]] : []), ...(style >= 0 ? [styleIds[style]] : [])],
+  }
+}
+
+export function scoutingReport({ character, playerColour, record, target, last, style = 0, demo = true }: ScoutingInput): string[] {
   const notes = SCOUTING[character]
   if (!notes) return []
-  const bubbles = [playerColour === 'b' ? notes.asWhite : notes.asBlack, notes.style]
+  const they = notes.pronoun === 'her' ? 'her' : 'his'
+  // Every demo seen: the openings are old news, and said as much.
+  const openings = demo ? (playerColour === 'b' ? notes.asWhite : notes.asBlack) : `You know ${they} openings by now.`
+  const bubbles = [openings, ...(style !== null && notes.styles[style] ? [notes.styles[style]] : [])]
   const played = record.wins + record.losses
   bubbles.push(
     played === 0

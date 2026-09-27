@@ -41,7 +41,7 @@ import { ACT_1 } from '../data/act1'
 import { actNumber, weeksBefore } from '../data/acts'
 import { CHARACTERS } from '../data/characters'
 import { rivalTarget } from '../logic/rival'
-import { scoutingReport, type LastMeeting } from '../logic/scouting'
+import { pickScouting, scoutingReport, type LastMeeting } from '../logic/scouting'
 import { strengthFromAccuracy } from '../logic/trialNight'
 import {
   type ArchivedGame,
@@ -205,29 +205,37 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
         ? pickScenario(pathGame.rating, opposite(record.playerColour), progress.scenariosUsed ?? [])
         : null
     if (trap) nextProgress = { ...nextProgress, scenariosUsed: [...(nextProgress.scenariosUsed ?? []), trap.id] }
+
+    // Scouting report: before matches and cup games, and before the first
+    // practice game against someone new (their first meeting). Each one is
+    // new: the next demo for your colour and the next line about their style
+    // that you haven't had yet (Joseph, Sep 2026).
+    const scouted =
+      pathGame.kind === 'match' ||
+      pathGame.kind === 'cup-round' ||
+      pathGame.kind === 'boss' ||
+      (pathGame.kind === 'friendly' && h2h.played === 0 && !!SCOUTING_DEMOS[pathGame.opponent])
+    const pick = scouted
+      ? pickScouting(pathGame.opponent, record.playerColour, nextProgress.scoutingSeen ?? [], SCOUTING_DEMOS[pathGame.opponent]?.[record.playerColour].length ?? 0)
+      : null
+    if (pick?.used.length) nextProgress = { ...nextProgress, scoutingSeen: [...(nextProgress.scoutingSeen ?? []), ...pick.used] }
     if (nextProgress !== progress) updateProgress(nextProgress)
 
     // Toby studies the player's games (rival level 1): the weakest opening, once there's evidence.
     const target = pathGame.opponent === 'toby' ? await playerWeakness().catch(() => null) : null
     // What the player usually plays, from their recent games (for the "your opening" notes).
     const repertoire = await usualOpenings().catch(() => ({}))
-    // Scouting report before matches and the first (assisted) friendly against someone.
-    // Scouting report: before matches and cup games, and before the first
-    // practice game against someone new (their first meeting).
-    const scouted =
-      pathGame.kind === 'match' ||
-      pathGame.kind === 'cup-round' ||
-      pathGame.kind === 'boss' ||
-      (pathGame.kind === 'friendly' && h2h.played === 0 && !!SCOUTING_DEMOS[pathGame.opponent])
     // Your last game against them, for a line in the report (Sep 2026).
     const last = scouted ? await lastGameAgainst(opponentId).catch(() => null) : null
-    const scouting = scouted
+    const scouting = pick
       ? scoutingReport({
           character: pathGame.opponent,
           playerColour: record.playerColour,
           record: { wins: h2h.wins, losses: h2h.losses },
           target,
           last,
+          style: pick.style,
+          demo: pick.demo !== null,
         })
       : undefined
 
@@ -235,6 +243,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
       ...record,
       path: pathGame,
       scouting,
+      ...(pick?.demo != null ? { scoutingDemo: pick.demo } : {}),
       rivalPrefer: target && target.colour === record.playerColour ? target.opening : undefined,
       repertoire,
       scenario: trap ? { id: trap.id } : undefined,

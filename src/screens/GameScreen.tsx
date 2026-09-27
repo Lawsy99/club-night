@@ -615,11 +615,13 @@ export function GameScreen({
 
   // The scouting report plays out on the board before the game (YouTube-teacher style).
   if (showScouting && opponent.character) {
-    const written = SCOUTING_DEMOS[opponent.character.id]?.[game.playerColour] ?? []
+    // This game's demo (a new one each time, for the colour you have), if any are left unseen.
+    const written = game.scoutingDemo !== undefined ? (SCOUTING_DEMOS[opponent.character.id]?.[game.playerColour][game.scoutingDemo] ?? []) : []
     const steps = [
       ...buildDemo(written),
       // Last: their style, your record and (for Toby) his target, with no moves.
-      { caption: (game.scouting ?? []).slice(1).join(' '), moves: [] },
+      // (Without a demo, the openings line comes first, in words.)
+      { caption: (game.scouting ?? []).slice(written.length ? 1 : 0).join(' '), moves: [] },
     ]
     return (
       <main className="game-screen">
@@ -629,7 +631,9 @@ export function GameScreen({
               {game.path.label} <span>· {game.path.location}</span>
             </p>
           )}
-          <p className="stage-label">Scouting report · {opponent.name}</p>
+          <p className="stage-label">
+            Scouting report · playing {game.playerColour === 'w' ? 'White' : 'Black'} against {opponent.name}
+          </p>
         </header>
         <DemoBoard
           steps={steps}
