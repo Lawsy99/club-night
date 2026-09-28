@@ -87,6 +87,8 @@ type Props = {
   playerName?: string
   /** How much the characters say (Settings). */
   chatter?: Chatter
+  /** Ask before each move is played, with a tick and a cross (Settings). */
+  confirmMoves?: boolean
 }
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
@@ -110,6 +112,7 @@ export function GameScreen({
   playerRating,
   playerName,
   chatter = 'full',
+  confirmMoves = false,
 }: Props) {
   const stage = helpFor(game)
   const isExhibition = game.path?.kind === 'exhibition'
@@ -125,6 +128,9 @@ export function GameScreen({
   const [moveAttempt, setMoveAttempt] = useState(0)
   const failedAttempts = useRef(0)
   const [pending, setPending] = useState<PendingMove | null>(null)
+  // Confirm moves (Joseph, Sep 2026, as on chess.com): the move shown on the
+  // board, waiting for a tick or a cross, before anything else happens.
+  const [proposed, setProposed] = useState<{ uci: string; fenAfter: string } | null>(null)
   // The coach's last "are you sure?", so he doesn't say the same thing twice running.
   const lastQuery = useRef<string | null>(null)
   const coachVoice = opponent.character ? COACH_VOICES[opponent.character.id] : undefined
@@ -475,7 +481,13 @@ export function GameScreen({
     }
   }
 
-  /** The player dropped a piece: check it for a blunder if the stage says so. */
+  /** The player dropped a piece: with Confirm moves on, wait for the tick first. */
+  function handleDrop(uci: string) {
+    if (!confirmMoves) return handlePlayerMove(uci)
+    setProposed({ uci, fenAfter: replay([...game.moves, uci]).fen() })
+  }
+
+  /** The player's move is settled: check it for a blunder if the stage says so. */
   function handlePlayerMove(uci: string) {
     // The coach only queries a bad move some of the time, and only while
     // there's a takeback left to pay for taking it back (Joseph, Sep 2026).
@@ -651,7 +663,7 @@ export function GameScreen({
   // (Joseph, Sep 2026), not the live position.
   const viewedAnalysis = useAnalysis(viewed ? viewed.fen() : fen, viewing && stage.evalBar)
   const barAnalysis = viewing ? viewedAnalysis.latest : analysis.latest
-  const boardFen = viewed ? (viewPeeking ? viewedBefore! : viewed.fen()) : peeking ? ratedMove.fenBefore : pending ? pending.fenAfter : fen
+  const boardFen = viewed ? (viewPeeking ? viewedBefore! : viewed.fen()) : peeking ? ratedMove.fenBefore : proposed ? proposed.fenAfter : pending ? pending.fenAfter : fen
 
   // The scouting report plays out on the board before the game (YouTube-teacher style).
   if (showScouting && opponent.character) {
@@ -762,7 +774,7 @@ export function GameScreen({
           <Board
             fen={boardFen}
             orientation={game.playerColour === 'w' ? 'white' : 'black'}
-            movableColour={outcome || pending || peeking || showScouting || viewing ? null : game.playerColour}
+            movableColour={outcome || pending || proposed || peeking || showScouting || viewing ? null : game.playerColour}
             lastMove={
               viewing
                 ? viewedLast && !viewPeeking
@@ -770,9 +782,11 @@ export function GameScreen({
                   : null
                 : peeking
                   ? null
-                  : (pendingLast ?? (last ? { from: last.from, to: last.to } : null))
+                  : proposed
+                    ? { from: proposed.uci.slice(0, 2), to: proposed.uci.slice(2, 4) }
+                    : (pendingLast ?? (last ? { from: last.from, to: last.to } : null))
             }
-            onMove={handlePlayerMove}
+            onMove={handleDrop}
             arrows={
               viewPeeking
                 ? [
@@ -797,6 +811,26 @@ export function GameScreen({
       </div>
 
       <PlayerStrip name={playerName ?? 'You'} rating={playerRating} fen={fen} side={game.playerColour} />
+
+      {proposed && !viewing && (
+        <div className="confirm-move" role="group" aria-label="Confirm your move">
+          <button type="button" className="confirm-no" aria-label="Cancel the move" onClick={() => setProposed(null)}>
+            ✕
+          </button>
+          <button
+            type="button"
+            className="confirm-yes"
+            aria-label="Play the move"
+            onClick={() => {
+              const uci = proposed.uci
+              setProposed(null)
+              handlePlayerMove(uci)
+            }}
+          >
+            ✓
+          </button>
+        </div>
+      )}
 
       <div className="move-row">
         <MoveStrip sans={viewing ? sans.slice(0, viewPly!) : sans} />

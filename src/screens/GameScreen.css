@@ -384,3 +384,31 @@
   opacity: 0.4;
   cursor: default;
 }
+
+/* Confirm moves: a cross and a tick under the board, big enough for a thumb. */
+.confirm-move {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.confirm-move button {
+  min-width: 96px;
+  min-height: 48px;
+  border-radius: 10px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.confirm-move .confirm-yes {
+  background: #4f9a4f;
+  color: #fff;
+  border: none;
+}
+
+.confirm-move .confirm-no {
+  background: transparent;
+  color: inherit;
+  border: 1px solid currentColor;
+}

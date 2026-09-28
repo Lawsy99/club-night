@@ -19,9 +19,11 @@ export type Settings = {
    * change the rating.
    */
   unlimitedHelp?: boolean
+  /** A tick and a cross before each move is played (Joseph, Sep 2026, as on chess.com). On unless turned off. */
+  confirmMoves?: boolean
 }
 
-export const DEFAULT_SETTINGS: Settings = { chatter: 'full', sound: true, board: 'club', unlimitedHelp: false }
+export const DEFAULT_SETTINGS: Settings = { chatter: 'full', sound: true, board: 'club', unlimitedHelp: false, confirmMoves: true }
 
 export const CHATTER_OPTIONS: { value: Chatter; label: string; detail: string }[] = [
   { value: 'full', label: 'Full', detail: 'Lines before, during and after games.' },

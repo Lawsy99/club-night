@@ -164,6 +164,26 @@ export function SettingsScreen({ settings, onChange, onBack, whereTheyAre }: Pro
 
       </section>
 
+      {/* Confirm moves (Joseph, Sep 2026): no more moves played by a slip of the thumb. */}
+      <section>
+        <h2>Confirm moves</h2>
+        <div className="settings-options" role="radiogroup" aria-label="Confirm moves">
+          {[true, false].map((on) => (
+            <button
+              key={String(on)}
+              type="button"
+              role="radio"
+              aria-checked={(settings.confirmMoves ?? true) === on}
+              className={(settings.confirmMoves ?? true) === on ? 'selected' : undefined}
+              onClick={() => onChange({ ...settings, confirmMoves: on })}
+            >
+              <strong>{on ? 'On' : 'Off'}</strong>
+              <span>{on ? 'Each move waits for a tick (play it) or a cross (put it back).' : 'Moves are played as soon as you make them.'}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
       {/* Full help (Joseph, Sep 2026): for anyone who'd rather learn with the help on. */}
       <section>
         <h2>Full help</h2>

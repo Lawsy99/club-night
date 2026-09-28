@@ -454,6 +454,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
         playerRating={progress.rating ? Math.round(progress.rating.rating) : undefined}
         playerName={progress.playerName}
         chatter={settings.chatter}
+        confirmMoves={settings.confirmMoves ?? true}
         onReview={() => setView('review')}
         onContinue={() => void finishGame(game)}
         onPause={() => setView('home')}
