@@ -23,7 +23,7 @@ import { APPEARANCES } from '../data/appearances'
 import { moodFor } from '../logic/mood'
 import { matchMoment } from '../logic/matchReaction'
 import type { Expression } from '../logic/dialogue'
-import { COACH_STEPS_IN, HELP_STAGES } from '../data/helpStages'
+import { COACH_STEPS_IN, helpFor } from '../data/helpStages'
 import { resolveOpponent } from '../data/opponents'
 import { analysePosition } from '../engine/analysis'
 import { getMaia, type MaiaStatus } from '../engine/maia/maia'
@@ -111,7 +111,7 @@ export function GameScreen({
   playerName,
   chatter = 'full',
 }: Props) {
-  const stage = HELP_STAGES[game.stage]
+  const stage = helpFor(game)
   const isExhibition = game.path?.kind === 'exhibition'
   const opponent = resolveOpponent(game.levelId, game.opponentRating, isExhibition)
   // Nothing said during the game on trial night (design: "Trial night"), or
@@ -872,7 +872,7 @@ export function GameScreen({
               disabled={!hintMove || hintsLeft === 0 || pending !== null || peeking || !!hintedHere?.shown}
               onClick={askForHint}
             >
-              {hintedHere && !hintedHere.shown ? `Show me the move (${hintsLeft} left)` : `Hint (${hintsLeft} left)`}
+              {hintedHere && !hintedHere.shown ? `Show me the move${countLeft(hintsLeft)}` : `Hint${countLeft(hintsLeft)}`}
             </button>
           )}
           {stage.takebacks > 0 && (
@@ -884,7 +884,7 @@ export function GameScreen({
                 setGame((g) => (g ? withTakeback(g) : g))
               }}
             >
-              Take back ({takebacksLeft(game)} left)
+              Take back{countLeft(takebacksLeft(game))}
             </button>
           )}
         </div>
@@ -937,6 +937,11 @@ export function GameScreen({
       </p>
     </main>
   )
+}
+
+/** " (3 left)" on a help button; nothing when it's unlimited (Full help setting). */
+function countLeft(n: number): string {
+  return Number.isFinite(n) ? ` (${n} left)` : ''
 }
 
 /** The move-rating chip: "Nd3", or "Knight to d3" below 1500 (notation.ts). */

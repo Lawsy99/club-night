@@ -1,6 +1,6 @@
 // A game as it is saved to the device: everything needed to resume it
 // exactly. Pure functions only; saving itself lives in src/storage.
-import { HELP_STAGES, type HelpStageId } from '../data/helpStages'
+import { helpFor, type HelpStageId } from '../data/helpStages'
 import { applyUci, getOutcome, replay, type Colour, type GameOutcome } from './game'
 import type { MoveRating } from './moveRating'
 import type { PathGame } from './path'
@@ -19,6 +19,8 @@ export type GameRecord = {
   takebacksUsed: number
   /** The coach's hints asked for in this game (the coached game allows three). */
   hintsUsed?: number
+  /** Played with the "Full help" setting: unlimited hints and takebacks (data/helpStages.ts). */
+  unlimited?: boolean
   /**
    * How each of the player's moves rated, by move index, so looking back
    * through the game shows them too (tester feedback, Sep 2026). `uci` checks
@@ -118,7 +120,7 @@ function moverOf(index: number): Colour {
 }
 
 export function takebacksLeft(game: GameRecord): number {
-  return Math.max(0, HELP_STAGES[game.stage].takebacks - game.takebacksUsed)
+  return Math.max(0, helpFor(game).takebacks - game.takebacksUsed)
 }
 
 export function canTakeBack(game: GameRecord): boolean {

@@ -184,6 +184,27 @@ export type PathGame = {
   helped?: boolean
 }
 
+/** Games you have to win to move on: these are the ones that change your rating. */
+export const MUST_WIN: StepKind[] = ['match', 'cup-round', 'boss']
+
+/**
+ * With the "Full help" setting on, Pemberton asks before every must-win game
+ * whether you want his help (Joseph, Sep 2026). Taken, the game moves the
+ * story on but doesn't count for the rating; on your own, it does.
+ */
+export function withHelpChoice(step: NextStep, fullHelp: boolean): NextStep {
+  if (!fullHelp || step.kind !== 'play' || step.helpOffer || !MUST_WIN.includes(step.game.kind) || step.game.helped) return step
+  return {
+    ...step,
+    helpOffer: { ...step.game, stage: 'assisted', helped: true },
+    note: HELP_CHOICE_NOTE,
+  }
+}
+
+/** Pemberton, before a must-win game with Full help on. */
+export const HELP_CHOICE_NOTE =
+  'I can sit in on this one, as usual. Or you play it on your own, and it counts on the ladder. Up to you.'
+
 /** Best-of-threes lost in a week before Pemberton offers his help on Saturday. */
 export const HELP_AFTER_SERIES_LOST = 2
 

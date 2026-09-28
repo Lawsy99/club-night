@@ -17,7 +17,9 @@ import {
   beginTrial,
   completeLesson,
   drawRule,
+  MUST_WIN,
   NEW_PROGRESS,
+  withHelpChoice,
   startNextAct,
   storyPlayed,
   nextStep,
@@ -201,7 +203,15 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
     const opponentId = characterOpponentId(pathGame.opponent)
     // Head-to-head so far, for dialogue ("Third time lucky…").
     const h2h = await headToHead(opponentId).catch(() => ({ played: 0, wins: 0, losses: 0, theirStreak: 0 }))
-    const record = newGameRecord(nextPlayerColour(game), opponentId, pathGame.stage, pathGame.rating)
+    // Full help (Settings): every game except trial night, and a must-win game
+    // only when the player said yes to Pemberton's help (so it isn't rated).
+    const unlimited =
+      !!settings.unlimitedHelp &&
+      pathGame.kind !== 'trial' &&
+      pathGame.kind !== 'exhibition' &&
+      (!MUST_WIN.includes(pathGame.kind) || !!pathGame.helped)
+    const fresh = newGameRecord(nextPlayerColour(game), opponentId, unlimited ? 'assisted' : pathGame.stage, pathGame.rating)
+    const record = unlimited ? { ...fresh, unlimited } : fresh
 
     // About one Tuesday in three, Pemberton announces a trap and plays it.
     const trap =
@@ -311,7 +321,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
     setView('home')
   }
 
-  const next = nextStep(progress)
+  const next = withHelpChoice(nextStep(progress), !!settings.unlimitedHelp)
 
   if (next.kind === 'welcome' && view !== 'deck' && view !== 'history') {
     return (

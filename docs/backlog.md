@@ -6,18 +6,6 @@ When an item is built, move it to "Done" with the date.
 
 ## Waiting
 
-### 1. "Unlimited help" setting (Joseph, 28 Sep 2026)
-A switch in Settings that turns on unlimited hints, the evaluation bar, move
-ratings and takebacks in every game, Saturday matches included.
-
-- Small to build: the help each game gets already comes from one place (the
-  help stages), so the switch can raise every game to full help.
-- To decide: do games played with it on still count towards the rating? Suggested:
-  no, as with Pemberton's Saturday help, otherwise the rating stops meaning
-  anything and opponents (who follow your rating) drift. The story still moves on.
-- To decide: should Pemberton or the review mention it ("with help"), as Past
-  games does for the helped Saturday game? Suggested: yes, a quiet label only.
-
 ### 2. Accounts, to play the same game on several devices (Joseph, 28 Sep 2026)
 - A big change: the design is "all saving on the device, no accounts, no
   servers" (design document, Saving). Accounts need an online service to hold
@@ -43,4 +31,7 @@ Builds on docs/learning-plan.md, item 2 ("A thinking habit: blunder check").
 
 ## Done
 
-(nothing yet)
+- 28 Sep 2026: "Full help" setting. Settings > Full help: unlimited hints and
+  takebacks, move ratings and the evaluation bar in every game. Before each
+  must-win game Pemberton asks; helped games move the story on but are not
+  rated (logic/path.ts withHelpChoice, data/helpStages.ts UNLIMITED_HELP).

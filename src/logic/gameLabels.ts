@@ -15,6 +15,6 @@ const KIND_LABELS: Record<string, string> = {
 const STAGE_LABELS: Record<string, string> = { assisted: 'Coached', guided: 'Practice', real: 'Match' }
 
 export function gameKindLabel(game: Pick<GameRecord, 'path' | 'stage'>): string {
-  if (game.path?.helped) return 'Best of three, with Pemberton’s help'
+  if (game.path?.helped) return `${KIND_LABELS[game.path.kind] ?? 'Match'}, with Pemberton’s help`
   return (game.path && KIND_LABELS[game.path.kind]) ?? STAGE_LABELS[game.stage] ?? 'Game'
 }

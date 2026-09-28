@@ -161,6 +161,31 @@ export function SettingsScreen({ settings, onChange, onBack, whereTheyAre }: Pro
             </button>
           ))}
         </div>
+
+      </section>
+
+      {/* Full help (Joseph, Sep 2026): for anyone who'd rather learn with the help on. */}
+      <section>
+        <h2>Full help</h2>
+        <div className="settings-options" role="radiogroup" aria-label="Full help">
+          {[false, true].map((on) => (
+            <button
+              key={String(on)}
+              type="button"
+              role="radio"
+              aria-checked={!!settings.unlimitedHelp === on}
+              className={!!settings.unlimitedHelp === on ? 'selected' : undefined}
+              onClick={() => onChange({ ...settings, unlimitedHelp: on })}
+            >
+              <strong>{on ? 'On' : 'Off'}</strong>
+              <span>
+                {on
+                  ? 'Unlimited hints and takebacks, move ratings and the evaluation bar in every game. Before each match, Pemberton asks if you want it: helped wins move the story on, but don’t change your rating.'
+                  : 'Help as the club gives it: most on Tuesday, some on Thursday, none on Saturday.'}
+              </span>
+            </button>
+          ))}
+        </div>
       </section>
 
       <section>

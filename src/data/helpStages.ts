@@ -62,6 +62,24 @@ export const HELP_STAGES: Record<HelpStageId, HelpStage> = {
 }
 
 /**
+ * The "Full help" setting (Joseph, Sep 2026): the coached game's help with no
+ * limits. Games keep the 'assisted' stage id, so everything that goes with it
+ * (hints, "are you sure?", seeing the better move) works the same.
+ */
+export const UNLIMITED_HELP: HelpStage = {
+  ...HELP_STAGES.assisted,
+  label: 'Full help',
+  summary: 'unlimited hints and takebacks',
+  hints: Infinity,
+  takebacks: Infinity,
+}
+
+/** The help a saved game gets. */
+export function helpFor(game: { stage: HelpStageId; unlimited?: boolean }): HelpStage {
+  return game.unlimited ? UNLIMITED_HELP : HELP_STAGES[game.stage]
+}
+
+/**
  * How often Pemberton queries a bad move before it's played. Not every time:
  * he lets you make some mistakes, and talks about them afterwards.
  */

@@ -13,6 +13,7 @@ import {
   upgradeProgress,
   wantsWarmup,
   weekOpponentRating,
+  withHelpChoice,
   type Progress,
 } from './path'
 
@@ -236,6 +237,22 @@ describe('the path', () => {
     expect(weekOpponentRating(strongFixed, 'graham')).toBe(1260)
     // Practice night keeps fixed players at their own number.
     expect(opponentRating(strongFixed, 'graham')).toBe(1600)
+  })
+
+  it('with Full help on, Pemberton asks before a must-win game; helped games are not rated', () => {
+    const p = { ...readyForPractice(), friendlies: { played: 3, wonGuided: false } } as Progress
+    expect(withHelpChoice(nextStep(p), false)).toEqual(nextStep(p))
+    const step = withHelpChoice(nextStep(p), true)
+    if (step.kind !== 'play') throw new Error('expected a game')
+    expect(step.game).toMatchObject({ kind: 'match' })
+    expect(step.game.helped).toBeUndefined()
+    expect(step.helpOffer).toMatchObject({ kind: 'match', helped: true })
+    const before = p.rating!.rating
+    expect(recordGame(p, step.helpOffer!, true, null).rating!.rating).toBe(before)
+    expect(recordGame(p, step.game, true, null).rating!.rating).toBeGreaterThan(before)
+    // Practice games aren't asked about.
+    const practice = withHelpChoice(nextStep(readyForPractice()), true)
+    expect(practice.kind === 'play' && practice.helpOffer).toBeFalsy()
   })
 
   it('shows on the club ladder the same number they play at', () => {
