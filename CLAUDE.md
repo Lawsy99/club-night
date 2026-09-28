@@ -98,5 +98,6 @@ band; fixed strengths are for practice night only; style is what varies (logic/p
 weekOpponentRating, roundRating, finalRating). Moves are written in words below 1500 (logic/notation.ts). Review ends with the step-through, then Home.
 Testers: friends and family now play the live link; feedback comes via Settings >
 Feedback through the phone's share sheet (no address built into the app).
-Next: Joseph's answers on those questions, tester feedback, the rest of
+Backlog: docs/backlog.md (Joseph's requests between sessions, with what needs deciding).
+Next: the backlog, Joseph's answers on those questions, tester feedback, the rest of
 docs/learning-plan.md, Act 3.
