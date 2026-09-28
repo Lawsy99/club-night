@@ -7,7 +7,7 @@
 import { errorKind, type ErrorKind } from './explain'
 import type { Colour } from './game'
 import { isMissedChance } from './mistakeCards'
-import { reviewMoves, type PositionEval, type ReviewedMove } from './review'
+import { bestMoveOfGame, reviewMoves, type PositionEval, type ReviewedMove } from './review'
 import { phaseOf, type Phase } from './stats'
 
 export type NotesInput = {
@@ -214,13 +214,52 @@ export function coachNotes(input: NotesInput): string[] {
     if (best[1] - worst[1] >= 12) add(4, `Your ${best[0]} was the best part. The ${worst[0]} is where it went.`)
   }
 
-  // 6. A clean game is worth saying so.
-  if (errors.length === 0 && moves.length >= 40) add(5, 'No mistakes, no blunders. That’s how games are won at any level.')
+  // 6. Something you did well, to keep doing (Joseph, Sep 2026). Always from
+  // this game, always last, so the notes end on what to repeat.
+  const good = somethingGood(reviewed, errors, player, won, firstWinning?.ply ?? null, phaseAccuracy(reviewed, player).opening)
+  const keep = good ? 2 : 3
 
-  return notes
-    .sort((a, b) => a.rank - b.rank)
-    .slice(0, 3)
-    .map((n) => n.text)
+  return [
+    ...notes
+      .sort((a, b) => a.rank - b.rank)
+      .slice(0, keep)
+      .map((n) => n.text),
+    ...(good ? [good] : []),
+  ]
+}
+
+/**
+ * One thing that went well, the most valuable first. Each is measured from
+ * the game: the engine's grades, material really won in the game (bestMoveOfGame),
+ * and the moves played. Nothing is said if nothing qualifies.
+ */
+function somethingGood(
+  reviewed: readonly ReviewedMove[],
+  errors: readonly PlayerError[],
+  player: Colour,
+  won: boolean | null,
+  aheadFrom: number | null,
+  openingAccuracy: number | null,
+): string | null {
+  const mine = reviewed.filter((m) => m.mover === player)
+  if (errors.length === 0 && reviewed.length >= 40) return 'No mistakes, no blunders. That’s how games are won at any level.'
+  if (won === true && aheadFrom !== null && !errors.some((e) => e.move.ply >= aheadFrom)) {
+    return `From move ${moveNo(aheadFrom)} you were ahead, and you didn’t give it back. Turning an advantage into a win is a skill in itself.`
+  }
+  const best = bestMoveOfGame(reviewed, player)
+  if (best?.punished) {
+    return `On move ${moveNo(best.move.ply)} they slipped, and you made them pay for it. That’s the habit: after every move of theirs, ask what it left loose.`
+  }
+  if (mine.length >= 15 && !mine.some((m) => m.rating === 'blunder')) {
+    return 'No blunders: you never gave anything away for nothing. Whatever you’re checking before you move, keep checking it.'
+  }
+  const openingErrors = errors.some((e) => e.move.ply < 20)
+  if (!openingErrors && openingAccuracy !== null && openingAccuracy >= 80) {
+    return 'A clean opening: your first ten moves gave nothing away. Keep starting games the same way.'
+  }
+  const castled = mine.find((m) => m.ply < 20 && m.san.startsWith('O-O'))
+  if (castled) return `You castled by move ${moveNo(castled.ply)}, so your king was safe before the fighting started. Keep doing that.`
+  return null
 }
 
 /** Your average accuracy in each phase of this game (null with fewer than four moves in it). */

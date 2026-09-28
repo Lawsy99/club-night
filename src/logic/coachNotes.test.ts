@@ -36,6 +36,22 @@ describe("Pemberton's notes after a game", () => {
     expect(notes[0]).toMatch(/^By move 3 you were well ahead on the board\. Being ahead still has to be turned into a win/)
   })
 
+  it('ends on something done well, when there really was something', () => {
+    // Black took the gifts, never slipped, and won.
+    const notes = coachNotes({ moves, evals, player: 'b', won: true })
+    expect(notes.at(-1)).toBe('From move 3 you were ahead, and you didn’t give it back. Turning an advantage into a win is a skill in itself.')
+    // White blundered twice and never castled: no praise made up.
+    const white = coachNotes({ moves, evals, player: 'w', won: false })
+    expect(white.join(' ')).not.toMatch(/Keep|skill|habit: after/)
+  })
+
+  it('praises castling early, from the moves played', () => {
+    const castled = parseLine('1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. O-O Nf6 5. d3 d6 6. c3 O-O 7. h3 h6 8. Re1 a6')
+    const flat: PositionEval[] = Array.from({ length: castled.length + 1 }, () => ({ cp: 20, bestMove: null }))
+    const notes = coachNotes({ moves: castled, evals: flat, player: 'w', won: null })
+    expect(notes.at(-1)).toMatch(/^(No blunders|A clean opening|You castled by move 4)/)
+  })
+
   it('stays quiet about games too short to say anything', () => {
     expect(coachNotes({ moves: moves.slice(0, 8), evals: evals.slice(0, 9), player: 'w', won: false })).toEqual([])
   })
