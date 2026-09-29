@@ -546,6 +546,10 @@ Joseph: every mistake should feel like a chance to learn, not a failure. So each
 - **In the coached game:** when you make the very mistake you're working on, he says "That's the one we're working on this week."
 - **After every game:** his first review note checks it, with the moves where it slipped ("Loose pieces, this week's job: one this game, on move 12. Down from about two a game. Getting there."). His other notes don't repeat it.
 
+### Key moments (Sep 2026)
+
+Joseph: you can't think hard about every move (on the bus, say), so the game should say when one really matters. On the player's turn the engine compares the two best moves; when the best is far better than the next (0.2 in winning chances: the only move that holds, or the one that wins something), the opponent says a line in character, from the `key_moment` lines in content/dialogue.csv. It never says what to play, or whether it's a danger or a chance. At most two a game, twelve moves apart, not in the first six moves, not for obvious recaptures, not when the game is already decided. Not in must-win games played without help (Saturday stays help-free) or on trial night (logic/keyMoment.ts).
+
 ### The review
 
 1. **The character's post-game bubbles** (one or two), then the review opens.

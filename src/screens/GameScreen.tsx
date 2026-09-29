@@ -30,6 +30,8 @@ import { getMaia, type MaiaStatus } from '../engine/maia/maia'
 import { chooseOpponentMove } from '../engine/opponent'
 import { useAnalysis } from '../engine/useAnalysis'
 import { useMoveRating } from '../engine/useMoveRating'
+import { getEngine } from '../engine/stockfish'
+import { isKeyMoment, KEY_FROM_PLY } from '../logic/keyMoment'
 import { useWakeLock } from './useWakeLock'
 import { assessMove, describeBlunder } from '../logic/blunder'
 import { flipScore, scoreFor, toCentipawns } from '../logic/evaluation'
@@ -194,6 +196,32 @@ export function GameScreen({
     playerName,
     storyOnly: chatter === 'off',
   })
+  // Key moments (Joseph, Sep 2026): when one move is far better than the
+  // rest, the opponent says so, in character, never saying what to play. You
+  // can't think hard every move on the bus; this says when to. Not in
+  // must-win games without help (Saturday stays help-free), nor trial night.
+  const keyPlies = useRef<number[]>([])
+  useEffect(() => {
+    if (!playersTurn || stage.id === 'real' || !opponent.character || showScouting || viewPly !== null) return
+    const ply = game.moves.length
+    if (ply < KEY_FROM_PLY) return
+    let cancelled = false
+    getEngine()
+      .search(fen, { multiPv: 2, depth: 12, movetime: 500 })
+      .then(({ lines }) => {
+        if (cancelled) return
+        const lastMove = last ? { uci: last.from + last.to, captured: !!last.captured } : null
+        if (!isKeyMoment({ lines, ply, lastMove, earlier: keyPlies.current })) return
+        keyPlies.current = [...keyPlies.current, ply]
+        dialogue.speak('key_moment')
+      })
+      .catch(() => undefined)
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per position
+  }, [fen, playersTurn])
+
   // The opponent's face: the expression of whatever they've just said, else
   // how the game is going for them (or went, once it's over).
   const moods = opponent.character ? APPEARANCES[opponent.character.id]?.moods : undefined

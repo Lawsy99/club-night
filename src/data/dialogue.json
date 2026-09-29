@@ -7835,5 +7835,265 @@
   },
   "weight": 1,
   "once": false
+ },
+ {
+  "id": "marjorie-key-01",
+  "character": "marjorie",
+  "trigger": "key_moment",
+  "text": "I'd have a good long look at this one, dear. I would.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "marjorie-key-02",
+  "character": "marjorie",
+  "trigger": "key_moment",
+  "text": "This is where I'd put my tea down.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-key-01",
+  "character": "dex",
+  "trigger": "key_moment",
+  "text": "Chat, this is the move. Everything hangs on this one.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "dex-key-02",
+  "character": "dex",
+  "trigger": "key_moment",
+  "text": "Big moment. Even in bullet I'd think here.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-key-01",
+  "character": "oscar",
+  "trigger": "key_moment",
+  "text": "(Oscar stops swinging his legs and watches the board.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "oscar-key-02",
+  "character": "oscar",
+  "trigger": "key_moment",
+  "text": "(Oscar sits up. He's seen something. He isn't saying what.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-key-01",
+  "character": "clive",
+  "trigger": "key_moment",
+  "text": "This one's not as quiet as it looks.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "clive-key-02",
+  "character": "clive",
+  "trigger": "key_moment",
+  "text": "I'd take my time here, if I were you. I usually don't. That's why I'd know.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-key-01",
+  "character": "priya",
+  "trigger": "key_moment",
+  "text": "This is a critical position. The book would say so, anyway.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "priya-key-02",
+  "character": "priya",
+  "trigger": "key_moment",
+  "text": "There's a note about positions like this in chapter nine. Most people get it wrong.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-key-01",
+  "character": "graham",
+  "trigger": "key_moment",
+  "text": "For the record, I'd consider this move carefully.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "graham-key-02",
+  "character": "graham",
+  "trigger": "key_moment",
+  "text": "Touch-move applies. I only mention it because of this position.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-key-01",
+  "character": "toby",
+  "trigger": "key_moment",
+  "text": "Ooh. Interesting one, this. Take your time, mate.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "toby-key-02",
+  "character": "toby",
+  "trigger": "key_moment",
+  "text": "No rush. Honestly. It's a big one, though.",
+  "expression": "smug",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-key-01",
+  "character": "terry",
+  "trigger": "key_moment",
+  "text": "This is what I call a moment. Capital M.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "terry-key-02",
+  "character": "terry",
+  "trigger": "key_moment",
+  "text": "I'd think about this one. I wouldn't, but I'd advise it.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "ray-key-01",
+  "character": "ray",
+  "trigger": "key_moment",
+  "text": "This is the one I'd stop the juniors on. Have a proper look.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "ray-key-02",
+  "character": "ray",
+  "trigger": "key_moment",
+  "text": "Sit on your hands for a minute. That's what I tell them.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "sheila-key-01",
+  "character": "sheila",
+  "trigger": "key_moment",
+  "text": "Even I can tell this one matters. Go on, have a think.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "sheila-key-02",
+  "character": "sheila",
+  "trigger": "key_moment",
+  "text": "I'll wait. I'm in no hurry. The raffle's not till nine.",
+  "expression": "pleased",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "bill-key-01",
+  "character": "bill",
+  "trigger": "key_moment",
+  "text": "Positions like this decided the 1983 club final. Have a look.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "bill-key-02",
+  "character": "bill",
+  "trigger": "key_moment",
+  "text": "Don't rush this one. Nobody ever regretted thinking.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-key-01",
+  "character": "malcolm",
+  "trigger": "key_moment",
+  "text": "(Malcolm stops writing and looks at the board.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "malcolm-key-02",
+  "character": "malcolm",
+  "trigger": "key_moment",
+  "text": "(Malcolm puts his pen down.)",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "pemberton-key-01",
+  "character": "pemberton",
+  "trigger": "key_moment",
+  "text": "This one matters. Have a proper look before you touch anything.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
+ },
+ {
+  "id": "pemberton-key-02",
+  "character": "pemberton",
+  "trigger": "key_moment",
+  "text": "Slow down here. Checks, captures, threats. Both sides.",
+  "expression": "neutral",
+  "conditions": {},
+  "weight": 1,
+  "once": false
  }
 ]

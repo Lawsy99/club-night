@@ -30,6 +30,11 @@ export type Trigger =
   /** their king goes for a walk up the board (Terry). */
   | 'king_walk'
   /**
+   * The next move really matters: one move is far better than the rest
+   * (logic/keyMoment.ts). Said on the player's turn; never says what to play.
+   */
+  | 'key_moment'
+  /**
    * The character says what they're planning. Not used in games since Sep
    * 2026 (fixed text often wasn't true on the board); kept for the file format.
    */
