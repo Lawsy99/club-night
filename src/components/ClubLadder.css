@@ -4,10 +4,11 @@
   flex-direction: column;
   gap: 8px;
   width: 100%;
-  padding: 0 0 4px;
+  padding: 14px 16px 16px;
   border: none;
-  border-radius: 0;
-  background: none;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--lift);
   color: var(--text);
   font: inherit;
   text-align: left;
@@ -19,7 +20,7 @@
   justify-content: space-between;
   align-items: baseline;
   padding-bottom: 6px;
-  border-bottom: 1px solid var(--text);
+  border-bottom: 1px solid var(--line);
   font-family: var(--serif);
   font-size: 20px;
 }
@@ -86,6 +87,8 @@
 .ladder-row.is-you {
   box-shadow: inset 3px 0 0 var(--brass);
   padding-left: 8px;
+  border-radius: 6px;
+  background: rgba(217, 172, 85, 0.12);
   font-weight: 700;
 }
 
@@ -156,8 +159,8 @@
 }
 
 .ladder-bar {
-  height: 3px;
-  border-radius: 0;
+  height: 6px;
+  border-radius: 3px;
   background: var(--line-soft);
   overflow: hidden;
 }

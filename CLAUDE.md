@@ -101,8 +101,8 @@ Feedback through the phone's share sheet (no address built into the app).
 Learning-first week (Sep 2026): Saturday is first to two wins, no loss limit; Pemberton's
 weekly focus (logic/weeklyFocus.ts) is set from real mistakes, shown on Home, flagged in
 the coached game and checked first in every review.
-Look (Sep 2026): "club stationery" (paper, ink, Caslon, typewriter notices, ruled lists,
-stamped results; tokens in src/index.css; see design doc "The look").
+Look (Sep 2026): "cozy club mat" (forest green felt, brass lamplight, cream cards, Caslon,
+typewriter notices, dotted ladder, stamped results; tokens in src/index.css; design doc "The look").
 Backlog: docs/backlog.md (Joseph's requests between sessions, with what needs deciding).
 Next: the backlog, Joseph's answers on those questions, tester feedback, the rest of
 docs/learning-plan.md, Act 3.

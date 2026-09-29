@@ -10,8 +10,7 @@
   align-items: flex-end;
   justify-content: space-between;
   padding-bottom: 12px;
-  /* The masthead, like the top of the club newsletter */
-  border-bottom: 3px double var(--text);
+  border-bottom: 1px solid var(--line);
 }
 
 .home-kicker {
@@ -48,8 +47,10 @@
 
 .rating-change {
   margin: 0;
-  padding: 2px 0 2px 12px;
-  border-left: 3px solid currentColor;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--lift);
   font-family: var(--serif);
   font-size: 17px;
 }
@@ -137,12 +138,10 @@
   display: grid;
   grid-auto-columns: 1fr;
   grid-auto-flow: column;
-  gap: 0;
+  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
-  /* The fixture card: one ruled box, a column a night */
-  border: 1px solid var(--text);
 }
 
 .club-week-day {
@@ -150,9 +149,11 @@
   flex-direction: column;
   align-items: center;
   gap: 1px;
-  min-height: 56px;
+  min-height: 58px;
   padding: 8px 4px 7px;
-  background: none;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--lift);
   font-size: 14px;
   text-align: center;
 }
@@ -176,9 +177,10 @@
 }
 
 .club-week-day.today {
-  background: var(--buff);
+  background: var(--brass);
   color: var(--ink);
   font-weight: 600;
+  box-shadow: 0 0 0 1px rgba(255, 220, 150, 0.25), 0 6px 20px rgba(217, 172, 85, 0.3);
 }
 
 .club-week-day.today .club-week-dow {
@@ -214,6 +216,8 @@
 
 .club-week-day.later {
   color: var(--muted-dim);
+  background: rgba(38, 66, 47, 0.5);
+  box-shadow: none;
 }
 
 .next-record {
@@ -228,9 +232,10 @@
   flex-direction: column;
   gap: 10px;
   padding: 18px 18px 20px;
-  border-radius: var(--radius);
+  border-radius: 18px;
   background: var(--buff);
   color: var(--ink);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
 }
 
 .next-kind {
@@ -297,7 +302,7 @@
   margin-top: 4px;
   border: none;
   border-radius: var(--radius);
-  background: var(--buff);
+  background: var(--brass);
   color: var(--ink);
   font: inherit;
   font-weight: 600;
@@ -321,9 +326,11 @@
 
 /* Milestones: quiet, one line each, gone after the next game */
 .milestone-banner {
-  padding: 10px 14px;
+  padding: 12px 14px;
   border-left: 3px solid var(--brass);
+  border-radius: var(--radius);
   background: var(--card);
+  box-shadow: var(--lift);
 }
 
 .milestone-banner p {
@@ -341,16 +348,17 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 14px 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  padding: 14px;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--lift);
 }
 
 .missing-name button {
   min-height: 44px;
   border: none;
   border-radius: var(--radius);
-  background: var(--buff);
+  background: var(--brass);
   color: var(--ink);
   font: inherit;
   font-weight: 600;
@@ -399,12 +407,11 @@
   align-items: center;
   gap: 12px;
   min-height: 64px;
-  padding: 12px 0;
+  padding: 12px 14px;
   border: none;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  border-radius: 0;
-  background: none;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--lift);
   color: var(--text);
   font: inherit;
   text-align: left;
@@ -431,7 +438,10 @@
 .home-links {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--text);
+  padding: 2px 16px;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--lift);
 }
 
 .home-links button {
@@ -511,5 +521,9 @@
 }
 
 .club-week-day + .club-week-day {
-  border-left: 1px solid var(--line);
+  border-left: none;
+}
+
+.home-links button:last-child {
+  border-bottom: none;
 }

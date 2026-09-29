@@ -5,9 +5,11 @@
   max-width: 520px;
   margin: 0 auto;
   box-sizing: border-box;
-  /* The mat's printed border (colour set by the board style) */
-  padding: 5px;
-  border-radius: 4px;
+  /* The mat on the table: its printed border, soft corners and a shadow beneath */
+  padding: 6px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
   /* Stop iOS treating drags on the board as page scrolls or text selection */
   touch-action: none;
   user-select: none;

@@ -1,40 +1,43 @@
 /* App-wide base styles. Designed for iPhone first (390 × 844).
  *
- * The look is "club stationery" (Sep 2026 overhaul): the paperwork of an
- * English chess club. Off-white paper and black ink, thin printed rules
- * instead of boxes, Caslon (the English printer's typeface) for headings and
- * figures, a typewriter for Graham's notices, one deep club green for what
- * you can press, and a rubber-stamp red kept for blunders and losses.
+ * The look is "cozy club mat" (Sep 2026, Joseph: "it should be really cozy").
+ * Evening at the club: deep forest green like the felt of the roll-up mat,
+ * a warm brass glow from the lamp overhead, cream text, and soft felt cards
+ * with gentle shadows. Caslon for headings and figures, a typewriter for
+ * Graham's notices. Tonight's session sits on a cream card in dark ink.
  *
- * The token names are older than the look: --buff and --ink are still "the
- * feature surface" and "text on it" (now club green and paper).
+ * Token names: --buff and --ink are "the feature surface" (cream) and "text
+ * on it" (dark green ink).
  */
 :root {
-  /* Paper, and the rules printed on it */
-  --bg: #f2ede3;
-  --card: #ebe4d6;
-  --panel: #e5ddcc;
-  --line-soft: #ddd4c2;
-  --line: #bfb39b;
-  /* The feature surface (what to do next) and the text on it */
-  --buff: #1f4a37;
-  --ink: #f5f0e6;
-  --ink-muted: rgba(245, 240, 230, 0.72);
-  --ink-line: rgba(245, 240, 230, 0.35);
-  /* The accent: club green ink, for headings' small print and what's current */
-  --brass: #1f4a37;
-  /* Ink on paper */
-  --text: #1c1a16;
-  --muted: #5f584c;
-  --muted-dim: #91887a;
+  /* The felt, darkest to lightest */
+  --bg: #1c3326;
+  --card: #26422f;
+  --panel: #2d4c38;
+  --line-soft: #33543f;
+  --line: #4a6b55;
+  /* The feature surface: cream, like the light squares of the mat, and dark ink on it */
+  --buff: #efe3c6;
+  --ink: #213222;
+  --ink-muted: rgba(33, 50, 34, 0.72);
+  --ink-line: rgba(33, 50, 34, 0.28);
+  /* Brass: the lamp, and the one accent */
+  --brass: #d9ac55;
+  /* Text on the felt */
+  --text: #f1e4c8;
+  --muted: #bdbb9f;
+  --muted-dim: #86917b;
   /* Results and grades */
-  --good: #2e6b3c;
-  --bad: #a8322a;
-  --stamp: #a8322a;
+  --good: #8cc98a;
+  --bad: #e7896a;
+  --stamp: #e7896a;
 
   --serif: 'Libre Caslon Text', Georgia, 'Times New Roman', serif;
   --mono: 'Courier Prime', 'Courier New', monospace;
-  --radius: 3px;
+  /* Soft, felt-edged corners */
+  --radius: 14px;
+  /* Cards sit on the felt with a soft shadow, not a hard line */
+  --lift: 0 1px 0 rgba(255, 240, 200, 0.05) inset, 0 6px 18px rgba(0, 0, 0, 0.22);
 
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
@@ -46,12 +49,17 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* The lamp over the table: a warm glow at the top of every screen, and the
+   faintest grain of felt. Fixed, so it stays put while the page scrolls. */
 body {
   margin: 0;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(120% 55% at 50% -12%, rgba(233, 178, 88, 0.2), rgba(233, 178, 88, 0) 62%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-attachment: fixed;
 }
 
-/* Headings are set, not styled: Caslon, no tracking games. */
 h1,
 h2 {
   font-family: var(--serif);
@@ -63,11 +71,11 @@ h2 {
   font-size: 20px;
 }
 
-/* Section heads as the club programme sets them: plain Caslon over a rule. */
+/* Section heads: Caslon over a soft rule. */
 section > h2:first-child {
   margin: 0 0 8px;
   padding-bottom: 6px;
-  border-bottom: 1px solid var(--text);
+  border-bottom: 1px solid var(--line);
   font-size: 20px;
   line-height: 1.2;
 }
@@ -86,18 +94,17 @@ button {
   box-sizing: border-box;
 }
 
-/* Slips of paper: what people say, and Pemberton's notes and reports. A
-   lighter slip with a hairline edge, in Caslon, rather than a green block
-   (green is kept for what you press). Redefining the feature-surface colours
-   here means everything inside (buttons, pointers) follows. The doubled class
+/* Notes: what people say, and Pemberton's notes and reports, on warm cream
+   notepaper with a soft shadow. Redefining the feature-surface colours here
+   means everything inside (buttons, pointers) follows. The doubled class
    outranks each component's own rule, whatever order the files load in. */
 :root :is(.talk-bubble, .speech-bubble, .scouting-card, .demo-caption, .story-study-page) {
-  --buff: #fbf8f1;
-  --ink: #1c1a16;
-  --ink-muted: #5f584c;
-  --ink-line: #bfb39b;
-  border: 1px solid var(--line);
-  box-shadow: none;
+  --buff: #f4e9cf;
+  --ink: #2a2a20;
+  --ink-muted: #625d4b;
+  --ink-line: #c9bb98;
+  border: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
   font-family: var(--serif);
 }
 
@@ -105,7 +112,6 @@ button {
   font-size: 16px;
 }
 
-/* On the slips, buttons are ink, not green. */
 :root :is(.talk-bubble, .speech-bubble, .scouting-card) button {
   font-family: system-ui, -apple-system, sans-serif;
 }

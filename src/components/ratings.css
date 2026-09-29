@@ -1,28 +1,28 @@
-/* Move-rating colours, shared by the game screen and the review. Tuned for
-   the paper background (Sep 2026 overhaul): greens for good moves, then
-   ochre, orange and stamp red for the errors. They never carry meaning alone:
-   every use also shows the label or the chess annotation (?!, ?, ??). */
+/* Move-rating colours, shared by the game screen and the review, tuned for
+   the dark felt. Greens for good moves, then amber, orange and red for the
+   errors. They never carry meaning alone: every use also shows the label or
+   the chess annotation (?!, ?, ??). */
 .rating-best {
-  --rating: #2e6b3c;
-  --rating-ink: #ffffff;
+  --rating: #8cc98a;
+  --rating-ink: #1c2a1d;
 }
 
 .rating-good {
-  --rating: #7d9a63;
-  --rating-ink: #ffffff;
+  --rating: #c9d8b8;
+  --rating-ink: #1c2a1d;
 }
 
 .rating-inaccuracy {
-  --rating: #d9a21b;
-  --rating-ink: #1c1a16;
+  --rating: #f2b53a;
+  --rating-ink: #2a2110;
 }
 
 .rating-mistake {
-  --rating: #cc6329;
-  --rating-ink: #ffffff;
+  --rating: #e7896a;
+  --rating-ink: #2a160f;
 }
 
 .rating-blunder {
-  --rating: #a8322a;
+  --rating: #d6463d;
   --rating-ink: #ffffff;
 }
