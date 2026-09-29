@@ -67,7 +67,7 @@ Terry (practice-night comic relief, plays the Bongcloud/Grob/traps sincerely) ad
 Coached game (Sep 2026): Pemberton's "are you sure?" (some bad moves, uses one of 3
 takebacks), comments on mistakes/missed chances, 3 spoken hints; no best line.
 In-game lines only react to the board (no idle stage directions or fixed plan lines).
-Draws: practice/coached count and move on; best-of-three draws void; knockouts replay.
+Draws: practice/coached count and move on; Saturday match draws void (first to two wins, no loss limit); knockouts replay.
 Pause a game (nothing else starts until it's finished); extra coached games before a match.
 Story (Sep 2026): weekly Tue/Thu "Around the club" lines + Saturday "On the way out"
 (data/weekStory.ts), monthly cutscenes (data/cutscenes.ts, drawn in SceneArt.tsx),

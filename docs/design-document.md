@@ -140,7 +140,7 @@ Fixed characters (Marjorie, Clive, Graham) and the background members keep the r
 
 **The week's person (Joseph, Sep 2026: nobody should get stuck early and stop seeing the story).** The person you play on Saturday is adjusted for their week, on Thursday and Saturday alike, so their number is the same all week (`weekOpponentRating` in logic/path.ts):
 
-- Act 1, weeks 1 to 7: at least 150 below the player in weeks 1 and 2, then 125, 125, 100, 100 and 60 below. At 150 below, the player wins about four best-of-threes in five. Anyone already further below stays as they are.
+- Act 1, weeks 1 to 7: at least 150 below the player in weeks 1 and 2, then 125, 125, 100, 100 and 60 below. At 150 below, the player wins about 70% of games. Anyone already further below stays as they are.
 - From week 8, and in later acts: between 50 below and 60 above the player, following the player's rating week by week.
 - The rest of the week stays demanding: Thursday's stronger practice game, Toby's visits and Pemberton at the player's level are unchanged.
 
@@ -220,7 +220,7 @@ There are two kinds of game, mirroring real club life: friendlies are practice w
 Rules for every game:
 
 - **Colours alternate** from game to game across the whole app. The player never chooses.
-- **Draws** (revised Sep 2026, Joseph), including agreed draws, repetitions and stalemates: in practice games and the coached game a draw counts as played and you move on. In the best of three a draw doesn't count either way; the score stands and you play the next game. Only knockout games (trial night, cup rounds, the final) are replayed, because someone has to win.
+- **Draws** (revised Sep 2026, Joseph), including agreed draws, repetitions and stalemates: in practice games and the coached game a draw counts as played and you move on. In the Saturday match a draw doesn't count either way; the score stands and you play the next game. Only knockout games (trial night, cup rounds, the final) are replayed, because someone has to win.
 - The player can resign at any time.
 
 ### Clocks and thinking time
@@ -260,7 +260,7 @@ Dialogue about clocks (pressing the clock with the wrong hand, starting your clo
 
 ### The help stages
 
-Which game gets which stage (Joseph, Sep 2026): **Coached** (full help) is the Tuesday game with Pemberton; **Practice** is Thursday's practice games; **Real** is Saturday's best of three, the cup, the boss and trial night. (In the code the stages are still called assisted, guided and real.)
+Which game gets which stage (Joseph, Sep 2026): **Coached** (full help) is the Tuesday game with Pemberton; **Practice** is Thursday's practice games; **Real** is Saturday's match, the cup, the boss and trial night. (In the code the stages are still called assisted, guided and real.)
 
 | Feature | Coached | Practice | Real |
 | --- | --- | --- | --- |
@@ -311,7 +311,7 @@ Revised Sep 2026: each act is a season of sixteen weeks. Acts 1 and 2 are built 
 | --- | --- | --- |
 | Tuesday | Coaching night | Three warm-ups from the player's own recent errors (whenever any are waiting; one answered correctly is gone for good), then Pemberton's lesson and puzzles, then a coached game against Pemberton, who plays at exactly the player's level, with full help (hints, takebacks, the best line, his running commentary). Unrated |
 | Thursday | Practice night | Three practice games, light help: the week's person first, then one stronger and one weaker from whoever's in (regulars already met, Ray after junior night, Sheila, Bill). Every so often Toby turns up. Saturday opens after the three |
-| Saturday | Match day | Best of three against the week's person (Joseph's decision), each game rated, no help. First to two takes the week; losing two means the series is played again from 0–0 |
+| Saturday | Match day | First to two wins against the week's person, each game rated, no help. No limit on losses (Joseph, Sep 2026: a mistake is a chance to learn, not a reason to start the match again); a loss just adds a game. After three losses in a week Pemberton offers to sit in |
 
 **The mistakes deck** is no longer a separate screen (Sep 2026, Joseph): past errors come back only as Tuesday's warm-ups, so they actually get done, and the deck never piles up. Every warm-up is a first look and is shown once only, right or wrong (no repeats, so it never becomes a memory test). A moment already retried in the post-game review never becomes a warm-up. Games the player doesn't review are checked quietly in the background afterwards, so their errors are still found.
 

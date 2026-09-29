@@ -54,7 +54,7 @@ export type Progress = {
   notice?: string | null
   /** This week's coached game against Pemberton (Tuesday, after the lesson) is done. */
   coachingDone?: boolean
-  /** This week's Saturday match: best of three (Joseph, Sep 2026). */
+  /** This week's Saturday match: first to two wins, however many losses (Joseph, Sep 2026). */
   series?: { wins: number; losses: number }
   /** Which version of the fixed characters' offsets fixedRatings came from. */
   fixedVersion?: number
@@ -72,7 +72,7 @@ export type Progress = {
   monthlyTests?: MonthlyTest[]
   /** Scouting demos and style lines already seen ("marjorie:w:0", "dex:style:1"), so none repeats. */
   scoutingSeen?: string[]
-  /** Best-of-threes lost this week (Pemberton offers help after HELP_AFTER_SERIES_LOST). */
+  /** (Older saves: best-of-threes lost in a week. No longer used; losses stay in `series`.) */
   seriesLost?: number
 }
 
@@ -122,7 +122,11 @@ export function weekBeat(p: Progress): { day: 'Tuesday' | 'Thursday'; text: stri
   return null
 }
 
-/** Saturday's match is best of three: first to two. */
+/**
+ * Saturday's match is first to two wins, with no limit on losses (Joseph,
+ * Sep 2026: a mistake should be a chance to learn, not a reason to start the
+ * week's match again). Every game is still rated, so losses still cost.
+ */
 export const SERIES_TO_WIN = 2
 
 export type RatingPoint = { at: number; rating: number }
@@ -178,7 +182,7 @@ export type PathGame = {
   extra?: boolean
   /**
    * A Saturday match played with Pemberton's help (three takebacks and the
-   * live evaluation), offered after two lost best-of-threes in a week
+   * live evaluation), offered after HELP_AFTER_LOSSES Saturday losses in a week
    * (Joseph, Sep 2026: so nobody gets stuck). Counts for the week, not the rating.
    */
   helped?: boolean
@@ -205,8 +209,8 @@ export function withHelpChoice(step: NextStep, fullHelp: boolean): NextStep {
 export const HELP_CHOICE_NOTE =
   'I can sit in on this one, as usual. Or you play it on your own, and it counts on the ladder. Up to you.'
 
-/** Best-of-threes lost in a week before Pemberton offers his help on Saturday. */
-export const HELP_AFTER_SERIES_LOST = 2
+/** Saturday games lost in a week before Pemberton offers his help. */
+export const HELP_AFTER_LOSSES = 3
 
 export type NextStep =
   | { kind: 'welcome' }
@@ -411,7 +415,7 @@ export function nextStep(p: Progress): NextStep {
     if (!unlocked) {
       return { kind: 'play', game: friendly(p.friendlies.played), optionalFriendly: null, note: null }
     }
-    // Saturday: best of three against the week's person.
+    // Saturday: first to two wins against the week's person, however long it takes.
     const series = p.series ?? { wins: 0, losses: 0 }
     const gameNo = series.wins + series.losses + 1
     const score = gameNo === 1 ? '' : ` · ${series.wins}–${series.losses}`
@@ -424,9 +428,10 @@ export function nextStep(p: Progress): NextStep {
       location: sessionLabel('match'),
       chapter: ch.id,
     }
-    // Two best-of-threes lost this week: Pemberton offers to sit in, to take
+    // Three Saturday losses this week: Pemberton offers to sit in, to take
     // or leave, game by game (Joseph, Sep 2026: so nobody gets stuck on Saturday).
-    const stuck = (p.seriesLost ?? 0) >= HELP_AFTER_SERIES_LOST
+    const stuck = series.losses >= HELP_AFTER_LOSSES
+    const toGo = SERIES_TO_WIN - series.wins
     return {
       kind: 'play',
       game: match,
@@ -435,11 +440,11 @@ export function nextStep(p: Progress): NextStep {
       extraCoaching: { ...coaching, label: 'Another game with Coach Pemberton', extra: true },
       helpOffer: stuck ? { ...match, stage: 'guided', helped: true } : null,
       note: stuck
-        ? `${nameOf(ch.opponent)} has had the better of you twice this week. If you like, I’ll sit in on this one: three takebacks, and you can see how the position stands. It won’t count towards your rating. Your call.`
-        : p.matchLost
-          ? 'Best of three again. Warm up with a practice game first, if you like.'
-          : gameNo === 1
-            ? `Best of three against ${nameOf(ch.opponent)}.`
+        ? `${nameOf(ch.opponent)} has had ${series.losses === 3 ? 'three' : series.losses} off you this week. If you like, I’ll sit in on this one: three takebacks, and you can see how the position stands. It won’t count towards your rating. Your call.`
+        : gameNo === 1
+          ? `First to two wins against ${nameOf(ch.opponent)}. However many games it takes.`
+          : series.losses > 0
+            ? `${toGo === 1 ? 'One more win' : 'Two wins'} and the week’s yours. No limit on tries. Have a look at the last game first, if you haven’t.`
             : null,
     }
   }
@@ -577,7 +582,7 @@ export function startNextAct(p: Progress): Progress {
 /**
  * What a draw means (Joseph, Sep 2026):
  * - practice and the coached game: it counts as played, and the week moves on;
- * - the best of three: it doesn't count either way (the series score stands);
+ * - Saturday's match: it doesn't count either way (the score stands);
  * - knockout games (trial night, the cup, the final): replayed, someone has to win.
  * Toby's trial-night game just ends the night.
  */
@@ -618,7 +623,7 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
   // Real games change the rating; a match played with Pemberton's help doesn't.
   let next = game.helped ? p : rateReal(p, game.rating, won)
   if (game.kind === 'match') {
-    // Best of three: each game is rated; first to two takes the week.
+    // First to two wins takes the week; each game is rated. Losses just add a game.
     const before = next.series ?? { wins: 0, losses: 0 }
     const series = { wins: before.wins + (won ? 1 : 0), losses: before.losses + (won ? 0 : 1) }
     if (series.wins >= SERIES_TO_WIN) {
@@ -638,11 +643,8 @@ export function recordGame(p: Progress, game: PathGame, won: boolean, accuracySt
         seriesLost: 0,
       }
       if (next.chapter >= actPlan(p).chapters.length) next = startCup(next)
-    } else if (series.losses >= SERIES_TO_WIN) {
-      // Lost the series: it's played again from 0–0 (and counted, for Pemberton's offer).
-      next = { ...next, matchLost: true, series: { wins: 0, losses: 0 }, seriesLost: (next.seriesLost ?? 0) + 1 }
     } else {
-      next = { ...next, series }
+      next = { ...next, series, matchLost: next.matchLost || !won }
     }
     return next
   }

@@ -1019,7 +1019,7 @@ function downloadLabel(status: MaiaStatus): string {
 function resultForPlayer(outcome: GameOutcome, game: GameRecord): string {
   if (outcome.winner === null) {
     const rule = game.path ? drawRule(game.path.kind) : 'replay'
-    return rule === 'counts' ? '' : rule === 'void' ? "A draw doesn't count in the best of three." : rule === 'replay' ? 'Draws are replayed.' : ''
+    return rule === 'counts' ? '' : rule === 'void' ? "A draw doesn't count: it's still first to two wins." : rule === 'replay' ? 'Draws are replayed.' : ''
   }
   return outcome.winner === game.playerColour ? 'You won.' : 'You lost.'
 }

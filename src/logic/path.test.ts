@@ -166,35 +166,34 @@ describe('the path', () => {
     expect(p.rating!.rating).toBeGreaterThan(before)
   })
 
-  it('plays Saturday as best of three: first to two; losing two replays it from 0–0', () => {
+  it('plays Saturday as first to two wins, with no limit on losses', () => {
     let p = readyForPractice()
     for (let i = 0; i < 3; i++) p = recordGame(p, nextGame(p).game, false, null)
+    expect(nextGame(p).note).toMatch(/First to two wins/)
     p = recordGame(p, nextGame(p).game, true, null)
     expect(nextGame(p).game.label).toMatch(/game 2 · 1–0/)
     p = recordGame(p, nextGame(p).game, false, null)
     p = recordGame(p, nextGame(p).game, false, null)
-    // Lost 1–2: the series starts again.
-    expect(p.series).toEqual({ wins: 0, losses: 0 })
-    expect(nextGame(p).note).toMatch(/Best of three again/)
-    p = recordGame(p, nextGame(p).game, true, null)
+    // 1–2: nothing starts again, it's one more win to go.
+    expect(p.series).toEqual({ wins: 1, losses: 2 })
+    expect(nextGame(p).note).toMatch(/One more win/)
     p = recordGame(p, nextGame(p).game, true, null)
     expect(p.chapter).toBe(1)
+    expect(p.series).toEqual({ wins: 0, losses: 0 })
     expect(p.coachingDone).toBe(false)
     expect(nextStep(p).kind).toBe('lesson')
   })
 
-  it('offers Pemberton’s help after two lost best-of-threes, counting for the week but not the rating', () => {
+  it('offers Pemberton’s help after three Saturday losses, counting for the week but not the rating', () => {
     let p = readyForPractice()
     for (let i = 0; i < 3; i++) p = recordGame(p, nextGame(p).game, false, null)
-    // Lose the best of three twice.
-    for (let series = 0; series < 2; series++) {
+    for (let lost = 0; lost < 3; lost++) {
       expect(nextGame(p).helpOffer).toBeNull()
-      p = recordGame(p, nextGame(p).game, false, null)
       p = recordGame(p, nextGame(p).game, false, null)
     }
     const offer = nextGame(p).helpOffer
     expect(offer).toMatchObject({ kind: 'match', stage: 'guided', helped: true })
-    expect(nextGame(p).note).toMatch(/three takebacks/)
+    expect(nextGame(p).note).toMatch(/three off you this week/)
     // Taking it: the games count for the week, and the rating stays put.
     const rating = p.rating!.rating
     p = recordGame(p, offer!, true, null)
@@ -202,7 +201,7 @@ describe('the path', () => {
     expect(p.rating!.rating).toBe(rating)
     expect(p.chapter).toBe(1)
     // A new week starts afresh: no offer until it's needed again.
-    expect(p.seriesLost).toBe(0)
+    expect(p.series).toEqual({ wins: 0, losses: 0 })
   })
 
   it('scaling characters keep the story’s distance from the player; fixed ones never move', () => {

@@ -7,7 +7,7 @@ const KIND_LABELS: Record<string, string> = {
   exhibition: 'Just for fun',
   coaching: 'Coached',
   friendly: 'Practice',
-  match: 'Best of three',
+  match: 'Saturday match',
   'cup-round': 'Knockout cup',
   boss: 'Cup final',
 }
