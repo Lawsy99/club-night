@@ -115,3 +115,20 @@ export function focusCheck(focus: Pick<WeekFocus, 'id' | 'baseline'>, errors: re
   }
   return `${job} ${count} this game, on ${moveList(slips)}. ${f.habit}`
 }
+
+/** Clean games in a row before a habit counts as shaken. */
+export const SHAKEN_AFTER = 5
+
+/**
+ * Habits you've got on top of (Joseph, Sep 2026: progress that a lost game
+ * can't take away): each focus area you used to slip on, with how many games
+ * in a row you've gone without it. `games` is error kinds per game, newest first.
+ */
+export function shakenHabits(games: readonly (readonly ErrorKind[])[]): { id: FocusId; title: string; clean: number }[] {
+  return FOCUSES.flatMap((f) => {
+    const last = games.findIndex((g) => focusCount(g, f.id) > 0)
+    // Never slipped on it (nothing shaken), or not clean for long enough yet.
+    if (last === -1 || last < SHAKEN_AFTER) return []
+    return [{ id: f.id, title: f.title, clean: last }]
+  }).sort((a, b) => b.clean - a.clean)
+}

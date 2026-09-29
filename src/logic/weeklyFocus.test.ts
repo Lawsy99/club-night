@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { chooseFocus, focusCheck } from './weeklyFocus'
+import { chooseFocus, focusCheck, shakenHabits } from './weeklyFocus'
 import type { ErrorKind } from './explain'
 
 const games = (...g: ErrorKind[][]) => g
@@ -39,5 +39,14 @@ describe('the weekly focus', () => {
     expect(focusCheck({ id: 'loose-pieces', baseline: 1 }, [{ ply: 14, kind: 'undefended' }, { ply: 30, kind: 'undefended' }])).toBe(
       'Loose pieces, this week’s job: two this game, on moves 8 and 16. Before every move, check that everything of yours is defended.',
     )
+  })
+})
+
+describe('habits you’ve got on top of', () => {
+  it('lists habits you used to slip on, once five games are clean', () => {
+    const clean: ErrorKind[][] = [[], ['fork'], [], [], [], [], ['undefended'], ['fork']]
+    expect(shakenHabits(clean)).toEqual([{ id: 'loose-pieces', title: 'Loose pieces', clean: 6 }])
+    // Never slipped on it: nothing to shake.
+    expect(shakenHabits([[], [], [], [], [], []])).toEqual([])
   })
 })

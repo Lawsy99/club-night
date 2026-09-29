@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react'
 import { RatingGraph } from '../components/RatingGraph'
 import { CHARACTERS, COACH, findCharacter, PRACTICE_REGULARS } from '../data/characters'
 import { OPENING_NAMES } from '../data/scouting'
-import { toStatsGame } from '../logic/archiveStats'
+import { errorKindsByGame, toStatsGame } from '../logic/archiveStats'
+import type { ErrorKind } from '../logic/explain'
+import { SHAKEN_AFTER, shakenHabits } from '../logic/weeklyFocus'
 import type { MonthlyTest } from '../logic/monthlyTest'
 import type { Progress } from '../logic/path'
 import {
@@ -22,10 +24,14 @@ import './StatsScreen.css'
 
 export function StatsScreen({ progress, onBack }: { progress: Progress; onBack: () => void }) {
   const [games, setGames] = useState<StatsGame[] | null>(null)
+  const [kinds, setKinds] = useState<ErrorKind[][]>([])
 
   useEffect(() => {
     listArchivedGames()
-      .then((archived) => setGames(archived.flatMap(toStatsGame)))
+      .then((archived) => {
+        setGames(archived.flatMap(toStatsGame))
+        setKinds(errorKindsByGame(archived))
+      })
       .catch(() => setGames([]))
   }, [])
 
@@ -52,6 +58,7 @@ export function StatsScreen({ progress, onBack }: { progress: Progress; onBack: 
       ) : (
         <>
           <ImprovementSection games={games} />
+          <HabitsSection kinds={kinds} />
           <MonthlyTestsSection tests={progress.monthlyTests ?? []} />
           <RecordSection games={games} />
           <AccuracySection games={games} />
@@ -93,6 +100,30 @@ function ImprovementSection({ games }: { games: StatsGame[] }) {
             })}
           </ul>
         </>
+      )}
+    </section>
+  )
+}
+
+/** Habits you've got on top of: games in a row without a mistake you used to make. */
+function HabitsSection({ kinds }: { kinds: ErrorKind[][] }) {
+  const habits = shakenHabits(kinds)
+  return (
+    <section>
+      <h2>Habits you’ve got on top of</h2>
+      {habits.length === 0 ? (
+        <p className="stats-note">Go {SHAKEN_AFTER} games without a mistake you used to make, and it shows here.</p>
+      ) : (
+        <ul className="stats-records">
+          {habits.map((h) => (
+            <li key={h.id}>
+              <span className="stats-name">{h.title}</span>
+              <span>
+                <strong className="stats-better">{h.clean} games</strong> clean
+              </span>
+            </li>
+          ))}
+        </ul>
       )}
     </section>
   )
