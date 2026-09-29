@@ -312,6 +312,22 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
   }
 
   /** The finished game's result goes on the path once (draws: see drawRule). */
+  // Play on from just before a mistake (Joseph, Sep 2026: retry the moment,
+  // not the game). Same opponent, same colour, same help; doesn't count.
+  const startRetry = (finished: GameRecord, ply: number) => {
+    const fresh = newGameRecord(finished.playerColour, finished.levelId, finished.stage, finished.opponentRating)
+    setGame({
+      ...fresh,
+      moves: finished.moves.slice(0, ply),
+      startPly: ply,
+      unlimited: finished.unlimited,
+      act: finished.act,
+      repertoire: finished.repertoire,
+      path: finished.path ? { ...finished.path, retry: true, label: `Again from move ${Math.floor(ply / 2) + 1}` } : undefined,
+    })
+    setView('game')
+  }
+
   const finishGame = async (finished: GameRecord) => {
     const outcome = outcomeOf(finished)
     if (!outcome || !finished.path) {
@@ -478,7 +494,14 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
             to: rateGame(progress.rating, game.path!.rating, outcome.winner === game.playerColour ? 1 : 0).rating,
           }
         : null
-    return <ReviewScreen key={game.id} game={game} ratingChange={preview} focus={progress.focus} onContinue={() => void finishGame(game)} />
+    return <ReviewScreen
+        key={game.id}
+        game={game}
+        ratingChange={preview}
+        focus={progress.focus}
+        onContinue={() => void finishGame(game)}
+        onPlayFrom={(ply) => void finishGame(game).then(() => startRetry(game, ply))}
+      />
   }
 
   if (game && view === 'game') {

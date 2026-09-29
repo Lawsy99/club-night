@@ -189,6 +189,11 @@ export type PathGame = {
    * (Joseph, Sep 2026: so nobody gets stuck). Counts for the week, not the rating.
    */
   helped?: boolean
+  /**
+   * Played again from just before a mistake, from the review (Joseph, Sep 2026:
+   * retry the moment, not the game). Doesn't count towards the week.
+   */
+  retry?: boolean
 }
 
 /** Games you have to win to move on: these are the ones that change your rating. */
@@ -600,6 +605,8 @@ export function drawRule(kind: PathGame['kind']): DrawRule {
 
 export function recordGame(p: Progress, game: PathGame, won: boolean, accuracyStrength: number | null): Progress {
   if (game.kind === 'trial') return recordTrialGame(p, game, won, accuracyStrength)
+  // A retry from the review is for learning only: the week and rating stand.
+  if (game.retry) return p
   // Toby's trial-night game: whatever happened, the night is over. No rating change.
   if (game.kind === 'exhibition') {
     if (p.stage !== 'trial' || !p.trial) return p

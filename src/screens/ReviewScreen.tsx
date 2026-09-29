@@ -26,6 +26,8 @@ import './ReviewScreen.css'
 type Props = {
   /** This week's focus: checked first in Pemberton's notes (games played since it was set). */
   focus?: WeekFocus | null
+  /** Practice and coached games: play on again from just before a mistake (the ply). */
+  onPlayFrom?: (ply: number) => void
   game: GameRecord
   onContinue: () => void
   /** Opened from Past games: the way out goes back to the list. */
@@ -50,7 +52,7 @@ function theirMoveName(moves: readonly string[], ply: number): string {
   return move ? moveName(move) : 'their move'
 }
 
-export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChange = null, focus = null }: Props) {
+export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChange = null, focus = null, onPlayFrom }: Props) {
   const [evals, setEvals] = useState<PositionEval[] | null>(null)
   const [progress, setProgress] = useState({ done: 0, total: game.moves.length + 1 })
   const [failed, setFailed] = useState(false)
@@ -94,10 +96,24 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
   const outcome = outcomeOf(game)
   const reviewed = useMemo(() => (evals ? reviewMoves(game.moves, evals) : null), [evals, game.moves])
   const moments = useMemo(
-    () => (evals ? gameMoments(game.moves, evals, player) : []),
-    [evals, game.moves, player],
+    // (A retry: only what happened from the retried move on.)
+    () => (evals ? gameMoments(game.moves, evals, player).filter((m) => m.ply >= (game.startPly ?? 0)) : []),
+    [evals, game.moves, player, game.startPly],
   )
-  const best = useMemo(() => (reviewed ? bestMoveOfGame(reviewed, player) : null), [reviewed, player])
+  // The one to play again from: the costliest mistake (Joseph, Sep 2026: retry the moment).
+  const retryFrom = useMemo(() => {
+    const cost = (m: (typeof moments)[number]) => (m.rating === 'blunder' ? 1000 : 0) + m.bestCp - (m.playedCp ?? m.bestCp)
+    return moments.length ? [...moments].sort((a, b) => cost(b) - cost(a))[0].ply : null
+  }, [moments])
+  const canRetry =
+    !fromHistory && !!onPlayFrom && retryFrom !== null && (game.path?.kind === 'friendly' || game.path?.kind === 'coaching')
+  const best = useMemo(() => {
+    const b = reviewed ? bestMoveOfGame(reviewed, player) : null
+    // (Not one of a retry's copied moves.)
+    return b && b.move.ply >= (game.startPly ?? 0) ? b : null
+  }, [reviewed, player, game.startPly])
+  // The moves actually played in this game (a retry's first moves were the original game's).
+  const played = useMemo(() => reviewed?.filter((m) => m.ply >= (game.startPly ?? 0)) ?? [], [reviewed, game.startPly])
 
   // Pemberton's notes: what this game meant, and any habit it shares with
   // your last few reviewed games (Joseph, Sep 2026).
@@ -120,8 +136,8 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
   // The week's focus, for games played since Pemberton set it (not past games).
   const focusOn = !fromHistory && focus && game.startedAt >= focus.setAt && game.moves.length >= 16 ? focus : null
   const focusNote = useMemo(
-    () => (evals && focusOn ? focusCheck(focusOn, gameErrors(game.moves, evals, player)) : null),
-    [evals, focusOn, game.moves, player],
+    () => (evals && focusOn ? focusCheck(focusOn, gameErrors(game.moves, evals, player).filter((e) => e.ply >= (game.startPly ?? 0))) : null),
+    [evals, focusOn, game.moves, game.startPly, player],
   )
   const coachNotesOnly = useMemo(
     () =>
@@ -138,7 +154,9 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
     // eslint-disable-next-line react-hooks/exhaustive-deps -- outcome follows the moves
     [evals, recentKinds, game.moves, player, focusOn],
   )
-  const notes = focusNote ? [focusNote, ...coachNotesOnly] : coachNotesOnly
+  // A retry gets one note on how the second go went, not the whole game's notes again.
+  const retryNote = game.startPly !== undefined && outcome ? retryVerdict(game.startPly, outcome.winner === null ? null : outcome.winner === player) : null
+  const notes = [...(focusNote ? [focusNote] : []), ...(retryNote ? [retryNote] : game.startPly !== undefined ? [] : coachNotesOnly)]
 
   // Real errors (mistakes and blunders) become Tuesday warm-ups. Done as soon
   // as the analysis is in, so they're kept even if the review is skipped.
@@ -348,14 +366,14 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
       ) : (
         <section className="review-summary">
           <div className="accuracy">
-            <span className="accuracy-value">{gameAccuracy(reviewed, player) ?? '–'}%</span>
+            <span className="accuracy-value">{gameAccuracy(played, player) ?? '–'}%</span>
             <span className="accuracy-label">your accuracy</span>
-            <span className="accuracy-opponent">Opponent: {gameAccuracy(reviewed, opponent) ?? '–'}%</span>
+            <span className="accuracy-opponent">Opponent: {gameAccuracy(played, opponent) ?? '–'}%</span>
           </div>
 
           <ul className="rating-counts">
             {RATING_ORDER.map((rating) => {
-              const count = ratingCounts(reviewed, player)[rating]
+              const count = ratingCounts(played, player)[rating]
               return (
                 <li key={rating} className={`rating-${rating}`}>
                   <span className="dot" />
@@ -401,6 +419,11 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
           <button type="button" className="review-secondary" onClick={() => goTo(1)}>
             Skip to {lower(momentsLabel)}
           </button>
+          {canRetry && (
+            <button type="button" className="review-secondary" onClick={() => onPlayFrom!(retryFrom!)}>
+              Play on from before your mistake (move {Math.floor(retryFrom! / 2) + 1})
+            </button>
+          )}
         </>
       ) : (
         failed && (
@@ -413,3 +436,11 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
   )
 }
 
+
+/** Pemberton on a retried game: how the second go went. */
+function retryVerdict(startPly: number, won: boolean | null): string {
+  const from = `From move ${Math.floor(startPly / 2) + 1} again`
+  if (won === true) return `${from}, and this time you won it. Remember what you did differently. That’s the lesson.`
+  if (won === null) return `${from}, and a draw this time. Better than last time. Look at where it levelled out.`
+  return `${from}. Still not easy, is it. Look at where it went this time: it won’t be the same place.`
+}

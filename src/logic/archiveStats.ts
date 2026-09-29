@@ -1,7 +1,7 @@
 // Archived games in the shape the stats (and Pemberton's study of you) need.
 // Unfinished or unreadable games are skipped.
 import type { ArchivedGame } from '../storage/db'
-import { gameErrorKinds } from './coachNotes'
+import { gameErrors } from './coachNotes'
 import type { ErrorKind } from './explain'
 import { replay } from './game'
 import { outcomeOf, upgradeGameRecord } from './gameRecord'
@@ -39,7 +39,8 @@ export function errorKindsByGame(archived: readonly ArchivedGame[]): ErrorKind[]
     .flatMap((saved) => {
       try {
         if (!saved.evals || saved.evals.length !== saved.moves.length + 1 || saved.moves.length < 16) return []
-        return [gameErrorKinds(saved.moves, saved.evals, saved.playerColour)]
+        // (A retry's moves before startPly were counted in the original game.)
+        return [gameErrors(saved.moves, saved.evals, saved.playerColour).filter((e) => e.ply >= (saved.startPly ?? 0)).map((e) => e.kind)]
       } catch {
         return []
       }
@@ -53,7 +54,7 @@ export function blundersByGame(archived: readonly ArchivedGame[]): number[] {
     .flatMap((saved) => {
       try {
         if (!saved.evals || saved.evals.length !== saved.moves.length + 1 || saved.moves.length < 16) return []
-        return [reviewMoves(saved.moves, saved.evals).filter((m) => m.mover === saved.playerColour && m.rating === 'blunder').length]
+        return [reviewMoves(saved.moves, saved.evals).filter((m) => m.mover === saved.playerColour && m.rating === 'blunder' && m.ply >= (saved.startPly ?? 0)).length]
       } catch {
         return []
       }

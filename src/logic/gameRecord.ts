@@ -21,6 +21,8 @@ export type GameRecord = {
   hintsUsed?: number
   /** Played with the "Full help" setting: unlimited hints and takebacks (data/helpStages.ts). */
   unlimited?: boolean
+  /** A retry: the moves before this ply were the original game's, replayed (not counted again in reviews and stats). */
+  startPly?: number
   /**
    * How each of the player's moves rated, by move index, so looking back
    * through the game shows them too (tester feedback, Sep 2026). `uci` checks
