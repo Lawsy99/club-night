@@ -15,7 +15,7 @@
   min-height: 64px;
   padding: 10px 12px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--panel);
   color: var(--text);
   font: inherit;
@@ -30,11 +30,11 @@
 }
 
 .past-result.won {
-  color: #7fc47a;
+  color: var(--good);
 }
 
 .past-result.lost {
-  color: #ec835a;
+  color: var(--bad);
 }
 
 .past-result.draw {

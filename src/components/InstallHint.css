@@ -2,10 +2,9 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 12px 14px;
-  border: 1px solid var(--brass);
-  border-radius: 12px;
-  background: var(--card);
+  padding: 4px 0 4px 14px;
+  border-left: 3px solid var(--text);
+  background: none;
 }
 
 .install-hint p {

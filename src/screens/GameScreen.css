@@ -33,7 +33,7 @@
   width: 100%;
   max-width: 340px;
   padding: 14px 16px;
-  border-radius: 14px;
+  border-radius: var(--radius);
   background: var(--buff);
   color: var(--ink);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
@@ -41,10 +41,12 @@
 
 .scouting-kicker {
   margin: 0 0 6px;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 15px;
+  font-weight: 400;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-family: var(--serif);
+  letter-spacing: 0.05em;
   color: var(--line);
 }
 
@@ -65,7 +67,7 @@
   width: 100%;
   min-height: 48px;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--ink);
   color: var(--buff);
   font: inherit;
@@ -81,7 +83,7 @@
   margin: 0 16px;
   padding: 8px 14px;
   border: none;
-  border-radius: 14px;
+  border-radius: var(--radius);
   background: var(--buff);
   color: var(--ink);
   font: inherit;
@@ -128,7 +130,7 @@
   gap: 8px;
   margin: 0 16px;
   padding: 6px 8px 6px 14px;
-  border-radius: 14px;
+  border-radius: var(--radius);
   background: var(--buff);
   color: var(--ink);
   position: relative;
@@ -153,7 +155,7 @@
   min-height: 44px;
   padding: 0 14px;
   border: 1px solid var(--ink);
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: none;
   color: var(--ink);
   font: inherit;
@@ -185,7 +187,7 @@
   min-height: 44px;
   padding: 0 12px;
   border: 1px solid rgb(25, 95, 185);
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: none;
   color: var(--text);
   font: inherit;
@@ -245,7 +247,7 @@
   width: 44px;
   height: 44px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--panel);
   color: var(--text);
   font-size: 22px;
@@ -262,7 +264,7 @@
   min-height: 44px;
   margin: 0 16px;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--brass);
   color: var(--ink);
   font: inherit;
@@ -338,7 +340,7 @@
   margin: 0 16px;
   padding: 0 14px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--panel);
   color: var(--text);
   font: inherit;
@@ -350,7 +352,7 @@
   min-height: 44px;
   padding: 0 14px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--panel);
   color: var(--text);
   font: inherit;
@@ -369,8 +371,9 @@
 }
 
 .game-actions button.danger {
-  background: #7a2e25;
-  border-color: #a0453a;
+  background: var(--bad);
+  border-color: var(--bad);
+  color: #ffffff;
 }
 
 .game-screen.loading {
@@ -396,14 +399,14 @@
 .confirm-move button {
   min-width: 96px;
   min-height: 48px;
-  border-radius: 10px;
+  border-radius: var(--radius);
   font-size: 1.4rem;
   font-weight: 700;
 }
 
 .confirm-move .confirm-yes {
-  background: #4f9a4f;
-  color: #fff;
+  background: var(--buff);
+  color: var(--ink);
   border: none;
 }
 

@@ -62,7 +62,7 @@
 .full-game-controls button {
   min-height: 48px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--panel);
   color: var(--text);
   cursor: pointer;
@@ -91,7 +91,7 @@
   min-height: 44px;
   padding: 0 8px;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: none;
   color: var(--text);
   font: inherit;

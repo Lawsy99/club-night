@@ -18,7 +18,7 @@
 
 .crash-screen button {
   min-height: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius);
   font: inherit;
   font-weight: 600;
   cursor: pointer;

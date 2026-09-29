@@ -1,27 +1,40 @@
 /* App-wide base styles. Designed for iPhone first (390 × 844).
  *
- * The look is "club mat" (Joseph, Sep 2026): the bottle-green and buff of a
- * roll-up vinyl tournament board, with brass for anything that matters.
- * Headings in a serif (Fraunces), everything else in the phone's own font.
+ * The look is "club stationery" (Sep 2026 overhaul): the paperwork of an
+ * English chess club. Off-white paper and black ink, thin printed rules
+ * instead of boxes, Caslon (the English printer's typeface) for headings and
+ * figures, a typewriter for Graham's notices, one deep club green for what
+ * you can press, and a rubber-stamp red kept for blunders and losses.
+ *
+ * The token names are older than the look: --buff and --ink are still "the
+ * feature surface" and "text on it" (now club green and paper).
  */
 :root {
-  /* Surfaces, darkest to lightest */
-  --bg: #173324;
-  --card: #1f3f2d;
-  --panel: #264a36;
-  --line-soft: #2c5440;
-  --line: #3f6a51;
-  /* Light: the buff of the mat, and dark ink for text on it */
-  --buff: #efe6c8;
-  --ink: #16301f;
-  /* Brass: the one accent */
-  --brass: #d0a847;
-  /* Text on the green */
-  --text: #efe6c8;
-  --muted: #a9bba8;
-  --muted-dim: #6f8a78;
+  /* Paper, and the rules printed on it */
+  --bg: #f2ede3;
+  --card: #ebe4d6;
+  --panel: #e5ddcc;
+  --line-soft: #ddd4c2;
+  --line: #bfb39b;
+  /* The feature surface (what to do next) and the text on it */
+  --buff: #1f4a37;
+  --ink: #f5f0e6;
+  --ink-muted: rgba(245, 240, 230, 0.72);
+  --ink-line: rgba(245, 240, 230, 0.35);
+  /* The accent: club green ink, for headings' small print and what's current */
+  --brass: #1f4a37;
+  /* Ink on paper */
+  --text: #1c1a16;
+  --muted: #5f584c;
+  --muted-dim: #91887a;
+  /* Results and grades */
+  --good: #2e6b3c;
+  --bad: #a8322a;
+  --stamp: #a8322a;
 
-  --serif: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --serif: 'Libre Caslon Text', Georgia, 'Times New Roman', serif;
+  --mono: 'Courier Prime', 'Courier New', monospace;
+  --radius: 3px;
 
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
@@ -29,6 +42,8 @@
   -webkit-font-smoothing: antialiased;
   /* Stop iOS enlarging text when the phone is turned sideways */
   -webkit-text-size-adjust: 100%;
+  /* Figures line up in tables and scores */
+  font-variant-numeric: tabular-nums;
 }
 
 body {
@@ -36,12 +51,31 @@ body {
   background: var(--bg);
 }
 
-/* Headings speak in the club's voice: a warm serif. */
+/* Headings are set, not styled: Caslon, no tracking games. */
 h1,
 h2 {
   font-family: var(--serif);
-  font-weight: 560;
-  letter-spacing: -0.005em;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+/* Section heads in the club programme style: small capitals over a rule. */
+section > h2:first-child {
+  margin: 0 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--text);
+  font-size: 15px;
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+}
+
+button {
+  border-radius: var(--radius);
 }
 
 #root {
@@ -52,4 +86,28 @@ h2 {
   padding: env(safe-area-inset-top) env(safe-area-inset-right)
     env(safe-area-inset-bottom) env(safe-area-inset-left);
   box-sizing: border-box;
+}
+
+/* Slips of paper: what people say, and Pemberton's notes and reports. A
+   lighter slip with a hairline edge, in Caslon, rather than a green block
+   (green is kept for what you press). Redefining the feature-surface colours
+   here means everything inside (buttons, pointers) follows. The doubled class
+   outranks each component's own rule, whatever order the files load in. */
+:root :is(.talk-bubble, .speech-bubble, .scouting-card, .demo-caption, .story-study-page) {
+  --buff: #fbf8f1;
+  --ink: #1c1a16;
+  --ink-muted: #5f584c;
+  --ink-line: #bfb39b;
+  border: 1px solid var(--line);
+  box-shadow: none;
+  font-family: var(--serif);
+}
+
+:root :is(.talk-bubble, .speech-bubble) {
+  font-size: 16px;
+}
+
+/* On the slips, buttons are ink, not green. */
+:root :is(.talk-bubble, .speech-bubble, .scouting-card) button {
+  font-family: system-ui, -apple-system, sans-serif;
 }

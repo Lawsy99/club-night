@@ -31,11 +31,11 @@
 }
 
 .review-rating.up {
-  color: #7fc47a;
+  color: var(--good);
 }
 
 .review-rating.down {
-  color: #ec835a;
+  color: var(--bad);
 }
 
 .review-note {
@@ -148,9 +148,11 @@
 
 .review-kicker {
   margin: 0 0 4px;
-  font-size: 13px;
+  font-size: 16px;
   color: var(--muted);
-  text-transform: uppercase;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-family: var(--serif);
   letter-spacing: 0.05em;
 }
 
@@ -196,7 +198,7 @@
 .review-secondary {
   min-height: 44px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: none;
   color: var(--text);
   font: inherit;
@@ -216,7 +218,7 @@
 .review-continue {
   min-height: 48px;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--brass);
   color: var(--ink);
   font: inherit;

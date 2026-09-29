@@ -34,7 +34,7 @@
 }
 
 .moment-verdict.solved {
-  color: #7fc47a;
+  color: var(--good);
 }
 
 .moment-verdict.revealed {
@@ -52,7 +52,7 @@
   align-items: flex-start;
   margin: 0 16px;
   padding: 12px;
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--card);
 }
 
@@ -65,9 +65,11 @@
 }
 
 .moment-coach-name {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 400;
   color: var(--brass);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-family: var(--serif);
+  letter-spacing: 0.05em;
 }

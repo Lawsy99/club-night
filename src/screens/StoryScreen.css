@@ -19,11 +19,13 @@
 
 .story-kicker {
   margin: 0;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 400;
   color: var(--brass);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-family: var(--serif);
+  letter-spacing: 0.05em;
 }
 
 .story-skip {
@@ -47,7 +49,7 @@
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 12px;
+  border-radius: var(--radius);
 }
 
 .story-lines {
@@ -77,11 +79,13 @@
 
 .story-speaker {
   display: block;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 400;
   color: var(--brass);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-family: var(--serif);
+  letter-spacing: 0.05em;
 }
 
 /* The study: a document, not a scene. Paper on the table. */
@@ -93,7 +97,7 @@
 
 .story-study-page {
   padding: 14px 16px;
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--buff);
   color: var(--ink);
   animation: story-in 0.4s ease-out;
@@ -101,10 +105,12 @@
 
 .story-study-page h2 {
   margin: 0 0 6px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-size: 15px;
+  font-weight: 400;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-family: var(--serif);
+  letter-spacing: 0.05em;
   opacity: 0.7;
 }
 

@@ -13,7 +13,7 @@
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--card);
   /* The whole graph is the touch target; stop the page scrolling while scrubbing */
   touch-action: none;

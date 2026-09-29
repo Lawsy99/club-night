@@ -1,28 +1,28 @@
-/* Move-rating colours, shared by the game screen and the review. The three
-   error grades use the validated status steps (warning / serious / critical);
-   they never carry meaning alone: every use also shows the label or the
-   chess annotation (?!, ?, ??). */
+/* Move-rating colours, shared by the game screen and the review. Tuned for
+   the paper background (Sep 2026 overhaul): greens for good moves, then
+   ochre, orange and stamp red for the errors. They never carry meaning alone:
+   every use also shows the label or the chess annotation (?!, ?, ??). */
 .rating-best {
-  --rating: #7fc47a;
-  --rating-ink: var(--ink);
+  --rating: #2e6b3c;
+  --rating-ink: #ffffff;
 }
 
 .rating-good {
-  --rating: #c9d8b8;
-  --rating-ink: var(--ink);
+  --rating: #7d9a63;
+  --rating-ink: #ffffff;
 }
 
 .rating-inaccuracy {
-  --rating: #fab219;
-  --rating-ink: var(--ink);
+  --rating: #d9a21b;
+  --rating-ink: #1c1a16;
 }
 
 .rating-mistake {
-  --rating: #ec835a;
-  --rating-ink: var(--ink);
+  --rating: #cc6329;
+  --rating-ink: #ffffff;
 }
 
 .rating-blunder {
-  --rating: #d03b3b;
+  --rating: #a8322a;
   --rating-ink: #ffffff;
 }

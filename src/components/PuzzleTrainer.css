@@ -15,7 +15,7 @@
 }
 
 .puzzle-prompt.solved {
-  color: #7fc47a;
+  color: var(--good);
 }
 
 .puzzle-prompt.helped {

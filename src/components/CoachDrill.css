@@ -11,7 +11,7 @@
   gap: 10px;
   margin: 0 16px;
   padding: 12px;
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--card);
 }
 
@@ -25,7 +25,7 @@
 .rules-skip {
   min-height: 48px;
   margin: 0 16px;
-  border-radius: 12px;
+  border-radius: var(--radius);
   font: inherit;
   cursor: pointer;
 }

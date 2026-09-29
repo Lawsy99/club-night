@@ -1,12 +1,14 @@
 .move-strip {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin: 0;
   padding: 0 16px;
   list-style: none;
   overflow-x: auto;
   white-space: nowrap;
-  font-size: 14px;
+  /* Moves as they'd go on a scoresheet: typed */
+  font-family: var(--mono);
+  font-size: 15px;
   color: var(--muted);
   scrollbar-width: none;
 }
@@ -17,6 +19,8 @@
 
 .move-strip.empty {
   overflow: visible;
+  font-family: inherit;
+  font-size: 14px;
 }
 
 .move-strip .num {
