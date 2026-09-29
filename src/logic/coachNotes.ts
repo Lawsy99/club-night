@@ -18,6 +18,8 @@ export type NotesInput = {
   won: boolean | null
   /** The error kinds of your previous reviewed games, newest first (for patterns). */
   recent?: readonly (readonly ErrorKind[])[]
+  /** This week's focus kinds: checked in their own note, so not repeated here. */
+  focusKinds?: readonly ErrorKind[]
 }
 
 /** Winning, or losing, by this much (centipawns) counts as clearly so. */
@@ -30,7 +32,12 @@ const moveNo = (ply: number) => Math.floor(ply / 2) + 1
 
 /** The kinds of error in a game: one entry per mistake or blunder of yours. */
 export function gameErrorKinds(moves: readonly string[], evals: readonly PositionEval[], player: Colour): ErrorKind[] {
-  return playerErrors(reviewMoves(moves, evals), evals, player).map((e) => e.kind)
+  return gameErrors(moves, evals, player).map((e) => e.kind)
+}
+
+/** Each mistake or blunder of yours: where (ply) and what kind. */
+export function gameErrors(moves: readonly string[], evals: readonly PositionEval[], player: Colour): { ply: number; kind: ErrorKind }[] {
+  return playerErrors(reviewMoves(moves, evals), evals, player).map((e) => ({ ply: e.move.ply, kind: e.kind }))
 }
 
 type PlayerError = { move: ReviewedMove; kind: ErrorKind; missedChance: boolean }
@@ -162,8 +169,9 @@ export function coachNotes(input: NotesInput): string[] {
   // 1. A habit that keeps coming back, across games.
   const kinds = errors.map((e) => e.kind)
   const recent = input.recent ?? []
+  const focus = input.focusKinds ?? []
   for (const kind of new Set(kinds)) {
-    if (kind === 'positional') continue
+    if (kind === 'positional' || focus.includes(kind)) continue
     const earlier = recent.slice(0, 4).filter((g) => g.includes(kind)).length
     if (earlier >= 2) {
       const games = earlier + 1
@@ -190,13 +198,15 @@ export function coachNotes(input: NotesInput): string[] {
   const counts = new Map<ErrorKind, number>()
   for (const k of kinds) counts.set(k, (counts.get(k) ?? 0) + 1)
   const [topKind, topCount] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0] ?? [null, 0]
-  if (topKind && topCount >= 2) {
+  if (topKind && focus.includes(topKind)) {
+    // (Already the focus note.)
+  } else if (topKind && topCount >= 2) {
     add(2, KIND_NOTES[topKind].what(COUNT_WORDS[Math.min(topCount, 5)]))
   } else if (errors.length > 0) {
     // The biggest single error is where the game turned.
     const worst = [...errors].sort((a, b) => b.move.winBefore - b.move.winAfter - (a.move.winBefore - a.move.winAfter))[0]
     // ("Your biggest mistake", not "the game turned": they may not have taken advantage.)
-    add(2, `Your biggest mistake was on move ${moveNo(worst.move.ply)}, when ${KIND_NOTES[worst.kind].single}.`)
+    if (!focus.includes(worst.kind)) add(2, `Your biggest mistake was on move ${moveNo(worst.move.ply)}, when ${KIND_NOTES[worst.kind].single}.`)
   }
 
   // 4. Chances they gave you that you let go (if not already the story).

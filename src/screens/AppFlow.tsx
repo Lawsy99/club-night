@@ -41,7 +41,10 @@ import { storyFor } from '../logic/storyContent'
 import { collectMistakes } from '../engine/collectMistakes'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
 import { ACT_1 } from '../data/act1'
-import { actNumber, weeksBefore } from '../data/acts'
+import { actNumber, actPlan, weeksBefore } from '../data/acts'
+import { errorKindsByGame } from '../logic/archiveStats'
+import { chooseFocus } from '../logic/weeklyFocus'
+import { findFocus } from '../data/focuses'
 import { CHARACTERS } from '../data/characters'
 import { rivalTarget } from '../logic/rival'
 import { pickScouting, scoutingReport, type LastMeeting } from '../logic/scouting'
@@ -184,6 +187,35 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
     // Every screen starts at the top (not wherever the last one was scrolled to).
     window.scrollTo(0, 0)
   }, [view, loaded])
+
+  // Pemberton's focus for the week (Joseph, Sep 2026): chosen once, at the
+  // start of each week, from the mistakes in your recent analysed games.
+  const focusWeek =
+    progress.stage === 'act' && actPlan(progress).chapters[progress.chapter]
+      ? `${actNumber(progress)}:${actPlan(progress).chapters[progress.chapter].id}`
+      : null
+  useEffect(() => {
+    if (!loaded || !focusWeek || progress.focus?.week === focusWeek) return
+    let cancelled = false
+    listArchivedGames()
+      .then((archived) => {
+        if (cancelled) return
+        const prev = progress.focus
+        const since = prev ? errorKindsByGame(archived.filter((g) => g.finishedAt >= prev.setAt)) : []
+        const focus = chooseFocus(focusWeek, Date.now(), errorKindsByGame(archived), prev ? { focus: prev, since } : null)
+        setProgress((p) => {
+          if (p.focus?.week === focusWeek) return p
+          const next = { ...p, focus }
+          saveProgress(next).catch((err) => console.error('Save failed', err))
+          return next
+        })
+      })
+      .catch(() => undefined)
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per week
+  }, [loaded, focusWeek])
 
   if (!loaded) return <main className="game-screen loading">Setting up the board…</main>
 
@@ -442,7 +474,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
             to: rateGame(progress.rating, game.path!.rating, outcome.winner === game.playerColour ? 1 : 0).rating,
           }
         : null
-    return <ReviewScreen key={game.id} game={game} ratingChange={preview} onContinue={() => void finishGame(game)} />
+    return <ReviewScreen key={game.id} game={game} ratingChange={preview} focus={progress.focus} onContinue={() => void finishGame(game)} />
   }
 
   if (game && view === 'game') {
@@ -455,6 +487,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
         playerName={progress.playerName}
         chatter={settings.chatter}
         confirmMoves={settings.confirmMoves ?? true}
+        focusKinds={progress.focus ? findFocus(progress.focus.id).kinds : []}
         onReview={() => setView('review')}
         onContinue={() => void finishGame(game)}
         onPause={() => setView('home')}

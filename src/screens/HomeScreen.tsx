@@ -3,6 +3,7 @@
 // There is deliberately no free-play mode: the path decides what's next.
 import { useEffect, useRef, useState } from 'react'
 import { BUILD_LABEL } from '../buildInfo'
+import { FocusCard } from '../components/FocusCard'
 import { InstallHint } from '../components/InstallHint'
 import { NameField } from '../components/NameField'
 import { Portrait } from '../components/Portrait'
@@ -166,6 +167,9 @@ export function HomeScreen(props: Props) {
       <button type="button" className="act-progress-button" onClick={onOpenCalendar} aria-label="Club calendar">
         <ActProgress progress={progress} />
       </button>
+
+      {/* Pemberton's focus for the week: what every game this week is checked for. */}
+      {progress.focus && progress.stage === 'act' && <FocusCard focus={progress.focus} showVerdict={!progress.coachingDone} />}
 
       {/* A paused game comes first: finish it (or resign) before anything else. */}
       {pausedGame ? (

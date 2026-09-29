@@ -537,6 +537,15 @@ Every game, won or lost, ends with a short review. The review is where most of t
 
 The review is offered, not forced: a Skip button sits beside "Review game" and in the corner of each review step (Joseph's decision, Sep 2026). A skipped game adds no cards to the mistakes deck, because the cards come from the review's analysis.
 
+### Pemberton's weekly focus (Sep 2026)
+
+Joseph: every mistake should feel like a chance to learn, not a failure. So each week has one habit to work on, chosen by Pemberton from the mistakes the player has actually been making (logic/weeklyFocus.ts, data/focuses.ts): loose pieces, their threats, your chances, your king, the opening, swaps.
+
+- **Chosen** at the start of each week from the last six analysed games (a new player starts on loose pieces). A habit that has halved, or gone, is done with; one that hasn't stays another week.
+- **Tuesday:** Home shows the focus in his words, with a dry verdict on last week's ("Last week, loose pieces: none in 3 games. That'll do. On to something else.").
+- **In the coached game:** when you make the very mistake you're working on, he says "That's the one we're working on this week."
+- **After every game:** his first review note checks it, with the moves where it slipped ("Loose pieces, this week's job: one this game, on move 12. Down from about two a game. Getting there."). His other notes don't repeat it.
+
 ### The review
 
 1. **The character's post-game bubbles** (one or two), then the review opens.

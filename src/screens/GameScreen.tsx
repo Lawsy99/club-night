@@ -10,7 +10,7 @@ import { HINT_ARROW_COLOUR } from '../components/lineArrows'
 import { COACH_VOICES, pickLine } from '../data/coachLines'
 import { coachHint } from '../logic/coachHints'
 import { findScenario, scenarioMove, scenarioState, scenarioVerdict } from '../logic/coachScenario'
-import { coachComment, explainBestMove } from '../logic/explain'
+import { coachComment, errorKind, explainBestMove, type ErrorKind } from '../logic/explain'
 import { MoveStrip } from '../components/MoveStrip'
 import { DemoBoard } from '../components/DemoBoard'
 import { SCOUTING } from '../data/scouting'
@@ -89,6 +89,8 @@ type Props = {
   chatter?: Chatter
   /** Ask before each move is played, with a tick and a cross (Settings). */
   confirmMoves?: boolean
+  /** The kinds of mistake this week's focus is about (Pemberton points them out). */
+  focusKinds?: readonly ErrorKind[]
 }
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
@@ -113,6 +115,7 @@ export function GameScreen({
   playerName,
   chatter = 'full',
   confirmMoves = false,
+  focusKinds = [],
 }: Props) {
   const stage = helpFor(game)
   const isExhibition = game.path?.kind === 'exhibition'
@@ -587,7 +590,7 @@ export function GameScreen({
     // Their move just before, so a missed recapture reads as one.
     const at = game.moves.length - (game.moves.at(-1) === ratedMove.played ? 1 : 2)
     const prev = at > 0 ? { fen: replay(game.moves.slice(0, at - 1)).fen(), move: game.moves[at - 1] } : undefined
-    const comment = coachComment({
+    const facts = {
       fenBefore: ratedMove.fenBefore,
       played: ratedMove.played,
       bestMove: ratedMove.betterMove,
@@ -597,8 +600,12 @@ export function GameScreen({
       bestLine: ratedMove.bestLine ?? undefined,
       replyLine: ratedMove.replyLine ?? undefined,
       prev,
-    })
-    dialogue.say(`${pickLine(coachVoice.afterMistake, null)} ${comment}`, 'annoyed')
+    }
+    const comment = coachComment(facts)
+    // The week's focus (Joseph, Sep 2026): when it's the very mistake you're
+    // working on, he says so instead of his usual opener.
+    const onFocus = focusKinds.includes(errorKind(facts))
+    dialogue.say(`${onFocus ? 'That’s the one we’re working on this week.' : pickLine(coachVoice.afterMistake, null)} ${comment}`, 'annoyed')
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per rated move
   }, [ratedKey])
 

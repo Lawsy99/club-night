@@ -2,6 +2,7 @@
 // next (design document, "The path", "How friendlies move you forward",
 // "Stakes"). Pure state + functions; the Home screen asks `nextStep` and the
 // game flow reports results back.
+import type { WeekFocus } from './weeklyFocus'
 import { storyWeeksBefore, TRIAL_FINALE, TRIAL_OPPONENTS } from '../data/act1'
 import { characterRating, findCharacter, LEAGUE_ONLY, PRACTICE_REGULARS, storyOffset } from '../data/characters'
 import { MEMBERS } from '../data/members'
@@ -72,6 +73,8 @@ export type Progress = {
   monthlyTests?: MonthlyTest[]
   /** Scouting demos and style lines already seen ("marjorie:w:0", "dex:style:1"), so none repeats. */
   scoutingSeen?: string[]
+  /** Pemberton's focus for the week (logic/weeklyFocus.ts). */
+  focus?: WeekFocus
   /** (Older saves: best-of-threes lost in a week. No longer used; losses stay in `series`.) */
   seriesLost?: number
 }

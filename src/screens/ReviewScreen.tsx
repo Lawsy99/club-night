@@ -6,7 +6,9 @@ import { FullGameView } from '../components/FullGameView'
 import { MomentTrainer } from '../components/MomentTrainer'
 import { MoveReplay } from '../components/MoveReplay'
 import { Portrait } from '../components/Portrait'
-import { coachNotes, gameErrorKinds } from '../logic/coachNotes'
+import { coachNotes, gameErrorKinds, gameErrors } from '../logic/coachNotes'
+import { findFocus } from '../data/focuses'
+import { focusCheck, type WeekFocus } from '../logic/weeklyFocus'
 import type { ErrorKind } from '../logic/explain'
 import { drawRule } from '../logic/path'
 import { analyseGame } from '../engine/reviewAnalysis'
@@ -22,6 +24,8 @@ import '../components/ratings.css'
 import './ReviewScreen.css'
 
 type Props = {
+  /** This week's focus: checked first in Pemberton's notes (games played since it was set). */
+  focus?: WeekFocus | null
   game: GameRecord
   onContinue: () => void
   /** Opened from Past games: the way out goes back to the list. */
@@ -46,7 +50,7 @@ function theirMoveName(moves: readonly string[], ply: number): string {
   return move ? moveName(move) : 'their move'
 }
 
-export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChange = null }: Props) {
+export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChange = null, focus = null }: Props) {
   const [evals, setEvals] = useState<PositionEval[] | null>(null)
   const [progress, setProgress] = useState({ done: 0, total: game.moves.length + 1 })
   const [failed, setFailed] = useState(false)
@@ -113,7 +117,13 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
       cancelled = true
     }
   }, [game.id])
-  const notes = useMemo(
+  // The week's focus, for games played since Pemberton set it (not past games).
+  const focusOn = !fromHistory && focus && game.startedAt >= focus.setAt && game.moves.length >= 16 ? focus : null
+  const focusNote = useMemo(
+    () => (evals && focusOn ? focusCheck(focusOn, gameErrors(game.moves, evals, player)) : null),
+    [evals, focusOn, game.moves, player],
+  )
+  const coachNotesOnly = useMemo(
     () =>
       evals && recentKinds
         ? coachNotes({
@@ -122,11 +132,13 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
             player,
             won: outcome ? (outcome.winner === null ? null : outcome.winner === player) : null,
             recent: recentKinds,
+            focusKinds: focusOn ? findFocus(focusOn.id).kinds : [],
           })
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps -- outcome follows the moves
-    [evals, recentKinds, game.moves, player],
+    [evals, recentKinds, game.moves, player, focusOn],
   )
+  const notes = focusNote ? [focusNote, ...coachNotesOnly] : coachNotesOnly
 
   // Real errors (mistakes and blunders) become Tuesday warm-ups. Done as soon
   // as the analysis is in, so they're kept even if the review is skipped.
