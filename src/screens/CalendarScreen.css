@@ -57,10 +57,9 @@
   flex: 0 0 52px;
   font-size: 14px;
   font-weight: 400;
-  text-transform: lowercase;
-  font-variant: small-caps;
+  font-style: italic;
   font-family: var(--serif);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
   color: var(--muted);
 }
 

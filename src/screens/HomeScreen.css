@@ -19,10 +19,9 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--brass);
-  text-transform: lowercase;
-  font-variant: small-caps;
+  font-style: italic;
   font-family: var(--serif);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 
 .home-header h1 {
@@ -74,10 +73,9 @@
   margin-right: 4px;
   font-size: 15px;
   color: var(--muted);
-  text-transform: lowercase;
-  font-variant: small-caps;
+  font-style: italic;
   font-family: var(--serif);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 
 .act-dot {
@@ -162,10 +160,9 @@
 .club-week-dow {
   font-size: 14px;
   font-weight: 400;
-  text-transform: lowercase;
-  font-variant: small-caps;
+  font-style: italic;
   font-family: var(--serif);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
   color: var(--muted);
 }
 
@@ -210,10 +207,9 @@
   font-style: normal;
   font-weight: 400;
   color: var(--brass);
-  text-transform: lowercase;
-  font-variant: small-caps;
+  font-style: italic;
   font-family: var(--serif);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 
 .club-week-day.later {
@@ -242,10 +238,9 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--ink-muted);
-  text-transform: lowercase;
-  font-variant: small-caps;
+  font-style: italic;
   font-family: var(--serif);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 
 .next-card h2 {
@@ -393,10 +388,9 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--brass);
-  text-transform: lowercase;
-  font-variant: small-caps;
+  font-style: italic;
   font-family: var(--serif);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 
 /* Pemberton's monthly test: a quiet row, not a second "Next" card. */

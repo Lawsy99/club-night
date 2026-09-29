@@ -22,10 +22,9 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--brass);
-  text-transform: lowercase;
-  font-variant: small-caps;
+  font-style: italic;
   font-family: var(--serif);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 
 .story-skip {
@@ -82,10 +81,9 @@
   font-size: 15px;
   font-weight: 400;
   color: var(--brass);
-  text-transform: lowercase;
-  font-variant: small-caps;
+  font-style: italic;
   font-family: var(--serif);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 
 /* The study: a document, not a scene. Paper on the table. */
@@ -107,10 +105,9 @@
   margin: 0 0 6px;
   font-size: 15px;
   font-weight: 400;
-  text-transform: lowercase;
-  font-variant: small-caps;
+  font-style: italic;
   font-family: var(--serif);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
   opacity: 0.7;
 }
 

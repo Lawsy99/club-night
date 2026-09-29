@@ -44,19 +44,22 @@
 .settings-options {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
 }
 
 .settings-options button {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
   min-height: 52px;
-  padding: 8px 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--panel);
+  /* A ruled form: a box to tick on the left, then the choice */
+  padding: 10px 0 10px 34px;
+  border: none;
+  border-bottom: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: none;
   color: var(--text);
   font: inherit;
   text-align: left;
@@ -69,8 +72,7 @@
 }
 
 .settings-options button.selected {
-  border-color: var(--brass);
-  box-shadow: inset 0 0 0 1px var(--brass);
+  font-weight: 600;
 }
 
 .settings-options button.settings-board {
@@ -141,4 +143,28 @@
   margin: 4px 0 0;
   font-size: 14px;
   color: var(--text);
+}
+
+.settings-options button::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 14px;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: 1.5px solid var(--text);
+  border-radius: 2px;
+}
+
+.settings-options button.selected::before {
+  content: '✓';
+  display: grid;
+  place-items: center;
+  background: var(--buff);
+  border-color: var(--buff);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
 }

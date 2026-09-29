@@ -1,10 +1,12 @@
 .past-games {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
   margin: 0;
   padding: 0;
   list-style: none;
+  /* The results book: one ruled line a game */
+  border-top: 1px solid var(--text);
 }
 
 .past-games button {
@@ -13,10 +15,11 @@
   gap: 12px;
   width: 100%;
   min-height: 64px;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--panel);
+  padding: 10px 0;
+  border: none;
+  border-bottom: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: none;
   color: var(--text);
   font: inherit;
   text-align: left;
@@ -25,8 +28,9 @@
 
 .past-result {
   flex: 0 0 44px;
-  font-weight: 700;
-  font-size: 14px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
 }
 
 .past-result.won {
@@ -60,7 +64,8 @@
 }
 
 .past-accuracy {
-  font-size: 13px;
+  font-family: var(--serif);
+  font-size: 15px;
   color: var(--muted);
   text-align: right;
 }

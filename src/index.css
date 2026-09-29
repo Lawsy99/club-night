@@ -63,15 +63,13 @@ h2 {
   font-size: 20px;
 }
 
-/* Section heads in the club programme style: small capitals over a rule. */
+/* Section heads as the club programme sets them: plain Caslon over a rule. */
 section > h2:first-child {
   margin: 0 0 8px;
   padding-bottom: 6px;
   border-bottom: 1px solid var(--text);
-  font-size: 15px;
-  font-variant: small-caps;
-  letter-spacing: 0.06em;
-  text-transform: lowercase;
+  font-size: 20px;
+  line-height: 1.2;
 }
 
 button {

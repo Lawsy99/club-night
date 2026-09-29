@@ -175,6 +175,7 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
         ? 'You won.'
         : 'You lost.'
     : ''
+  const stampKind = !outcome ? '' : outcome.winner === null ? 'drawn' : outcome.winner === player ? 'won' : 'lost'
   const finalLabel = fromHistory ? 'Back to past games' : outcome?.winner === null ? 'Replay' : 'Continue'
   const momentsLabel =
     moments.length > 0 ? `Your biggest moment${moments.length === 1 ? '' : 's'} (${moments.length})` : 'Best move of the game'
@@ -324,7 +325,9 @@ export function ReviewScreen({ game, onContinue, fromHistory = false, ratingChan
           {skipButton}
         </div>
         <p className="review-result">
-          {resultLine} {outcome && <span>{describeOutcome(outcome)}</span>}
+          {/* The result, stamped as on the club's results sheet. */}
+          <strong className={`result-stamp ${stampKind}`}>{resultLine}</strong>{' '}
+          {outcome && <span>{describeOutcome(outcome)}</span>}
         </p>
         {ratingChange && (
           <p className={`review-rating ${ratingChange.to >= ratingChange.from ? 'up' : 'down'}`}>

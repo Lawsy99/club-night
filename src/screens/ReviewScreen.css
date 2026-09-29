@@ -64,8 +64,8 @@
 }
 
 .progress-track {
-  height: 8px;
-  border-radius: 4px;
+  height: 3px;
+  border-radius: 0;
   background: var(--panel);
   overflow: hidden;
 }
@@ -89,8 +89,9 @@
 }
 
 .accuracy-value {
-  font-size: 48px;
-  font-weight: 700;
+  font-family: var(--serif);
+  font-size: 56px;
+  font-weight: 400;
   line-height: 1;
 }
 
@@ -150,10 +151,9 @@
   margin: 0 0 4px;
   font-size: 16px;
   color: var(--muted);
-  text-transform: lowercase;
-  font-variant: small-caps;
+  font-style: italic;
   font-family: var(--serif);
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 
 .review-pill {
@@ -237,3 +237,31 @@
   margin: 0;
 }
 
+
+/* The result as a rubber stamp: inked, a little crooked, as a person would. */
+.result-stamp {
+  display: inline-block;
+  margin: 4px 0 6px;
+  padding: 3px 12px 2px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transform: rotate(-2.5deg);
+  opacity: 0.88;
+}
+
+.result-stamp.won {
+  color: var(--good);
+}
+
+.result-stamp.lost {
+  color: var(--stamp);
+}
+
+.result-stamp.drawn {
+  color: var(--muted);
+}

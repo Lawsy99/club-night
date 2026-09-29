@@ -21,10 +21,7 @@
   padding-bottom: 6px;
   border-bottom: 1px solid var(--text);
   font-family: var(--serif);
-  font-size: 15px;
-  font-variant: small-caps;
-  letter-spacing: 0.06em;
-  text-transform: lowercase;
+  font-size: 20px;
 }
 
 .ladder-card-head span {
