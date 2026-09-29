@@ -42,7 +42,8 @@ import { collectMistakes } from '../engine/collectMistakes'
 import { SCOUTING_DEMOS } from '../data/scoutingDemos'
 import { ACT_1 } from '../data/act1'
 import { actNumber, actPlan, weeksBefore } from '../data/acts'
-import { errorKindsByGame } from '../logic/archiveStats'
+import { blundersByGame, errorKindsByGame } from '../logic/archiveStats'
+import { STEP_IN_BY_LEVEL, DEFAULT_WATCH, watchLevel, watchNote } from '../logic/coachWatch'
 import { chooseFocus } from '../logic/weeklyFocus'
 import { findFocus } from '../data/focuses'
 import { CHARACTERS } from '../data/characters'
@@ -202,7 +203,10 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
         if (cancelled) return
         const prev = progress.focus
         const since = prev ? errorKindsByGame(archived.filter((g) => g.finishedAt >= prev.setAt)) : []
-        const focus = chooseFocus(focusWeek, Date.now(), errorKindsByGame(archived), prev ? { focus: prev, since } : null)
+        const chosen = chooseFocus(focusWeek, Date.now(), errorKindsByGame(archived), prev ? { focus: prev, since } : null)
+        // Help that fades (Sep 2026): how closely he watches follows your blunders.
+        const watch = watchLevel(blundersByGame(archived))
+        const focus = { ...chosen, watch, watchNote: watchNote(prev?.watch, watch) }
         setProgress((p) => {
           if (p.focus?.week === focusWeek) return p
           const next = { ...p, focus }
@@ -488,6 +492,7 @@ function Flow({ settings, onChangeSettings }: { settings: Settings; onChangeSett
         chatter={settings.chatter}
         confirmMoves={settings.confirmMoves ?? true}
         focusKinds={progress.focus ? findFocus(progress.focus.id).kinds : []}
+        stepInChance={STEP_IN_BY_LEVEL[progress.focus?.watch ?? DEFAULT_WATCH]}
         onReview={() => setView('review')}
         onContinue={() => void finishGame(game)}
         onPause={() => setView('home')}

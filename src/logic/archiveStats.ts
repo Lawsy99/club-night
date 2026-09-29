@@ -45,3 +45,17 @@ export function errorKindsByGame(archived: readonly ArchivedGame[]): ErrorKind[]
       }
     })
 }
+
+/** Your blunders in each analysed game, newest first (for how closely Pemberton watches). */
+export function blundersByGame(archived: readonly ArchivedGame[]): number[] {
+  return [...archived]
+    .sort((a, b) => b.finishedAt - a.finishedAt)
+    .flatMap((saved) => {
+      try {
+        if (!saved.evals || saved.evals.length !== saved.moves.length + 1 || saved.moves.length < 16) return []
+        return [reviewMoves(saved.moves, saved.evals).filter((m) => m.mover === saved.playerColour && m.rating === 'blunder').length]
+      } catch {
+        return []
+      }
+    })
+}

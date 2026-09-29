@@ -91,6 +91,8 @@ type Props = {
   confirmMoves?: boolean
   /** The kinds of mistake this week's focus is about (Pemberton points them out). */
   focusKinds?: readonly ErrorKind[]
+  /** How often Pemberton's "are you sure?" steps in (fades as you blunder less: logic/coachWatch.ts). */
+  stepInChance?: number
 }
 
 /** A move the player has dropped but not yet confirmed (blunder check). */
@@ -116,6 +118,7 @@ export function GameScreen({
   chatter = 'full',
   confirmMoves = false,
   focusKinds = [],
+  stepInChance = COACH_STEPS_IN,
 }: Props) {
   const stage = helpFor(game)
   const isExhibition = game.path?.kind === 'exhibition'
@@ -494,7 +497,7 @@ export function GameScreen({
   function handlePlayerMove(uci: string) {
     // The coach only queries a bad move some of the time, and only while
     // there's a takeback left to pay for taking it back (Joseph, Sep 2026).
-    const rule = stage.blunderWarning && takebacksLeft(game) > 0 && Math.random() < COACH_STEPS_IN ? stage.blunderWarning : null
+    const rule = stage.blunderWarning && takebacksLeft(game) > 0 && Math.random() < stepInChance ? stage.blunderWarning : null
     const chessAfter = replay([...game.moves, uci])
     // No warning in Real, or when the move ends the game.
     if (!rule || getOutcome(chessAfter)) {

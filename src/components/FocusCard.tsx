@@ -13,6 +13,7 @@ export function FocusCard({ focus, showVerdict }: { focus: WeekFocus; showVerdic
       <div>
         <p className="focus-kicker">This week: {f.title.toLowerCase()}</p>
         {showVerdict && focus.verdict && <p className="focus-verdict">{focus.verdict}</p>}
+        {showVerdict && focus.watchNote && <p className="focus-verdict">{focus.watchNote}</p>}
         <p className="focus-habit">{f.habit}</p>
       </div>
     </section>

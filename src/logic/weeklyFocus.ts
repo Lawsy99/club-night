@@ -14,6 +14,9 @@ export type WeekFocus = {
   setAt: number
   /** Pemberton on last week's focus, if there was one. */
   verdict: string | null
+  /** How closely he watches your moves this week (logic/coachWatch.ts), and what he said about it. */
+  watch?: number
+  watchNote?: string | null
 }
 
 /** Games needed before a baseline means anything. */
