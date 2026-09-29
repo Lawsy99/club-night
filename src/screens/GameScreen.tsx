@@ -31,7 +31,7 @@ import { chooseOpponentMove } from '../engine/opponent'
 import { useAnalysis } from '../engine/useAnalysis'
 import { useMoveRating } from '../engine/useMoveRating'
 import { getEngine } from '../engine/stockfish'
-import { isKeyMoment, KEY_FROM_PLY } from '../logic/keyMoment'
+import { isKeyMoment, KEY_FROM_PLY, KEY_LINES } from '../logic/keyMoment'
 import { useWakeLock } from './useWakeLock'
 import { assessMove, describeBlunder } from '../logic/blunder'
 import { flipScore, scoreFor, toCentipawns } from '../logic/evaluation'
@@ -196,8 +196,8 @@ export function GameScreen({
     playerName,
     storyOnly: chatter === 'off',
   })
-  // Key moments (Joseph, Sep 2026): when one move is far better than the
-  // rest, the opponent says so, in character, never saying what to play. You
+  // Key moments (Joseph, Sep 2026): when only a few moves are good and most
+  // of the rest are blunders, the opponent says so, in character, never saying what to play. You
   // can't think hard every move on the bus; this says when to. Not in
   // must-win games without help (Saturday stays help-free), nor trial night.
   const keyPlies = useRef<number[]>([])
@@ -207,11 +207,12 @@ export function GameScreen({
     if (ply < KEY_FROM_PLY) return
     let cancelled = false
     getEngine()
-      .search(fen, { multiPv: 2, depth: 12, movetime: 500 })
+      .search(fen, { multiPv: KEY_LINES, depth: 10, movetime: 700 })
       .then(({ lines }) => {
         if (cancelled) return
         const lastMove = last ? { uci: last.from + last.to, captured: !!last.captured } : null
-        if (!isKeyMoment({ lines, ply, lastMove, earlier: keyPlies.current })) return
+        const legalMoves = chess.moves().length
+        if (!isKeyMoment({ lines, legalMoves, ply, lastMove, earlier: keyPlies.current })) return
         keyPlies.current = [...keyPlies.current, ply]
         dialogue.speak('key_moment')
       })
