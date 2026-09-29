@@ -329,7 +329,7 @@ The cup is "Cup week" (round 1, round 2, semi-final, final). Trial night keeps i
 
 **Competitive games** (match, cup, boss): no move ratings on screen. Only a great move (the winning shot, found straight after the opponent slips) or a blunder shows, in the opponent: their face for a few seconds, and now and then a stage direction. Any game can be looked back through move by move (view only; one tap returns to the game).
 
-**The look (Sep 2026): "club mat".** Bottle green and buff from the roll-up vinyl boards English clubs use, with brass as the one accent; headings in a serif (Fraunces, bundled with the app); the board framed like the mat. Tonight's session sits on a buff card in dark ink. Wood and slate boards remain in Settings.
+**The look (Sep 2026 overhaul): "club stationery".** Joseph wanted it to feel made by a person, not generated. So it borrows the paperwork of an English chess club: off-white paper and black ink; Caslon (the English printer's typeface) for headings and figures; a typewriter (Courier Prime) for Graham's notices and the move list; thin printed rules instead of boxes, and square corners. Home has a newsletter masthead over a double rule, the week as a ruled fixture card, the ladder as a typed list with dotted leaders, and the links as a ruled list. Speech and Pemberton's notes are slips of paper; Settings is a form with tick boxes; past games are a results book; a review's result is a rubber stamp. Club green is kept for what you can press, stamp red for losses and blunders. The board keeps the club-mat greens; wood and slate remain in Settings. (Before this: "club mat", dark bottle green with brass and Fraunces.)
 
 A chapter is a short fixed sequence of steps. The usual pattern is:
 
